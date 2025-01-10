@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "967238267679",
+    "project_id": "skulfulharmony",
+    "storage_bucket": "skulfulharmony.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967238267679:android:8c5ae1261214fdba3f762a",
+        "android_client_info": {
+          "package_name": "com.example.skulfulharmony"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhhKFXhw5mGNbUXKUbPnoqliWmZvBdgdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
