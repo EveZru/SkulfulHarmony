@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RecuperarContr">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="251dp"
+        android:layout_height="181dp"
+        android:layout_gravity="center"
+        android:background="@drawable/third_rounder_button"
+        android:text="@string/recuperarcont"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.294" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnrecuperarCont"
+        android:layout_width="106dp"
+        android:layout_height="49dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_button"
+        android:text="@string/si"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.461" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btncancelar_recuperar"
+        android:layout_width="142dp"
+        android:layout_height="39dp"
+        android:layout_gravity="center"
+        android:background="@drawable/rounded_edit_text"
+        android:text="@string/cancelar"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnrecuperarCont"
+        app:layout_constraintVertical_bias="0.131" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
