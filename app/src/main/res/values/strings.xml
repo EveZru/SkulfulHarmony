@@ -1,21 +1,23 @@
 <resources>
-    <string name="app_name">Skulful Harmony</string>
+    <string name="app_name">Skillfull Harmony</string>
+    <string name="default_web_client_id">TU_ID_CLIENTE</string>
+
     <!--registrarse y entrar -->
     <string name="correo"> Correo</string>
     <string name="nombre"> Nombre de usuario</string>
     <string name="contraseña"> Contraseña </string>
-    <string name="usercorreo"> Correo o usuario</string>
+    <string name="usercorreo"> Correo </string>
 
     <string name="googlecuenta"> Otra opción:  </string>
 
     <string name="yatienes"> Ya tienes cuenta </string>
-    <string name="iniciar"> Iniciar secion </string>
+    <string name="iniciar"> Iniciar sesión </string>
 
     <string name="notienes"> No tienes cuenta </string>
     <string name="crear"> Crear cuenta </string>
 
 
-    <string name="recuperarcont">¿Deseas recuperar\ncontraseña?</string>
+    <string name="recuperarcont">¿Deseas recuperar contraseña?</string>
 
     <string name="si">Si</string>
     <string name="cancelar">Cancelar</string>
@@ -25,6 +27,8 @@
     <string name="leyenda_continua">Continua aprendiendo</string>
     <string name="leyenda_recomendados">Te recomendamos</string>
     <string name="leyenda_originales">Clases originales</string>
+    <string name="google_login">Google</string>
+    <string name="toggle_password_visibility">ver\n</string>
 
 
 </resources>

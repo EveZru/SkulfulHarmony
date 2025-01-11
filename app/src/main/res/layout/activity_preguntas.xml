@@ -21,9 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="preguta"
-            android:textSizse="100sp"
-            android:padding="40dp"/>
+            android:text="pregunta"
+            android:textSize="100sp"
+            android:padding="40dp" />
 
     </LinearLayout>
 

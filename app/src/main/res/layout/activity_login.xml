@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".login"
-    android:background="@color/white"
-    >
+    android:background="@color/white">
+
     <LinearLayout
         android:layout_width="333dp"
         android:layout_height="404dp"
@@ -24,17 +24,30 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edit_text"
-            android:text="@string/usercorreo" />
+            android:hint="@string/usercorreo" />
 
-        <EditText
-            android:id="@+id/Et_contraseña_iniciar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edit_text"
-            android:text="@string/contraseña"
-            android:inputType="text"
-            />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/Et_contraseña_iniciar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/contraseña"
+                android:inputType="textPassword" />
+
+            <ImageView
+                android:id="@+id/ivTogglePassword"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:src="@drawable/ic_visibility_off"
+                android:contentDescription="@string/toggle_password_visibility" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnIniciarsecion"
@@ -58,14 +71,15 @@
                 android:layout_height="30dp"
                 android:text="@string/googlecuenta"
                 android:textSize="20sp"
-                android:layout_gravity="center"
-                />
+                android:layout_gravity="center" />
 
             <ImageButton
                 android:id="@+id/btn_google_iniciar"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:src="@drawable/logo_google" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/logo_google"
+                android:contentDescription="@string/google_login" />
 
         </LinearLayout>
 
@@ -99,6 +113,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/img_encabezado" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
