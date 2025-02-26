@@ -43,7 +43,7 @@
             <ImageView
                 android:id="@+id/ivTogglePassword"
                 android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:padding="10dp"
                 android:src="@drawable/ic_visibility_off"
                 android:contentDescription="@string/toggle_password_visibility" />
@@ -89,7 +89,7 @@
             android:layout_gravity="center"
             android:text="@string/notienes"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="23sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_gotocrearcuenta"

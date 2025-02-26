@@ -10,14 +10,14 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="333dp"
-        android:layout_height="385dp"
+        android:layout_width="331dp"
+        android:layout_height="411dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.817">
+        app:layout_constraintVertical_bias="0.918">
 
         <EditText
             android:id="@+id/Et_nameuser"
@@ -35,10 +35,14 @@
             android:background="@drawable/rounded_edit_text"
             android:text="@string/correo" />
 
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
         <EditText
             android:id="@+id/Et_contraseña"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edit_text"
@@ -47,11 +51,12 @@
 
         <ImageView
             android:id="@+id/ivTogglePassword"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="end"
             android:contentDescription="@string/toggle_password_visibility"
             android:src="@drawable/ic_visibility_off" />
+    </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCrearCuenta"
@@ -92,7 +97,7 @@
             android:layout_gravity="center"
             android:text="@string/yatienes"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="23sp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnGotoiniciar"

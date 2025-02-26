@@ -15,7 +15,7 @@ public class RecuperarContr extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         btnrecuperar=findViewById(R.id.btnrecuperarCont);
-
+        btncancelar=findViewById(R.id.btncancelar_recuperar);
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
