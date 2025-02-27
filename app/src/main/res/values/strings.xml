@@ -37,6 +37,8 @@
     <string name="cont_personalizado">Contenido personalizado</string>
     <string name="termycond">Terminos y condiciones</string>
     <string name="recupe_contr">Recuperar contraseña</string>
+    <string name="tiempotrab">Tiempo de trabajo</string>
+    <string name="eliminarcuent">¿Deseas eliminar\ntu cuenta?</string>
 
 
 </resources>
