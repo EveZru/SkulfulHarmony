@@ -8,6 +8,7 @@ public class Pregunta {
     private Date fecha;
     ArrayList<String> respuestas = new ArrayList<>();
     Integer respuestaCorrecta;
+    Integer respuestaElegida;
 
     public Integer getRespuestaElegida() {
         return respuestaElegida;
@@ -17,7 +18,7 @@ public class Pregunta {
         this.respuestaElegida = respuestaElegida;
     }
 
-    Integer respuestaElegida;
+
 
     //PARA CREAR UN CUESTIONARIO DE USUARIO
     public Pregunta(String pregunta, ArrayList<String> respuestas, Integer respuestaCorrecta) {

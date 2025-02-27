@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
+import android.media.Image;
+
 import com.example.skulfulharmony.javaobjects.clasifications.Dificultad;
 import com.example.skulfulharmony.javaobjects.clasifications.Genero;
 import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
@@ -11,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Curso {
-    private String imagen;
+    private Image imagen;
     private String titulo;
     private String descripcion;
     private List<Clase> clases;
@@ -34,11 +36,11 @@ public class Curso {
         this.fechaCreacion = new Date();
     }
 
-    public String getImagen() {
+    public Image getImagen() {
         return imagen;
     }
 
-    public void setImagen(String imagen) {
+    public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
 

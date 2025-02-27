@@ -1,19 +1,23 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
+import android.media.Image;
+import android.net.Uri;
+
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Pregunta;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Clase {
 
     private String titulo;
-    private String textos;
-    private String imagen;
+    private ArrayList<String> textos = new ArrayList<>();
+    private Image imagen;
     private List<File> archivos;
-    private String video;
+    private Uri video;
     private List<Pregunta> preguntas;
     private List<Comentario> comentarios;
     private int meGusta;
@@ -25,19 +29,19 @@ public class Clase {
         this.fechaCreacion = new Date();
     }
 
-    public String getTextos() {
+    public ArrayList<String> getTextos() {
         return textos;
     }
 
-    public void setTextos(String textos) {
+    public void setTextos(ArrayList<String> textos) {
         this.textos = textos;
     }
 
-    public String getImagen() {
+    public Image getImagen() {
         return imagen;
     }
 
-    public void setImagen(String imagen) {
+    public void setImagen(Image imagen) {
         this.imagen = imagen;
     }
 
@@ -49,11 +53,11 @@ public class Clase {
         this.archivos = archivos;
     }
 
-    public String getVideo() {
+    public Uri getVideo() {
         return video;
     }
 
-    public void setVideo(String video) {
+    public void setVideo(Uri video) {
         this.video = video;
     }
 }

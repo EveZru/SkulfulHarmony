@@ -13,11 +13,8 @@ public class CalificacionCurso {
 
     public CalificacionCurso() {
         this.estrellas = new ArrayList<>();
-        Integer una=0, dos=0, tres=0, cuatro=0, cinco=0;
-        estrellas.add(una);
-        estrellas.add(dos);
-        estrellas.add(tres);
-        estrellas.add(cuatro);
-        estrellas.add(cinco);
+
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.javaobjects.users;
 
+import android.media.Image;
+
 import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
@@ -11,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Usuario {
-    private String imagen;
+    private Image imagen;
     private String nombre;
     private String user;
     private String contrasena;
