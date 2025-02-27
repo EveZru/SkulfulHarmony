@@ -25,6 +25,12 @@ public class Usuario {
     private RecomendacionDeUsuario recomendacionesUsuario;
     private Instrumento instrumento;
 
+    public Usuario(String nombre, String correo, String contrasena) {
+        this.nombre = nombre;
+        this.correo = correo;
+        this.contrasena = contrasena;
+    }
+
     public void actualizarPreguntasInicio(List<Pregunta> todasLasPreguntas) {
         Date haceDosSemanas = new Date(System.currentTimeMillis() - 14L * 24 * 60 * 60 * 1000);
         this.preguntasInicio = new ArrayList<>();
