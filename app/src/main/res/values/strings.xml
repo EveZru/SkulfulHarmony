@@ -23,12 +23,20 @@
     <string name="cancelar">Cancelar</string>
 
     <!--homme leyendas-->
-    <string name ="buscar">Buscar</string>
+    <string name="buscar">Buscar</string>
     <string name="leyenda_continua">Continua aprendiendo</string>
     <string name="leyenda_recomendados">Te recomendamos</string>
     <string name="leyenda_originales">Clases originales</string>
     <string name="google_login">Google</string>
     <string name="toggle_password_visibility">ver\n</string>
+    <!--configuracion-->
+    <string name="configuracion">Configuración</string>
+    <string name="infoperfil">Información del perfil</string>
+    <string name="notificaciones">Notificaciones</string>
+    <string name="elim_cuenta">Eliminar cuenta</string>
+    <string name="cont_personalizado">Contenido personalizado</string>
+    <string name="termycond">Terminos y condiciones</string>
+    <string name="recupe_contr">Recuperar contraseña</string>
 
 
 </resources>
