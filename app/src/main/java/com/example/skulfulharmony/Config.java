@@ -26,7 +26,7 @@ public class Config extends AppCompatActivity {
         btnContPersonalizado = findViewById(R.id.btn_cont_personalizado);
         btnTerminosYCondiciones = findViewById(R.id.btn_terminosycondiciones);
         btnRecuperarCont = findViewById(R.id.btn_recuperar_cont);
-        btnTiempoTrabajo = findViewById(R.id.btn_tiempotrabajo);
+        //btnTiempoTrabajo = findViewById(R.id.btn_tiempotrabajo);
 
 
         btnInfoPerfil.setOnClickListener(new View.OnClickListener() {
