@@ -8,100 +8,110 @@
     tools:context=".Config">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_width="389dp"
+        android:layout_height="700dp"
         android:layout_marginHorizontal="10dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <android.widget.Button
             android:layout_width="match_parent"
             android:layout_height="70dp"
+            android:background="@color/gray1"
             android:text="@string/configuracion"
-            android:textSize="30sp"
-            android:background="@color/gray1"/>
+            android:textSize="30sp" />
+
         <android.widget.Button
             android:id="@+id/btn_info_perfil"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/infoperfil"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/infoperfil"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
+
         <android.widget.Button
             android:id="@+id/btn_notificaciones"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/notificaciones"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/notificaciones"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
+
         <android.widget.Button
             android:id="@+id/btn_eliminar_cuenta"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/elim_cuenta"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/elim_cuenta"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
+
         <android.widget.Button
             android:id="@+id/btn_cont_personalizado"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/cont_personalizado"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/cont_personalizado"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
+
         <android.widget.Button
             android:id="@+id/btn_terminosycondiciones"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/termycond"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/termycond"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
+
         <android.widget.Button
             android:id="@+id/btn_recuperar_cont"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="@string/recupe_contr"
-            android:background="@color/gray2"
-            android:layout_marginVertical="9dp"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:textAllCaps="false"
             android:layout_marginHorizontal="10dp"
-            />
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/recupe_contr"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
 
+        <android.widget.Button
+            android:id="@+id/btn_tiempotrabajo"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="9dp"
+            android:background="@color/gray2"
+            android:gravity="left"
+            android:text="@string/tiempotrab"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
 
-
-
-
-
-
-
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
 
     </LinearLayout>
