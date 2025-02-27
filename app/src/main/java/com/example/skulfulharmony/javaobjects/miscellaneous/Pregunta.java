@@ -9,17 +9,39 @@ public class Pregunta {
     ArrayList<String> respuestas = new ArrayList<>();
     Integer respuestaCorrecta;
 
+    public Integer getRespuestaElegida() {
+        return respuestaElegida;
+    }
+
+    public void setRespuestaElegida(Integer respuestaElegida) {
+        this.respuestaElegida = respuestaElegida;
+    }
+
+    Integer respuestaElegida;
+
+    //PARA CREAR UN CUESTIONARIO DE USUARIO
     public Pregunta(String pregunta, ArrayList<String> respuestas, Integer respuestaCorrecta) {
         this.pregunta = pregunta;
         this.respuestas = respuestas;
         this.respuestaCorrecta = respuestaCorrecta;
-        this.fecha = new Date();
+        this.fecha = null;
+        this.respuestaElegida = null;
     }
 
+    //   5 PREGUNTAS AL ENTRAR A LA APP
+    public Pregunta(String pregunta, ArrayList<String> respuestas, Integer respuestaCorrecta, Date fecha) {
+        this.pregunta = pregunta;
+        this.respuestas = respuestas;
+        this.respuestaCorrecta = respuestaCorrecta;
+        this.fecha = fecha;
+        this.respuestaElegida = null;
+    }
+
+    // PREGUNTAS DE RECOMENDACION
     public Pregunta(String pregunta, ArrayList<String> respuestas) {
         this.pregunta = pregunta;
         this.respuestas = respuestas;
-        this.fecha = new Date();
+        this.fecha = null;
         this.respuestaCorrecta = null;
     }
 
