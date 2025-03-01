@@ -12,42 +12,39 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
-        <activity
-            android:name=".busqueda"
-            android:exported="false" />
-        <activity
-            android:name=".denuncias_hacer"
-            android:exported="false" />
-        <activity
-            android:name=".crear_clase"
-            android:exported="false" />
-        <activity
-            android:name=".eliminar_cuenta"
-            android:exported="false" />
-        <activity
-            android:name=".Config"
-            android:exported="false" />
-        <activity
-            android:name=".home"
-            android:exported="false" />
-        <activity
-            android:name=".preguntas"
-            android:exported="false" />
-        <activity
-            android:name=".RecuperarContr"
-            android:exported="false" />
+
+        <!-- Actividades secundarias -->
+        <activity android:name=".busqueda" android:exported="false" />
+        <activity android:name=".denuncias_hacer" android:exported="false" />
+        <activity android:name=".crear_clase" android:exported="false" />
+        <activity android:name=".eliminar_cuenta" android:exported="false" />
+        <activity android:name=".Config" android:exported="false" />
+        <activity android:name=".preguntas" android:exported="false" />
+        <activity android:name=".RecuperarContr" android:exported="false" />
+
+        <!-- Pantalla de inicio de sesión -->
         <activity
             android:name=".login"
-            android:exported="false" />
+            android:exported="false"
+            android:noHistory="true"/> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
+
+        <!-- Pantalla de creación de cuenta -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:noHistory="true"/> <!-- No permite volver atrás después de registrarse -->
+
+        <!-- HomeActivity ahora es la pantalla principal si el usuario ya ha iniciado sesión -->
+        <activity
+            android:name=".home"
+            android:exported="true"
+            android:launchMode="singleTask"> <!-- Evita múltiples instancias de Home -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
