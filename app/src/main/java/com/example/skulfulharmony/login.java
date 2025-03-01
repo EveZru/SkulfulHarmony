@@ -7,11 +7,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.skulfulharmony.home;
+import com.example.skulfulharmony.RecuperarContr;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -29,6 +31,7 @@ public class login extends AppCompatActivity {
     private Button btnIniciar, btnGoToCrear;
     private ImageButton btnGoogleIniciar;
     private ImageView ivTogglePassword;
+    private TextView tvRecuperarContraseña;  // Nuevo botón de recuperación
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -50,6 +53,7 @@ public class login extends AppCompatActivity {
         btnGoogleIniciar = findViewById(R.id.btn_google_iniciar);
         btnGoToCrear = findViewById(R.id.btn_gotocrearcuenta);
         ivTogglePassword = findViewById(R.id.ivTogglePassword);
+        tvRecuperarContraseña = findViewById(R.id.tvRecuperarContraseña);  // Referencia al nuevo botón
 
         // Configurar Google Sign-In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -102,6 +106,9 @@ public class login extends AppCompatActivity {
 
         // Botón para ir a la pantalla de creación de cuenta
         btnGoToCrear.setOnClickListener(v -> startActivity(new Intent(login.this, MainActivity.class)));
+
+        // Botón para ir a la recuperación de contraseña
+        tvRecuperarContraseña.setOnClickListener(v -> startActivity(new Intent(login.this, RecuperarContr.class)));
     }
 
     // Iniciar sesión con Google

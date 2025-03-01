@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -49,6 +50,22 @@
                 android:contentDescription="@string/toggle_password_visibility" />
         </LinearLayout>
 
+        <!-- NUEVO: Botón para recuperar contraseña -->
+        <TextView
+            android:id="@+id/tvRecuperarContraseña"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="@string/recuperar_contraseña"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:minHeight="48dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnIniciarsecion"
             android:layout_width="wrap_content"
@@ -80,7 +97,6 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/logo_google"
                 android:contentDescription="@string/google_login" />
-
         </LinearLayout>
 
         <TextView
@@ -114,3 +130,4 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/img_encabezado" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+

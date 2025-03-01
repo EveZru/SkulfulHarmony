@@ -39,6 +39,7 @@
     <string name="recupe_contr">Recuperar contraseña</string>
     <string name="tiempotrab">Tiempo de trabajo</string>
     <string name="eliminarcuent">¿Deseas eliminar\ntu cuenta?</string>
+    <string name="recuperar_contraseña">¿Olvidaste tu contraseña?</string>
 
 
 </resources>
