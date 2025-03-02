@@ -10,13 +10,7 @@ public class Pregunta {
     Integer respuestaCorrecta;
     Integer respuestaElegida;
 
-    public Integer getRespuestaElegida() {
-        return respuestaElegida;
-    }
 
-    public void setRespuestaElegida(Integer respuestaElegida) {
-        this.respuestaElegida = respuestaElegida;
-    }
 
 
 
@@ -55,4 +49,11 @@ public class Pregunta {
         return fecha;
     }
 
+    public Integer getRespuestaElegida() {
+        return respuestaElegida;
+    }
+
+    public void setRespuestaElegida(Integer respuestaElegida) {
+        this.respuestaElegida = respuestaElegida;
+    }
 }
