@@ -23,26 +23,8 @@ public class seguidos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-         @SuppressLint("RestrictedApi") BottomNavigationItemView bottomNavigationItemView=findViewById(R.id.barra_navegacion);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.it_seguidos:
-                        return true;
-                    case R.id.it_new:
-                        startActivity(new Intent(seguidos.this, crear_curso.class));
-                        return true;
-                    case R.id.it_homme  :
-                        startActivity(new Intent(seguidos.this, home.class));
-                        return true;
-                    case R.id.it_perfil:
-                        startActivity(new Intent(seguidos.this, busqueda.class));
-                        return true;
-                }
-                return false;
-            }
-        });
+        // @SuppressLint("RestrictedApi") BottomNavigationItemView bottomNavigationItemView=findViewById(R.id.barra_navegacion);
+
 
       /*  EdgeToEdge.enable(this);
         setContentView(R.layout.activity_seguidos);

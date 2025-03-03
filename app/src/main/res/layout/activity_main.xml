@@ -25,7 +25,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edit_text"
-            android:text="@string/nombre" />
+            android:hint="@string/nombre" />
 
         <EditText
             android:id="@+id/Et_correo"
@@ -33,7 +33,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edit_text"
-            android:text="@string/correo" />
+            android:hint="@string/correo" />
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -46,7 +46,7 @@
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_edit_text"
-            android:text="@string/contraseña" />
+            android:hint="@string/contraseña" />
 
 
         <ImageView
