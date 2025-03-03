@@ -26,13 +26,14 @@
             android:layout_marginBottom="16dp"
             android:text="..."
             android:textSize="18sp" />
-        <Button
+        <android.widget.Button
             android:id="@+id/next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="16dp"
-            android:text="Next" />
+            android:text="Siguiente"
+            android:background="@drawable/third_rounder_button"/>
 
         <RadioGroup
             android:id="@+id/options_group"
