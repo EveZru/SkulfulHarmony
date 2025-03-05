@@ -1,8 +1,7 @@
 package com.example.skulfulharmony;
 
 import android.os.Bundle;
-import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,26 +9,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class busqueda extends AppCompatActivity {
-    private EditText et_buscar;
+public class cerrar_sesion extends AppCompatActivity {
+    private Button cancelar_cerrarsesion,cerrarsesion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_busqueda);
+        cancelar_cerrarsesion=findViewById(R.id.btncancelar_cerrarsesion);
+        cerrarsesion=findViewById(R.id.btncancelar_cerrarsesion);
 
-        et_buscar=findViewById(R.id.et_parabuscar);
-        //et_buscar = findViewById(R.id.et_parabuscar);
-        if (getIntent().getBooleanExtra("focus", false)) {
-            et_buscar.requestFocus(); // Solicita el foco
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE); // Muestra el teclado
-        }
 
+        setContentView(R.layout.activity_cerrar_sesion);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        cancelar_cerrarsesion.setOnClickListener(view->{}
+        );
+        cerrarsesion.setOnClickListener(view->{}
+        );
 
     }
 }

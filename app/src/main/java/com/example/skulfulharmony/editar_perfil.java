@@ -1,7 +1,7 @@
 package com.example.skulfulharmony;
 
 import android.os.Bundle;
-import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -10,20 +10,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class busqueda extends AppCompatActivity {
-    private EditText et_buscar;
+public class editar_perfil extends AppCompatActivity {
+    private EditText et_nuevoNombre, et_nuevaDescripcion;
+    private Button btn_actualizar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_busqueda);
+        setContentView(R.layout.activity_editar_perfil);
 
-        et_buscar=findViewById(R.id.et_parabuscar);
-        //et_buscar = findViewById(R.id.et_parabuscar);
-        if (getIntent().getBooleanExtra("focus", false)) {
-            et_buscar.requestFocus(); // Solicita el foco
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE); // Muestra el teclado
-        }
+        et_nuevoNombre=findViewById(R.id.et_nombrecambiar);
+        et_nuevaDescripcion=findViewById(R.id.et_nuevadescripcion);
+       // et_nuevaDescripcion=findViewById(R.id.et_nuevadescripcion);
+        btn_actualizar=findViewById(R.id.btn_cambiardatos);
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -31,5 +31,9 @@ public class busqueda extends AppCompatActivity {
             return insets;
         });
 
+
+        btn_actualizar.setOnClickListener(v->{
+            //cambiar info jsjs
+        });
     }
 }

@@ -23,6 +23,7 @@
     android:layout_height="wrap_content">
 
         <EditText
+            android:id="@+id/et_parabuscar"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -71,22 +72,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <android.widget.Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-
+                android:layout_weight="1"
                 android:textAllCaps="false"
                 android:text="Genero"
                 />
             <android.widget.Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Instrumento"
 
                 android:textAllCaps="false"
                 />
             <android.widget.Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Dificultad"
 
                 android:textAllCaps="false"
