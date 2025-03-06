@@ -42,6 +42,11 @@
     <string name="recuperar_contraseña">¿Olvidaste tu contraseña?</string>
     <string name="cerrarsesion">¿Deseas \n cerrar \n sesión?</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="eliminar_cuenta">Eliminar cuenta</string>
+    <string name="editar_perfil">Editar Perfil</string>
+    <string name="cursos_creados">Cursos creados</string>
+    <string name="perfil_imagen">foto de perfil</string>
+    <string name="nombre_usuario">Nombre de usuario</string>
 
 
 </resources>
