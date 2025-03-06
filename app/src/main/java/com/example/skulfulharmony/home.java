@@ -78,7 +78,7 @@ public class home extends AppCompatActivity {
             return insets;
         });
 
-        //barra de busqueda
+
 
 
 
@@ -95,11 +95,11 @@ public class home extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.it_seguidos) {
                 // Navegar a la actividad para ver los seguidos
-                startActivity(new Intent(home.this, seguidos.class));
+                startActivity(new Intent(home.this, ver_mi_perfil.class));
                 return true;
             } else if (itemId == R.id.it_perfil) {
                 // Navegar a la actividad para buscar perfiles
-                startActivity(new Intent(home.this, busqueda.class));
+                startActivity(new Intent(home.this, seguidos.class));
                 return true;
             }
 

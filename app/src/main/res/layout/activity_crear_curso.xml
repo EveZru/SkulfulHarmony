@@ -5,7 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".crear_curso">
+    tools:context=".crear_curso"
+    android:background="@color/white"
+    >
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -29,30 +31,66 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
+            android:layout_margin="8dp"
             android:orientation="horizontal">
 
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Instrumento"
+               android:textSize="20sp"
+               />
             <Spinner
                 android:id="@+id/sp_Instrumento"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="9dp" />
 
-            <Spinner
-                android:id="@+id/sp_Nivel"
+
+
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nivel"
+            android:textSize="20sp"
+            />
+        <Spinner
+            android:id="@+id/sp_Nivel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="9dp" />
+
+
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="9dp" />
-
+                android:text="Genero"
+                android:textSize="20sp"
+                />
             <Spinner
                 android:id="@+id/sp_Genero"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="9dp" />
-
         </LinearLayout>
 
-        <Button
+
+
+
+        <android.widget.Button
             android:id="@+id/btn_subir_curso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,17 +99,26 @@
 
     </LinearLayout>
 
+
+
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/secod_rounded_button"
+        android:layout_height="88dp"
+        app:itemBackground="@color/black"
+        app:itemIconTint="@color/rojo"
+        app:itemTextColor="@color/gray1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="0.923"
-        app:menu="@menu/barra_navegacion1" />
+        app:layout_constraintVertical_bias="1.0"
+        app:menu="@menu/barra_navegacion1"
+
+
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

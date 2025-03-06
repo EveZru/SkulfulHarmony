@@ -101,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:text="Subir clase "
+                android:background="@drawable/third_rounder_button"
                 android:textAllCaps="false" />
 
 

@@ -41,6 +41,7 @@
     <string name="eliminarcuent">¿Deseas eliminar\ntu cuenta?</string>
     <string name="recuperar_contraseña">¿Olvidaste tu contraseña?</string>
     <string name="cerrarsesion">¿Deseas \n cerrar \n sesión?</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
 
 
 </resources>
