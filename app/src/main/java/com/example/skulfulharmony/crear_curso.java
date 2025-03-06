@@ -15,6 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.example.skulfulharmony.javaobjects.clasifications.lists.Dificultades;
+import com.example.skulfulharmony.javaobjects.clasifications.lists.Generos;
+import com.example.skulfulharmony.javaobjects.clasifications.lists.Instrumentos;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.android.material.bottomnavigation.BottomNavigationView;  // Para BottomNavigationView
 
 import androidx.annotation.NonNull;
@@ -27,6 +32,9 @@ public class crear_curso extends AppCompatActivity {
     private Spinner spInstrumento, spNivel, spGenero;
     private Button btnSubirCurso;
     private String NombreNuevoCurso;
+    private Dificultades dificultades = new Dificultades();
+    private Generos generos = new Generos();
+    private Instrumentos instrumentos = new Instrumentos();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
