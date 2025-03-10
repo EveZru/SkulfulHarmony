@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -33,7 +31,7 @@ public class ver_mi_perfil extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private ImageView ivProfilePicture;
-    private TextView tv_NombreUsuario, tv_No_Cursos;
+    private TextView tv_NombreUsuario, tv_No_Cursos,tv_DescripcionUsuario;
     private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta;
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -68,6 +66,8 @@ public class ver_mi_perfil extends AppCompatActivity {
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
+        tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
+
 
         // Cargar datos del usuario
         cargarDatosUsuario();
@@ -76,7 +76,11 @@ public class ver_mi_perfil extends AppCompatActivity {
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
 
         // Evento para editar el perfil
-        btnEditarPerfil.setOnClickListener(v -> mostrarDialogoEditarPerfil());
+        btnEditarPerfil.setOnClickListener(v -> {
+            // Cambiar a la actividad de editar perfil
+            Intent intent = new Intent(ver_mi_perfil.this, editar_perfil.class);
+            startActivity(intent);
+        });
 
         // Evento para cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> {
@@ -104,11 +108,13 @@ public class ver_mi_perfil extends AppCompatActivity {
             if (documentSnapshot.exists()) {
                 tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
                 tv_No_Cursos.setText("Cursos creados: " + documentSnapshot.getLong("cursos"));
+                tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
             } else {
                 // Si no hay datos, se crean por primera vez
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("nombre", "Usuario");
                 userData.put("cursos", 0);
+                userData.put("descripcion", "Sin descripción");
 
                 db.collection("usuarios").document(userId).set(userData)
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Perfil creado", Toast.LENGTH_SHORT).show())
@@ -117,38 +123,6 @@ public class ver_mi_perfil extends AppCompatActivity {
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
     }
 
-    private void mostrarDialogoEditarPerfil() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Editar Perfil");
-
-        EditText input = new EditText(this);
-        input.setHint("Nuevo nombre de usuario");
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        builder.setView(input);
-        builder.setPositiveButton("Guardar", (dialog, which) -> {
-            String nuevoNombre = input.getText().toString().trim();
-            if (!nuevoNombre.isEmpty()) {
-                actualizarNombre(nuevoNombre);
-            } else {
-                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
-        builder.show();
-    }
-
-    private void actualizarNombre(String nuevoNombre) {
-        if (userId == null) return;
-
-        db.collection("usuarios").document(userId).update("nombre", nuevoNombre)
-                .addOnSuccessListener(aVoid -> {
-                    tv_NombreUsuario.setText(nuevoNombre);
-                    Toast.makeText(this, "Nombre actualizado", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Error al actualizar nombre", Toast.LENGTH_SHORT).show());
-    }
 
     private void seleccionarImagen() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

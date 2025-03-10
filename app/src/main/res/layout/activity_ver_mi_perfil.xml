@@ -58,6 +58,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp" />
 
+    <!-- Descripción del usuario -->
+    <TextView
+        android:id="@+id/tv_DescripcionUsuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/descripción_usuario"
+        android:textSize="16sp"
+        android:textColor="@color/gray1"
+        app:layout_constraintTop_toBottomOf="@id/tv_No_Cursos"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
     <!-- Botón para editar perfil -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnEditarPerfil"
@@ -68,7 +81,7 @@
         android:textColor="@color/white"
         android:padding="12dp"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_No_Cursos"
+        app:layout_constraintTop_toBottomOf="@id/tv_DescripcionUsuario"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp" />
