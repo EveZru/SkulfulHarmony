@@ -1,94 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
     android:background="@color/white"
+    android:padding="20dp"
     tools:context=".ver_mi_perfil">
 
-    <!-- Contenedor de la imagen de perfil -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardViewProfile"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="30dp"
-        app:cardCornerRadius="60dp"
-        app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageView
-            android:id="@+id/ivProfilePicture"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_profile"
-            android:contentDescription="@string/perfil_imagen" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- Nombre del usuario -->
-    <TextView
-        android:id="@+id/tv_NombreUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nombre_usuario"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/cardViewProfile"
-        app:layout_constraintStart_toStartOf="parent"
+    <LinearLayout
+        android:layout_width="407dp"
+        android:layout_height="732dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardViewProfile"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="30dp"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/perfil_imagen"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_profile" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_NombreUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/nombre_usuario"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_No_Cursos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/cursos_creados"
+                    android:textColor="@color/gray1"
+                    android:textSize="16sp" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
 
     <!-- Número de cursos creados -->
-    <TextView
-        android:id="@+id/tv_No_Cursos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cursos_creados"
-        android:textSize="16sp"
-        android:textColor="@color/gray1"
-        app:layout_constraintTop_toBottomOf="@id/tv_NombreUsuario"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
 
-    <!-- Botón para editar perfil -->
+    <!-- Botón para editar perfil
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnEditarPerfil"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/azul"
+        android:padding="12dp"
         android:text="@string/editar_perfil"
         android:textColor="@color/white"
-        android:padding="12dp"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_No_Cursos"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_No_Cursos" />
 
-    <!-- Botón para cerrar sesión -->
+     Botón para cerrar sesión
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCerrarSesion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:backgroundTint="@color/rojo"
+        android:padding="12dp"
         android:text="@string/cerrar_sesion"
         android:textColor="@color/white"
-        android:padding="12dp"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/btnEditarPerfil"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnEditarPerfil" />
 
-    <!-- Botón para eliminar cuenta -->
+     Botón para eliminar cuenta
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnEliminarCuenta"
         android:layout_width="wrap_content"
@@ -99,11 +129,8 @@
         android:text="@string/eliminar_cuenta"
         android:textColor="@color/white"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnCerrarSesion"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintTop_toBottomOf="@id/btnCerrarSesion" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
