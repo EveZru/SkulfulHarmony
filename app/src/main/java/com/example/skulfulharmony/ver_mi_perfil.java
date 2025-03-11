@@ -1,14 +1,11 @@
 package com.example.skulfulharmony;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,25 +17,47 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ver_mi_perfil extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+
     private ImageView ivProfilePicture;
-    private TextView tv_NombreUsuario, tv_No_Cursos;
+    private TextView tv_NombreUsuario, tv_No_Cursos,tv_DescripcionUsuario;
     private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
-    private SharedPreferences sharedPreferences;
+    private String userId; // Para identificar el usuario actual
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ver_mi_perfil);
+
+        // Inicializar Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        // Obtener el UID del usuario actual
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            userId = user.getUid();
+        } else {
+            // Si no hay usuario autenticado, redirigir a login
+            startActivity(new Intent(this, login.class));
+            finish();
+            return;
+        }
 
         // Referencias a los elementos de UI
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
@@ -47,9 +66,8 @@ public class ver_mi_perfil extends AppCompatActivity {
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
+        tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
 
-        // Inicializar SharedPreferences
-        sharedPreferences = getSharedPreferences("UserProfile", MODE_PRIVATE);
 
         // Cargar datos del usuario
         cargarDatosUsuario();
@@ -58,18 +76,20 @@ public class ver_mi_perfil extends AppCompatActivity {
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
 
         // Evento para editar el perfil
-        btnEditarPerfil.setOnClickListener(v -> mostrarDialogoEditarPerfil());
-
-        // Evento para cerrar sesión (redirige a cerrar_sesion.java)
-        btnCerrarSesion.setOnClickListener(v -> {
-            Intent intent = new Intent(ver_mi_perfil.this, cerrar_sesion.class);
+        btnEditarPerfil.setOnClickListener(v -> {
+            // Cambiar a la actividad de editar perfil
+            Intent intent = new Intent(ver_mi_perfil.this, editar_perfil.class);
             startActivity(intent);
         });
 
-        // Evento para eliminar cuenta (redirige a eliminar_cuenta.java)
+        // Evento para cerrar sesión
+        btnCerrarSesion.setOnClickListener(v -> {
+            startActivity(new Intent(ver_mi_perfil.this, cerrar_sesion.class));
+        });
+
+        // Evento para eliminar cuenta
         btnEliminarCuenta.setOnClickListener(v -> {
-            Intent intent = new Intent(ver_mi_perfil.this, eliminar_cuenta.class);
-            startActivity(intent);
+            startActivity(new Intent(ver_mi_perfil.this, eliminar_cuenta.class));
         });
 
         // Ajustar el padding si es necesario
@@ -81,53 +101,28 @@ public class ver_mi_perfil extends AppCompatActivity {
     }
 
     private void cargarDatosUsuario() {
-        // Cargar nombre guardado
-        String nombreUsuario = sharedPreferences.getString("nombre", "Nombre de Usuario");
-        tv_NombreUsuario.setText(nombreUsuario);
+        if (userId == null) return;
 
-        // Cargar número de cursos
-        int cursos = sharedPreferences.getInt("cursos", 0);
-        tv_No_Cursos.setText("Cursos creados: " + cursos);
-
-        // Cargar imagen de perfil local
-        String imagePath = sharedPreferences.getString("profileImage", null);
-        if (imagePath != null) {
-            ivProfilePicture.setImageURI(Uri.fromFile(new File(imagePath)));
-        }
-    }
-
-    private void mostrarDialogoEditarPerfil() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Editar Perfil");
-
-        EditText input = new EditText(this);
-        input.setHint("Nuevo nombre de usuario");
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        builder.setView(input);
-        builder.setPositiveButton("Guardar", (dialog, which) -> {
-            String nuevoNombre = input.getText().toString().trim();
-            if (!nuevoNombre.isEmpty()) {
-                actualizarNombre(nuevoNombre);
+        DocumentReference docRef = db.collection("usuarios").document(userId);
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
+                tv_No_Cursos.setText("Cursos creados: " + documentSnapshot.getLong("cursos"));
+                tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
             } else {
-                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                // Si no hay datos, se crean por primera vez
+                Map<String, Object> userData = new HashMap<>();
+                userData.put("nombre", "Usuario");
+                userData.put("cursos", 0);
+                userData.put("descripcion", "Sin descripción");
+
+                db.collection("usuarios").document(userId).set(userData)
+                        .addOnSuccessListener(aVoid -> Toast.makeText(this, "Perfil creado", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(this, "Error al crear perfil", Toast.LENGTH_SHORT).show());
             }
-        });
-
-        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
-        builder.show();
+        }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
     }
 
-    private void actualizarNombre(String nuevoNombre) {
-        // Guardar nombre en SharedPreferences
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("nombre", nuevoNombre);
-        editor.apply();
-
-        // Actualizar en la interfaz
-        tv_NombreUsuario.setText(nuevoNombre);
-        Toast.makeText(this, "Nombre actualizado", Toast.LENGTH_SHORT).show();
-    }
 
     private void seleccionarImagen() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -141,27 +136,7 @@ public class ver_mi_perfil extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
             ivProfilePicture.setImageURI(imageUri);
-            guardarImagenLocalmente(imageUri);
-        }
-    }
-
-    private void guardarImagenLocalmente(Uri uri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-            File file = new File(getFilesDir(), "profile_picture.jpg");
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();
-
-            // Guardar la ruta en SharedPreferences
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("profileImage", file.getAbsolutePath());
-            editor.apply();
-
-            Toast.makeText(this, "Imagen guardada localmente", Toast.LENGTH_SHORT).show();
-
-        } catch (IOException e) {
-            Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+            // FUTURO: Subir imagen a Firebase Storage y guardar la URL en Firestore
         }
     }
 }
