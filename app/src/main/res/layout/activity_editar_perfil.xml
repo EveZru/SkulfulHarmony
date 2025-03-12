@@ -23,31 +23,48 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="informacion que puedes editar "/>
+            android:text="@string/editar_informacion"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"
+            android:contentDescription="@string/editar_informacion_desc"/>
+
         <EditText
             android:id="@+id/et_nombrecambiar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Ingresa nuevo nombre"/>
+            android:hint="@string/nuevo_nombre"
+            android:textColor="@android:color/black"
+            android:inputType="textPersonName"
+            android:autofillHints="name"
+            android:contentDescription="@string/et_nombrecambiar_desc"/>
+
         <EditText
             android:id="@+id/et_nuevadescripcion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nueva descripción"/>
+            android:hint="@string/nueva_descripcion"
+            android:textColor="@android:color/black"
+            android:inputType="textMultiLine"
+            android:autofillHints="description"
+            android:contentDescription="@string/et_nuevadescripcion_desc"/>
+
         <ImageView
             android:id="@+id/iv_fotoperfil"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/home_logo"/>
+            android:background="@drawable/home_logo"
+            android:contentDescription="@string/imagen_perfil_desc"/>
+
         <android.widget.Button
             android:id="@+id/btn_cambiardatos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="publicar"
+            android:text="@string/publicar"
             android:background="@drawable/third_rounder_button"
-            />
-
-
+            android:padding="16dp"
+            android:contentDescription="@string/btn_cambiardatos_desc"/>
 
     </LinearLayout>
 

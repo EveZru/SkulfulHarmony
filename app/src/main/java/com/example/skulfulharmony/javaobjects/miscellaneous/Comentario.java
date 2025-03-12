@@ -16,4 +16,8 @@ public class Comentario {
         this.texto = texto;
         this.fecha = new Date();
     }
+
+    void DarMeGusta(Boolean x){
+        reacciones.add(x);
+    }
 }
