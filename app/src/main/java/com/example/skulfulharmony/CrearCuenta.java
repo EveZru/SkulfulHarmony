@@ -19,11 +19,9 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.example.skulfulharmony.home;
 
-public class MainActivity extends AppCompatActivity {
+public class CrearCuenta extends AppCompatActivity {
 
     private EditText etCorreo, etContraseña;
     private Button btnCrearCuenta, btnGoToIniciar;
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_crearcuenta);
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         // Listeners
         btnGoogleCrear.setOnClickListener(v -> signInWithGoogle());
         btnCrearCuenta.setOnClickListener(v -> registerUser());
-        btnGoToIniciar.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, login.class)));
+        btnGoToIniciar.setOnClickListener(v -> startActivity(new Intent(CrearCuenta.this, IniciarSesion.class)));
 
         // Toggle de visibilidad de la contraseña
         ivTogglePassword.setOnClickListener(v -> {
@@ -82,20 +80,20 @@ public class MainActivity extends AppCompatActivity {
         String password = etContraseña.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(MainActivity.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CrearCuenta.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(MainActivity.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CrearCuenta.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(MainActivity.this, home.class);
+                        Intent intent = new Intent(CrearCuenta.this, Home.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(MainActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CrearCuenta.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -127,12 +125,12 @@ public class MainActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(MainActivity.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(MainActivity.this, home.class);
+                        Toast.makeText(CrearCuenta.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CrearCuenta.this, Home.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(MainActivity.this, "Autenticación fallida", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CrearCuenta.this, "Autenticación fallida", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

@@ -7,14 +7,14 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Config extends AppCompatActivity {
+public class Configuracion extends AppCompatActivity {
     private Button btnInfoPerfil, btnNotificaciones, btnEliminarCuenta, btnContPersonalizado,
             btnTerminosYCondiciones, btnRecuperarCont, btnTiempoTrabajo, btnCerrarSesion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_config); // Asegúrate de usar el layout adecuado
+        setContentView(R.layout.activity_configuracion); // Asegúrate de usar el layout adecuado
 
         // Inicializar botones
         btnInfoPerfil = findViewById(R.id.btn_info_perfil);
@@ -31,7 +31,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Información de perfil
-                Intent intent = new Intent(Config.this, ver_mi_perfil.class);
+                Intent intent = new Intent(Configuracion.this, Perfil.class);
                 startActivity(intent);
             }
         });
@@ -41,7 +41,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Notificaciones
-                Intent intent = new Intent(Config.this, preguntas.class);
+                Intent intent = new Intent(Configuracion.this, PreguntasRecomendacion.class);
                 startActivity(intent);
             }
         });
@@ -51,7 +51,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Eliminar Cuenta
-                Intent intent = new Intent(Config.this, eliminar_cuenta.class);
+                Intent intent = new Intent(Configuracion.this, EliminarCuenta.class);
                 startActivity(intent);
             }
         });
@@ -61,7 +61,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Contenido Personalizado
-                Intent intent = new Intent(Config.this, crear_curso.class);
+                Intent intent = new Intent(Configuracion.this, CrearCurso.class);
                 startActivity(intent);
             }
         });
@@ -71,7 +71,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Términos y Condiciones
-                Intent intent = new Intent(Config.this, Preg.class);
+                Intent intent = new Intent(Configuracion.this, Preg.class);
                 startActivity(intent);
             }
         });
@@ -81,7 +81,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Recuperar Contraseña
-                Intent intent = new Intent(Config.this, RecuperarContr.class);
+                Intent intent = new Intent(Configuracion.this, RecuperarContrasena.class);
                 startActivity(intent);
             }
         });
@@ -91,7 +91,7 @@ public class Config extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Tiempo de Trabajo
-                Intent intent = new Intent(Config.this, crear_clase.class);
+                Intent intent = new Intent(Configuracion.this, CrearClase.class);
                 startActivity(intent);
             }
         });
@@ -102,7 +102,7 @@ public class Config extends AppCompatActivity {
             public void onClick(View v) {
                 // Cierra sesión (esto dependerá de la implementación de tu sistema de autenticación)
                 // Aquí deberías agregar código para cerrar la sesión en Firebase o el sistema que uses
-                Intent intent = new Intent(Config.this, login.class); // Redirige a la pantalla de inicio de sesión
+                Intent intent = new Intent(Configuracion.this, IniciarSesion.class); // Redirige a la pantalla de inicio de sesión
                 startActivity(intent);
                 finish(); // Finaliza esta actividad para que el usuario no pueda regresar a ella
             }

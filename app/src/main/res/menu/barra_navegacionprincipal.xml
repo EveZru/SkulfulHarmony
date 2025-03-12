@@ -5,7 +5,7 @@
     <item
         android:id="@+id/it_homme"
         android:icon="@drawable/home_logo"
-       android:title="Home" />
+       android:title="Inicio" />
     <item
         android:id="@+id/it_new"
         android:icon="@drawable/mas_logo"
@@ -13,7 +13,7 @@
     <item
         android:id="@+id/it_seguidos"
         android:icon="@drawable/seguidos_icono"
-        android:title="Seguidos"/>
+        android:title="Mi biblioteca"/>
     <item
         android:id="@+id/it_perfil"
         android:icon="@drawable/perfil_icono"

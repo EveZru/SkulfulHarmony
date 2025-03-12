@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class cerrar_sesion extends AppCompatActivity {
+public class CerrarSesion extends AppCompatActivity {
     private Button cancelar_cerrarsesion, cerrarsesion;
     private FirebaseAuth mAuth;
 
@@ -20,7 +20,7 @@ public class cerrar_sesion extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_cerrar_sesion);
+        setContentView(R.layout.activity_cerrarsesion);
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -32,7 +32,7 @@ public class cerrar_sesion extends AppCompatActivity {
         // Manejar cierre de sesión
         cerrarsesion.setOnClickListener(view -> {
             mAuth.signOut(); // Cierra sesión en Firebase
-            Intent intent = new Intent(cerrar_sesion.this, login.class);
+            Intent intent = new Intent(CerrarSesion.this, IniciarSesion.class);
             startActivity(intent);
             finish(); // Cierra la actividad actual
         });

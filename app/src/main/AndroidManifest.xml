@@ -14,53 +14,53 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
-            android:name=".ver_mi_perfil"
+            android:name=".Perfil"
             android:exported="false" />
         <activity
-            android:name=".editar_perfil"
+            android:name=".EditarPerfil"
             android:exported="false" />
         <activity
-            android:name=".cerrar_sesion"
+            android:name=".CerrarSesion"
             android:exported="false" />
         <activity
-            android:name=".crear_curso"
+            android:name=".CrearCurso"
             android:exported="false" />
         <activity
-            android:name=".seguidos"
+            android:name=".Biblioteca"
             android:exported="false" /> <!-- Actividades secundarias -->
         <activity
-            android:name=".busqueda"
+            android:name=".Busqueda"
             android:exported="false" />
         <activity
-            android:name=".denuncias_hacer"
+            android:name=".CrearDenuncia"
             android:exported="false" />
         <activity
-            android:name=".crear_clase"
+            android:name=".CrearClase"
             android:exported="false" />
         <activity
-            android:name=".eliminar_cuenta"
+            android:name=".EliminarCuenta"
             android:exported="false" />
         <activity
-            android:name=".Config"
+            android:name=".Configuracion"
             android:exported="false" />
         <activity
-            android:name=".preguntas"
+            android:name=".PreguntasRecomendacion"
             android:exported="false" />
         <activity
-            android:name=".RecuperarContr"
+            android:name=".RecuperarContrasena"
             android:exported="false" /> <!-- Pantalla de inicio de sesión -->
         <activity
-            android:name=".login"
+            android:name=".IniciarSesion"
             android:exported="false"
             android:noHistory="true" /> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
         <!-- Pantalla de creación de cuenta -->
         <activity
-            android:name=".MainActivity"
+            android:name=".CrearCuenta"
             android:exported="true"
             android:noHistory="true" /> <!-- No permite volver atrás después de registrarse -->
         <!-- HomeActivity ahora es la pantalla principal si el usuario ya ha iniciado sesión -->
         <activity
-            android:name=".home"
+            android:name=".Home"
             android:exported="true"
             android:launchMode="singleTask"> <!-- Evita múltiples instancias de Home -->
             <intent-filter>

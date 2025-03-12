@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class editar_perfil extends AppCompatActivity {
+public class EditarPerfil extends AppCompatActivity {
     private EditText et_nuevoNombre, et_nuevaDescripcion;
     private Button btn_actualizar;
 
@@ -26,7 +26,7 @@ public class editar_perfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_editar_perfil);
+        setContentView(R.layout.activity_editarperfil);
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -53,7 +53,7 @@ public class editar_perfil extends AppCompatActivity {
             if (!nuevoNombre.isEmpty() && !nuevaDescripcion.isEmpty()) {
                 actualizarPerfil(nuevoNombre, nuevaDescripcion);
             } else {
-                Toast.makeText(editar_perfil.this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditarPerfil.this, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -65,10 +65,10 @@ public class editar_perfil extends AppCompatActivity {
         db.collection("usuarios").document(userId)
                 .update("nombre", nuevoNombre, "descripcion", nuevaDescripcion)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(editar_perfil.this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditarPerfil.this, "Perfil actualizado", Toast.LENGTH_SHORT).show();
                     finish();  // Cierra la actividad después de la actualización
                 })
-                .addOnFailureListener(e -> Toast.makeText(editar_perfil.this, "Error al actualizar perfil", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(EditarPerfil.this, "Error al actualizar perfil", Toast.LENGTH_SHORT).show());
     }
 
 }

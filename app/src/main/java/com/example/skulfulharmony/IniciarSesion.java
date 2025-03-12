@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.skulfulharmony.home;
-import com.example.skulfulharmony.RecuperarContr;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-public class login extends AppCompatActivity {
+public class IniciarSesion extends AppCompatActivity {
 
     private EditText etCorreoOUser, etContraseña_Iniciar;
     private Button btnIniciar, btnGoToCrear;
@@ -41,7 +39,7 @@ public class login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_iniciarsesion);
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -82,20 +80,20 @@ public class login extends AppCompatActivity {
             String password = etContraseña_Iniciar.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(login.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(IniciarSesion.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
             } else {
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                Toast.makeText(login.this, "Bienvenido " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(IniciarSesion.this, "Bienvenido " + user.getEmail(), Toast.LENGTH_SHORT).show();
 
                                 // Redirigir a HomeActivity
-                                Intent intent = new Intent(login.this, home.class);
+                                Intent intent = new Intent(IniciarSesion.this, Home.class);
                                 startActivity(intent);
-                                finish(); // Evita que el usuario vuelva a la pantalla de login
+                                finish(); // Evita que el usuario vuelva a la pantalla de IniciarSesion
                             } else {
-                                Toast.makeText(login.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(IniciarSesion.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -105,10 +103,10 @@ public class login extends AppCompatActivity {
         btnGoogleIniciar.setOnClickListener(v -> signInWithGoogle());
 
         // Botón para ir a la pantalla de creación de cuenta
-        btnGoToCrear.setOnClickListener(v -> startActivity(new Intent(login.this, MainActivity.class)));
+        btnGoToCrear.setOnClickListener(v -> startActivity(new Intent(IniciarSesion.this, CrearCuenta.class)));
 
         // Botón para ir a la recuperación de contraseña
-        tvRecuperarContraseña.setOnClickListener(v -> startActivity(new Intent(login.this, RecuperarContr.class)));
+        tvRecuperarContraseña.setOnClickListener(v -> startActivity(new Intent(IniciarSesion.this, RecuperarContrasena.class)));
     }
 
     // Iniciar sesión con Google
@@ -139,14 +137,14 @@ public class login extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(login.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(IniciarSesion.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
 
                         // Redirigir a HomeActivity
-                        Intent intent = new Intent(login.this, home.class);
+                        Intent intent = new Intent(IniciarSesion.this, Home.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(login.this, "Autenticación fallida", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(IniciarSesion.this, "Autenticación fallida", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

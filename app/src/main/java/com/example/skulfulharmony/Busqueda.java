@@ -11,7 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class busqueda extends AppCompatActivity {
+public class Busqueda extends AppCompatActivity {
     private EditText et_buscar;
     private Button btn_genero, btn_instrumrnto, btn_dificultad;
     @Override

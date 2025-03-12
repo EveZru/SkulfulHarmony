@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.InputType;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -25,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ver_mi_perfil extends AppCompatActivity {
+public class Perfil extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -42,7 +40,7 @@ public class ver_mi_perfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_ver_mi_perfil);
+        setContentView(R.layout.activity_perfil);
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -53,8 +51,8 @@ public class ver_mi_perfil extends AppCompatActivity {
         if (user != null) {
             userId = user.getUid();
         } else {
-            // Si no hay usuario autenticado, redirigir a login
-            startActivity(new Intent(this, login.class));
+            // Si no hay usuario autenticado, redirigir a IniciarSesion
+            startActivity(new Intent(this, IniciarSesion.class));
             finish();
             return;
         }
@@ -78,18 +76,18 @@ public class ver_mi_perfil extends AppCompatActivity {
         // Evento para editar el perfil
         btnEditarPerfil.setOnClickListener(v -> {
             // Cambiar a la actividad de editar perfil
-            Intent intent = new Intent(ver_mi_perfil.this, editar_perfil.class);
+            Intent intent = new Intent(Perfil.this, EditarPerfil.class);
             startActivity(intent);
         });
 
         // Evento para cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> {
-            startActivity(new Intent(ver_mi_perfil.this, cerrar_sesion.class));
+            startActivity(new Intent(Perfil.this, CerrarSesion.class));
         });
 
         // Evento para eliminar cuenta
         btnEliminarCuenta.setOnClickListener(v -> {
-            startActivity(new Intent(ver_mi_perfil.this, eliminar_cuenta.class));
+            startActivity(new Intent(Perfil.this, EliminarCuenta.class));
         });
 
         // Ajustar el padding si es necesario

@@ -1,6 +1,7 @@
 package com.example.skulfulharmony;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -14,22 +15,28 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.databases.DbHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class home extends AppCompatActivity {
+public class Home extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
     private Handler backPressHandler = new Handler();
     private EditText et_buscarhome;
+    private SQLiteDatabase localDatabase;
+    private DbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+
+        dbHelper = new DbHelper(Home.this);
+        localDatabase = dbHelper.getReadableDatabase();
 
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
@@ -41,7 +48,7 @@ public class home extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             // Si no hay usuario, redirigir a Login
-            Intent intent = new Intent(home.this, login.class);
+            Intent intent = new Intent(Home.this, IniciarSesion.class);
             startActivity(intent);
             finish(); // Evita que el usuario vuelva a Home si no está logueado
         }
@@ -50,7 +57,7 @@ public class home extends AppCompatActivity {
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(home.this, busqueda.class);
+                Intent intent = new Intent(Home.this, Busqueda.class);
                 intent.putExtra("focus", true); // Enviar extra para enfocar el EditText en la otra actividad
                 startActivity(intent);
             }
@@ -65,7 +72,7 @@ public class home extends AppCompatActivity {
                 if (backPressCount == 3) {
                     moveTaskToBack(true); // 🔹 Minimiza la aplicación en lugar de cerrarla
                 } else {
-                    Toast.makeText(home.this, "Presiona atrás " + (3 - backPressCount) + " veces más para salir", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home.this, "Presiona atrás " + (3 - backPressCount) + " veces más para salir", Toast.LENGTH_SHORT).show();
                     backPressHandler.postDelayed(() -> backPressCount = 0, 2000); // Reinicia el contador después de 2 segundos
                 }
             }
@@ -91,15 +98,15 @@ public class home extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.it_new) {
                 // Navegar a la actividad para crear un curso
-                startActivity(new Intent(home.this, crear_curso.class));
+                startActivity(new Intent(Home.this, CrearCurso.class));
                 return true;
             } else if (itemId == R.id.it_seguidos) {
-                // Navegar a la actividad para ver los seguidos
-                startActivity(new Intent(home.this, seguidos.class));
+                // Navegar a la actividad para ver los Biblioteca
+                startActivity(new Intent(Home.this, Biblioteca.class));
                 return true;
             } else if (itemId == R.id.it_perfil) {
                 // Navegar a la actividad para buscar perfiles
-                startActivity(new Intent(home.this, ver_mi_perfil.class));
+                startActivity(new Intent(Home.this, Perfil.class));
                 return true;
             }
 
@@ -145,7 +152,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class home extends AppCompatActivity {
+public class Home extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
@@ -165,7 +172,7 @@ public class home extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             // Si no hay usuario, redirigir a Login
-            Intent intent = new Intent(home.this, login.class);
+            Intent intent = new Intent(Home.this, IniciarSesion.class);
             startActivity(intent);
             finish(); // Evita que el usuario vuelva a Home si no está logueado
         }
@@ -178,7 +185,7 @@ public class home extends AppCompatActivity {
                 if (backPressCount == 3) {
                     moveTaskToBack(true); // 🔹 Minimiza la aplicación en lugar de cerrarla
                 } else {
-                    Toast.makeText(home.this, "Presiona atrás " + (3 - backPressCount) + " veces más para salir", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Home.this, "Presiona atrás " + (3 - backPressCount) + " veces más para salir", Toast.LENGTH_SHORT).show();
                     backPressHandler.postDelayed(() -> backPressCount = 0, 2000); // Reinicia el contador después de 2 segundos
                 }
             }
@@ -199,15 +206,15 @@ public class home extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.it_new) {
                 // Navegar a la actividad para crear un curso
-                startActivity(new Intent(home.this, crear_curso.class));
+                startActivity(new Intent(Home.this, CrearCurso.class));
                 return true;
             } else if (itemId == R.id.it_seguidos) {
-                // Navegar a la actividad para ver los seguidos
-                startActivity(new Intent(home.this, seguidos.class));
+                // Navegar a la actividad para ver los Biblioteca
+                startActivity(new Intent(Home.this, Biblioteca.class));
                 return true;
             } else if (itemId == R.id.it_perfil) {
                 // Navegar a la actividad para buscar perfiles
-                startActivity(new Intent(home.this, busqueda.class));
+                startActivity(new Intent(Home.this, Busqueda.class));
                 return true;
             }
 

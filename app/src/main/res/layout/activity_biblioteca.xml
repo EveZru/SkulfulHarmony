@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".seguidos"
+    tools:context=".Biblioteca"
     android:orientation="vertical"
     >
 
@@ -68,7 +68,7 @@
             app:itemIconTint="@color/rojo"
             app:itemTextColor="@color/gray1"
             android:layout_gravity="bottom"
-            app:menu="@menu/barra_navegacion1" />
+            app:menu="@menu/barra_navegacionprincipal" />
     </LinearLayout>
 
 

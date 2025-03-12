@@ -7,22 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class RecuperarContr extends AppCompatActivity {
+public class RecuperarContrasena extends AppCompatActivity {
     private Button btnrecuperar, btncancelar;
     private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recuperar_contr);
+        setContentView(R.layout.activity_recuperarcontrasena);
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -64,7 +60,7 @@ public class RecuperarContr extends AppCompatActivity {
                 if (!email.isEmpty()) {
                     enviarCorreoRecuperacion(email);
                 } else {
-                    Toast.makeText(RecuperarContr.this, "Por favor, introduce tu correo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecuperarContrasena.this, "Por favor, introduce tu correo", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -84,9 +80,9 @@ public class RecuperarContr extends AppCompatActivity {
         mAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(RecuperarContr.this, "Correo de recuperación enviado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecuperarContrasena.this, "Correo de recuperación enviado", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(RecuperarContr.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RecuperarContrasena.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

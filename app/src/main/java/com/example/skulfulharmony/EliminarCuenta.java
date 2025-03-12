@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class eliminar_cuenta extends AppCompatActivity {
+public class EliminarCuenta extends AppCompatActivity {
 
     private Button btnConfirmarEliminar, btnCancelarEliminar;
     private FirebaseAuth mAuth;
@@ -23,7 +23,7 @@ public class eliminar_cuenta extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_eliminar_cuenta);
+        setContentView(R.layout.activity_eliminarcuenta);
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -52,15 +52,15 @@ public class eliminar_cuenta extends AppCompatActivity {
         if (user != null) {
             user.delete().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(eliminar_cuenta.this, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EliminarCuenta.this, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).show();
 
-                    // Cerrar sesión y redirigir a login
+                    // Cerrar sesión y redirigir a IniciarSesion
                     mAuth.signOut();
-                    Intent intent = new Intent(eliminar_cuenta.this, login.class);
+                    Intent intent = new Intent(EliminarCuenta.this, IniciarSesion.class);
                     startActivity(intent);
                     finish(); // Cierra esta actividad
                 } else {
-                    Toast.makeText(eliminar_cuenta.this, "Error al eliminar la cuenta: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(EliminarCuenta.this, "Error al eliminar la cuenta: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         } else {

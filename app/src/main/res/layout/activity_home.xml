@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".home">
+    tools:context=".Home">
 
     <!-- ScrollView con tamaño optimizado -->
     <ScrollView
@@ -98,7 +98,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/scrollView2"
-        app:menu="@menu/barra_navegacion1"
+        app:menu="@menu/barra_navegacionprincipal"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"
