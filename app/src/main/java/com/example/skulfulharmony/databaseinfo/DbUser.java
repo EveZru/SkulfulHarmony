@@ -95,4 +95,16 @@ public class DbUser extends DbHelper{
         return false;
     }
 
+    public void deleteUser(){
+        DbHelper dbHelper = new DbHelper(this.context);
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        database.execSQL("DROP TABLE " + TABLE_PROGRESS);
+        database.execSQL("DROP TABLE " + TABLE_OPTIONS);
+        database.execSQL("DROP TABLE " + TABLE_QUESTION);
+        database.execSQL("DROP TABLE " + TABLE_CLASS);
+        database.execSQL("DROP TABLE " + TABLE_COURSE);
+        database.execSQL("DROP TABLE " + TABLE_USER);
+
+    }
+
 }
