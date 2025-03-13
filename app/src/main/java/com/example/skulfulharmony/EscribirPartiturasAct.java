@@ -7,26 +7,37 @@ import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Rect;
-
-// setContentView(R.layout.activity_escribirpartituras_act);
-
-
+import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
-public class EscribirPartiturasAct extends AppCompatActivity {
+import java.util.Random;
 
+public class EscribirPartiturasAct extends AppCompatActivity {
+    private TextView tv_nota;
+    private String[]notas={"Do","Re","Mi","Sol","La","Si"};
+    private ImageView noteImageView = findViewById(R.id.iv_notaclase);
+    private String inicialpx,inicialpy;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_escribirpartituras_act); // Tu XML
-
+        setContentView(R.layout.activity_escribirpartituras_act);
+        tv_nota=findViewById(R.id.tv_notaporbuscar);
         // Inicializa los componentes
-        final ImageView noteImageView = findViewById(R.id.iv_notaclase); // El ImageView para la nota
-        final View line1 = findViewById(R.id.line1);  // Línea 1 del pentagrama
-        final View line2 = findViewById(R.id.line2);  // Línea 2 del pentagrama
-        final View line3 = findViewById(R.id.line3);  // Línea 3 del pentagrama
-        final View line4 = findViewById(R.id.line4);  // Línea 4 del pentagrama
-        final View line5 = findViewById(R.id.line5);  // Línea 5 del pentagrama
+         // El ImageView para la nota
+
+        final View lin0 = findViewById(R.id.line0);
+        final View line1 = findViewById(R.id.line1);
+        final View line2 = findViewById(R.id.line2);
+        final View line3 = findViewById(R.id.line3);
+        final View line4 = findViewById(R.id.line4);
+        final View line5 = findViewById(R.id.line5);
+
+        /*noteImageView.post(()->{
+            inicialpx = noteImageView.getX();
+            inicialpy = noteImageView.getY();
+        });*/
+
+        
 
         // Set the touch listener to move the noteImageView
         noteImageView.setOnTouchListener(new View.OnTouchListener() {
@@ -58,10 +69,10 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         });
     }
 
-    // Método para verificar si la nota está sobre una de las líneas
-    private void checkLineCollision(View note, View line1, View line2, View line3, View line4, View line5) {
+    private void checkLineCollision(View note ,View line1, View line2, View line3, View line4, View line5) {
         if (isColliding(note, line1)) {
             line1.setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light)); // Cambiar color de línea
+            correcto();
         } else {
             line1.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black)); // Restaurar color
         }
@@ -100,5 +111,16 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         line.getHitRect(lineRect);  // Obtiene el área de la línea
 
         return Rect.intersects(noteRect, lineRect); // Verifica si las áreas se intersectan
+    }
+
+
+    public void correcto(){
+        Random random=new Random();
+        int inota=random.nextInt(notas.length);
+        String nuevaNota=notas[inota];
+        tv_nota.setText(nuevaNota);
+
+       // noteImageView.setX(inicialpx);
+        //noteImageView.setY(inicialpy);
     }
 }
