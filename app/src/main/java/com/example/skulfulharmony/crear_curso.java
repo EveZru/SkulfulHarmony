@@ -78,21 +78,26 @@ public class crear_curso extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
+
             if (itemId == R.id.it_homme) {
+                // Navegar a la actividad para Home
                 startActivity(new Intent(crear_curso.this, home.class));
                 return true;
             } else if (itemId == R.id.it_new) {
-                // Cambiar la actividad para crear el curso
+                // Accion para Crear Curso
                 return true;
             } else if (itemId == R.id.it_seguidos) {
+                // Navegar a la actividad para ver los seguidos
                 startActivity(new Intent(crear_curso.this, seguidos.class));
                 return true;
             } else if (itemId == R.id.it_perfil) {
-                startActivity(new Intent(crear_curso.this, busqueda.class));
+                // Navegar a la actividad para buscar perfiles
+                startActivity(new Intent(crear_curso.this, ver_mi_perfil.class));
                 return true;
             }
 
             return false;
+
         });
 
         bottomNavigationView.setSelectedItemId(R.id.it_new);

@@ -105,9 +105,6 @@ public class home extends AppCompatActivity {
 
             return false;
 
-
-
-
         });
         //bottomNavigationView.setSelectedItemId(R.id.it_homme);
         bottomNavigationView.setSelectedItemId(R.id.it_homme);
