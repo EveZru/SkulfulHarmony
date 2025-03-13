@@ -2,7 +2,7 @@ package com.example.skulfulharmony.javaobjects.users;
 
 import com.example.skulfulharmony.javaobjects.clustering.ClusterClases;
 import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
-import com.example.skulfulharmony.javaobjects.miscellaneous.Pregunta;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 
 import java.util.List;
 

@@ -10,4 +10,12 @@ public class Instrumento {
         this.titulo = titulo;
         this.imagen = imagen;
     }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public Image getImagen() {
+        return imagen;
+    }
 }

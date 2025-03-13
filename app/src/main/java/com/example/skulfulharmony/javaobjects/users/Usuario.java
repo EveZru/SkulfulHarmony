@@ -1,12 +1,10 @@
 package com.example.skulfulharmony.javaobjects.users;
 
-import android.media.Image;
-
 import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
-import com.example.skulfulharmony.javaobjects.miscellaneous.Pregunta;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -15,16 +13,20 @@ import java.util.Date;
 import java.util.List;
 
 public class Usuario {
-    private Image imagen;
+
+    //ATRIBUTOS DE IDENTIFICACION
+    private String imagen;
     private String nombre;
     private String user;
     private String correo;
+    private Instrumento instrumento;
+
+    //ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
     private List<Curso> cursosSeguidos;
     private List<Clase> historialClases;
     private List<Pregunta> preguntasInicio;
     private RecomendacionDeUsuario recomendacionesUsuario;
-    private Instrumento instrumento;
     private List<Date> horasEntrada;
     private LocalTime tiempoDeNotificacion;
 
@@ -74,4 +76,47 @@ public class Usuario {
             this.tiempoDeNotificacion = null; // No hay datos recientes
         }
     }
+
+    //GETTERS AND SETTERS
+            public String getImagen () {
+            return imagen;
+        }
+
+            public void setImagen (String imagen){
+            this.imagen = imagen;
+        }
+
+            public String getNombre () {
+            return nombre;
+        }
+
+            public void setNombre (String nombre){
+            this.nombre = nombre;
+        }
+
+            public String getUser () {
+            return user;
+        }
+
+            public void setUser (String user){
+            this.user = user;
+        }
+
+            public String getCorreo () {
+            return correo;
+        }
+
+            public void setCorreo (String correo){
+            this.correo = correo;
+        }
+
+            public Instrumento getInstrumento () {
+            return instrumento;
+        }
+
+            public void setInstrumento (Instrumento instrumento){
+            this.instrumento = instrumento;
+        }
+
+
 }

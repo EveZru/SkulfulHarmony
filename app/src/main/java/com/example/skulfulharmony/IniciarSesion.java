@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -36,10 +38,19 @@ public class IniciarSesion extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private boolean isPasswordVisible = false;
 
+    private DbUser dbUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciarsesion);
+
+        DbUser dbUser1 = new DbUser(this);
+        if(dbUser1.anyUser()){
+            Intent intent = new Intent(IniciarSesion.this, Home.class);
+            startActivity(intent);
+            finish();
+        }
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -87,6 +98,15 @@ public class IniciarSesion extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 Toast.makeText(IniciarSesion.this, "Bienvenido " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                                DbUser dbUser = new DbUser(this);
+
+                                if(!dbUser.existUser(user.getEmail())){
+                                    Usuario usuario = new Usuario(user.getDisplayName(),user.getEmail());
+                                    if(dbUser.insertUser(usuario) == 0){
+                                        Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
+                                    }
+                                }
 
                                 // Redirigir a HomeActivity
                                 Intent intent = new Intent(IniciarSesion.this, Home.class);
@@ -138,6 +158,13 @@ public class IniciarSesion extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(IniciarSesion.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
+
+                        if(!dbUser.existUser(acct.getEmail())){
+                            Usuario usuario = new Usuario(acct.getDisplayName(),acct.getEmail());
+                            if(dbUser.insertUser(usuario) == 0){
+                                Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
+                            }
+                        }
 
                         // Redirigir a HomeActivity
                         Intent intent = new Intent(IniciarSesion.this, Home.class);

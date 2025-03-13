@@ -4,7 +4,7 @@ import android.media.Image;
 import android.net.Uri;
 
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
-import com.example.skulfulharmony.javaobjects.miscellaneous.Pregunta;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 
 import java.io.File;
 import java.util.ArrayList;
