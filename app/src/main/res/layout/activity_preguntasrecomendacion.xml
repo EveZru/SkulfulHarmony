@@ -20,23 +20,44 @@
         app:layout_constraintVertical_bias="0.837">
 
         <TextView
-            android:id="@+id/question_text"
+            android:id="@+id/txt_preguntarecomendacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:text="..."
             android:textSize="18sp" />
-        <android.widget.Button
-            android:id="@+id/next_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:text="Siguiente"
-            android:background="@drawable/third_rounder_button"/>
 
-        <RadioGroup
-            android:id="@+id/options_group"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <android.widget.Button
+                android:id="@+id/btn_preguntaanterior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Anterior "
+                android:background="@drawable/third_rounder_button"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <android.widget.Button
+                android:id="@+id/btn_preguntasigueinte"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Siguiente"
+                android:background="@drawable/third_rounder_button"
+                />
+
+
+
+        </LinearLayout>
+         <RadioGroup
+            android:id="@+id/rg_recomendacionrespuesta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

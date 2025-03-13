@@ -57,11 +57,10 @@
     <string name="imagen_perfil_desc">Imagen de perfil del usuario</string>
     <string name="editar_informacion_desc">Sección para editar información del perfil</string>
 
-        <!-- Descripción para los EditText -->
+    <!-- Descripción para los EditText -->
     <string name="et_nombrecambiar_desc">Campo para cambiar el nombre de usuario</string>
     <string name="et_nuevadescripcion_desc">Campo para cambiar la descripción del usuario</string>
     <string name="btn_cambiardatos_desc">Botón para publicar los cambios realizados en el perfil</string>
-
 
 
 </resources>

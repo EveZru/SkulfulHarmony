@@ -24,10 +24,12 @@ public class Home extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
+
     private Handler backPressHandler = new Handler();
     private EditText et_buscarhome;
+
     private SQLiteDatabase localDatabase;
-    private DbHelper dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class Home extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-        dbHelper = new DbHelper(Home.this);
+        DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
         et_buscarhome=findViewById(R.id.et_buscarhome);

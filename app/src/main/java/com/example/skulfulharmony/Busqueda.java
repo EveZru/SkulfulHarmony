@@ -25,7 +25,7 @@ public class Busqueda extends AppCompatActivity {
         et_buscar=findViewById(R.id.et_parabuscar);
         //et_buscar = findViewById(R.id.et_parabuscar);
         if (getIntent().getBooleanExtra("focus", false)) {
-            et_buscar.requestFocus(); // Solicita el foco
+            et_buscar.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE); // Muestra el teclado
         }
 
