@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,7 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class CrearCuenta extends AppCompatActivity {
 
-    private EditText etCorreo, etContraseña;
+    private EditText etCorreo, etContraseña, etUser;
     private Button btnCrearCuenta, btnGoToIniciar;
     private ImageButton btnGoogleCrear;
     private ImageView ivTogglePassword;
@@ -50,6 +52,7 @@ public class CrearCuenta extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Referencias de UI
+        etUser = findViewById(R.id.Et_nameuser);
         etCorreo = findViewById(R.id.Et_correo);
         etContraseña = findViewById(R.id.Et_contraseña);
         btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
@@ -78,8 +81,9 @@ public class CrearCuenta extends AppCompatActivity {
     private void registerUser() {
         String email = etCorreo.getText().toString().trim();
         String password = etContraseña.getText().toString().trim();
+        String name = etUser.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
             Toast.makeText(CrearCuenta.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -87,7 +91,17 @@ public class CrearCuenta extends AppCompatActivity {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+
+                        DbUser dbUser = new DbUser(this);
+                        if(!dbUser.existUser(email)){
+                            Usuario usuario = new Usuario(name,email);
+                            if(dbUser.insertUser(usuario) == 0){
+                                Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
+                            }
+                        }
+
                         Toast.makeText(CrearCuenta.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+
 
                         Intent intent = new Intent(CrearCuenta.this, Home.class);
                         startActivity(intent);

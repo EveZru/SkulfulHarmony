@@ -58,6 +58,7 @@ public class IniciarSesion extends AppCompatActivity {
         // Referencias de UI
         etCorreoOUser = findViewById(R.id.Et_correoOuser);
         etContraseña_Iniciar = findViewById(R.id.Et_contraseña_iniciar);
+
         btnIniciar = findViewById(R.id.btnIniciarsecion);
         btnGoogleIniciar = findViewById(R.id.btn_google_iniciar);
         btnGoToCrear = findViewById(R.id.btn_gotocrearcuenta);
@@ -90,14 +91,14 @@ public class IniciarSesion extends AppCompatActivity {
             String email = etCorreoOUser.getText().toString().trim();
             String password = etContraseña_Iniciar.getText().toString().trim();
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty() ) {
                 Toast.makeText(IniciarSesion.this, "Llena todos los campos", Toast.LENGTH_SHORT).show();
             } else {
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                Toast.makeText(IniciarSesion.this, "Bienvenido " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(IniciarSesion.this, "Bienvenido " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
 
                                 DbUser dbUser = new DbUser(this);
 
