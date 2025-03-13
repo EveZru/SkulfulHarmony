@@ -46,10 +46,15 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-auth:22.1.1")
-    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-auth") // Se eliminó la versión para que tome la del BOM
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.android.material:material:1.8.0")
-    implementation ("com.google.firebase:firebase-firestore:24.8.1")
+    implementation("com.google.firebase:firebase-firestore") // Se eliminó la versión para que tome la del BOM
+    /*implementation("com.github.bumptech.glide:glide:4.14.2") // Actualizado a una versión más reciente
+    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2") // Actualizado a la versión correspondiente
+    implementation("commons-net:commons-net:3.8.0")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13") // Puedes actualizar si lo deseas, pero esta es la versión que tienes
+    //implementation("com.arthenica:ffmpeg-kit-full:5.1.1")*/
 
 
 }
