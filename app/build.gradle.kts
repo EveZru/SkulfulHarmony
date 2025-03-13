@@ -50,11 +50,6 @@ dependencies {
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.android.material:material:1.8.0")
     implementation ("com.google.firebase:firebase-firestore:24.8.1")
-    implementation ("com.github.bumptech.glide:glide:4.11.0")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
-    implementation ("commons-net:commons-net:3.8.0")
-    implementation ("com.github.bumptech.glide:glide:4.11.0")
-    implementation ("org.apache.httpcomponents:httpclient:4.5.13")
-    implementation ("com.arthenica:ffmpeg-kit-full:5.1.1")
+
 
 }
