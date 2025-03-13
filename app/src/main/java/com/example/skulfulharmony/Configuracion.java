@@ -71,7 +71,7 @@ public class Configuracion extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Abre la actividad de Términos y Condiciones
-                Intent intent = new Intent(Configuracion.this, Preg.class);
+                Intent intent = new Intent(Configuracion.this, Home.class);
                 startActivity(intent);
             }
         });

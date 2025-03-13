@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,18 +32,18 @@ public class Biblioteca extends AppCompatActivity {
 
             if (itemId == R.id.it_homme) {
                 // Navegar a la actividad para Home
-                startActivity(new Intent(seguidos.this, home.class));
+                startActivity(new Intent(Biblioteca.this, Home.class));
                 return true;
             } else if (itemId == R.id.it_new) {
                 // Navegar a la actividad para crear clase
-                startActivity(new Intent(seguidos.this, seguidos.class));
+                startActivity(new Intent(Biblioteca.this, CrearCurso.class));
                 return true;
             } else if (itemId == R.id.it_seguidos) {
                 // Accion para Ver los seguidos
                 return true;
             } else if (itemId == R.id.it_perfil) {
                 // Navegar a la actividad para buscar perfiles
-                startActivity(new Intent(seguidos.this, ver_mi_perfil.class));
+                startActivity(new Intent(Biblioteca.this, Perfil.class));
                 return true;
             }
 
