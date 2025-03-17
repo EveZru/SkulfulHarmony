@@ -5,40 +5,56 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".PreguntasRecomendacion">
+
+    <ImageView
+        android:layout_width="410dp"
+        android:layout_height="240dp"
+        android:background="@drawable/encabezado_preguntas"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.021" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="406dp"
-        android:layout_height="708dp"
+        android:layout_width="322dp"
+        android:layout_height="660dp"
+        android:layout_marginVertical="30dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.692"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.837">
+        app:layout_constraintVertical_bias="0.491">
 
         <TextView
             android:id="@+id/txt_preguntarecomendacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:padding="69dp"
             android:text="..."
+            android:textColor="@color/white"
             android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <android.widget.Button
                 android:id="@+id/btn_preguntaanterior"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Anterior "
                 android:background="@drawable/third_rounder_button"
-                />
+                android:text="Anterior "
+                android:textColor="@color/black" />
+
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -49,18 +65,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Siguiente"
                 android:background="@drawable/third_rounder_button"
-                />
-
+                android:text="Siguiente"
+                android:textColor="@color/black" />
 
 
         </LinearLayout>
-         <RadioGroup
+
+        <RadioGroup
             android:id="@+id/rg_recomendacionrespuesta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:textColor="@color/black" />
 
 
     </LinearLayout>

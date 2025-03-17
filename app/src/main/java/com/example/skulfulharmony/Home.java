@@ -37,6 +37,11 @@ public class Home extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
+      //  Intent intent2 = new Intent(Home.this,PreguntasRecomendacion.class);
+       // startActivity(intent2);
+
+
+
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 

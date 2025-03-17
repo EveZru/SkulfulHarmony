@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -91,11 +92,16 @@ public class PreguntasRecomendacion extends AppCompatActivity {
 
 //        Botón para siguiente pregunta
         btn_siguiente_pregunta.setOnClickListener(v -> {
-                guardarRespuestaElegida(currentPreguntaIndex);  //Guarda antes de avanzar
-        if (currentPreguntaIndex <= listaDePreguntas.size() - 1) {
-            currentPreguntaIndex++;
-            mostrarPregunta(currentPreguntaIndex);
-        }
+            guardarRespuestaElegida(currentPreguntaIndex);  //Guarda antes de avanzar
+            if (currentPreguntaIndex < listaDePreguntas.size() - 1) {
+                currentPreguntaIndex++;
+                mostrarPregunta(currentPreguntaIndex);
+            } else {
+                // Cambiar de actividad cuando se llegue a la última pregunta
+                Intent intent = new Intent(PreguntasRecomendacion.this, Home.class);
+                startActivity(intent);
+                finish(); // Opcional, para cerrar esta actividad
+            }
         });
 
 //        Botón para pregunta anterior
@@ -126,7 +132,8 @@ public class PreguntasRecomendacion extends AppCompatActivity {
         rg_opcionespregunta.removeAllViews();
 
 //        Configurar dinámicamente los RadioButtons para las opciones
-        for (int i = 0; i  <= pregunta.getRespuestas().size(); i++) {
+        for (int i = 0; i < pregunta.getRespuestas().size(); i++) {
+
             RadioButton radioButton = new RadioButton(this);
             radioButton.setText(pregunta.getRespuestas().get(i));  // Usamos getRespuestas() para obtener las opciones
             radioButton.setId(View.generateViewId());   //Genera un ID único
