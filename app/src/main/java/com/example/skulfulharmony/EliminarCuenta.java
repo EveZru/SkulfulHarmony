@@ -11,6 +11,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -54,6 +55,8 @@ public class EliminarCuenta extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Toast.makeText(EliminarCuenta.this, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).show();
 
+                    DbUser user1 = new DbUser(this);
+                    user1.deleteUser();
                     // Cerrar sesión y redirigir a IniciarSesion
                     mAuth.signOut();
                     Intent intent = new Intent(EliminarCuenta.this, IniciarSesion.class);
