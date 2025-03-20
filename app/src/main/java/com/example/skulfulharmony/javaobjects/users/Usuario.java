@@ -25,6 +25,7 @@ public class Usuario {
     //ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
     private List<Curso> cursosSeguidos;
+    private List<Curso> historialCursos;
     private List<Clase> historialClases;
     private List<PreguntaInicio> preguntasInicio;
     private RecomendacionDeUsuario recomendacionesUsuario;

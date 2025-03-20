@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Curso {
+    private Integer idCurso;
     private Image imagen;
     private String titulo;
     private String descripcion;
