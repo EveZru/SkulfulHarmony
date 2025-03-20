@@ -17,17 +17,17 @@ public class EscribirPartiturasAct extends AppCompatActivity {
     private EditText tvActual; // El EditText donde se muestra la posición actual
     private float posInicialX, posInicialY;  // Posiciones iniciales de la nota
     private String[] notas = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si"}; // Notas posibles
-    private String notaActual;  // Nota que se debe mover
+    private String notaActual, Notapocicionada;  // Nota que se debe mover
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_escribirpartituras_act); // Tu XML
+        setContentView(R.layout.activity_escribirpartituras_act);
 
         // Inicializar componentes
-        ivNota = findViewById(R.id.iv_notaclase); // El ImageView para la nota
-        tvNota = findViewById(R.id.tv_notaporbuscar); // El TextView para la nota aleatoria
-        tvActual = findViewById(R.id.tvactual); // El EditText donde se muestra la posición
+        ivNota = findViewById(R.id.iv_notaclase);
+        tvNota = findViewById(R.id.tv_notaporbuscar);
+        tvActual = findViewById(R.id.tvactual);
 
         // Generar una nota aleatoria para mostrar
         mostrarNotaAleatoria();
@@ -76,30 +76,63 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         // Verificar si la nota está sobre algún View
         if (isViewAtPosition(nota, R.id.line0)) {
             tvActual.append("\nEstá sobre 'Do'");
+            Notapocicionada=("Do");
         } else if (isViewAtPosition(nota, R.id.space0)) {
             tvActual.append("\nEstá sobre 'Re'");
+            Notapocicionada=("Re");
         } else if (isViewAtPosition(nota, R.id.line1)) {
             tvActual.append("\nEstá sobre 'Mi'");
+            Notapocicionada=("Mi");
         } else if (isViewAtPosition(nota, R.id.space1)) {
             tvActual.append("\nEstá sobre 'Fa'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.line2)) {
             tvActual.append("\nEstá sobre 'Sol'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.space2)) {
             tvActual.append("\nEstá sobre 'La'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.line3)) {
             tvActual.append("\nEstá sobre 'Si'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.space3)) {
             tvActual.append("\nEstá sobre 'Do4'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.line4)) {
             tvActual.append("\nEstá sobre 'Re4'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.space4)) {
             tvActual.append("\nEstá sobre 'Mi4'");
+            Notapocicionada=("");
         } else if (isViewAtPosition(nota, R.id.line5)) {
             tvActual.append("\nEstá sobre 'Fa4'");
+            Notapocicionada=("");
         } else {
             tvActual.append("\nNo está sobre ninguna línea/espacio.");
         }
     }
+
+    private void compararNotaYPosicion() {
+        //  nota objetivo
+        String notaBuscada = tvNota.getText().toString();
+        // notapocicionada
+        String posicionNota = Notapocicionada;
+
+        // Comparar los dos valores
+        if (posicionNota.contains(notaBuscada)) {
+            Correcto();
+        }
+    }
+
+    private void Correcto() {
+        // Mover la nota de vuelta a su posición inicial (usando las posiciones iniciales guardadas)
+        ivNota.setX(posInicialX);
+        ivNota.setY(posInicialY);
+
+        // Generar una nueva nota aleatoria y mostrarla en el TextView
+        mostrarNotaAleatoria();
+    }
+
 
     // Méta verificar si el `View` está en la posición correcta
     private boolean isViewAtPosition(View nota, int idView) {
