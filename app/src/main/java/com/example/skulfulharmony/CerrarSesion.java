@@ -10,6 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class CerrarSesion extends AppCompatActivity {
@@ -32,6 +33,8 @@ public class CerrarSesion extends AppCompatActivity {
         // Manejar cierre de sesión
         cerrarsesion.setOnClickListener(view -> {
             mAuth.signOut(); // Cierra sesión en Firebase
+            DbUser dbUser = new DbUser(this);
+            dbUser.deleteUser();
             Intent intent = new Intent(CerrarSesion.this, IniciarSesion.class);
             startActivity(intent);
             finish(); // Cierra la actividad actual

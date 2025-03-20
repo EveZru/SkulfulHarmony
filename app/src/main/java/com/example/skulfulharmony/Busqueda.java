@@ -11,9 +11,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
+
 public class Busqueda extends AppCompatActivity {
     private EditText et_buscar;
     private Button btn_genero, btn_instrumrnto, btn_dificultad;
+    private DbUser dbUser = new DbUser(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
