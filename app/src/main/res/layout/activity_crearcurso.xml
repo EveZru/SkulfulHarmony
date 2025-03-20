@@ -40,6 +40,7 @@
                android:layout_height="wrap_content"
                android:text="Instrumento"
                android:textSize="20sp"
+
                />
             <Spinner
                 android:id="@+id/sp_Instrumento"

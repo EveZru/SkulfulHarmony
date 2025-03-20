@@ -8,17 +8,23 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/logo_sh"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo_sh"
         android:supportsRtl="true"
         android:theme="@style/Theme.SkulfulHarmony"
-        tools:targetApi="31"
-        android:hardwareAccelerated="false">
+        tools:targetApi="31">
+        <activity
+            android:name=".EscribirPartiturasAct"
+            android:exported="false"/>
+
+        <activity
+            android:name=".VerCurso"
+            android:exported="false" />
         <activity
             android:name=".Descanso"
             android:exported="false" />

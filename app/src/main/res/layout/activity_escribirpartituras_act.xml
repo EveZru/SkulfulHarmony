@@ -9,10 +9,24 @@
     tools:context=".EscribirPartiturasAct">
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/instruccionesescribirpartituras"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.044" />
+
+    <TextView
         android:id="@+id/tv_notaporbuscar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:textColor="@color/black"
         android:text="-nota-"
         android:textSize="29sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,7 +36,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.096" />
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -33,13 +48,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.22">
 
-
-        <ImageView
-            android:id="@+id/iv_clave"
-            android:layout_width="98dp"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:src="@drawable/perfil_logo" />
 
         <LinearLayout
             android:id="@+id/pentagramLayout"
@@ -55,60 +63,118 @@
             app:layout_constraintVertical_bias="0.291">
 
             <View
+                android:id="@+id/lineextra"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
+                android:background="@color/gray1" />
+
+            <View
+                android:id="@+id/spaceestra"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/gray2" />
+
+
+            <View
                 android:id="@+id/line5"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@android:color/black" />
+
+            <View
+                android:id="@+id/space4"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@android:color/white" />
 
             <View
                 android:id="@+id/line4"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@android:color/black" />
+
+            <View
+                android:id="@+id/space3"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@android:color/white" />
 
             <View
                 android:id="@+id/line3"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@android:color/black" />
+
+            <View
+                android:id="@+id/space2"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@android:color/white" />
 
             <View
                 android:id="@+id/line2"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@android:color/black" />
+
+            <View
+                android:id="@+id/space1"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@android:color/white" />
 
             <View
                 android:id="@+id/line1"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@android:color/black" />
+
+            <View
+                android:id="@+id/space0"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/gray2" />
 
             <View
                 android:id="@+id/line0"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="1dp"
                 android:background="@color/gray1" />
 
+
+            <EditText
+                android:id="@+id/tvactual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="actual"
+                android:textColor="@color/black" />
+
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_clave"
+
+            android:layout_width="89dp"
+            android:layout_height="169dp"
+            android:layout_centerInParent="true"
+            android:layout_marginVertical="50dp"
+            android:src="@drawable/nota_sol" />
+
+    </FrameLayout>
+
 
     <ImageView
         android:id="@+id/iv_notaclase"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerInParent="true"
         android:src="@drawable/perfil_logo"
         app:layout_constraintBottom_toBottomOf="parent"
