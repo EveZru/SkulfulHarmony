@@ -13,7 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -26,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-
+    // Dependencias de UI y herramientas de Android
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -41,20 +41,25 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation(libs.androidx.appcompat)
+
+    // Dependencias de prueba
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Dependencias de Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth") // Se eliminó la versión para que tome la del BOM
+    implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-    implementation("com.google.android.material:material:1.8.0")
-    implementation("com.google.firebase:firebase-firestore") // Se eliminó la versión para que tome la del BOM
-    /*implementation("com.github.bumptech.glide:glide:4.14.2") // Actualizado a una versión más reciente
-    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2") // Actualizado a la versión correspondiente
+    implementation("com.google.firebase:firebase-firestore")
+
+    // Glide (para cargar imágenes)
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+
+    // Apache Commons Net (para FTP)
     implementation("commons-net:commons-net:3.8.0")
-    implementation("org.apache.httpcomponents:httpclient:4.5.13") // Puedes actualizar si lo deseas, pero esta es la versión que tienes
-    //implementation("com.arthenica:ffmpeg-kit-full:5.1.1")*/
 
-
+    // PDF.js en WebView (no requiere dependencias adicionales, solo configurar WebView)
 }

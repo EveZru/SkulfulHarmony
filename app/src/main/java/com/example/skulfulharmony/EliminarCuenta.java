@@ -55,8 +55,13 @@ public class EliminarCuenta extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Toast.makeText(EliminarCuenta.this, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).show();
 
-                    DbUser user1 = new DbUser(this);
-                    user1.deleteUser();
+                    try{
+                        DbUser user1 = new DbUser(this);
+                        user1.deleteUser();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
                     // Cerrar sesión y redirigir a IniciarSesion
                     mAuth.signOut();
                     Intent intent = new Intent(EliminarCuenta.this, IniciarSesion.class);
