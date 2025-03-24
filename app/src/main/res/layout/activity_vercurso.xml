@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VerCurso">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        android:layout_marginVertical="20dp"
-        android:layout_marginHorizontal="10dp"
-        android:orientation="vertical"
-        >
-<VideoView
-    android:id="@+id/vv_videoclase"
-    android:layout_width="match_parent"
-    android:layout_height="180dp"
-    android:layout_marginVertical="10dp"
-    android:layout_marginHorizontal="30dp"/>
+        android:fillViewport="true">
 
-    <ListView
-    android:id="@+id/lv_archivos"
-    android:layout_width="match_parent"
-    android:layout_height="300dp">
-
-    </ListView>
-
-       <TextView
-           android:id="@+id/tv_info"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:textSize="25sp"
-           android:text="tecto de informacion suer importante sakdhs"
-           android:textColor="@color/black"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_pruntasporclase"
+        <LinearLayout
+            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:orientation="vertical">
 
+            <VideoView
+                android:id="@+id/vv_videoclase"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginVertical="10dp" />
 
+            <ListView
+                android:id="@+id/lv_archivos"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
 
+            <TextView
+                android:id="@+id/tv_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="tecto de informacion suer importante sakdhs"
+                android:textColor="@color/black"
+                android:textSize="25sp" />
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_pruntasporclase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

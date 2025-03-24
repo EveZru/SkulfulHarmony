@@ -40,7 +40,7 @@ public class AdapterBibliotecaVerCursos extends RecyclerView.Adapter {
             if(documentSnapshot.exists()){
                 
             }
-        })
+        });
     }
 
 

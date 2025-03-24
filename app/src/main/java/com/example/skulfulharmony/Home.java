@@ -37,7 +37,7 @@ public class Home extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-       Intent intent2 = new Intent(Home.this,EscribirPartiturasAct.class);
+      Intent intent2 = new Intent(Home.this, CrearClase.class);
          startActivity(intent2);
 
 
@@ -47,7 +47,7 @@ public class Home extends AppCompatActivity {
 
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacionhome);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion);
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -131,7 +131,7 @@ public class Home extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Asegúrate de que el ítem de "Home" esté seleccionado cuando regreses a la actividad
-        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacionhome);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion);
         bottomNavigationView.setSelectedItemId(R.id.it_homme);  // Seleccionamos Home
     }
 }
