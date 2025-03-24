@@ -2,16 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:hardwareAccelerated="false"
         android:icon="@drawable/logo_sh"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo_sh"
@@ -19,65 +13,23 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
-            android:name=".EscribirPartiturasAct"
-            android:exported="false"/>
-
-        <activity
-            android:name=".VerCurso"
+            android:name=".Config"
             android:exported="false" />
         <activity
-            android:name=".Descanso"
+            android:name=".home"
             android:exported="false" />
         <activity
-            android:name=".Perfil"
+            android:name=".preguntas"
             android:exported="false" />
         <activity
-            android:name=".EditarPerfil"
+            android:name=".RecuperarContr"
             android:exported="false" />
         <activity
-            android:name=".CerrarSesion"
+            android:name=".login"
             android:exported="false" />
         <activity
-            android:name=".CrearCurso"
-            android:exported="false" />
-        <activity
-            android:name=".Biblioteca"
-            android:exported="false" /> <!-- Actividades secundarias -->
-        <activity
-            android:name=".Busqueda"
-            android:exported="false" />
-        <activity
-            android:name=".CrearDenuncia"
-            android:exported="false" />
-        <activity
-            android:name=".CrearClase"
-            android:exported="false" />
-        <activity
-            android:name=".EliminarCuenta"
-            android:exported="false" />
-        <activity
-            android:name=".Configuracion"
-            android:exported="false" />
-        <activity
-            android:name=".PreguntasRecomendacion"
-            android:exported="false" />
-        <activity
-            android:name=".RecuperarContrasena"
-            android:exported="false" /> <!-- Pantalla de inicio de sesión -->
-        <activity
-            android:name=".IniciarSesion"
-            android:exported="false"
-            android:noHistory="true" /> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
-        <!-- Pantalla de creación de cuenta -->
-        <activity
-            android:name=".CrearCuenta"
-            android:exported="true"
-            android:noHistory="true" /> <!-- No permite volver atrás después de registrarse -->
-        <!-- HomeActivity ahora es la pantalla principal si el usuario ya ha iniciado sesión -->
-        <activity
-            android:name=".Home"
-            android:exported="true"
-            android:launchMode="singleTask"> <!-- Evita múltiples instancias de Home -->
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
