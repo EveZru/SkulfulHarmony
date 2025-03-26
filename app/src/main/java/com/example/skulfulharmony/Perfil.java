@@ -1,5 +1,12 @@
 package com.example.skulfulharmony;
 
+import com.example.skulfulharmony.server.zip.DescomprimirZip;
+import com.example.skulfulharmony.server.zip.ComprimirZip;
+import com.example.skulfulharmony.server.config.ConfiguracionFTP;
+import com.example.skulfulharmony.server.SubirArchivos.SubirArchivo;
+import com.example.skulfulharmony.server.SubirArchivos.RecibirArchivo;
+import android.database.Cursor;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,12 +37,15 @@ public class Perfil extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private ImageView ivProfilePicture;
-    private TextView tv_NombreUsuario, tv_No_Cursos,tv_DescripcionUsuario;
+    private TextView tv_NombreUsuario, tv_No_Cursos, tv_DescripcionUsuario;
     private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId; // Para identificar el usuario actual
+    private static final String FTP_SERVER = "192.168.100.117";
+    private static final String FTP_USERNAME = "ftpuser";
+    private static final String FTP_PASSWORD = "Skillfull2025$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +76,6 @@ public class Perfil extends AppCompatActivity {
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
-
 
         // Cargar datos del usuario
         cargarDatosUsuario();
@@ -121,7 +131,6 @@ public class Perfil extends AppCompatActivity {
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
     }
 
-
     private void seleccionarImagen() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
@@ -134,7 +143,41 @@ public class Perfil extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
             ivProfilePicture.setImageURI(imageUri);
-            // FUTURO: Subir imagen a Firebase Storage y guardar la URL en Firestore
+
+            // Convertir el URI a archivo
+            File archivo = new File(getRealPathFromURI(imageUri));
+            // Comprimir la imagen antes de subirla
+            File archivoComprimido = new File(archivo.getAbsolutePath() + ".zip");
+            try {
+                // Comprimir imagen
+                ComprimirZip compressor = new ComprimirZip();
+                compressor.compressFile(archivo, archivoComprimido); // Comprimir
+
+                // Subir imagen comprimida al FTP
+                SubirArchivo subirArchivo = new SubirArchivo();
+                ConfiguracionFTP configFTP = new ConfiguracionFTP(FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, 21);
+                subirArchivo.subirArchivo(archivoComprimido, configFTP);
+
+                // Mostrar mensaje de éxito
+                Toast.makeText(this, "Imagen de perfil subida al servidor", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    // Método para obtener la ruta real del URI de la imagen seleccionada
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        try (Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null)) {
+            if (cursor != null) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                return cursor.getString(column_index);
+            }
+        }
+        return null;
     }
 }
