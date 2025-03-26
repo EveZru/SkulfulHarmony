@@ -43,6 +43,17 @@ public class DbUser extends DbHelper{
         return id;
     }
 
+    public String getCorreoUser(){
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT correo FROM " + DbHelper.TABLE_USER, new String[]{"LIMIT 1"});
+        if(cursor.isFirst()){
+            return cursor.getString(0);
+        }
+        cursor.close();
+        return null;
+    }
+
     public Usuario getUser(String correoBusqueda){
         String nombre = "";
         String correoDeclarado = "";
@@ -88,6 +99,7 @@ public class DbUser extends DbHelper{
                 cursor.close();
                 return true;
             }
+            cursor.close();
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -96,15 +108,9 @@ public class DbUser extends DbHelper{
     }
 
     public void deleteUser(){
-        DbHelper dbHelper = new DbHelper(this.context);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        database.execSQL("DROP TABLE " + TABLE_PROGRESS);
-        database.execSQL("DROP TABLE " + TABLE_OPTIONS);
-        database.execSQL("DROP TABLE " + TABLE_QUESTION);
-        database.execSQL("DROP TABLE " + TABLE_CLASS);
-        database.execSQL("DROP TABLE " + TABLE_COURSE);
-        database.execSQL("DROP TABLE " + TABLE_USER);
-
+        DbHelper dbHelper = new DbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("*",null,null);
     }
 
 }

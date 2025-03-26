@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.clasifications.lists.Dificultades;
 import com.example.skulfulharmony.javaobjects.clasifications.lists.Generos;
 import com.example.skulfulharmony.javaobjects.clasifications.lists.Instrumentos;
@@ -25,6 +26,7 @@ public class CrearCurso extends AppCompatActivity {
     private Dificultades dificultades = new Dificultades();
     private Generos generos = new Generos();
     private Instrumentos instrumentos = new Instrumentos();
+    private DbUser dbUser = new DbUser(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

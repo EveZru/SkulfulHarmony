@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.view.MotionEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import android.graphics.Rect;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -16,18 +18,18 @@ public class EscribirPartiturasAct extends AppCompatActivity {
     private TextView tvNota;   // El TextView donde se muestra la nota aleatoria
     private EditText tvActual; // El EditText donde se muestra la posición actual
     private float posInicialX, posInicialY;  // Posiciones iniciales de la nota
-    private String[] notas = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si"}; // Notas posibles
-    private String notaActual, Notapocicionada;  // Nota que se debe mover
+    private String[] notas = {"Do", "Re", "Mi", "Fa", "Sol", "La", "Si", "Do4", "Re4", "Mi4", "Fa4"}; // Notas posibles
+    private String notaActual, Notapocicionada;  // Variables para la nota actual y la nota en la posición
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_escribirpartituras_act);
+        setContentView(R.layout.activity_escribirpartituras_act); // Tu XML
 
         // Inicializar componentes
-        ivNota = findViewById(R.id.iv_notaclase);
-        tvNota = findViewById(R.id.tv_notaporbuscar);
-        tvActual = findViewById(R.id.tvactual);
+        ivNota = findViewById(R.id.iv_notaclase); // El ImageView para la nota
+        tvNota = findViewById(R.id.tv_notaporbuscar); // El TextView para la nota aleatoria
+        tvActual = findViewById(R.id.tvactual); // El EditText donde se muestra la posición
 
         // Generar una nota aleatoria para mostrar
         mostrarNotaAleatoria();
@@ -49,6 +51,7 @@ public class EscribirPartiturasAct extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         // Verificar si la nota está sobre algún View y mostrar la posición
                         mostrarPosicionNota(v);
+                        verificarNotaYPosicion();
                         break;
                 }
                 return true;
@@ -56,7 +59,7 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         });
     }
 
-    // Mét para mostrar una nota aleatoria en el TextView
+    // Método para mostrar una nota aleatoria en el TextView
     private void mostrarNotaAleatoria() {
         // Elegir una nota aleatoria del arreglo
         int indiceAleatorio = (int) (Math.random() * notas.length);
@@ -64,7 +67,7 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         tvNota.setText(notaActual); // Mostrar la nota en el TextView
     }
 
-    // Mét para mostrar la posición de la nota en el EditText
+    // Método para mostrar la posición de la nota en el EditText
     private void mostrarPosicionNota(View nota) {
         // Obtener la posición de la nota (en el eje X y Y)
         float notaX = nota.getX();
@@ -76,65 +79,63 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         // Verificar si la nota está sobre algún View
         if (isViewAtPosition(nota, R.id.line0)) {
             tvActual.append("\nEstá sobre 'Do'");
-            Notapocicionada=("Do");
+            Notapocicionada = "Do";
         } else if (isViewAtPosition(nota, R.id.space0)) {
             tvActual.append("\nEstá sobre 'Re'");
-            Notapocicionada=("Re");
+            Notapocicionada = "Re";
         } else if (isViewAtPosition(nota, R.id.line1)) {
             tvActual.append("\nEstá sobre 'Mi'");
-            Notapocicionada=("Mi");
+            Notapocicionada = "Mi";
         } else if (isViewAtPosition(nota, R.id.space1)) {
             tvActual.append("\nEstá sobre 'Fa'");
-            Notapocicionada=("");
+            Notapocicionada = "Fa";
         } else if (isViewAtPosition(nota, R.id.line2)) {
             tvActual.append("\nEstá sobre 'Sol'");
-            Notapocicionada=("");
+            Notapocicionada = "Sol";
         } else if (isViewAtPosition(nota, R.id.space2)) {
             tvActual.append("\nEstá sobre 'La'");
-            Notapocicionada=("");
+            Notapocicionada = "La";
         } else if (isViewAtPosition(nota, R.id.line3)) {
             tvActual.append("\nEstá sobre 'Si'");
-            Notapocicionada=("");
+            Notapocicionada = "Si";
         } else if (isViewAtPosition(nota, R.id.space3)) {
             tvActual.append("\nEstá sobre 'Do4'");
-            Notapocicionada=("");
+            Notapocicionada = "Do4";
         } else if (isViewAtPosition(nota, R.id.line4)) {
             tvActual.append("\nEstá sobre 'Re4'");
-            Notapocicionada=("");
+            Notapocicionada = "Re4";
         } else if (isViewAtPosition(nota, R.id.space4)) {
             tvActual.append("\nEstá sobre 'Mi4'");
-            Notapocicionada=("");
+            Notapocicionada = "Mi4";
         } else if (isViewAtPosition(nota, R.id.line5)) {
             tvActual.append("\nEstá sobre 'Fa4'");
-            Notapocicionada=("");
+            Notapocicionada = "Fa4";
         } else {
             tvActual.append("\nNo está sobre ninguna línea/espacio.");
         }
     }
 
-    private void compararNotaYPosicion() {
-        //  nota objetivo
+    // Método para comparar si la posición de la nota corresponde con la nota mostrada en el TextView
+    private void verificarNotaYPosicion() {
+        // Obtener la nota actual desde el TextView
         String notaBuscada = tvNota.getText().toString();
-        // notapocicionada
-        String posicionNota = Notapocicionada;
 
-        // Comparar los dos valores
-        if (posicionNota.contains(notaBuscada)) {
-            Correcto();
+        // Comparar la nota actual con la posición detectada
+        if (Notapocicionada != null && Notapocicionada.equals(notaBuscada)) {
+            // Si la nota está en la posición correcta, hacer lo siguiente
+            findViewById(getResources().getIdentifier(Notapocicionada, "id", getPackageName()))
+                    .setBackgroundColor(ContextCompat.getColor(this, android.R.color.holo_green_light)); // Cambiar color a verde
+
+            // Mover la nota a su posición inicial
+            ivNota.setX(posInicialX);
+            ivNota.setY(posInicialY);
+
+            // Generar una nueva nota aleatoria
+            mostrarNotaAleatoria();
         }
     }
 
-    private void Correcto() {
-        // Mover la nota de vuelta a su posición inicial (usando las posiciones iniciales guardadas)
-        ivNota.setX(posInicialX);
-        ivNota.setY(posInicialY);
-
-        // Generar una nueva nota aleatoria y mostrarla en el TextView
-        mostrarNotaAleatoria();
-    }
-
-
-    // Méta verificar si el `View` está en la posición correcta
+    // Método para verificar si un View está en una posición específica
     private boolean isViewAtPosition(View nota, int idView) {
         // Obtener las coordenadas globales de la nota
         int[] notaLocation = new int[2];
@@ -148,20 +149,15 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         // Comparar la posición de la nota con la posición de la línea/espacio
         int notaX = notaLocation[0];  // Coordenada X de la nota
         int notaY = notaLocation[1];  // Coordenada Y de la nota
-       // notaY=notaY+5;
-
 
         int posX = positionLocation[0];  // Coordenada X del View
         int posY = positionLocation[1];  // Coordenada Y del View
 
-        // Definir un margen de tolerancia (puedes ajustarlo según sea necesario)
+        // Definir un margen de tolerancia
         int tolerance = 150;
 
         // Verificar si la posición de la nota está dentro de los límites de la línea o espacio
         return (notaX >= posX - tolerance && notaX <= posX + positionView.getWidth() + tolerance)
                 && (notaY >= posY - tolerance && notaY <= posY + positionView.getHeight() + tolerance);
     }
-
-
-
 }
