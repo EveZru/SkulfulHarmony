@@ -93,23 +93,27 @@
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="90dp">
+                android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/rv_homeclasesoriginales"
+                    android:layout_width="90dp"
                     android:layout_height="match_parent" />
             </HorizontalScrollView>
 
         </LinearLayout>
 
     </ScrollView>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+       />
     <!-- Barra de navegación fija en la parte inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/barra_navegacion"
+        android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:background="@color/gray2"
         app:menu="@menu/barra_navegacionprincipal"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"

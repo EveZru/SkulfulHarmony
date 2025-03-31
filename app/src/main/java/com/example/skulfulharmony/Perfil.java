@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -65,7 +67,9 @@ public class Perfil extends AppCompatActivity {
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
-
+        //barra de navegacion
+        BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
+        bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
 
         // Cargar datos del usuario
         cargarDatosUsuario();
@@ -96,6 +100,48 @@ public class Perfil extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        if (bottomNavigationView1 != null) {
+            // Configurar el listener para los ítems seleccionados
+            bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.it_homme) {
+                    //Navegar a la actividad de home
+                    startActivity(new Intent(Perfil.this, Home.class));
+                    return true;
+                } else if (itemId == R.id.it_new) {
+                    // Navegar a la actividad para crear un curso
+                    startActivity(new Intent(Perfil.this, CrearCurso.class));
+                    return true;
+                } else if (itemId == R.id.it_seguidos) {
+                    // Navegar a la actividad para ver la Biblioteca
+                    startActivity(new Intent(Perfil.this, Biblioteca.class));
+                    return true;
+                } else if (itemId == R.id.it_perfil) {
+                    // ya estamos en perfil
+                    return true;
+                }
+                return false;
+            });
+            // Establecer el ítem seleccionado al inicio (si es necesario)
+            bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
+        } else {
+            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
+        }
+
+
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
+
+        // Establece el ítem seleccionado
+        if (this instanceof Perfil) {
+            bottomNavigationView.setSelectedItemId(R.id.it_perfil);
+
+        }
     }
 
     private void cargarDatosUsuario() {

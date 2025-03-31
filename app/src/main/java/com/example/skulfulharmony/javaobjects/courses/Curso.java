@@ -29,12 +29,24 @@ public class Curso {
     public Dificultad dificultad;
 
     public Curso(String titulo, Usuario creador, Instrumento instrumento, Genero genero, Dificultad dificultad) {
-        this.titulo = titulo;
+       /* this.titulo = titulo;
         this.creador = creador;
         this.instrumento = instrumento;
         this.genero = genero;
         this.dificultad = dificultad;
-        this.fechaCreacion = new Date();
+        this.fechaCreacion = new Date();*/
+        this.titulo = titulo;
+        this.creador = creador!= null ? creador : null;;
+        this.instrumento = instrumento != null ? instrumento : null;  // Si no se pasa un objeto, se usa null
+        this.genero = genero != null ? genero : null;
+        this.dificultad = dificultad != null ? dificultad : null;
+
+        /* this.titulo = titulo;
+        this.imagenUrl = imagenUrl;
+        this.creador = creador;
+        this.instrumento = instrumento != null ? instrumento : null;  // Si no se pasa un objeto, se usa null
+        this.genero = genero != null ? genero : null;
+        this.dificultad = dificultad != null ? dificultad : null;*/
     }
 
     public Image getImagen() {

@@ -3,6 +3,7 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
 import android.content.Intent;
 import android.widget.ArrayAdapter;
@@ -40,10 +41,12 @@ public class CrearCurso extends AppCompatActivity {
         btnSubirCurso = findViewById(R.id.btn_subir_curso);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        // Opciones para los Spinners
-        String[] instrumentos = {"Flauta", "Piano", "Guitarra", "Otro"};
-        String[] niveles = {"Fácil", "Difícil", "Normal"};
-        String[] generos = {"Rock", "Clásica", "Pop", "Otro"};
+
+        String[] instrumentos = {"Guitarra", "Bajo", "Flauta", "Trompeta", "Batería",
+                "Piano", "Ukelele", "Violin", "Canto","Otro"};
+        String[] niveles = {"Principiante", "Intermedio","Avanzado"};
+        String[] generos = {"Pop", "Rock", "Hiphop/Rap", "Electronica", "Jazz", "Blues",
+                "Reggaeton", "Reggae", "Clasica", "Coutry", "Metal", "Folk", "Independiente"};
 
         setSpinnerAdapter(spInstrumento, instrumentos);
         setSpinnerAdapter(spNivel, niveles);
