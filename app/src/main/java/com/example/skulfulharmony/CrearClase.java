@@ -34,7 +34,7 @@ public class CrearClase extends AppCompatActivity {
         btn_subirpregunta = findViewById(R.id.btn_subir_pregunta);
         containerOpciones = findViewById(R.id.container_opciones);
 
-        EdgeToEdge.enable(this);  // Esto debe ir después de setContentView()
+        EdgeToEdge.enable(this);
 
         // Asegurar que el primer campo tenga el listener
         if (containerOpciones.getChildCount() > 0) {
@@ -45,7 +45,7 @@ public class CrearClase extends AppCompatActivity {
             }
         }
 
-        btn_subirpregunta.setOnClickListener(v -> addNewOptionIfNeeded());
+      //  btn_subirpregunta.setOnClickListener(v -> addNewOptionIfNeeded());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

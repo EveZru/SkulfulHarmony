@@ -71,10 +71,10 @@ public class CrearCurso extends AppCompatActivity {
             return insets;
         });*/
 
-
-        setSpinnerAdapter(spInstrumento, instrumentos);
-        setSpinnerAdapter(spNivel, niveles);
-        setSpinnerAdapter(spGenero, generos);
+//
+//        setSpinnerAdapter(spInstrumento, instrumentos);
+//        setSpinnerAdapter(spNivel, niveles);
+//        setSpinnerAdapter(spGenero, generos);
 
 
 

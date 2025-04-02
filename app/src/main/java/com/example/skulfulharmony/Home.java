@@ -50,7 +50,7 @@ public class Home extends AppCompatActivity {
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
 
-       Intent intent2 = new Intent(Home.this, Biblioteca.class);
+       Intent intent2 = new Intent(Home.this, CrearClase.class);
         startActivity(intent2);
 
         //-------Parte de los cursos de clases originales -------
