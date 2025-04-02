@@ -59,6 +59,8 @@ public class CrearCurso extends AppCompatActivity {
             if (NombreNuevoCurso.isEmpty()) {
                 Toast.makeText(CrearCurso.this, "Ingresa un nombre para el curso", Toast.LENGTH_SHORT).show();
             } else {
+
+
                 Toast.makeText(CrearCurso.this, "Creando clase...", Toast.LENGTH_SHORT).show();
 
                 // Aquí va el código para subir el curso a la base de datos

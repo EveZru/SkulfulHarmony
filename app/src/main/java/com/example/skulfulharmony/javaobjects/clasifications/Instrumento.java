@@ -10,6 +10,9 @@ public class Instrumento {
         this.titulo = titulo;
         this.imagen = imagen;
     }
+    public Instrumento(String titulo){
+        this.titulo = titulo;
+    }
 
     public String getTitulo() {
         return titulo;
