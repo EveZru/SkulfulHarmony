@@ -40,7 +40,7 @@ public class CrearCurso extends AppCompatActivity {
         spGenero = findViewById(R.id.sp_Genero);
         btnSubirCurso = findViewById(R.id.btn_subir_curso);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
+/*
 
         String[] instrumentos = {"Guitarra", "Bajo", "Flauta", "Trompeta", "Batería",
                 "Piano", "Ukelele", "Violin", "Canto","Otro"};
@@ -50,7 +50,7 @@ public class CrearCurso extends AppCompatActivity {
 
         setSpinnerAdapter(spInstrumento, instrumentos);
         setSpinnerAdapter(spNivel, niveles);
-        setSpinnerAdapter(spGenero, generos);
+        setSpinnerAdapter(spGenero, generos);*/
 
         //  subir curso
         btnSubirCurso.setOnClickListener(view -> {
