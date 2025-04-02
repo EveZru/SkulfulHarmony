@@ -1,11 +1,9 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
-import android.media.Image;
-
 import com.example.skulfulharmony.javaobjects.clasifications.Dificultad;
 import com.example.skulfulharmony.javaobjects.clasifications.Genero;
 import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
-import com.example.skulfulharmony.javaobjects.clustering.ClusterClases;
+import com.example.skulfulharmony.javaobjects.clustering.ClusterCursos;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 
@@ -14,17 +12,52 @@ import java.util.List;
 
 public class Curso {
     private Integer idCurso;
-    private Image imagen;
+    private String imagen;
     private String titulo;
     private String descripcion;
     private List<Clase> clases;
     private Usuario creador;
     private List<Usuario> seguidores;
     private List<Comentario> comentarios;
-    private ClusterClases cluster;
+    private ClusterCursos cluster;
     private CalificacionCurso calificacion;
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
     private Date fechaCreacion;
+
+    public Instrumento getInstrumento() {
+        return instrumento;
+    }
+
+    public void setInstrumento(Instrumento instrumento) {
+        this.instrumento = instrumento;
+    }
+
     public Instrumento instrumento;
+
+    public Genero getGenero() {
+        return genero;
+    }
+
+    public void setGenero(Genero genero) {
+        this.genero = genero;
+    }
+
+    public Dificultad getDificultad() {
+        return dificultad;
+    }
+
+    public void setDificultad(Dificultad dificultad) {
+        this.dificultad = dificultad;
+    }
+
     public Genero genero;
     public Dificultad dificultad;
 
@@ -34,14 +67,28 @@ public class Curso {
         this.instrumento = instrumento;
         this.genero = genero;
         this.dificultad = dificultad;
-        this.fechaCreacion = new Date();
+    }
+    public Curso(String titulo, Usuario creador, String imagen, Instrumento instrumento, Genero genero, Dificultad dificultad) {
+        this.titulo = titulo;
+        this.creador = creador;
+        this.imagen = imagen;
+        this.instrumento = instrumento;
+        this.genero = genero;
+        this.dificultad = dificultad;
     }
 
-    public Image getImagen() {
+    public Curso(Integer idCurso, String imagen, String titulo, Date fechaCreacion) {
+        this.idCurso = idCurso;
+        this.imagen = imagen;
+        this.titulo = titulo;
+        this.fechaCreacion = fechaCreacion;
+    }
+
+    public String getImagen() {
         return imagen;
     }
 
-    public void setImagen(Image imagen) {
+    public void setImagen(String imagen) {
         this.imagen = imagen;
     }
 
@@ -61,11 +108,11 @@ public class Curso {
         this.titulo = titulo;
     }
 
-    public ClusterClases getCluster() {
+    public ClusterCursos getCluster() {
         return cluster;
     }
 
-    public void setCluster(ClusterClases cluster) {
+    public void setCluster(ClusterCursos cluster) {
         this.cluster = cluster;
     }
 

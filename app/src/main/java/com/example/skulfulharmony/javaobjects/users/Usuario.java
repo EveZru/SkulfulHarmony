@@ -1,10 +1,11 @@
 package com.example.skulfulharmony.javaobjects.users;
 
 import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
+import com.example.skulfulharmony.javaobjects.clustering.GestionClustering;
+import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
-import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaInicio;
 
 import java.time.LocalTime;
@@ -25,6 +26,7 @@ public class Usuario {
     //ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
     private List<Curso> cursosSeguidos;
+    private GestionClustering gestionClustering;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
     private List<PreguntaInicio> preguntasInicio;
@@ -42,6 +44,12 @@ public class Usuario {
         this.nombre = nombre;
         this.correo = correo;
         this.user = user;
+    }
+
+    public Usuario(String nombre, String correo, GestionClustering gestionClustering) {
+        this.nombre = nombre;
+        this.correo = correo;
+        this.gestionClustering = gestionClustering;  // Inyectar GestionClustering
     }
 
     public void actualizarPreguntasInicio(List<PreguntaInicio> todasLasPreguntas) {
@@ -120,5 +128,16 @@ public class Usuario {
             this.instrumento = instrumento;
         }
 
+    public List<Curso> getHistorialCursos() {
+        return historialCursos;
+    }
 
+    public void setHistorialCursos(List<Curso> historialCursos) {
+        this.historialCursos = historialCursos;
+    }
+
+    public List<Curso> obtenerCursosRecomendados() {
+        RecomendacionDeUsuario recomendacion = new RecomendacionDeUsuario(new RanqueadorCluster(), gestionClustering);
+        return recomendacion.generarRecomendaciones(this);
+    }
 }
