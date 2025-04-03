@@ -1,12 +1,15 @@
 package com.example.skulfulharmony.adapters;
 
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.skulfulharmony.javaobjects.miscellaneous.Pregunta;
+import com.example.skulfulharmony.R;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class AdapterPreguntasDeClasesOriginales extends RecyclerView.Adapter<Ada
         // Métodos del adaptador
         @Override
         public PreguntaViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pregunta, parent, false);
+            View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.holder_preguntasinicio, parent, false);
             return new PreguntaViewHolder(vista);
         }
 

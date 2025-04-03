@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Curso {
     private Integer idCurso;
-    private Image imagen;
+    private String imagen;
     private String titulo;
     private String descripcion;
     private List<Clase> clases;
@@ -26,6 +26,12 @@ public class Curso {
     private CalificacionCurso calificacion;
 
 
+    public Curso(Integer idCurso,String titulo, String imagen, Date fechaCreacion){
+        this.idCurso = idCurso;
+        this.titulo = titulo;
+        this.imagen = imagen;
+        this.fechaCreacion = fechaCreacion;
+    }
 
     public Date getFechaCreacion() {
         return fechaCreacion;
@@ -88,11 +94,11 @@ public class Curso {
         this.dificultad = dificultad != null ? dificultad : null;*/
     }
 
-    public Image getImagen() {
+    public String getImagen() {
         return imagen;
     }
 
-    public void setImagen(Image imagen) {
+    public void setImagen(String imagen) {
         this.imagen = imagen;
     }
 
