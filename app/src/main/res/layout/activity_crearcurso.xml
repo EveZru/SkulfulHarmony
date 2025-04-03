@@ -21,10 +21,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5">
 
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/iv_fotocurso"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@color/cardview_dark_background"
+            android:src="@drawable/img_encabezado"
+            android:contentDescription="Seleccionar imagen"
+            android:clickable="true"
+            android:focusable="true"/>
+
+
         <EditText
             android:id="@+id/et_nombre_nuevo_curso"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:hint="Nombre del curso"
             android:layout_margin="10dp"
             android:padding="8dp" />
@@ -44,8 +57,8 @@
                />
             <Spinner
                 android:id="@+id/sp_Instrumento"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
                 android:layout_margin="9dp" />
 
 
@@ -64,8 +77,8 @@
             />
         <Spinner
             android:id="@+id/sp_Nivel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
             android:layout_margin="9dp" />
 
 
@@ -84,8 +97,8 @@
                 />
             <Spinner
                 android:id="@+id/sp_Genero"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="48dp"
                 android:layout_margin="9dp" />
         </LinearLayout>
 
@@ -93,6 +106,7 @@
 
 
         <android.widget.Button
+            android:layout_gravity="end"
             android:id="@+id/btn_subir_curso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

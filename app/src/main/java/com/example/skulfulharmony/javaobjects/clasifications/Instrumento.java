@@ -10,9 +10,6 @@ public class Instrumento {
         this.titulo = titulo;
         this.imagen = imagen;
     }
-    public Instrumento(String titulo){
-        this.titulo = titulo;
-    }
 
     public String getTitulo() {
         return titulo;
@@ -20,5 +17,21 @@ public class Instrumento {
 
     public Image getImagen() {
         return imagen;
+    }
+
+    public Instrumento(String titulo){
+        this.titulo = titulo;
+        switch (titulo){
+            case "Principiaante":
+                this.imagen = null;
+                break;
+            case "Intermedio":
+                this.imagen = null;
+                break;
+            case "Avanzado":
+                this.imagen = null;
+                break;
+
+        }//SUPERNECESITA CORRECCION
     }
 }
