@@ -29,7 +29,7 @@ public class ClasesOriginales extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        //------------------------------------------ esto es para probar que funcionan las preguntasss localmente falta que se conecten a la bd y consigan la info
+        //------------------------------------------ esto es para probar que funcionan las preguntas localmente falta que se conecten a la bd y consigan la info
         List<PreguntaCuestionario> listaPreguntas = new ArrayList<>();
         listaPreguntas.add(new PreguntaCuestionario("¿Cuál es la capital de Francia?",
                 new ArrayList<>(Arrays.asList("París", "Madrid", "Berlín")), 0));

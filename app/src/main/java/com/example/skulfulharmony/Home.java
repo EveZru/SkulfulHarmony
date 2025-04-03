@@ -75,7 +75,7 @@ public class Home extends AppCompatActivity {
         // Crea el adaptador y establece el RecyclerView
         AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(listaCursos, this);
         recyclerView.setAdapter(adapter);
-
+//_________
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 

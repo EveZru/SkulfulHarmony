@@ -12,7 +12,7 @@ public class Dificultades {
 
     public Dificultades() {
         String []nombres = {"Principiante", "Intermedio","Avanzado"};
-        String[] Imagenes ={null, null, null, null, null,
+        Image[] Imagenes ={null, null, null, null, null,
                 null, null, null, null, null};
 
         for(int i = 0; i<= nombres.length-1; i++){//mens 1 para evitar que se salga segun yo jsjjs

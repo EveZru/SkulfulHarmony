@@ -23,7 +23,7 @@ public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<Ada
     private Context context;
     private AccessController itemView;
 
-    // private AccessController itemView;
+   // private AccessController itemView;
     public AdapterPreguntasEnClasesOriginales(List<PreguntaCuestionario> itemlist, Context context) {
         this.preginflador = LayoutInflater.from(context);
         this.preg = itemlist;

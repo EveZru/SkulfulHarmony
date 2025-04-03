@@ -81,24 +81,38 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusableInTouchMode="true"
                         android:hint="Ingresa una opción de respuesta" />
                 </LinearLayout>
             </LinearLayout>
 
             <!-- RecyclerView para mostrar preguntas agregadas -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_preguntas"
+                android:id="@+id/rv_preguntascrearclase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp" >
 
-            <android.widget.Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/third_rounder_button"
-                android:text="Subir clase"
-                android:textAllCaps="false" />
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
         </LinearLayout>
     </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+
+        >
+        <android.widget.Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/third_rounder_button"
+            android:text="Subir clase"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
 </LinearLayout>

@@ -30,7 +30,7 @@ public class CrearCuenta extends AppCompatActivity {
     private ImageButton btnGoogleCrear;
     private ImageView ivTogglePassword;
 
-    private FirebaseAuth mAuth, mu;
+    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 123;
     private boolean isPasswordVisible = false;

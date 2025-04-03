@@ -1,16 +1,20 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
+import android.media.Image;
+import android.net.Uri;
+
+import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class Clase {
 
-    private String nombreCurso;
 
     public String getImagenCurso() {
         return imagenCurso;
@@ -21,14 +25,21 @@ public class Clase {
     }
 
     private String imagenCurso;
+    private String titulo;
+    private ArrayList<String> textos = new ArrayList<>();
+    private String imagen;
+    private List<File> archivos;
+    private Uri video;
+    private List<PreguntaCuestionario> preguntas;
+    private List<Comentario> comentarios;
+    private int meGusta;
+    private Integer idCurso;
 
-    public String getTitulo() {
-        return titulo;
+    public String getNombreCurso() {
+        return nombreCurso;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    private String nombreCurso;
 
     public Date getFechaCreacion() {
         return fechaCreacion;
@@ -38,14 +49,6 @@ public class Clase {
         this.fechaCreacion = fechaCreacion;
     }
 
-    private String titulo;
-    private String textos;
-    private String imagen;
-    private List<File> archivos;
-    private String video;
-    private List<PreguntaCuestionario> preguntas;
-    private List<Comentario> comentarios;
-    private int meGusta;
     private Date fechaCreacion;
 
     public Clase(String titulo, List<PreguntaCuestionario> preguntas) {
@@ -54,18 +57,20 @@ public class Clase {
         this.fechaCreacion = new Date();
     }
 
-    public Clase(String titulo, String nombreCurso, String imagen, List<PreguntaCuestionario>  preguntaCuestionarios){
+    public Clase(String titulo, String  nombreCurso, String image, List<PreguntaCuestionario> preguntas) {
         this.titulo = titulo;
+        this.preguntas = preguntas;
+        this.fechaCreacion = new Date();
         this.nombreCurso = nombreCurso;
-        this.imagen = imagen;
-        preguntas = preguntaCuestionarios;
+        this.imagenCurso = image;
+
     }
 
-    public String getTextos() {
+    public ArrayList<String> getTextos() {
         return textos;
     }
 
-    public void setTextos(String textos) {
+    public void setTextos(ArrayList<String> textos) {
         this.textos = textos;
     }
 
@@ -85,11 +90,19 @@ public class Clase {
         this.archivos = archivos;
     }
 
-    public String getVideo() {
+    public Uri getVideo() {
         return video;
     }
 
-    public void setVideo(String video) {
+    public void setVideo(Uri video) {
         this.video = video;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 }

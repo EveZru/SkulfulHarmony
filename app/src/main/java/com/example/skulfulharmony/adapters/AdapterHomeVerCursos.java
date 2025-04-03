@@ -45,9 +45,6 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
     }
 
 
-
-
-
     @Override
     public CursoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.holder_curso_clase, parent, false);
@@ -59,9 +56,6 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
     public void onBindViewHolder(CursoViewHolder holder, int position) {
         // Obtenemos el curso de la lista
         Curso curso = listaCursos.get(position);
-
-        // Usamos la ImageView de la CardView
-
         // Asignamos el título del curso
         holder.tvTextPrincipal.setText(curso.getTitulo());
     }

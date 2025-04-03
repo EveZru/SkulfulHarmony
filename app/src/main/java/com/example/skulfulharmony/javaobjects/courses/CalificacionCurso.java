@@ -9,23 +9,12 @@ public class CalificacionCurso {
     private List<Comentario> comentarios;
     private List<Integer> estrellas;
     private float indicePopularidad;
-    private Integer puntuacion;
-    public Integer getPuntuacion() {
-        return puntuacion;
-    }
-
-    public void setPuntuacion(Integer puntuacion) {
-        this.puntuacion = puntuacion;
-    }
-
-
 
 
     public CalificacionCurso() {
         this.estrellas = new ArrayList<>();
 
     }
-
 
 
 }

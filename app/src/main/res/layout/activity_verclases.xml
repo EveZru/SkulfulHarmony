@@ -53,73 +53,7 @@
                 android:id="@+id/rv_pruntasporclase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Calificacion promedio del curso"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:background="@drawable/rounded_edit_text"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginHorizontal="10dp"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text=" x / 5"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/rounded_button"
-                    />
-                <ImageView
-                    android:id="@+id/iv_p_estrella"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_s_estrella"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_t_estrella"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_c_estrella"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_q_estrella"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
 
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_comentarios"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
