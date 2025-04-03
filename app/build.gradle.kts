@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.skulfulharmony"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.skulfulharmony"
@@ -59,6 +59,7 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.dropbox.core:dropbox-core-sdk:3.1.5")
 
 
     // Apache Commons Net (para FTP)
