@@ -13,9 +13,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
-import com.example.skulfulharmony.javaobjects.clasifications.lists.Dificultades;
-import com.example.skulfulharmony.javaobjects.clasifications.lists.Generos;
-import com.example.skulfulharmony.javaobjects.clasifications.lists.Instrumentos;
 import com.google.android.material.bottomnavigation.BottomNavigationView;  // Para BottomNavigationView
 
 
@@ -24,9 +21,6 @@ public class CrearCurso extends AppCompatActivity {
     private Spinner spInstrumento, spNivel, spGenero;
     private Button btnSubirCurso;
     private String NombreNuevoCurso;
-    private Dificultades dificultades = new Dificultades();
-    private Generos generos = new Generos();
-    private Instrumentos instrumentos = new Instrumentos();
     private DbUser dbUser = new DbUser(this);
 
     @Override

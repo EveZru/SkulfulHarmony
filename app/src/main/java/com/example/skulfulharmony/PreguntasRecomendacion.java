@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaRecomendacion;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
