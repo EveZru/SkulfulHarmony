@@ -1,35 +1,29 @@
 package com.example.skulfulharmony;
 
-import com.example.skulfulharmony.server.zip.DescomprimirZip;
 import com.example.skulfulharmony.server.zip.ComprimirZip;
-import com.example.skulfulharmony.server.config.ConfiguracionFTP;
-import com.example.skulfulharmony.server.SubirArchivos.SubirArchivo;
-import com.example.skulfulharmony.server.SubirArchivos.RecibirArchivo;
+import com.example.skulfulharmony.server.config.DropboxConfig;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.UploadErrorException;
 import android.database.Cursor;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import android.provider.MediaStore;
 
 public class Perfil extends AppCompatActivity {
 
@@ -43,14 +37,11 @@ public class Perfil extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId; // Para identificar el usuario actual
-    private static final String FTP_SERVER = "192.168.100.117";
-    private static final String FTP_USERNAME = "ftpuser";
-    private static final String FTP_PASSWORD = "Skillfull2025$";
+    private static final String ACCESS_TOKEN = "tsl.u.AFot3oRZvqPIpyuc0dF55DFNpAJPV4PvWKX1qXx0wo7f-NOkvykzr9bDiUVHPKz08iZDoRAXqV01dsKBIG-EKG-Rt-amCBsBgTaZOSHFWRov0KKUyPFJPLc32__6EhCUymW7eeKu0dpFqyT3uLxMr-up8wEpIEw1Tb3n3mLqYGGh4HdRtHiR-BXLGWnXB_iDAIscdqxQpixX1U1HDpcHJmNgF1zdoXo4841CUj5ttJZPsnG4OpVY0tjBuvf-7o25YeJLHh3v1P4XmlTJm__mEAb5HNZgyrfz-z6is6dvD-AFrnn1dVRVicrVJVhZ_JPp6OOt6PYO2eoxvOhlkitdzxtaR0I1bVFXkEUASGc7Mw24LEGxsF6FLy94W5qfmDI2n-efSZY-7YtvYzQAh7Ng3DEFFulvwMUtKtswKtcKeLsdqFRPP4Cfyj06wVmbWFawMkl6cSfjIemMjRjUWIEjJbtl6OkL74Y5myx0RIfK-CfsDb98neoIecV_kX9xtJd3mS3DTM_FOWgugjGLjBRp_FXYiS1s8S16VHP4h0_OHaOC3jmjNyE52s0FOXvTqxOv1_9IW2ZXZH8JodpAg4uO5Mx1tnkHfQX4JNr5ymmLmF1U-Vdb5_WOrAez47kHhSeU_N7rcWz1XQL1UtfVRL1ypWJPVsCRZ9kwMGpFoHhVPS7kyg4Ovz8k4-4uCDIElGmj8XHsq7FFXogZMH2owb7QynJlg6IHpqbtLrNJtvwXfhBf5veuMeWILLP9GFVl-MKLvoZHY0fCpvMhtsDm01HtfNA6WYTajkQIN2VkrKVn6qJkaJ_vdxyBxyaa79g3SSKcfizci6i-_Yu4rFC3p1Q89Q1y6Z6LpgL_nTvhcichSKUg5G3gy6kXICuk6jEwCJWbh1G13t8V5IyrvRLQYy5YEpp4pJ-_0AkBAfo4DP9bW7phkmUwwOh3pc3Rf4w8TIpDl6f88wutQiRmwX3RieU0vEBQK5v6-lX_sC8v7g2mBzv1zMgKFoXsBWaA5XjM0A4u-ZV4jlmQBWWny9rfPdEltR2hPhQPC5NSCl8kk0PaUleiGaEei25sg8hTYEgzGp7tDMduqROqlLYAP2h5r3FptdGGqgMXFhZkiep0ZIeg2_2EApiVcZjFQEAJ7fd19L9FhqKP08X9LSNs51HJbF76MVvYmcI1If4JJ-VEnpzXODYoGrj8CFs_Hk5mrUo9dPt4ZaHFwj73WIboL6SkrkRAbRiEKJi4qtdlF1J3Z8nnMMAPa0WTnHpkvrVALpT97HlfM1Lwg_UIioe5ZWjVPUDmlS5ieMIeVOL_oGBULk7VdhO6y2TeDHHEGZetwSQ9TaMelnlAkfM0lZJl1nF85rbEC7e7iP7DzrJeqk2euSdHR9e7HjU94CXleq0gyZt_4Oe_ExFnNimW3K0lVqUaRRZ_dHliSr7nwXipgDh_qeVWOzfS4Q";  // Sustituir con el access token de Dropbox
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_perfil);
 
         // Inicializar Firebase
@@ -99,13 +90,6 @@ public class Perfil extends AppCompatActivity {
         btnEliminarCuenta.setOnClickListener(v -> {
             startActivity(new Intent(Perfil.this, EliminarCuenta.class));
         });
-
-        // Ajustar el padding si es necesario
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 
     private void cargarDatosUsuario() {
@@ -153,17 +137,22 @@ public class Perfil extends AppCompatActivity {
                 ComprimirZip compressor = new ComprimirZip();
                 compressor.compressFile(archivo, archivoComprimido); // Comprimir
 
-                // Subir imagen comprimida al FTP
-                SubirArchivo subirArchivo = new SubirArchivo();
-                ConfiguracionFTP configFTP = new ConfiguracionFTP(FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, 21);
-                subirArchivo.subirArchivo(archivoComprimido, configFTP);
+                // Crear la configuración de Dropbox
+                DropboxConfig dropboxConfig = new DropboxConfig(ACCESS_TOKEN);  // Usa el access token
+                DbxClientV2 client = dropboxConfig.getClient();  // Obtiene el cliente de Dropbox
 
-                // Mostrar mensaje de éxito
-                Toast.makeText(this, "Imagen de perfil subida al servidor", Toast.LENGTH_SHORT).show();
+                // Subir imagen comprimida a Dropbox
+                try (FileInputStream fis = new FileInputStream(archivoComprimido)) {
+                    // Verifica si la ruta es correcta
+                    System.out.println("Subiendo archivo a Dropbox en /Fotos/" + archivoComprimido.getName());
+                    FileMetadata metadata = client.files().uploadBuilder("/Aplicaciones/skillfullharmony/Fotos" + archivoComprimido.getName())
+                            .uploadAndFinish(fis);
+                    Toast.makeText(this, "Imagen de perfil subida a Dropbox: " + metadata.getName(), Toast.LENGTH_SHORT).show();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error al subir la imagen a Dropbox: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
