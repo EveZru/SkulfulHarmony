@@ -3,6 +3,7 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
 import android.content.Intent;
 import android.widget.ArrayAdapter;
@@ -39,15 +40,17 @@ public class CrearCurso extends AppCompatActivity {
         spGenero = findViewById(R.id.sp_Genero);
         btnSubirCurso = findViewById(R.id.btn_subir_curso);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+/*
 
-        // Opciones para los Spinners
-        String[] instrumentos = {"Flauta", "Piano", "Guitarra", "Otro"};
-        String[] niveles = {"Fácil", "Difícil", "Normal"};
-        String[] generos = {"Rock", "Clásica", "Pop", "Otro"};
+        String[] instrumentos = {"Guitarra", "Bajo", "Flauta", "Trompeta", "Batería",
+                "Piano", "Ukelele", "Violin", "Canto","Otro"};
+        String[] niveles = {"Principiante", "Intermedio","Avanzado"};
+        String[] generos = {"Pop", "Rock", "Hiphop/Rap", "Electronica", "Jazz", "Blues",
+                "Reggaeton", "Reggae", "Clasica", "Coutry", "Metal", "Folk", "Independiente"};
 
         setSpinnerAdapter(spInstrumento, instrumentos);
         setSpinnerAdapter(spNivel, niveles);
-        setSpinnerAdapter(spGenero, generos);
+        setSpinnerAdapter(spGenero, generos);*/
 
         //  subir curso
         btnSubirCurso.setOnClickListener(view -> {
@@ -56,6 +59,8 @@ public class CrearCurso extends AppCompatActivity {
             if (NombreNuevoCurso.isEmpty()) {
                 Toast.makeText(CrearCurso.this, "Ingresa un nombre para el curso", Toast.LENGTH_SHORT).show();
             } else {
+
+
                 Toast.makeText(CrearCurso.this, "Creando clase...", Toast.LENGTH_SHORT).show();
 
                 // Aquí va el código para subir el curso a la base de datos
@@ -68,10 +73,10 @@ public class CrearCurso extends AppCompatActivity {
             return insets;
         });*/
 
-
-        setSpinnerAdapter(spInstrumento, instrumentos);
-        setSpinnerAdapter(spNivel, niveles);
-        setSpinnerAdapter(spGenero, generos);
+//
+//        setSpinnerAdapter(spInstrumento, instrumentos);
+//        setSpinnerAdapter(spNivel, niveles);
+//        setSpinnerAdapter(spGenero, generos);
 
 
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -14,11 +15,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+
+import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Home extends AppCompatActivity {
 
@@ -30,24 +40,48 @@ public class Home extends AppCompatActivity {
 
     private SQLiteDatabase localDatabase;
 
+    private List<Curso> listaCursos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+        BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
+        bottomNavigationView1.setSelectedItemId(R.id.it_homme);
 
-       Intent intent2 = new Intent(Home.this,EscribirPartiturasAct.class);
-         startActivity(intent2);
+       Intent intent2 = new Intent(Home.this, CrearClase.class);
+        startActivity(intent2);
+
+        //-------Parte de los cursos de clases originales -------
+        // Aquí creamos los objetos Curso de forma estática
+        listaCursos = new ArrayList<>();
+
+        // Ejemplo de objetos Curso
+        Curso curso1 = new Curso("Curso de Guitarra", null, null, null, null);
+        Curso curso2 = new Curso("Curso de Piano", null, null, null, null);
+        Curso curso3 = new Curso("Curso de Batería", null, null, null, null);
+
+        // Agregamos los cursos a la lista
+        listaCursos.add(curso1);
+        listaCursos.add(curso2);
+        listaCursos.add(curso3);
 
 
+        RecyclerView recyclerView = findViewById(R.id.rv_homeclasesoriginales);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+
+        // Crea el adaptador y establece el RecyclerView
+        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(listaCursos, this);
+        recyclerView.setAdapter(adapter);
 
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacionhome);
+
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -92,48 +126,47 @@ public class Home extends AppCompatActivity {
             return insets;
         });
 
-
-
-
-
-        // Configurar el listener para los ítems seleccionados
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.it_homme) {
-                // Acción para Home
-                return true;
-            } else if (itemId == R.id.it_new) {
-                // Navegar a la actividad para crear un curso
-                startActivity(new Intent(Home.this, CrearCurso.class));
-                return true;
-            } else if (itemId == R.id.it_seguidos) {
-                // Navegar a la actividad para ver los Biblioteca
-                startActivity(new Intent(Home.this, Biblioteca.class));
-                return true;
-            } else if (itemId == R.id.it_perfil) {
-                // Navegar a la actividad para buscar perfiles
-                startActivity(new Intent(Home.this, Perfil.class));
-                return true;
-            }
-
-            return false;
-
-        });
-        //bottomNavigationView.setSelectedItemId(R.id.it_homme);
-        bottomNavigationView.setSelectedItemId(R.id.it_homme);
-
-
-
+        if (bottomNavigationView1 != null) {
+            // Configurar el listener para los ítems seleccionados
+            bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                 if (itemId == R.id.it_homme) {
+                     // Acción para Home
+                     return true;
+                 } else if (itemId == R.id.it_new) {
+                     // Navegar a la actividad para crear un curso
+                     startActivity(new Intent(Home.this, CrearCurso.class));
+                     return true;
+                 } else if (itemId == R.id.it_seguidos) {
+                     // Navegar a la actividad para ver la Biblioteca
+                     startActivity(new Intent(Home.this, Biblioteca.class));
+                     return true;
+                 } else if (itemId == R.id.it_perfil) {
+                        // Navegar a la actividad para buscar perfiles
+                        startActivity(new Intent(Home.this, Perfil.class));
+                        return true;
+                    }
+                    return false;
+                });
+                // Establecer el ítem seleccionado al inicio (si es necesario)
+                bottomNavigationView1.setSelectedItemId(R.id.it_homme);
+        } else {
+            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
+        }
 
     }
     @Override
     protected void onResume() {
         super.onResume();
-        // Asegúrate de que el ítem de "Home" esté seleccionado cuando regreses a la actividad
-        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacionhome);
-        bottomNavigationView.setSelectedItemId(R.id.it_homme);  // Seleccionamos Home
+        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
+
+        // Establece el ítem seleccionado
+        if (this instanceof Home) {
+            bottomNavigationView.setSelectedItemId(R.id.it_homme);
+
+        }
     }
+
 }
 
 

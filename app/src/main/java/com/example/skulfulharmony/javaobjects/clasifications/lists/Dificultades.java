@@ -11,11 +11,11 @@ public class Dificultades {
     ArrayList<Dificultad> listaDificultades = new ArrayList<>();
 
     public Dificultades() {
-        String []nombres = {"Principiante", "Intermedio","Avanzado", "Experto"};
+        String []nombres = {"Principiante", "Intermedio","Avanzado"};
         Image[] Imagenes ={null, null, null, null, null,
                 null, null, null, null, null};
 
-        for(int i = 0; i<= nombres.length; i++){
+        for(int i = 0; i<= nombres.length-1; i++){//mens 1 para evitar que se salga segun yo jsjjs
             Dificultad n = new Dificultad(nombres[i],Imagenes[i] );
             listaDificultades.add(n);
         }

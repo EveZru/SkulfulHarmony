@@ -12,4 +12,11 @@ public class PreguntaCuestionario extends Pregunta {
         this.respuestaCorrecta = respuestaCorrecta;
     }
 
+    public Integer getRespuestaCorrecta() {
+        return respuestaCorrecta;
+    }
+
+    public void setRespuestaCorrecta(Integer respuestaCorrecta) {
+        this.respuestaCorrecta = respuestaCorrecta;
+    }
 }

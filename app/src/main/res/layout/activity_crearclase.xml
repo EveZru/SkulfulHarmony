@@ -1,112 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".CrearClase">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginHorizontal="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <android.widget.Button
                 android:id="@+id/btn_cargar_video"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="10dp"
+                android:layout_margin="10dp"
                 android:background="@color/gray1"
                 android:text="Cargar video"
                 android:textAllCaps="false" />
 
             <android.widget.Button
                 android:id="@+id/btn_cargar_archivos"
-                android:layout_width="349dp"
+                android:layout_width="match_parent"
                 android:layout_height="79dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="10dp"
+                android:layout_margin="10dp"
                 android:background="@color/gray1"
                 android:text="Cargar archivos"
                 android:textAllCaps="false" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/et_ingresar_pregunta"
-                    android:layout_width="320dp"
-                    android:layout_height="wrap_content"
-                    android:hint="Ingrese posible pregunta" />
-
-                <Button
-                    android:id="@+id/btn_subir_pregunta"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:text="."
-
-                    />
-
-            </LinearLayout>
-
+            <!-- Sección para ingresar preguntas -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <CheckBox
-                    android:id="@+id/cb_selec_opcion"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp" />
-
                 <EditText
-                    android:id="@+id/et_opcrespuesta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:hint="Ingresa una opcion de respuesta" />
+                    android:id="@+id/et_ingresar_pregunta"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Ingrese posible pregunta"
+                    android:padding="10dp" />
 
+                <Button
+                    android:id="@+id/btn_subir_pregunta"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:text="+"
+                    android:background="@android:color/holo_blue_light" />
             </LinearLayout>
 
-
+            <!-- Contenedor dinámico de opciones de respuesta -->
             <LinearLayout
+                android:id="@+id/container_opciones"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_preguntas"
+                <!-- Primera opción por defecto -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <EditText
+                        android:id="@+id/et_ingresar_respuesta"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Ingresa una opción de respuesta" />
+                </LinearLayout>
             </LinearLayout>
 
+            <!-- RecyclerView para mostrar preguntas agregadas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_preguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
             <android.widget.Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:text="Subir clase "
+                android:layout_marginTop="10dp"
                 android:background="@drawable/third_rounder_button"
+                android:text="Subir clase"
                 android:textAllCaps="false" />
-
-
         </LinearLayout>
     </ScrollView>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
