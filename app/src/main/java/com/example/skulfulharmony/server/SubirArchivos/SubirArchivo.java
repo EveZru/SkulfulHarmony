@@ -41,22 +41,23 @@ public class SubirArchivo {
             // Determinar la carpeta de destino en Dropbox
             String carpetaDestino = obtenerCarpetaPorTipo(archivoComprimido);
 
-            try (FileInputStream fis = new FileInputStream(archivoComprimido)) {
-                // Subir archivo comprimido a Dropbox
-                FileMetadata metadata = client.files()
-                        .uploadBuilder(carpetaDestino + "/" + archivoComprimido.getName())
-                        .uploadAndFinish(fis);
-
-                // Generar URL pública (simulación, debes cambiarlo por la API correcta)
-                String urlImagen = "https://www.dropbox.com/home" + carpetaDestino + "/" + archivoComprimido.getName();
-
-                // Devolver la URL en el hilo principal
-                new Handler(Looper.getMainLooper()).post(() -> onSuccess.onSuccess(urlImagen));
-
-            } catch (UploadErrorException | DbxException | IOException e) {
-                e.printStackTrace();
-                new Handler(Looper.getMainLooper()).post(() -> onFailure.onFailure(e));
-            }
+//            try (FileInputStream fis = new FileInputStream(archivoComprimido)) {
+//                // Subir archivo comprimido a Dropbox
+//                FileMetadata metadata = client.files()
+//                        .uploadBuilder(carpetaDestino + "/" + archivoComprimido.getName())
+//                        .uploadAndFinish(fis);
+//
+//                // Generar URL pública (simulación, debes cambiarlo por la API correcta)
+//                String urlImagen = "https://www.dropbox.com/home" + carpetaDestino + "/" + archivoComprimido.getName();
+//
+//                // Devolver la URL en el hilo principal
+//                new Handler(Looper.getMainLooper()).post(() -> onSuccess.onSuccess(urlImagen));
+//
+//            }
+//            catch (UploadErrorException | DbxException | IOException e) {
+//                e.printStackTrace();
+//                new Handler(Looper.getMainLooper()).post(() -> onFailure.onFailure(e));
+//            }
         }).start();
     }
 

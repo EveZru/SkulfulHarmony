@@ -22,6 +22,16 @@
             android:padding="8dp"
             android:src="@drawable/mas_logo"
             android:contentDescription="Toolbar Icon" />
+
+        <!-- Botón que se añadirá para navegar al tiempo del usuario -->
+        <Button
+            android:id="@+id/btnVerTiempoUsuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ver Tiempo"
+            android:textColor="@android:color/white"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout

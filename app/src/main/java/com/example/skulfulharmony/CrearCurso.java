@@ -133,7 +133,7 @@ public class CrearCurso extends AppCompatActivity {
                 startActivity(new Intent(CrearCurso.this, Biblioteca.class));
                 return true;
             } else if (itemId == R.id.it_perfil) {
-                startActivity(new Intent(CrearCurso.this, Busqueda.class));
+                startActivity(new Intent(CrearCurso.this, Perfil.class));
                 return true;
             }
 

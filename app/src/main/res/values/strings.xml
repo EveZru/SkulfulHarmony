@@ -57,11 +57,15 @@
     <string name="imagen_perfil_desc">Imagen de perfil del usuario</string>
     <string name="editar_informacion_desc">Sección para editar información del perfil</string>
 
+    <string name="perfil_usuario">Perfil del Usuario</string>
+    <string name="tiempo_actividad">Tiempo de actividad: %1$d minutos</string>  <!-- Formato correcto con placeholder -->
+    <string name="actualizar">Actualizar</string>
+    <string name="error_cargando_datos">Error al cargar los datos</string>  <!-- Cadena de error definida -->
+
     <!-- Descripción para los EditText -->
     <string name="et_nombrecambiar_desc">Campo para cambiar el nombre de usuario</string>
     <string name="et_nuevadescripcion_desc">Campo para cambiar la descripción del usuario</string>
     <string name="btn_cambiardatos_desc">Botón para publicar los cambios realizados en el perfil</string>
     <string name="instruccionesescribirpartituras">colaco la imagen dejando la parte \\n inferior en donde corresponda</string>
-
 
 </resources>

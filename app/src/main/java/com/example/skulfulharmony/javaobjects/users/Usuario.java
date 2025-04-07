@@ -29,7 +29,7 @@ public class Usuario {
     private GestionClustering gestionClustering;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
-    private List<PreguntaInicio> preguntasInicio;
+    //private List<PreguntaInicio> preguntasInicio;
     private RecomendacionDeUsuario recomendacionesUsuario;
     private List<Date> horasEntrada;
     private LocalTime tiempoDeNotificacion;
@@ -52,7 +52,7 @@ public class Usuario {
         this.gestionClustering = gestionClustering;  // Inyectar GestionClustering
     }
 
-    public void actualizarPreguntasInicio(List<PreguntaInicio> todasLasPreguntas) {
+    /*public void actualizarPreguntasInicio(List<PreguntaInicio> todasLasPreguntas) {
         Date haceDosSemanas = new Date(System.currentTimeMillis() - 14L * 24 * 60 * 60 * 1000);
         this.preguntasInicio = new ArrayList<>();
         for (PreguntaInicio pregunta : todasLasPreguntas) {
@@ -60,7 +60,7 @@ public class Usuario {
                 this.preguntasInicio.add(pregunta);
             }
         }
-    }
+    }*/
 
     public void actualizarTiempoNotificaciones() {
         Date haceDosSemanas = new Date(System.currentTimeMillis() - 14L * 24 * 60 * 60 * 1000);
