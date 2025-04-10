@@ -1,20 +1,37 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
-import android.media.Image;
-
-import com.example.skulfulharmony.javaobjects.clasifications.Dificultad;
-import com.example.skulfulharmony.javaobjects.clasifications.Genero;
-import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 //import com.example.skulfulharmony.javaobjects.clustering.ClusterClases;
 import com.example.skulfulharmony.javaobjects.clustering.ClusterCursos;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Curso {
+
+    public Curso() {
+        // Initialize collections and maps to avoid NullPointerException
+        this.clases = new ArrayList<>();
+        this.seguidores = new ArrayList<>();
+        this.comentarios = new ArrayList<>();
+        this.instrumento = new HashMap<>();
+
+        this.genero = new HashMap<>();
+        this.dificultad = new HashMap<>();
+    }
+    public Integer getId() {
+        return idCurso;
+    }
+
+    public void setId(Integer id) {
+        this.idCurso = id;
+    }
+
     private Integer idCurso;
     private String imagen;
     private String titulo;
@@ -26,19 +43,36 @@ public class Curso {
     private ClusterCursos cluster;
     private CalificacionCurso calificacion;
     private Date fechaCreacion;
-    private Timestamp fechaCreacionf;
-    private Instrumento instrumento;
-    private Genero genero;
-    private Dificultad dificultad;
 
-    public Curso(Integer idCurso,String titulo, String imagen, Date fechaCreacion){
-        this.idCurso = idCurso;
+    public Timestamp getFechaCreacionf() {
+        return fechaCreacionf;
+    }
+
+    public void setFechaCreacionf(Timestamp fechaCreacionf) {
+        this.fechaCreacionf = fechaCreacionf;
+    }
+
+    public String getCreador() {
+        return creador;
+    }
+
+    public void setCreador(String creador) {
+        this.creador = creador;
+    }
+
+    private Timestamp fechaCreacionf;
+    private Map<String,String> instrumento;
+    private Map<String,String> genero;
+    private Map<String,String> dificultad;
+
+    public Curso(Integer id, String titulo, String imagen, Date fechaCreacion){
+        this.idCurso = id;
         this.titulo = titulo;
         this.imagen = imagen;
         this.fechaCreacion = fechaCreacion;
     }
 
-    public Curso(String titulo, String creador, Instrumento instrumento, Genero genero, Dificultad dificultad) {
+    public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad) {
        /* this.titulo = titulo;
         this.creador = creador;
         this.instrumento = instrumento;
@@ -59,7 +93,7 @@ public class Curso {
         this.dificultad = dificultad != null ? dificultad : null;*/
     }
 
-    public Curso(String titulo, String creador, Instrumento instrumento, Genero genero, Dificultad dificultad, String imagen, Timestamp fechaCreacionf) {
+    public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad, String imagen, Timestamp fechaCreacionf) {
         this.titulo = titulo;
         this.creador = creador;
         this.instrumento = instrumento;
@@ -103,20 +137,20 @@ public class Curso {
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-    public Dificultad getDificultad() {
+    public Map<String,String> getDificultad() {
         return dificultad;
     }
-    public void setDificultad(Dificultad dificultad) { this.dificultad = dificultad; }
-    public Genero getGenero() {
+    public void setDificultad(Map<String,String> dificultad) { this.dificultad = dificultad; }
+    public Map<String,String> getGenero() {
         return genero;
     }
-    public void setGenero(Genero genero) {
+    public void setGenero(Map<String,String> genero) {
         this.genero = genero;
     }
-    public Instrumento getInstrumento() {
+    public Map<String,String> getInstrumento() {
         return instrumento;
     }
-    public void setInstrumento(Instrumento instrumento) {
+    public void setInstrumento(Map<String,String> instrumento) {
         this.instrumento = instrumento;
     }
 }

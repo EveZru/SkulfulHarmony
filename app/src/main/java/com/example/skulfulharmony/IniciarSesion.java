@@ -25,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Date;
+
 public class IniciarSesion extends AppCompatActivity {
 
     private EditText etCorreoOUser, etContraseña_Iniciar;
@@ -103,7 +105,7 @@ public class IniciarSesion extends AppCompatActivity {
                                 DbUser dbUser = new DbUser(this);
 
                                 if(!dbUser.existUser(user.getEmail())){
-                                    Usuario usuario = new Usuario(user.getDisplayName(),user.getEmail());
+                                    Usuario usuario = new Usuario(email,password, "Perfil xd", new Date(System.currentTimeMillis()));
                                     if(dbUser.insertUser(usuario) == 0){
                                         Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
                                     }

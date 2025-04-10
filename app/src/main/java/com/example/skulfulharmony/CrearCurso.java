@@ -23,9 +23,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
-import com.example.skulfulharmony.javaobjects.clasifications.Dificultad;
-import com.example.skulfulharmony.javaobjects.clasifications.Genero;
-import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.server.SubirArchivos.SubirArchivo;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,6 +38,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CrearCurso extends AppCompatActivity {
@@ -145,9 +144,15 @@ public class CrearCurso extends AppCompatActivity {
     private void subir() {
         String correo = dbUser.getCorreoUser();
         String titulo = etNombreNuevoCurso.getText().toString();
-        Instrumento instrumento = new Instrumento(spInstrumento.getSelectedItem().toString());
-        Genero genero = new Genero(spGenero.getSelectedItem().toString());
-        Dificultad dificultad = new Dificultad(spNivel.getSelectedItem().toString());
+
+        Map<String,String> instrumento = new HashMap<>();
+        Map<String,String> genero = new HashMap<>();
+        Map<String,String> dificultad = new HashMap<>();
+
+        instrumento.put(spInstrumento.getSelectedItem().toString(),null);
+        genero.put(spGenero.getSelectedItem().toString(),null);
+        dificultad.put(spNivel.getSelectedItem().toString(),null);
+
         Calendar c = Calendar.getInstance();
         Timestamp fechaCreacion = new Timestamp(c.getTime());
 
@@ -170,17 +175,22 @@ public class CrearCurso extends AppCompatActivity {
         String nombreImagen = correo + "_" + titulo.replaceAll("\\s+", "_") + ".jpg";
         File imagenFile = new File(imagePath);
 
+        Curso curso = new Curso(titulo, correo, instrumento, genero, dificultad, nombreImagen, fechaCreacion);
+        curso.setCreador(correo);
+        curso.setFechaCreacionf(new Timestamp(new Date(System.currentTimeMillis())));
+
+        cursosRef.set(curso).addOnSuccessListener(aVoid -> {
+            Toast.makeText(CrearCurso.this, "Curso creado exitosamente", Toast.LENGTH_SHORT).show();
+            finish();
+        }).addOnFailureListener(e -> Toast.makeText(CrearCurso.this, "Error al subir el curso", Toast.LENGTH_SHORT).show());
+
         SubirArchivo subirArchivo = new SubirArchivo();
         subirArchivo.subirArchivo(imagenFile, ACCESS_TOKEN,
                 new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String urlImagen) {
                         // Una vez subida la imagen, guardar los datos del curso en Firestore
-                        Curso curso = new Curso(titulo, correo, instrumento, genero, dificultad, urlImagen, fechaCreacion);
-                        cursosRef.set(curso).addOnSuccessListener(aVoid -> {
-                            Toast.makeText(CrearCurso.this, "Curso creado exitosamente", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }).addOnFailureListener(e -> Toast.makeText(CrearCurso.this, "Error al subir el curso", Toast.LENGTH_SHORT).show());
+
                     }
                 },
                 new OnFailureListener() {

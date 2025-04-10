@@ -1,7 +1,5 @@
 package com.example.skulfulharmony.javaobjects.users;
 
-import com.example.skulfulharmony.javaobjects.clasifications.Dificultad;
-
 import java.util.Map;
 
 public class ProgresoUsuario {
@@ -9,6 +7,6 @@ public class ProgresoUsuario {
     private int respuestasCorrectas;
     private int respuestasIncorrectas;
     private float aciertosPorTiempo;
-    private Map<Dificultad, Integer> dificultadesIngresadasPorTiempo;
+    private Map<Map<String,String>, Integer> dificultadesIngresadasPorTiempo;
     private float promedioMejora;
 }

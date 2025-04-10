@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
 
     <application
         android:allowBackup="true"
@@ -20,9 +22,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
-        <activity
-            android:name=".vertiempousuario"
-            android:exported="false" />
         <activity
             android:name=".VerMiClase"
             android:exported="false" />
@@ -78,9 +77,13 @@
             android:name=".RecuperarContrasena"
             android:exported="false" /> <!-- Pantalla de inicio de sesión -->
         <activity
+
             android:name=".IniciarSesion"
             android:exported="false"
-            android:noHistory="true" /> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
+            android:noHistory="true"
+            >
+
+        </activity> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
         <!-- Pantalla de creación de cuenta -->
         <activity
             android:name=".CrearCuenta"
@@ -90,19 +93,19 @@
         <activity
             android:name=".Home"
             android:exported="true"
-            android:launchMode="singleTask"> <!-- Evita múltiples instancias de Home -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
+            android:launchMode="singleTask">
 
+            <!-- Intent para manejar el callback de OAuth -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="miapp" android:host="oauth" android:pathPrefix="/callback" />
+            </intent-filter>
 
-                <data
-                    android:host="oauth"
-                    android:pathPrefix="/callback"
-                    android:scheme="miapp" />
-
+            <!-- Intent principal que genera el ícono de la app -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

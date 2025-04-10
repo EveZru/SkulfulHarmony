@@ -1,6 +1,5 @@
 package com.example.skulfulharmony.javaobjects.users;
 
-import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.clustering.GestionClustering;
 import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
@@ -13,6 +12,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Usuario {
 
@@ -21,7 +21,7 @@ public class Usuario {
     private String nombre;
     private String user;
     private String correo;
-    private Instrumento instrumento;
+    private Map<String,String> instrumento;
 
     //ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
@@ -33,6 +33,14 @@ public class Usuario {
     private RecomendacionDeUsuario recomendacionesUsuario;
     private List<Date> horasEntrada;
     private LocalTime tiempoDeNotificacion;
+    private Date ultimoAcceso;
+
+    public Usuario(String nombre, String correo, String imagen, Map<String, String> instrumento) {
+        this.nombre = nombre;
+        this.correo = correo;
+        this.imagen = imagen;
+        this.instrumento = instrumento;
+    }
 
     public Usuario(String nombre, String correo) {
         this.nombre = nombre;
@@ -44,6 +52,13 @@ public class Usuario {
         this.nombre = nombre;
         this.correo = correo;
         this.user = user;
+    }
+
+    public Usuario(String nombre, String correo, String imagen, Date ultimoAcceso){
+        this.nombre = nombre;
+        this.correo = correo;
+        this.imagen = imagen;
+        this.ultimoAcceso = ultimoAcceso;
     }
 
     public Usuario(String nombre, String correo, GestionClustering gestionClustering) {
@@ -120,11 +135,11 @@ public class Usuario {
             this.correo = correo;
         }
 
-            public Instrumento getInstrumento () {
+            public Map<String,String> getInstrumento () {
             return instrumento;
         }
 
-            public void setInstrumento (Instrumento instrumento){
+            public void setInstrumento (Map<String,String> instrumento){
             this.instrumento = instrumento;
         }
 

@@ -1,6 +1,5 @@
 package com.example.skulfulharmony.javaobjects.clustering;
 
-import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 
@@ -10,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public class RanqueadorCluster {
-    private Instrumento instrumentoPrincipal;
+    private Map<String,String> instrumentoPrincipal;
     private PuntoCentroide posicionUsuario;
 
     public void calcularInstrumentoPrincipal(List<Curso> historialCursos) {
-        Map<Instrumento, Integer> conteoInstrumentos = new HashMap<>();
+        Map<Map<String,String>, Integer> conteoInstrumentos = new HashMap<>();
         for (Curso curso : historialCursos) {
             conteoInstrumentos.put(curso.getInstrumento(), conteoInstrumentos.getOrDefault(curso.getInstrumento(), 0) + 1);
         }
@@ -41,7 +40,7 @@ public class RanqueadorCluster {
         return posicionUsuario;
     }
 
-    public Instrumento getInstrumentoPrincipal() {
+    public Map<String,String> getInstrumentoPrincipal() {
         return instrumentoPrincipal;
     }
 }

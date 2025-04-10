@@ -23,9 +23,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +46,8 @@ public class Home extends AppCompatActivity {
     private SQLiteDatabase localDatabase;
 
     private List<Curso> listaCursos;
+    private RecyclerView rv_homevercursos;
+    private AdapterHomeVerCursos adapterHomeVerCursos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +56,11 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
+        rv_homevercursos = findViewById(R.id.rv_homevercursos);
 
-//       Intent intent2 = new Intent(Home.this, CrearClase.class);
-//        startActivity(intent2);
+        rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
+        cargarCursosFirebase();
         //-------Parte de los cursos de clases originales -------
         // Aquí creamos los objetos Curso de forma estática
         listaCursos = new ArrayList<>();
@@ -70,8 +78,6 @@ public class Home extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.rv_homeclasesoriginales);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-
         // Crea el adaptador y establece el RecyclerView
         AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(listaCursos, this);
         recyclerView.setAdapter(adapter);
@@ -155,11 +161,32 @@ public class Home extends AppCompatActivity {
         }
 
     }
+
+    private void cargarCursosFirebase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference cursosRef = db.collection("cursos");
+
+        cursosRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            List<Curso> listaCursost = new ArrayList<>();
+            for (DocumentSnapshot document : queryDocumentSnapshots) {
+                Curso curso = document.toObject(Curso.class);
+                listaCursost.add(curso);
+            }
+
+            // Ahora actualiza el adaptador
+            adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
+            rv_homevercursos.setAdapter(adapterHomeVerCursos);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(Home.this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
+            Log.e("Firestore", "Error: ", e);
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
-
+        cargarCursosFirebase();
         // Establece el ítem seleccionado
         if (this instanceof Home) {
             bottomNavigationView.setSelectedItemId(R.id.it_homme);

@@ -1,24 +1,24 @@
 package com.example.skulfulharmony.javaobjects.clustering;
 
-import com.example.skulfulharmony.javaobjects.clasifications.Instrumento;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ClusterCursos {
     private String id;
 
-    public Instrumento getInstrumento() {
+    public Map<String,String> getInstrumento() {
         return instrumento;
     }
 
-    public void setInstrumento(Instrumento instrumento) {
+    public void setInstrumento(Map<String,String> instrumento) {
         this.instrumento = instrumento;
     }
 
-    private Instrumento instrumento;
+    private Map<String,String> instrumento;
 
     public PuntoCentroide getCentroide() {
         return centroide;
@@ -31,7 +31,7 @@ public class ClusterCursos {
     private PuntoCentroide centroide;
     private List<Curso> cursos;
 
-    public ClusterCursos(Instrumento instrumento, PuntoCentroide centroide) {
+    public ClusterCursos(Map<String,String> instrumento, PuntoCentroide centroide) {
         this.instrumento = instrumento;
         this.centroide = centroide;
         this.cursos = new ArrayList<>();

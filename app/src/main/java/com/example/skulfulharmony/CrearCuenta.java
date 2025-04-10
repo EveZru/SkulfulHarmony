@@ -23,6 +23,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.Date;
+
 public class CrearCuenta extends AppCompatActivity {
 
     private EditText etCorreo, etContraseña, etUser;
@@ -94,7 +96,7 @@ public class CrearCuenta extends AppCompatActivity {
 
                         DbUser dbUser = new DbUser(this);
                         if(!dbUser.existUser(email)){
-                            Usuario usuario = new Usuario(name,email);
+                            Usuario usuario = new Usuario(name,email, null, new Date(System.currentTimeMillis()));
                             if(dbUser.insertUser(usuario) == 0){
                                 Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
                             }
@@ -139,6 +141,16 @@ public class CrearCuenta extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        DbUser dbUser = new DbUser(this);
+                        if(!dbUser.existUser(acct.getEmail())){
+                            Date d = new Date();
+                            d.setTime(System.currentTimeMillis());
+                            Usuario usuario = new Usuario(acct.getDisplayName(), acct.getEmail(), acct.getPhotoUrl().toString(), d );
+                            if(dbUser.insertUser(usuario) == 0){
+                                Toast.makeText(this, "Error: Problemas al acceder a la base de datos local", Toast.LENGTH_SHORT);
+                            }
+                        }
+
                         Toast.makeText(CrearCuenta.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CrearCuenta.this, Home.class);
                         startActivity(intent);
