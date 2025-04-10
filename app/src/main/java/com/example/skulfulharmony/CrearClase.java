@@ -3,6 +3,7 @@ package com.example.skulfulharmony;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -12,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
@@ -23,15 +25,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.widget.CheckBox;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 public class CrearClase extends AppCompatActivity {
     private EditText et_pregunta;
-    private Button btn_subirpregunta,btn_subirvideo,btn_subirarchivo;
+    private Button btn_subirpregunta,btn_subirarchivo;
     private LinearLayout containerOpciones;
     private final int MAX_OPCIONES = 5;
     private final ArrayList<View> opcionesList = new ArrayList<>();
+    private ImageView vid,btn_subirvideo;
+    private Uri im = Uri.EMPTY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,8 @@ public class CrearClase extends AppCompatActivity {
         et_pregunta = findViewById(R.id.et_ingresar_pregunta);
         btn_subirpregunta = findViewById(R.id.btn_subir_pregunta);
         containerOpciones = findViewById(R.id.container_opciones);
+
+       // vid=findViewById(R.id.im_foto);
 
         EdgeToEdge.enable(this);
 
@@ -142,17 +150,26 @@ public class CrearClase extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
-    private final ActivityResultLauncher<Intent> imagePickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+
+    private ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                             Uri videoUri = result.getData().getData();
+                            im = videoUri;
                             long videoSizeInBytes = getFileSizeFromUri(videoUri);
                             long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
 
                             if (videoSizeInBytes <= maxSizeInBytes) {
 
                                 Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
+
+                                try {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), videoUri);
+                                     btn_subirvideo.setImageBitmap(bitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
                             } else {
 
                                 Toast.makeText(this, "El video supera los 200MB", Toast.LENGTH_LONG).show();
@@ -170,5 +187,12 @@ public class CrearClase extends AppCompatActivity {
         }
         return 0;
     }
+
+    private void Subirarchivo(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("video/*");
+        imagePickerLauncher.launch(intent);
+    }
+
 
 }

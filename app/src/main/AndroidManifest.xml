@@ -63,6 +63,7 @@
             android:exported="false" />
         <activity
             android:name=".CrearClase"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".EliminarCuenta"

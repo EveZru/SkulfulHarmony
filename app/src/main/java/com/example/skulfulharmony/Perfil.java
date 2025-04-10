@@ -40,6 +40,7 @@ public class Perfil extends AppCompatActivity {
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_No_Cursos, tv_DescripcionUsuario;
     private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario;
+    private ImageView btn_gotoconfiguracion ;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
