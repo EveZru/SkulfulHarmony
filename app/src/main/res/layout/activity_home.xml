@@ -36,7 +36,7 @@
                     android:layout_margin="10dp"
                     android:background="@drawable/rounded_edit_text"
                     android:hint="Buscar"
-                    android:textColor="@color/white"
+                    android:textColor="@color/gray1"
                     android:layout_weight="1"/>
 
                 <ImageView
@@ -59,7 +59,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/leyenda_continua"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
@@ -69,6 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/leyenda_recomendados"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -80,6 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/leyenda_originales"
+                    android:textColor="@color/black"
                     android:textSize="20sp" />
 
 

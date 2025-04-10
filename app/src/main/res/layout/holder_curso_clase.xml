@@ -8,6 +8,8 @@
     android:background="@drawable/third_rounder_button"
     android:layout_margin="10dp"
     app:cardCornerRadius="10dp"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="5dp"
     >
 
         <ImageView
@@ -16,6 +18,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:background="@color/gray1"
+
             />
 
 
