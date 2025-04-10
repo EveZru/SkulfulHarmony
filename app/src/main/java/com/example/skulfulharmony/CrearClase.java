@@ -1,6 +1,12 @@
 package com.example.skulfulharmony;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -9,17 +15,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.widget.CheckBox;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 public class CrearClase extends AppCompatActivity {
     private EditText et_pregunta;
-    private Button btn_subirpregunta;
+    private Button btn_subirpregunta,btn_subirvideo,btn_subirarchivo;
     private LinearLayout containerOpciones;
     private final int MAX_OPCIONES = 5;
     private final ArrayList<View> opcionesList = new ArrayList<>();
@@ -28,6 +37,9 @@ public class CrearClase extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crearclase);  // Esto debe ir primero
+
+        btn_subirarchivo=findViewById(R.id.btn_cargar_archivos);
+        btn_subirvideo=findViewById(R.id.btn_cargar_video);
 
         // Inicializar vistas después de setContentView
         et_pregunta = findViewById(R.id.et_ingresar_pregunta);
@@ -45,6 +57,7 @@ public class CrearClase extends AppCompatActivity {
             }
         }
 
+        btn_subirvideo.setOnClickListener(v-> Subirvideo());
       //  btn_subirpregunta.setOnClickListener(v -> addNewOptionIfNeeded());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -122,6 +135,40 @@ public class CrearClase extends AppCompatActivity {
             containerOpciones.removeView(lastEmptyView);
             opcionesList.remove(lastEmptyView);
         }
+    }
+    private void Subirvideo(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("video/*");
+        imagePickerLauncher.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> imagePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                            Uri videoUri = result.getData().getData();
+                            long videoSizeInBytes = getFileSizeFromUri(videoUri);
+                            long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
+
+                            if (videoSizeInBytes <= maxSizeInBytes) {
+
+                                Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                Toast.makeText(this, "El video supera los 200MB", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+            );
+    private  long getFileSizeFromUri(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+            long size = cursor.getLong(sizeIndex);
+            cursor.close();
+            return size;
+        }
+        return 0;
     }
 
 }
