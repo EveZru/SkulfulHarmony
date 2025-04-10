@@ -8,20 +8,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Ver_cursos">
-    <Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_verclasesencurso"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/gray1"
+
+                >
+                <ImageView
+                    android:id="@+id/imgen_vercurso_imagentitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:background="@drawable/degradado_holder_texts"
+
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:textSize="40sp"
+                        android:text="lllll"
+                        android:textColor="@color/white"
+                        android:layout_marginHorizontal="10dp"
+                        android:textStyle="bold"
+                        android:id="@+id/text_vercurso_title"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:textSize="20sp"
+                        android:text="lllll"
+                        android:textColor="@color/white"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:id="@+id/text_vercurso_descripcion"
+                        />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_verclasesencurso"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
 
     </ScrollView>
 

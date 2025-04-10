@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.ClasesOriginales;
 import com.example.skulfulharmony.R;
+import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
 import java.text.SimpleDateFormat;
@@ -60,7 +61,7 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
 
         // Click para abrir actividad de clases
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ClasesOriginales.class);//Corregir
+            Intent intent = new Intent(context, Ver_cursos.class);//Corregir
             intent.putExtra("idCurso", curso.getId()); // Asegúrate de tener este método
             context.startActivity(intent);
         });
@@ -81,6 +82,7 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
             cardImage = itemView.findViewById(R.id.cardImage);
             tvTextPrincipal = itemView.findViewById(R.id.tv_textprincipal);
             tvTextSegundo = itemView.findViewById(R.id.tv_textsegundo);
+
         }
     }
 }

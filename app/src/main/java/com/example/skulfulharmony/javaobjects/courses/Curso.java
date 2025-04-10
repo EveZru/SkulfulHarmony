@@ -32,6 +32,14 @@ public class Curso {
         this.idCurso = id;
     }
 
+    public Integer getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(Integer idCurso) {
+        this.idCurso = idCurso;
+    }
+
     private Integer idCurso;
     private String imagen;
     private String titulo;
