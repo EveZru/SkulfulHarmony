@@ -11,6 +11,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.os.Environment;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -41,6 +47,8 @@ public class IniciarSesion extends AppCompatActivity {
     private boolean isPasswordVisible = false;
 
     private DbUser dbUser;
+    private static final int REQUEST_PERMISSIONS_CODE = 100;
+    private static final int REQUEST_MANAGE_EXTERNAL_STORAGE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,9 @@ public class IniciarSesion extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        // Verificar y solicitar permisos al iniciar
+        requestPermissions();
 
         // Alternar visibilidad de la contraseña
         ivTogglePassword.setOnClickListener(v -> {
@@ -130,6 +141,71 @@ public class IniciarSesion extends AppCompatActivity {
 
         // Botón para ir a la recuperación de contraseña
         tvRecuperarContraseña.setOnClickListener(v -> startActivity(new Intent(IniciarSesion.this, RecuperarContrasena.class)));
+    }
+
+    // Verificar y solicitar permisos al inicio
+    private void requestPermissions() {
+        String[] permissions = {
+                android.Manifest.permission.RECORD_AUDIO,
+                android.Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.INTERNET,
+                android.Manifest.permission.ACCESS_NETWORK_STATE,
+                android.Manifest.permission.POST_NOTIFICATIONS
+        };
+
+        // Verifica si se concedieron los permisos
+        boolean allPermissionsGranted = true;
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                allPermissionsGranted = false;
+                break;
+            }
+        }
+
+        // Solicitar permisos si no están concedidos
+        if (!allPermissionsGranted) {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS_CODE);
+        }
+
+        // Solicitar MANAGE_EXTERNAL_STORAGE para Android 11 y versiones superiores
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requestManageExternalStoragePermission();
+        }
+    }
+
+    // Solicitar MANAGE_EXTERNAL_STORAGE para Android 11 y versiones superiores
+    private void requestManageExternalStoragePermission() {
+        if (!Environment.isExternalStorageManager()) {
+            // Si no tiene el permiso, le pedimos al usuario que lo habilite en la configuración
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            startActivityForResult(intent, REQUEST_MANAGE_EXTERNAL_STORAGE);
+        } else {
+            // El permiso ya está habilitado
+            Toast.makeText(this, "Permiso de almacenamiento concedido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            boolean allPermissionsGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+
+            if (allPermissionsGranted) {
+                Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Se requieren permisos para continuar", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     // Iniciar sesión con Google

@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.content.pm.PackageManager;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -37,6 +40,8 @@ public class CrearCuenta extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private boolean isPasswordVisible = false;
 
+    private static final int REQUEST_PERMISSIONS_CODE = 100;  // Nuevo código para la solicitud de permisos
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,9 @@ public class CrearCuenta extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        // Verificar y solicitar permisos al iniciar
+        requestPermissions();
 
         // Referencias de UI
         etUser = findViewById(R.id.Et_nameuser);
@@ -78,6 +86,54 @@ public class CrearCuenta extends AppCompatActivity {
             }
             isPasswordVisible = !isPasswordVisible;
         });
+    }
+
+    // Verificar y solicitar permisos al inicio
+    private void requestPermissions() {
+        String[] permissions = {
+                android.Manifest.permission.RECORD_AUDIO,
+                android.Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.INTERNET,
+                android.Manifest.permission.ACCESS_NETWORK_STATE,
+                android.Manifest.permission.POST_NOTIFICATIONS
+        };
+
+        // Verifica si se concedieron los permisos
+        boolean allPermissionsGranted = true;
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                allPermissionsGranted = false;
+                break;
+            }
+        }
+
+        // Solicitar permisos si no están concedidos
+        if (!allPermissionsGranted) {
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSIONS_CODE);
+        }
+    }
+
+    // Manejar la respuesta de la solicitud de permisos
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_CODE) {
+            boolean allPermissionsGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+
+            if (allPermissionsGranted) {
+                Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Se requieren permisos para continuar", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void registerUser() {
