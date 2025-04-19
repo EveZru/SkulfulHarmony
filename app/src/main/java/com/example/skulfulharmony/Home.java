@@ -67,8 +67,8 @@ public class Home extends AppCompatActivity {
         listaCursos = new ArrayList<>();
 
         // Ejemplo de objetos Curso
-        Curso curso1 = new Curso("Curso de Guitarra", null, null, null, null);
-        Curso curso2 = new Curso("Curso de Piano", null, null, null, null);
+        Curso curso1 = new Curso("Fundamentos", null, null, null, null);
+        Curso curso2 = new Curso("Repaso de escribir partituras ", null, null, null, null);
         Curso curso3 = new Curso("Curso de Batería", null, null, null, null);
 
         // Agregamos los cursos a la lista

@@ -11,6 +11,7 @@ import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -66,6 +67,7 @@ public class CrearClase extends AppCompatActivity {
         }
 
         btn_subirvideo.setOnClickListener(v-> Subirvideo());
+        btn_subirarchivo.setOnClickListener(v->SubirArchivo());
       //  btn_subirpregunta.setOnClickListener(v -> addNewOptionIfNeeded());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -73,6 +75,13 @@ public class CrearClase extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        View rootView=findViewById(android.R.id.content);
+       /* rootView.getWindowVisibleDisplayFrame(r);
+        int screenHeight= rootView.getRootView().getHeight();
+        int KeyPadHeiht = screenHeight- r bottom;
+        if(keypadHeight)*/
     }
 
     // Agregar TextWatcher para detectar cambios en los EditText
@@ -188,11 +197,37 @@ public class CrearClase extends AppCompatActivity {
         return 0;
     }
 
-    private void Subirarchivo(){
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("video/*");
-        imagePickerLauncher.launch(intent);
+
+    private void SubirArchivo(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("*/*");
+        String[] mimeTypes = {
+                "application/pdf",
+                "application/msword",                   // .doc
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+        };
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        intent.addCategory(Intent.CATEGORY_OPENABLE); // Para que no elija cosas que no se pueden abrir
+        filePickerLauncher.launch(intent);
     }
+    private final ActivityResultLauncher<Intent> filePickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                            Uri fileUri = result.getData().getData();
+                            long fileSizeInBytes = getFileSizeFromUri(fileUri);
+                            long maxSizeInBytes = 20 * 124 * 124; //
+
+                            if (fileSizeInBytes <= maxSizeInBytes) {
+                                Toast.makeText(this, "Archivo válido", Toast.LENGTH_SHORT).show();
+                                // Aquí puedes hacer lo que necesites con el archivo
+                            } else {
+                                Toast.makeText(this, "El archivo supera los 200MB", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+            );
+
 
 
 }

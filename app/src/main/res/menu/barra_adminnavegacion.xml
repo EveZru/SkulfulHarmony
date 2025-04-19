@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/it_homme"
+        android:icon="@drawable/mas_logo"
+        android:title="Denuncias" />
+    <item
+        android:id="@+id/it_new"
+        android:icon="@drawable/mas_logo"
+        android:title="Navegar jsjs"/>
+</menu>
