@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -18,33 +18,50 @@
         android:hardwareAccelerated="false"
         android:icon="@drawable/logo_sh"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/logo_sh"
         android:supportsRtl="true"
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
-            android:name=".admi_populares"
+            android:name=".perfil_admin"
             android:exported="false" />
+        <!-- SPLASH como launcher principal -->
         <activity
-            android:name=".admi_denuncias"
-            android:exported="false" />
+            android:name=".SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- Pantallas normales -->
         <activity
-            android:name=".VerMiClase"
-            android:exported="false" />
+            android:name=".Home"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:pathPrefix="/callback"
+                    android:scheme="miapp" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".Ver_cursos"
-            android:exported="false" />
+            android:name=".IniciarSesion"
+            android:exported="false"
+            android:noHistory="true" />
         <activity
-            android:name=".ClasesOriginales"
-            android:exported="false" />
+            android:name=".CrearCuenta"
+            android:exported="true"
+            android:noHistory="true" />
         <activity
-            android:name=".EscribirPartiturasAct"
-            android:exported="false" />
-        <activity
-            android:name=".Ver_clases"
-            android:exported="false" />
-        <activity
-            android:name=".Descanso"
+            android:name=".RecuperarContrasena"
             android:exported="false" />
         <activity
             android:name=".Perfil"
@@ -60,7 +77,7 @@
             android:exported="false" />
         <activity
             android:name=".Biblioteca"
-            android:exported="false" /> <!-- Actividades secundarias -->
+            android:exported="false" />
         <activity
             android:name=".Busqueda"
             android:exported="false" />
@@ -81,43 +98,29 @@
             android:name=".PreguntasRecomendacion"
             android:exported="false" />
         <activity
-            android:name=".RecuperarContrasena"
-            android:exported="false" /> <!-- Pantalla de inicio de sesión -->
+            android:name=".Descanso"
+            android:exported="false" />
         <activity
-            android:name=".IniciarSesion"
-            android:exported="false"
-            android:noHistory="true" /> <!-- Evita que el usuario vuelva atrás después de iniciar sesión -->
-        <!-- Pantalla de creación de cuenta -->
+            android:name=".ClasesOriginales"
+            android:exported="false" />
         <activity
-            android:name=".CrearCuenta"
-            android:exported="true"
-            android:noHistory="true" /> <!-- No permite volver atrás después de registrarse -->
-        <!-- HomeActivity ahora es la pantalla principal si el usuario ya ha iniciado sesión -->
+            android:name=".Ver_cursos"
+            android:exported="false" />
         <activity
-            android:name=".Home"
-            android:exported="true"
-            android:launchMode="singleTask">
-
-            <!-- Intent para manejar el callback de OAuth -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="oauth"
-                    android:pathPrefix="/callback"
-                    android:scheme="miapp" />
-            </intent-filter>
-
-            <!-- Intent principal que genera el ícono de la app -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".Ver_clases"
+            android:exported="false" />
+        <activity
+            android:name=".VerMiClase"
+            android:exported="false" />
+        <activity
+            android:name=".EscribirPartiturasAct"
+            android:exported="false" />
+        <activity
+            android:name=".admi_populares"
+            android:exported="false" />
+        <activity
+            android:name=".admi_denuncias"
+            android:exported="false" />
     </application>
 
 </manifest>

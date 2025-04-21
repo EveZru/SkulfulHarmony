@@ -1,26 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".admi_populares">
 
-    <Toolbar
+    <!-- Toolbar arriba -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray2">
+        android:background="@color/gray2"
+        android:layout_alignParentTop="true">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Estadisticas"
+            android:text="Estadísticas"
             android:textSize="30sp"
             android:layout_gravity="center"
-            android:textColor="@color/black"
-            />
+            android:textColor="@color/black"/>
+    </androidx.appcompat.widget.Toolbar>
 
-    </Toolbar>
+    <!-- TabLayout para elegir qué estadísticas ver -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutEstadisticas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        app:tabMode="scrollable"
+        app:tabTextColor="@color/black"
+        app:tabSelectedTextColor="@color/rojo"
+        app:tabIndicatorColor="@color/rojo" />
 
-</LinearLayout>
+    <!-- ViewPager2 que cambiará entre gráficos -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerEstadisticas"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/tabLayoutEstadisticas"
+        android:layout_above="@id/barra_navegacion1" />
+
+    <!-- BottomNavigation fijo abajo -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/barra_navegacion1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray2"
+        app:itemBackground="@color/black"
+        app:itemIconTint="@color/rojo"
+        app:itemTextColor="@color/gray1"
+        app:menu="@menu/barra_adminnavegacion" />
+
+</RelativeLayout>

@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/it_homme"
+        android:id="@+id/menu_denuncias"
         android:icon="@drawable/mas_logo"
         android:title="Denuncias" />
     <item
-        android:id="@+id/it_new"
+        android:id="@+id/menu_estadisticas"
         android:icon="@drawable/mas_logo"
-        android:title="Navegar jsjs"/>
+        android:title="Estadisticas"/>
+
+    <item
+        android:id="@+id/menu_perfil"
+        android:icon="@drawable/perfil_icono"
+        android:title="Perfil Admin"/>
 </menu>

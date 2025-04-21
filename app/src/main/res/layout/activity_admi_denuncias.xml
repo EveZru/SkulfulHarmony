@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,47 +7,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".admi_denuncias">
-    <Toolbar
+
+    <!-- Toolbar arriba -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/gray2"
-        android:padding="10dp">
+        android:layout_alignParentTop="true">
+
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DEMANDAS"
+            android:layout_height="match_parent"
+            android:text="Demandas"
             android:textSize="30sp"
             android:layout_gravity="center"
-            />
-    </Toolbar>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_demandas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:textColor="@color/black"/>
+    </androidx.appcompat.widget.Toolbar>
 
 
-        </androidx.recyclerview.widget.RecyclerView>
-    </ScrollView>
-    <View
+
+    <!-- Contenido del medio si lo necesitas -->
+    <FrameLayout
+        android:id="@+id/contenedor_fragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        />
+        android:layout_above="@id/barra_navegacion1"
+        android:layout_below="@id/toolbar" />
+
+    <!-- BottomNavigation fijo abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:layout_alignParentBottom="true"
         android:background="@color/gray2"
-        app:menu="@menu/barra_adminnavegacion"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"
-        android:layout_gravity="bottom"
-        />
-</LinearLayout>
+        app:menu="@menu/barra_adminnavegacion" />
+
+</RelativeLayout>
