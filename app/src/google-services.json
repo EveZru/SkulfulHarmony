@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "967238267679-e5opei9v3g0i3vkv2jveu0rot6ddpngh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.skulfulharmony",
+            "certificate_hash": "fcd25426116c7035707e857349a6270fcef21e9c"
+          }
+        },
+        {
           "client_id": "967238267679-kourbs1dsnqrs9ckv81ugtgd6gb3dqt3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
