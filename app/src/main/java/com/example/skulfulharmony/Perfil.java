@@ -22,10 +22,15 @@ import android.widget.Button; // Botón
 import android.widget.ImageView; // Imagen
 import android.widget.TextView; // Texto
 import android.widget.Toast; // Mensajes emergentes
+import android.view.View;
 
 // 🔄 Concurrencia y ejecución en segundo plano
 import java.util.concurrent.ExecutorService; // Ejecutor de hilos
 import java.util.concurrent.Executors; // Utilidad para crear ejecutores
+
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.PopupMenu;
 
 // 🖼️ Librería externa para imágenes
 import com.bumptech.glide.Glide; // Cargar imágenes desde URL
@@ -66,11 +71,12 @@ public class Perfil extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId;
-    private static final String ACCESS_TOKEN = "sl.u.AFqeDvp_JKR9GLx7kywtI0eUGP8JyMZ2irluDz2eHqc4at1DctebmYJRuAo_UW-P-sIVwg1zeG-XmMcgnqwkYIZ7hd1u3XkRZZNVEUEMv_OJrquA3kyeqMwdyZBc0xq-dr1LLsORke3HkNvji32DjYFi57ggFwfTonvCKsOnuyTY-vfEl2z-6EfpyYfoAtIFTt3AbbUlAdk48l9jtQnutAiXpOnPkZtt_SO0S_gRiiu3pnSPH1aCGKiRqWGb6uax_hCgeVqF4d187dVkOm9V3YMw5NOrr0Ir8WROrNNrTL0JK92Cb-XMnjYlSPRNelOXjMpHOyCxrg0LGK8IN6K8GoTl8JoLN1-GdfdMaOpdf-fj4VzagzOxRGhFzf7LR0ILiKxYMb-A4oO80Ms0s2ellH443X_lG1wB9lW_V79m6LFo9jT7ZhezxXedGntqsDUcQmN5sxxAWFSAhZUvMrUP-UaQEeWGf6vYGzMyXhF4UhpIpSCCFCasVT95ACuoqJY1Khww2D0E1KJ1gwr5OpZwI_J3Uab0o88nUqKfP7RLbWzSIyY57YVXaGaNvOs02b0BuPyy0hVku5E5DqksytSJkGp4-e5tIJWDWgGardM5XhG1F_V4HS2UnzEb37slvZQ9SB1rdIqNvb8II7HFyzuzPGZWMUDP2mcpodGEW81L8iw9bQBAMOhdehb2xf5jZrjzHz0TzImHChOxHbCdqxQtcj46cd3AYHZ52ENIrXFbRtrsFsCIXHYb35SYXiEDo5VaCQzKoCTzCpJdVsUH3xWmOJyWehwTQdkUAjraBkZnQKJPORDVLo7ISHhLfwdIdrVQQn23jVgzlHPeUN3KtZthYZlyjCrVj-ILsrvUhyZfgJk8stuVjJ4tlv1gOc8XjbLsOiJX_DUIVYVmv0FeISduwTQv5WRk5GxWqxmE-UpM5Nq1rTAWslt4d4NAAurnM6oszOehtU3rltsiP8ZHZsKLYDPAh3jYUYTVSyjqXeqxQjhPR6NWl-teo68mApW1hw095WEqLNns4jCwhC6W2bb5_-uK_t3UlTC2crTgnkRGZVxtrmP65iOAIXG0_37pUqSsZDTTzpNAMAs1jBEHq2rxYFcAsmeAOV9-8nKlkbS0lZyDMRuXaG7pv0Em-pvSqUZXo_6PQj_8LH3DOFdTISznVLBBsq1F70JZSAXmw6sFF5-s_Pr9ty8U_zPg_KRiRg-meJ2hN50OXg-qjSsP2DILwl4tOF94uVyjwsA_z2yqtrdosTCdY0xtadNAROzV_pI89LkctL_AB7sbrFLNuYzl0hR_krLLmJvfGhqiJlwx_7oLqzmmrIyfZslilUiPWtcu8y4LxRh1ZWM2RvuZr6XNMzjt9a2wLNBfwQHwMfMPMP9M4R6wyeRWuUCu4zdpRPRN3CR0mCqLlgatMAx_ZKqMEAI-nsPBU5wKUIeSxa-G4YHiCw";
+    private static final String ACCESS_TOKEN = "sl.u.AFqeDvp_JKR9GLx7kywtI0eUGP8JyMZ2irluDz2eHqc4at1DctebmYJRuAo_UW-P-sIVwg1zeG-XmMcgnqwkYIZ7hd1u3XkRZZNVEUEMv_OJrquA3kyeqMwdyZBc0xq-dr1LLsORke3HkNvji32DjYFi57ggFwfTonvCKsOnuyTY-vfEl2z-6EfpyYfoAtIFTt3AbbUlAdk48l9jtQnutAiXpOnPkZtt_SO0S_gRiiu3pnSPH1aCGKiRqWGb6uax_hCgeVqF4d187dVkOm9V3YMw5NOrr0Ir8WROrNNrTL0JK92Cb-XMnjYlSPRNelOXjMpHOyCxrg0LGK8IN6K8GoTl8JoLN1-GdfdMaOpdf-fj4VzagzOxRGhFzf7LR0ILiKxYMb-A4oO80Ms0s2ellH443X_lG1wB9lW_V79m6LFo9jT7ZhezxXedGntqsDUcQmN5sxxAWFSAhZUvMrUP-UaQEeWGf6vYGzMyXhF4UhpIpSCCFCasVT95ACuoqJY1Khww2D0E1KJ1gwr5OpZwI_J3Uab0o88nUqKfP7RLbWzSIyY57YVXaGaNvOs02b0BuPyy0hVku5E5DqksytSJkGp4-e5tIJWDWgGardM5XhG1F_V4HS2UnzEb37slvZQ9SB1rdIqNvb8II7HFyzuzPGZWMUDP2mcpodGEW81L8iw9bQBAMOhdehb2xf5jZrjzHz0TzImHChOxHbCdqxQtcj46cd3AYHZ52ENIrXFbRtrsFsCIXHYb35SYXiEDo5VaCQzKoCTzCpJdVsUH3xWmOJyWehwTQdkUAjraBkZnQKJPORDVLo7ISHhLfwdIdrVQQn23jVgzlHPeUN3KtZthYZlyjCrVj-ILsrvUhyZfgJk8stuVjJ4tlv1gOc8XjbLsOiJX_DUIVYVmv0FeISduwTQv5WRk5GxWqxmE-UpM5Nq1rTAWslt4d4NAAurnM6oszOehtU3rltsiP8ZHZsKLYDPAh3jYUYTVSyjqXeqxQjhPR6NWl-teo68mApW1hw095WEqLNns4jCwhC6W2bb5_-uK_t3UlTC2crTgnkRGZVxtrmP65iOAIXG0_37pUqSsZDTTzpNAMAs1jBEHq2rxYFcAsmeAOV9-8nKlkbS0lZyDMRuXaG7pv0Em-pvSqUZXo_6PQj_8LH3DOFdTISznVLBBsq1F70JZSAXmw6sFF5-s_Pr9ty8U_zPg_KRiRg-meJ2hN50OXg-qjSsP2DILwl4tOF94uVyjwsA_z2yqtrdosTCdY0xtadNAROzV_pI89LkctL_AB7sbrFLNuYzl0hR_krLLmJvfGhqiJlwx_7oLqzmmrIyfZslilUiPWtcu8y4LxRh1ZWM2RvuZr6XNMzjt9a2wLNBfwQHwMfMPMP9M4R6wyeRWuUCu4zdpRPRN3CR0mCqLlgatMAx_ZKqMEAI-nsPBU5wKUIeSxa-G4YHiCw"; // Coloca tu token de Dropbox aquí
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil);
+        setContentView(R.layout.activity_perfil); // Asegúrate de que el layout esté correctamente configurado
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -79,8 +85,9 @@ public class Perfil extends AppCompatActivity {
         // Obtener el UID del usuario actual
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            userId = user.getUid();
+            userId = user.getUid(); // Obtener el ID del usuario autenticado
         } else {
+            // Si el usuario no está autenticado, redirige al login
             startActivity(new Intent(this, IniciarSesion.class));
             finish();
             return;
@@ -90,11 +97,7 @@ public class Perfil extends AppCompatActivity {
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
         tv_NombreUsuario = findViewById(R.id.tv_NombreUsuario);
         tv_No_Cursos = findViewById(R.id.tv_No_Cursos);
-        btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
-        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
-        btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
-        btnVerTiempoUsuario = findViewById(R.id.btnVerTiempoUsuario);
         btnVerVideoPrueba = findViewById(R.id.btnVerVideoPrueba);
         tv_correo = findViewById(R.id.tv_correo);
         tv_Seguidores = findViewById(R.id.tv_Seguidores);
@@ -102,68 +105,112 @@ public class Perfil extends AppCompatActivity {
 
         cargarDatosUsuario();
 
+        btn_gotoconfiguracion = findViewById(R.id.iv_gotoconfiguracion);
+        btn_gotoconfiguracion.setOnClickListener(v -> showPopupMenu(v));  // Se pasa la vista del botón que se ha clickeado
+
+        // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
-        btnEditarPerfil.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EditarPerfil.class)));
-        btnCerrarSesion.setOnClickListener(v -> startActivity(new Intent(Perfil.this, CerrarSesion.class)));
-        btnEliminarCuenta.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EliminarCuenta.class)));
-        btnVerTiempoUsuario.setOnClickListener(v -> startActivity(new Intent(Perfil.this, vertiempousuario.class)));
+        //btnEditarPerfil.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EditarPerfil.class)));
+        //btnCerrarSesion.setOnClickListener(v -> startActivity(new Intent(Perfil.this, CerrarSesion.class)));
+        //btnEliminarCuenta.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EliminarCuenta.class)));
+        //btnVerTiempoUsuario.setOnClickListener(v -> startActivity(new Intent(Perfil.this, vertiempousuario.class)));
         btnVerVideoPrueba.setOnClickListener(v -> startActivity(new Intent(Perfil.this, videos.class)));
 
+        // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
 
-
         if (bottomNavigationView1 != null) {
-            // Configurar el listener para los ítems seleccionados
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.it_homme) {
-                    // Navegar a la actividad para buscar perfiles
                     startActivity(new Intent(Perfil.this, Home.class));
-
                     return true;
                 } else if (itemId == R.id.it_new) {
-                    // Navegar a la actividad para crear un curso
                     startActivity(new Intent(Perfil.this, CrearCurso.class));
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
-                    // Navegar a la actividad para ver la Biblioteca
                     startActivity(new Intent(Perfil.this, Biblioteca.class));
                     return true;
                 } else if (itemId == R.id.it_perfil) {
-
                     return true;
                 }
                 return false;
             });
-            // Establecer el ítem seleccionado al inicio (si es necesario)
-            bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
-        } else {
-            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
+    }
+
+    // Método para mostrar el menú flotante
+    private void showPopupMenu(View view) {
+        // Crear el PopupMenu y asociarlo con la vista 'view' (el botón de configuración)
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.config_menu, popupMenu.getMenu());  // Aquí se infla el menú desde el archivo config_menu.xml
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.menuVerTiempo) {
+                startActivity(new Intent(Perfil.this, vertiempousuario.class));
+                return true;
+            } else if (id == R.id.menuEditarCuenta) {
+                startActivity(new Intent(Perfil.this, EditarPerfil.class));
+                return true;
+            } else if (id == R.id.menuCerrarSesion) {
+                startActivity(new Intent(Perfil.this, CerrarSesion.class));
+                return true;
+            } else if (id == R.id.menuEliminarCuenta) {
+                startActivity(new Intent(Perfil.this, EliminarCuenta.class));
+                return true;
+            } else if (id == R.id.menuTerminos) {
+                startActivity(new Intent(Perfil.this, TerminosCondiciones.class));
+                return true;
+            } else if (id == R.id.menuContactanos) {
+                startActivity(new Intent(Perfil.this, Contactanos.class));
+                return true;
+            }
+            return false;
+        });
+
+        // Mostrar el menú
+        popupMenu.show();
     }
 
     private void cargarDatosUsuario() {
         if (userId == null) return;
 
+        // Obtener los datos del usuario desde Firestore
         DocumentReference docRef = db.collection("usuarios").document(userId);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
+                // Cargar los datos del usuario en los TextViews
                 tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
-                tv_No_Cursos.setText("Cursos creados: " + documentSnapshot.getLong("cursos"));
+                tv_correo.setText(documentSnapshot.getString("correo"));
                 tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
+                tv_No_Cursos.setText("Cursos Creados: " + documentSnapshot.getLong("cursos"));
 
+                // Cargar seguidores y seguidos
+                long seguidores = documentSnapshot.getLong("seguidores");
+                long seguidos = documentSnapshot.getLong("seguidos");
+
+                tv_Seguidores.setText("Seguidores: " + seguidores);
+                tv_Seguido.setText("Seguidos: " + seguidos);
+
+                // Cargar la foto de perfil desde la URL almacenada en Firestore
                 String fotoUrl = documentSnapshot.getString("fotoPerfil");
                 if (fotoUrl != null && !fotoUrl.isEmpty()) {
                     Glide.with(this)
                             .load(fotoUrl)
-                            .into(ivProfilePicture); // 🔁 Se mantiene tras cerrar/abrir app
+                            .into(ivProfilePicture); // Se mantiene la foto incluso después de cerrar y abrir la app
                 }
             } else {
+                // Si el documento no existe, crea uno con valores predeterminados
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("nombre", "Usuario");
-                userData.put("cursos", 0);
+                userData.put("correo", FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 userData.put("descripcion", "Sin descripción");
+                userData.put("cursos", 0);
+                userData.put("seguidores", 0);
+                userData.put("seguidos", 0);
 
                 db.collection("usuarios").document(userId).set(userData)
                         .addOnSuccessListener(aVoid -> Toast.makeText(this, "Perfil creado", Toast.LENGTH_SHORT).show())
@@ -172,6 +219,7 @@ public class Perfil extends AppCompatActivity {
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
     }
 
+    // Método para seleccionar una imagen
     private void seleccionarImagen() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("image/*");
@@ -179,6 +227,7 @@ public class Perfil extends AppCompatActivity {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
+    // Método para copiar el URI de la imagen a un archivo temporal
     private File copiarUriAArchivoTemporal(Uri uri) {
         try {
             File tempFile = File.createTempFile("temp_image", ".jpg", getCacheDir());
@@ -198,13 +247,13 @@ public class Perfil extends AppCompatActivity {
         }
     }
 
+    // Método para subir la imagen a Dropbox
     private void subirImagenADropbox(File archivo) {
         if (archivo == null) {
             Toast.makeText(this, "Archivo inválido", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Verificar el tamaño del archivo antes de continuar
         long fileSize = archivo.length(); // Tamaño del archivo en bytes
         long maxFileSize = 10 * 1024 * 1024; // 10 MB en bytes
 
@@ -228,15 +277,13 @@ public class Perfil extends AppCompatActivity {
                 SharedLinkMetadata linkMetadata = client.sharing()
                         .createSharedLinkWithSettings(metadata.getPathLower());
 
-                // Convertir a enlace directo
                 String urlImagen = linkMetadata.getUrl()
                         .replace("www.dropbox.com", "dl.dropboxusercontent.com")
                         .replace("?dl=0", "");
 
-                // Guardar en Firestore
+                // Guardar URL en Firestore
                 guardarFotoEnFirestore(urlImagen);
 
-                // Actualizar imagen en la vista
                 handler.post(() -> {
                     Glide.with(this).load(urlImagen).into(ivProfilePicture);
                     Toast.makeText(this, "Imagen subida correctamente", Toast.LENGTH_SHORT).show();
@@ -255,6 +302,7 @@ public class Perfil extends AppCompatActivity {
         });
     }
 
+    // Método para guardar la foto en Firestore
     private void guardarFotoEnFirestore(String url) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -266,10 +314,12 @@ public class Perfil extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.e("Firestore", "Error al guardar URL", e));
     }
 
+    // Método para convertir la URL de Dropbox a un enlace directo
     private String convertirLinkADirecto(String dropboxUrl) {
         return dropboxUrl.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
     }
 
+    // Método para manejar el resultado de la selección de la imagen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -277,7 +327,7 @@ public class Perfil extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             imageUri = data.getData();
 
-            Log.d("DEBUG", "URI recibido: " + imageUri); // 🔍 Log para ver si hay Uri
+            Log.d("DEBUG", "URI recibido: " + imageUri); // Log para ver si hay URI
 
             try {
                 getContentResolver().takePersistableUriPermission(

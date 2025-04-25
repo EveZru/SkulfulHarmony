@@ -36,7 +36,6 @@ public class CrearCuenta extends AppCompatActivity {
     private Button btnCrearCuenta, btnGoToIniciar;
     private ImageButton btnGoogleCrear;
     private ImageView ivTogglePassword;
-
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 123;
@@ -143,6 +142,8 @@ public class CrearCuenta extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
 
+                        String photoUrl = "https://dl.dropboxusercontent.com/scl/fi/n5hcisqjtnj52rhr54k2l/lol.png?rlkey=nxygu2omun5ktztg0mr23gcr2"; // URL predeterminada, cámbiala según sea necesario
+
                         // 🔥 Guardar en Firestore con rol usuario
                         FirebaseFirestore.getInstance().collection("usuarios")
                                 .document(uid)
@@ -150,6 +151,10 @@ public class CrearCuenta extends AppCompatActivity {
                                     put("nombre", name);
                                     put("correo", email);
                                     put("rol", "usuario");
+                                    put("fotoPerfil", photoUrl);  // Agrega la URL de la foto de perfil
+                                    put("seguidores", 0);  // Inicializamos en 0
+                                    put("seguidos", 0);    // Inicializamos en 0
+                                    put("cursos", 0);
                                 }});
 
                         DbUser dbUser = new DbUser(this);

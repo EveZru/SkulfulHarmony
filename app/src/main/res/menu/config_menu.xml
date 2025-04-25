@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menuVerTiempo" android:title="Ver tiempo"/>
+    <item android:id="@+id/menuEditarCuenta" android:title="Editar cuenta"/>
+    <item android:id="@+id/menuCerrarSesion" android:title="Cerrar sesión"/>
+    <item android:id="@+id/menuEliminarCuenta" android:title="Eliminar cuenta"/>
+    <item android:id="@+id/menuTerminos" android:title="Términos y condiciones"/>
+    <item android:id="@+id/menuContactanos" android:title="Contáctanos"/>
+</menu>

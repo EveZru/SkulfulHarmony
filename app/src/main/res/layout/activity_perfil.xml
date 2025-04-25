@@ -24,14 +24,14 @@
             android:contentDescription="Toolbar Icon" />
 
         <!-- Botón que se añadirá para navegar al tiempo del usuario -->
-        <Button
-            android:id="@+id/btnVerTiempoUsuario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ver Tiempo"
-            android:textColor="@android:color/white"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp" />
+<!--        <Button-->
+<!--            android:id="@+id/btnVerTiempoUsuario"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Ver Tiempo"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:layout_gravity="end"-->
+<!--            android:layout_marginEnd="16dp" />-->
 
         <Button
             android:id="@+id/btnVerVideoPrueba"
@@ -139,46 +139,46 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:layout_weight="1">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:gravity="center_horizontal"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_weight="1">-->
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEditarPerfil"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/rojo"
-            android:text="Editar Perfil"
-            android:textColor="@color/white"
-            android:padding="12dp"
-            android:textSize="16sp" />
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/btnEditarPerfil"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:backgroundTint="@color/rojo"-->
+<!--            android:text="Editar Perfil"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:padding="12dp"-->
+<!--            android:textSize="16sp" />-->
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:text="Cerrar Sesión"
-            android:textColor="@color/white"
-            android:padding="12dp"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp" />
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/btnCerrarSesion"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:backgroundTint="@color/black"-->
+<!--            android:text="Cerrar Sesión"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:padding="12dp"-->
+<!--            android:textSize="16sp"-->
+<!--            android:layout_marginTop="12dp" />-->
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEliminarCuenta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/azul"
-            android:text="Eliminar Cuenta"
-            android:textColor="@color/white"
-            android:padding="12dp"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp" />
-    </LinearLayout>
+<!--        <androidx.appcompat.widget.AppCompatButton-->
+<!--            android:id="@+id/btnEliminarCuenta"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:backgroundTint="@color/azul"-->
+<!--            android:text="Eliminar Cuenta"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:padding="12dp"-->
+<!--            android:textSize="16sp"-->
+<!--            android:layout_marginTop="12dp" />-->
+<!--    </LinearLayout>-->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
