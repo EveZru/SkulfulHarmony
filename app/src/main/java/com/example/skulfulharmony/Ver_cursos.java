@@ -1,10 +1,13 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +27,7 @@ public class Ver_cursos extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
     private int idCurso;
-
+    private Toolbar menu_cursos;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +39,8 @@ public class Ver_cursos extends AppCompatActivity {
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
         rvClases = findViewById(R.id.rv_verclasesencurso);
 
-        descripcionCurso.setMovementMethod(new ScrollingMovementMethod());
-
         firestore = FirebaseFirestore.getInstance();
-
+        menu_cursos = findViewById(R.id.toolbar_ver_cursos);
         // Obtener idCurso del intent
         idCurso = getIntent().getIntExtra("idCurso", -1);
 
@@ -85,4 +86,28 @@ public class Ver_cursos extends AppCompatActivity {
                     Toast.makeText(this, "Error al obtener el curso", Toast.LENGTH_SHORT).show();
                 });
     }
+
+    //___________
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_cursos, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.it_denunciar) {
+            startActivity(new Intent(Ver_cursos.this, CrearClase.class));
+            return true;
+        } else if (id == R.id.it_descargar) {
+            Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.it_compartir) {
+            Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    //__________
 }
