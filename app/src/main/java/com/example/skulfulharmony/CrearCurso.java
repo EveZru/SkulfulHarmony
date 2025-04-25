@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,6 +22,9 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.dropbox.core.v2.DbxClientV2;
@@ -62,7 +66,8 @@ public class CrearCurso extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_crearcurso);
-
+        BottomNavigationView bottomNavigationView1 = findViewById(R.id.bottom_navigation);
+        bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         dbUser = new DbUser(this);
         imageView = findViewById(R.id.iv_fotocurso);
         etNombreNuevoCurso = findViewById(R.id.et_nombre_nuevo_curso);
@@ -107,6 +112,41 @@ public class CrearCurso extends AppCompatActivity {
         imageView.setOnClickListener(v -> openGallery());
 
         btnSubirCurso.setOnClickListener(v -> subir());
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        if (bottomNavigationView1 != null) {
+            // Configurar el listener para los ítems seleccionados
+            bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.it_homme) {
+                    startActivity(new Intent(CrearCurso.this, Home.class));
+
+                    // Acción para Home
+                    return true;
+                } else if (itemId == R.id.it_new) {
+                    // Navegar a la actividad para crear un curso
+                    return true;
+                } else if (itemId == R.id.it_seguidos) {
+                    // Navegar a la actividad para ver la Biblioteca
+                    startActivity(new Intent(CrearCurso.this, Biblioteca.class));
+                    return true;
+                } else if (itemId == R.id.it_perfil) {
+                    // Navegar a la actividad para buscar perfiles
+                    startActivity(new Intent(CrearCurso.this, Perfil.class));
+                    return true;
+                }
+                return false;
+            });
+            // Establecer el ítem seleccionado al inicio (si es necesario)
+            bottomNavigationView1.setSelectedItemId(R.id.it_new);
+        } else {
+            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
+        }
     }
 
     private void openGallery() {
@@ -216,4 +256,5 @@ public class CrearCurso extends AppCompatActivity {
             });
         });
     }
+
 }

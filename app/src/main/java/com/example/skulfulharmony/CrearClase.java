@@ -286,7 +286,7 @@ public class CrearClase extends AppCompatActivity {
         }
     });
 
-
+//__________________coso de subir la pregunta
     private void SubirPregunta() {
 
         String preguntaTexto = et_pregunta.getText().toString().trim();
