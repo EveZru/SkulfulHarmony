@@ -3,6 +3,7 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
 android {
     namespace = "com.example.skulfulharmony"
     compileSdk = 35

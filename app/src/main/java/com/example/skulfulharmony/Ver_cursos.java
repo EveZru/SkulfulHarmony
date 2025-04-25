@@ -1,6 +1,7 @@
 package com.example.skulfulharmony;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,8 @@ public class Ver_cursos extends AppCompatActivity {
         tituloCurso = findViewById(R.id.text_vercurso_title);
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
         rvClases = findViewById(R.id.rv_verclasesencurso);
+
+        descripcionCurso.setMovementMethod(new ScrollingMovementMethod());
 
         firestore = FirebaseFirestore.getInstance();
 
