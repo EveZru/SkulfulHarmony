@@ -32,6 +32,15 @@
             android:textColor="@android:color/white"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/btnVerVideoPrueba"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ver Video prueba"
+            android:textColor="@android:color/white"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp" />
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -74,13 +83,13 @@
                 android:textColor="@color/black" />
 
             <TextView
-                android:id="@+id/tv_No_Cursos"
+                android:id="@+id/tv_correo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cursos Creados: 10"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
+                android:text="Correo"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray1" />
 
             <TextView
                 android:id="@+id/tv_DescripcionUsuario"
@@ -90,8 +99,45 @@
                 android:textSize="16sp"
                 android:textColor="@color/gray1"
                 android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_No_Cursos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cursos Creados: 10"
+                android:textSize="16sp"
+                android:textColor="@color/gray1"
+                android:layout_marginTop="4dp" />
+
+            <!-- Followers and Following -->
+            <TextView
+                android:id="@+id/tv_Seguidores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seguidores: 200"
+                android:textSize="16sp"
+                android:textColor="@color/gray1"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tv_Seguido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seguidos: 150"
+                android:textSize="16sp"
+                android:textColor="@color/gray1"
+                android:layout_marginTop="4dp" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- Share Button -->
+    <Button
+        android:id="@+id/btnCompartirPerfil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Compartir Perfil"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

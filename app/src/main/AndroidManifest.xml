@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -24,9 +23,12 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
-            android:name=".perfil_admin"
+            android:name=".videos"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
-        <!-- SPLASH como launcher principal -->
+        <activity
+            android:name=".perfil_admin"
+            android:exported="false" /> <!-- SPLASH como launcher principal -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -52,6 +54,7 @@
                     android:scheme="miapp" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".IniciarSesion"
             android:exported="false"

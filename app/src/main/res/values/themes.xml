@@ -3,7 +3,18 @@
     <style name="Base.Theme.SkulfulHarmony" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- TODO: Customize your theme here. -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
 
     <style name="Theme.SkulfulHarmony" parent="Base.Theme.SkulfulHarmony" />
+
+<!--    <style name="Theme.SkulfulHarmony" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; TODO: Customize your theme here. &ndash;&gt;-->
+<!--        <item name="android:windowFullscreen">true</item>-->
+<!--        <item name="android:windowNoTitle">true</item>-->
+<!--        <item name="windowActionBar">false</item>-->
+<!--    </style>-->
 </resources>

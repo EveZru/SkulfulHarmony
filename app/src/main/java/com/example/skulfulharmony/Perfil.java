@@ -59,14 +59,14 @@ public class Perfil extends AppCompatActivity {
     private FirebaseFirestore db;
 
     private ImageView ivProfilePicture;
-    private TextView tv_NombreUsuario, tv_No_Cursos, tv_DescripcionUsuario;
-    private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario;
+    private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
+    private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario, btnVerVideoPrueba;
     private ImageView btn_gotoconfiguracion ;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId;
-    private static final String ACCESS_TOKEN = "sl.u.AFoT4f6Y43DWZfTU2OLuxwLw7d3-PrwZtOt8ET6rDTxU65Z-JJiNK1c92NuY0qdMN35uInQ6rcmPqyxmg1LpRpT2Or26omR-QzoLgNU3T5HYTjJNM0fVfw-h9ClM11UG54NClNpbxm05ck90ft1G6nAC4gINAZ6iFFGE7lHeSsm74I8SWlPbSZ-18T2Q-3x95IoxA_hJ5V0hppj_8VHJMVzk9trDL6Ebz1MW21QFp4KLhcHTibTZpNUP-614DrTVKuDrPHy6EN85iHcWWCRBwwgHh7xx4W6LhbLqcg8_ukgV94wgTfs6oGu5qv7Wfav24T_4ZuGWC6JpZhhFCvIB4ixWwDYVs_6mKTwk8PnhC_rEBKCFtQxmXFs-xk07KDwd_Sge34roi1xHtbSdT4bFFRRsBGLaVrs-yRtUa0I8RNW9ui5Xz-tqnKRO5nRxeu0b-7MUAnQehQOheCvRg3o84LVg1RmhJcQ35O944OKAx_ceCcHuGMBLP4A2HKhwUVeT6XlAf-fGQsG3746uHndeImyJvueG9Rbmg8iN_DwGdORtOdcT6ouIUGS3FJbH6I_Lbl4P2W58bKTM_xUcOdRv3-BY5LrtYzfsafwWPxFPvfZYB2uYWQTOhAeQrEQLRikmpyBlUqkoocHh_-YlpC29nPE07s0hOUHba981-3Q10OvFsUNyC_GKFdxDH8-i_M4kKQ_S1jso_6CYSrXQChUeb94xVbyseVyug-cCtsadxDO_tbqyF8SeBlhMHyWxXFVVraEV6Rc6JDLW7ps6Zyf6JrZOuJT3yNp7nmEs-4cJjdHe6L149gSYjPb-QTWHCavrBQ16Gn4wcZYBy1aiXAtMpFfPV3XluWLga843zgLD052hC-MpnKr2qfomsg8UaVfu80AfCHH9qBvWGo5Ayqs9ocnhjsu_0JIhwquJb0qTSmfupY8KzPrcVuvknlkfMXrBd5swRNkFt56nHheS63jPLibpdUqJpjZ9xz9BBoqN942gS6tKQkY-N2P2JLPdj-DvMHPOlOuxbwCKyIL0_nhO_dZH_qbxiNrPywHxSChQVH0M36IOMehOgZTcKtdn2-ws8WyB9K_jv93Ptpy0sQZCh4hEWJAMLyqku3-YNfzYZSnNz3WPBLuVNmeDlJr3PqJ5LWIROfK2rCsKKKHmhOV0WxEA5xvSkk-DtTcs46AgRjGpeFRdeS3h-AnXH8e_E05wajEyoNmShX_BQSyo7o95103cwP8n5MCDmehVLsHHbh5BmjCGeueWBXZRnniVGUDtVaScUYYV1aRuYQNH4yjABW5QZpq_DPDkG7LSzn2UOWxdp9uyeQMKBvQjqjpvLVHXWkVMRMn1PaDxZiRJPJUcD1RiLHGTlQR2quunTKjQlxm8YkEKjF5OfcGMFNW7fV1Bv1CANnKsFq9EzeIqpBW8cSaX8OZyPnPL66dtTvoasXCC-Q";
+    private static final String ACCESS_TOKEN = "sl.u.AFqeDvp_JKR9GLx7kywtI0eUGP8JyMZ2irluDz2eHqc4at1DctebmYJRuAo_UW-P-sIVwg1zeG-XmMcgnqwkYIZ7hd1u3XkRZZNVEUEMv_OJrquA3kyeqMwdyZBc0xq-dr1LLsORke3HkNvji32DjYFi57ggFwfTonvCKsOnuyTY-vfEl2z-6EfpyYfoAtIFTt3AbbUlAdk48l9jtQnutAiXpOnPkZtt_SO0S_gRiiu3pnSPH1aCGKiRqWGb6uax_hCgeVqF4d187dVkOm9V3YMw5NOrr0Ir8WROrNNrTL0JK92Cb-XMnjYlSPRNelOXjMpHOyCxrg0LGK8IN6K8GoTl8JoLN1-GdfdMaOpdf-fj4VzagzOxRGhFzf7LR0ILiKxYMb-A4oO80Ms0s2ellH443X_lG1wB9lW_V79m6LFo9jT7ZhezxXedGntqsDUcQmN5sxxAWFSAhZUvMrUP-UaQEeWGf6vYGzMyXhF4UhpIpSCCFCasVT95ACuoqJY1Khww2D0E1KJ1gwr5OpZwI_J3Uab0o88nUqKfP7RLbWzSIyY57YVXaGaNvOs02b0BuPyy0hVku5E5DqksytSJkGp4-e5tIJWDWgGardM5XhG1F_V4HS2UnzEb37slvZQ9SB1rdIqNvb8II7HFyzuzPGZWMUDP2mcpodGEW81L8iw9bQBAMOhdehb2xf5jZrjzHz0TzImHChOxHbCdqxQtcj46cd3AYHZ52ENIrXFbRtrsFsCIXHYb35SYXiEDo5VaCQzKoCTzCpJdVsUH3xWmOJyWehwTQdkUAjraBkZnQKJPORDVLo7ISHhLfwdIdrVQQn23jVgzlHPeUN3KtZthYZlyjCrVj-ILsrvUhyZfgJk8stuVjJ4tlv1gOc8XjbLsOiJX_DUIVYVmv0FeISduwTQv5WRk5GxWqxmE-UpM5Nq1rTAWslt4d4NAAurnM6oszOehtU3rltsiP8ZHZsKLYDPAh3jYUYTVSyjqXeqxQjhPR6NWl-teo68mApW1hw095WEqLNns4jCwhC6W2bb5_-uK_t3UlTC2crTgnkRGZVxtrmP65iOAIXG0_37pUqSsZDTTzpNAMAs1jBEHq2rxYFcAsmeAOV9-8nKlkbS0lZyDMRuXaG7pv0Em-pvSqUZXo_6PQj_8LH3DOFdTISznVLBBsq1F70JZSAXmw6sFF5-s_Pr9ty8U_zPg_KRiRg-meJ2hN50OXg-qjSsP2DILwl4tOF94uVyjwsA_z2yqtrdosTCdY0xtadNAROzV_pI89LkctL_AB7sbrFLNuYzl0hR_krLLmJvfGhqiJlwx_7oLqzmmrIyfZslilUiPWtcu8y4LxRh1ZWM2RvuZr6XNMzjt9a2wLNBfwQHwMfMPMP9M4R6wyeRWuUCu4zdpRPRN3CR0mCqLlgatMAx_ZKqMEAI-nsPBU5wKUIeSxa-G4YHiCw";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,6 +95,10 @@ public class Perfil extends AppCompatActivity {
         btnEliminarCuenta = findViewById(R.id.btnEliminarCuenta);
         tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
         btnVerTiempoUsuario = findViewById(R.id.btnVerTiempoUsuario);
+        btnVerVideoPrueba = findViewById(R.id.btnVerVideoPrueba);
+        tv_correo = findViewById(R.id.tv_correo);
+        tv_Seguidores = findViewById(R.id.tv_Seguidores);
+        tv_Seguido = findViewById(R.id.tv_Seguido);
 
         cargarDatosUsuario();
 
@@ -103,6 +107,7 @@ public class Perfil extends AppCompatActivity {
         btnCerrarSesion.setOnClickListener(v -> startActivity(new Intent(Perfil.this, CerrarSesion.class)));
         btnEliminarCuenta.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EliminarCuenta.class)));
         btnVerTiempoUsuario.setOnClickListener(v -> startActivity(new Intent(Perfil.this, vertiempousuario.class)));
+        btnVerVideoPrueba.setOnClickListener(v -> startActivity(new Intent(Perfil.this, videos.class)));
 
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
@@ -199,6 +204,15 @@ public class Perfil extends AppCompatActivity {
             return;
         }
 
+        // Verificar el tamaño del archivo antes de continuar
+        long fileSize = archivo.length(); // Tamaño del archivo en bytes
+        long maxFileSize = 10 * 1024 * 1024; // 10 MB en bytes
+
+        if (fileSize > maxFileSize) {
+            Toast.makeText(this, "La imagen es demasiado grande. El tamaño máximo permitido es 10 MB.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -253,8 +267,6 @@ public class Perfil extends AppCompatActivity {
     }
 
     private String convertirLinkADirecto(String dropboxUrl) {
-        // dropboxUrl: https://www.dropbox.com/scl/fi/xxx/imagen.jpg?rlkey=yyy&dl=0
-        // queremos:   https://dl.dropboxusercontent.com/scl/fi/xxx/imagen.jpg?rlkey=yyy
         return dropboxUrl.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
     }
 
@@ -279,9 +291,6 @@ public class Perfil extends AppCompatActivity {
             ivProfilePicture.setImageURI(imageUri);
 
             File archivo = copiarUriAArchivoTemporal(imageUri);
-
-            Log.d("DEBUG", "Archivo generado: " + (archivo != null ? archivo.getAbsolutePath() : "null"));
-            Log.d("DEBUG", "Archivo tamaño: " + (archivo != null ? archivo.length() : 0));
 
             subirImagenADropbox(archivo);
         }
