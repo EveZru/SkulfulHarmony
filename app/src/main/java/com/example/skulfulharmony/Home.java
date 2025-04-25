@@ -58,7 +58,6 @@ public class Home extends AppCompatActivity {
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         rv_homevercursos = findViewById(R.id.rv_homevercursos);
 
-        startActivity(new Intent(Home.this, CrearClase.class));
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         cargarCursosFirebase();
