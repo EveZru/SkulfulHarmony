@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/it_descargar"
+        android:title="Descargar"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/it_denunciar"
+        android:title="Denunciar"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/it_compartir"
+        android:title="Compartir"
+        app:showAsAction="never"/>
+</menu>

@@ -57,13 +57,17 @@ public class Home extends AppCompatActivity {
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         rv_homevercursos = findViewById(R.id.rv_homevercursos);
-
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+
+
+      //  startActivity(new Intent(Home.this, CrearClase.class));
 
         cargarCursosFirebase();
         //-------Parte de los cursos de clases originales -------
         // Aquí creamos los objetos Curso de forma estática
         listaCursos = new ArrayList<>();
+
 
         // Ejemplo de objetos Curso
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);

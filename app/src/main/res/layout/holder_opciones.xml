@@ -6,15 +6,19 @@
     android:padding="5dp">
 
     <CheckBox
-        android:id="@+id/cb_selec_opcion"
+        android:id="@+id/cb_correcta"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/verde"/>
 
     <EditText
         android:id="@+id/et_opcrespuesta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:textColorHint="@color/gray1"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/black"
         android:hint="Ingresa una opción de respuesta"
         android:padding="9dp" />
 </LinearLayout>

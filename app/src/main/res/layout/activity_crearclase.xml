@@ -8,13 +8,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".CrearClase">
+    tools:context=".CrearClase"
+    android:background="@color/white">
 
     <ScrollView
+        android:id="@+id/main_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true"
+        android:fitsSystemWindows="true"
         >
 
         <LinearLayout
@@ -56,7 +58,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColorHint="@color/gray2"
+                    android:textColor="@color/black"
                     android:hint="Ingrese posible pregunta"
+                    android:backgroundTint="@color/black"
                     android:padding="10dp" />
 
                 <Button
@@ -82,17 +87,32 @@
                     android:orientation="horizontal">
 
                     <CheckBox
+                        android:id="@+id/cb_correcta"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/verde"
+                        />
 
                     <EditText
                         android:id="@+id/et_ingresar_respuesta"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColorHint="@color/gray1"
+                        android:textColor="@color/black"
+                        android:backgroundTint="@color/black"
                         android:hint="Ingresa una opción de respuesta" />
                 </LinearLayout>
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/container_preguntas_creadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp" />
+
+
+
 
             <!-- RecyclerView para mostrar preguntas agregadas -->
             <androidx.recyclerview.widget.RecyclerView
@@ -111,12 +131,5 @@
                 android:textAllCaps="false" />
         </LinearLayout>
     </ScrollView>
-    <android.widget.Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/third_rounder_button"
-        android:text="Subir clase"
-        android:textAllCaps="false" />
+
 </LinearLayout>

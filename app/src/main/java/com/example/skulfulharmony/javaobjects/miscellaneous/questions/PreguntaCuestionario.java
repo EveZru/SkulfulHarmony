@@ -19,4 +19,7 @@ public class PreguntaCuestionario extends Pregunta {
     public void setRespuestaCorrecta(Integer respuestaCorrecta) {
         this.respuestaCorrecta = respuestaCorrecta;
     }
+    public ArrayList<String> getRespuestas() {
+        return respuestas;
+    }
 }

@@ -57,7 +57,7 @@ public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<Ada
         ViewHolder(View itemView) {
             super(itemView);
             pregunta = itemView.findViewById(R.id.tv_preguntatexto);
-            respuestas = itemView.findViewById(R.id.rg_opcionespreg);
+          //  respuestas = itemView.findViewById(R.id.rg_opcionespreg);
         }
 
 

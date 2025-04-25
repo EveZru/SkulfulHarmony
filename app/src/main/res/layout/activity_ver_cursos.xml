@@ -9,7 +9,12 @@
     android:layout_height="match_parent"
     tools:context=".Ver_cursos">
 
-
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_ver_cursos"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:background="@color/black"
+         />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
