@@ -87,8 +87,8 @@ public class CrearCuenta extends AppCompatActivity {
         String[] permissions = {
                 android.Manifest.permission.RECORD_AUDIO,
                 android.Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                //android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                //android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 android.Manifest.permission.INTERNET,
                 android.Manifest.permission.ACCESS_NETWORK_STATE,
                 android.Manifest.permission.POST_NOTIFICATIONS
@@ -155,6 +155,7 @@ public class CrearCuenta extends AppCompatActivity {
                                     put("seguidores", 0);  // Inicializamos en 0
                                     put("seguidos", 0);    // Inicializamos en 0
                                     put("cursos", 0);
+                                    put("acceptedTerms", false); // Asegúrate de agregar este campo para verificar si el usuario aceptó los términos
                                 }});
 
                         DbUser dbUser = new DbUser(this);
@@ -166,8 +167,12 @@ public class CrearCuenta extends AppCompatActivity {
                         }
 
                         Toast.makeText(CrearCuenta.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(CrearCuenta.this, Home.class));
+
+                        // Redirigir al usuario a la pantalla de Términos y Condiciones
+                        Intent intent = new Intent(CrearCuenta.this, TerminosCondiciones.class);
+                        startActivity(intent);
                         finish();
+
                     } else {
                         Toast.makeText(CrearCuenta.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
