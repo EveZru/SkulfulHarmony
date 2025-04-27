@@ -29,9 +29,6 @@
             android:name=".verterminos"
             android:exported="false" />
         <activity
-            android:name=".server.verterminos"
-            android:exported="false" />
-        <activity
             android:name=".Contactanos"
             android:exported="false" />
         <activity
