@@ -8,6 +8,7 @@
     tools:context=".EditarPerfil"
     android:background="@color/white">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,6 +39,8 @@
             android:textColor="@android:color/black"
             android:inputType="textPersonName"
             android:autofillHints="name"
+            android:textColorHint="@color/gray2"
+           android:backgroundTint="@color/black"
             android:contentDescription="@string/et_nombrecambiar_desc"/>
 
         <EditText
@@ -48,6 +51,9 @@
             android:textColor="@android:color/black"
             android:inputType="textMultiLine"
             android:autofillHints="description"
+
+            android:textColorHint="@color/gray2"
+            android:backgroundTint="@color/black"
             android:contentDescription="@string/et_nuevadescripcion_desc"/>
 
         <ImageView
@@ -62,6 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/publicar"
+            android:layout_marginHorizontal="10dp"
             android:background="@drawable/third_rounder_button"
             android:padding="16dp"
             android:contentDescription="@string/btn_cambiardatos_desc"/>

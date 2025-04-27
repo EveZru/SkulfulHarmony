@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Act_pianoAcordes">
+    <LinearLayout
+        android:id="@+id/actividadcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    <FrameLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="20dp">
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="700dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_do1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_re1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_mi1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_fa1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sol1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_la1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_si1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_do2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_re2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_mi2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_fa2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sol2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_la2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_si2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/third_rounder_button" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_doso1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_reso1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_faso1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_solso1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_laso1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_doso2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_reso2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_faso2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_solso2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_laso2"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/five_rounder_button" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_marginVertical="20dp"
+            android:text="Selecciona las teclas correspondientes al acorde de "/>
+
+        <TextView
+            android:id="@+id/tv_acorde"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:gravity="center"
+            android:text="..."/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+        <LinearLayout
+            android:id="@+id/ll_verapuntes"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:clickable="true">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/perfil_logo"/>
+            <TextView
+                android:text="Ver apuntes "
+                android:textSize="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_volveralcursop"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:clickable="true">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/atras"/>
+            <TextView
+                android:text="Volver al curso "
+                android:textSize="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/imagencontainer"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:background="@drawable/estella_llena"
+        android:layout_gravity="center"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_volveract"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Regresar a la actividad"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:padding="10dp"
+            android:background="@drawable/rounded_edit_text"
+            />
+</LinearLayout>
+</FrameLayout>

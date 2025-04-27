@@ -6,7 +6,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EliminarCuenta">
+    tools:context=".EliminarCuenta"
+    android:background="@color/white">
 
     <!-- Texto de confirmación de eliminación -->
     <androidx.appcompat.widget.AppCompatButton

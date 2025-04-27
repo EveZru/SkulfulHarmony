@@ -61,7 +61,7 @@ public class Home extends AppCompatActivity {
 
 
 
-      //  startActivity(new Intent(Home.this, CrearClase.class));
+      // startActivity(new Intent(Home.this, Act_pianoAcordes.class));
 
         cargarCursosFirebase();
         //-------Parte de los cursos de clases originales -------
