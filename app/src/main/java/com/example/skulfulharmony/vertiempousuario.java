@@ -1,78 +1,108 @@
 package com.example.skulfulharmony;
 
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.javaobjects.users.tiempoUsuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class vertiempousuario extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private String userId;
-    private TextView tiempoDeActividadTextView;
+
+    private TextView tiempoHoyTextView;
+    private ProgressBar[] barrasDias;
+    private Map<String, Long> tiemposPorDia = new HashMap<>();
+    private long tiempoHoy = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_vertiempousuario);
 
         db = FirebaseFirestore.getInstance();
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else {
+            // Si no hay usuario logueado, evitamos error
+            finish();
+            return;
+        }
 
-        tiempoDeActividadTextView = findViewById(R.id.tiempoDeActividadTextView);
+        tiempoHoyTextView = findViewById(R.id.tiempoHoyTextView);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        barrasDias = new ProgressBar[]{
+                findViewById(R.id.barDomingo),
+                findViewById(R.id.barLunes),
+                findViewById(R.id.barMartes),
+                findViewById(R.id.barMiercoles),
+                findViewById(R.id.barJueves),
+                findViewById(R.id.barViernes),
+                findViewById(R.id.barSabado)
+        };
 
-        loadActivityTime();
+        cargarDatos();
     }
 
-    private void loadActivityTime() {
+    private void cargarDatos() {
         DocumentReference userDoc = db.collection("usuarios").document(userId);
-        userDoc.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                StringBuilder historialBuilder = new StringBuilder();
-                Long total = 0L;
+        userDoc.addSnapshotListener((documentSnapshot, e) -> {
+            if (e != null) {
+                actualizarPantalla();
+                return;
+            }
 
-                // Usamos TreeMap para ordenar por fecha
-                Map<String, Object> sortedData = new TreeMap<>(documentSnapshot.getData());
+            if (documentSnapshot != null && documentSnapshot.exists() && documentSnapshot.getData() != null) {
+                String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                for (Map.Entry<String, Object> entry : sortedData.entrySet()) {
-                    String key = entry.getKey();
-                    if (key.startsWith("tiempo_")) {
-                        Long tiempo = ((Number) entry.getValue()).longValue();
-                        String fecha = key.replace("tiempo_", "");
-                        historialBuilder.append("📅 ").append(fecha).append(": ").append(tiempo).append(" min\n");
-                        total += tiempo;
+                tiemposPorDia.clear(); // 🔥 Limpiar datos viejos
+                tiempoHoy = 0;
+
+                for (Map.Entry<String, Object> entry : documentSnapshot.getData().entrySet()) {
+                    if (entry != null && entry.getKey() != null && entry.getKey().startsWith("tiempo_") && entry.getValue() instanceof Number) {
+                        String fecha = entry.getKey().replace("tiempo_", "");
+                        long minutos = ((Number) entry.getValue()).longValue();
+
+                        if (fecha.equals(fechaHoy)) {
+                            tiempoHoy = minutos;
+                        }
+
+                        tiemposPorDia.put(fecha, minutos);
                     }
                 }
 
-                historialBuilder.append("\n🧮 Total acumulado: ").append(total).append(" min");
-                tiempoDeActividadTextView.setText(historialBuilder.toString());
+                actualizarPantalla();
             } else {
-                tiempoDeActividadTextView.setText("No hay datos de actividad aún.");
+                actualizarPantalla();
             }
-        }).addOnFailureListener(e -> {
-            tiempoDeActividadTextView.setText("Error al cargar los datos de tiempo.");
         });
     }
+    private void actualizarPantalla() {
+        tiempoHoyTextView.setText("Hoy llevas: " + tiempoUsuario.formatearMinutos(tiempoHoy));
 
-    public void onActualizarClick(android.view.View view) {
-        loadActivityTime(); // Solo recarga, no hace conteo en esta vista
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+        for (int i = 0; i < 7; i++) {
+            String fecha = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            long minutos = tiemposPorDia.getOrDefault(fecha, 0L);
+
+            barrasDias[i].setMax(240); // 240 minutos = 4 horas máximo
+            barrasDias[i].setProgress((int) minutos);
+
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 }

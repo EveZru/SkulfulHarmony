@@ -39,6 +39,8 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
         <activity
+            android:name=".vertiempousuario" />
+        <activity
             android:name=".perfil_admin"
             android:exported="false" /> <!-- SPLASH como launcher principal -->
         <activity
