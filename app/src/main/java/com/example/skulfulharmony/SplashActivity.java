@@ -32,6 +32,11 @@ public class SplashActivity extends AppCompatActivity {
                             } else {
                                 startActivity(new Intent(this, Home.class));
                             }
+
+                            // INICIA EL CONTADOR GLOBAL AL INICIAR LA APP
+                            String userId = user.getUid(); // Obtienes el userId del usuario logueado
+                            MyApp.getContadorTiempo();  // Esto asegura que el tiempo siga corriendo en toda la app
+
                         } else {
                             Toast.makeText(this, "No se encontró el rol del usuario", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(this, IniciarSesion.class));

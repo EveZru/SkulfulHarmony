@@ -69,4 +69,15 @@ public class Descanso extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        // No hacer nada si el minuto no ha pasado
+        if (System.currentTimeMillis() - tiempoInicio < 60000) {  // 60,000 ms = 1 minuto
+            // Evitamos que el usuario regrese, mostrándole un mensaje o solo bloqueando la acción
+            //Log.d("Descanso", "Aún no puedes regresar, espera el minuto");
+        } else {
+            super.onBackPressed(); // Si ha pasado el minuto, entonces regresa normalmente
+        }
+    }
 }

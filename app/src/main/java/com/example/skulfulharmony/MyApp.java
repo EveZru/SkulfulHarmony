@@ -18,7 +18,7 @@ public class MyApp extends Application {
                 : null;
 
         if (userId != null) {
-            contadorTiempo = new tiempoUsuario(userId);
+            contadorTiempo = new tiempoUsuario(userId, getApplicationContext());
             contadorTiempo.iniciarConteo(); // 🔥 Inicia el contador
         }
     }
