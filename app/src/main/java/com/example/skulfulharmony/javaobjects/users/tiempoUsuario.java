@@ -68,10 +68,10 @@ public class tiempoUsuario {
 
                 Log.d("TiempoUsuario", "🔥 tiempoAcumuladoHoy: " + tiempoAcumuladoHoy + " segundos");
 
-                // Mandamos al descanso automáticamente después de 1 minuto
-                if (tiempoAcumuladoHoy >= 90 * 60) {
+                // Mandamos al descanso automáticamente después de 2 minutos
+                if (tiempoAcumuladoHoy >= 60 * 60) { // 2 minutos de tiempo
                     lanzarPantallaDescanso(); // Mandamos a descanso
-                    tiempoAcumuladoHoy = 0; // Reiniciamos el contador de tiempo
+                    // No reiniciamos el contador
                 }
 
                 subirTiempoAFirebase(); // Subimos el tiempo a Firebase
@@ -124,6 +124,13 @@ public class tiempoUsuario {
         });
     }
 
+    private void lanzarPantallaDescanso() {
+        Intent intent = new Intent(context, Descanso.class);  // Se crea la Intent para ir a DescansoActivity
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Esto es necesario cuando no estás en un Activity ya
+        context.startActivity(intent);  // Inicia la actividad de descanso
+        Log.d("TiempoUsuario", "🔥 Mandando al descanso...");
+    }
+
     public static String formatearMinutos(long minutos) {
         long horas = minutos / 60;
         long mins = minutos % 60;
@@ -133,12 +140,4 @@ public class tiempoUsuario {
             return mins + "m";
         }
     }
-
-    private void lanzarPantallaDescanso() {
-        Intent intent = new Intent(context, Descanso.class);  // Se crea la Intent para ir a DescansoActivity
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Esto es necesario cuando no estás en un Activity ya
-        context.startActivity(intent);  // Inicia la actividad de descanso
-        Log.d("TiempoUsuario", "🔥 Mandando al descanso...");
-    }
-
 }
