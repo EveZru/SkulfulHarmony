@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".creditos">
+
+    <!-- ScrollView para que el usuario pueda ver los Créditos -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/botonAceptar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <TextView
+            android:id="@+id/creditosText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎓 Créditos – Skillful Harmony\n\n
+Nombre de la aplicación:\n
+Skillfull Harmony – Plataforma de enseñanza y aprendizaje musical\n\n
+Versión:\n
+1.0\n\n
+Desarrollado por:\n
+Estudiantes del CETI – Centro de Enseñanza Técnica Industrial\n
+Carrera: Desarrollo de Software\n
+Proyecto Integrador de Desarrollo de Software I\n\n
+Equipo de desarrollo:\n
+• 🎵 Emilio Uriel Higareda Orozco – (En lo que se encargo)\n
+• 🎼 Evelin Inés Urzua Herrera – (En lo que se encargo)\n
+• 🎶 Esteban Israel Caballero Velázquez – (En lo que se encargo)\n\n
+Asesor académico:\n
+🧑‍🏫 Andrés Figueroa Flores / Ismael López Buenrostro\n\n
+Tecnologías utilizadas:\n
+• Firebase (Auth, Firestore, Storage)\n
+• Kotlin/Java\n
+• Algoritmo K-Means (recomendaciones)\n
+• SQLite (base de datos local)\n\n
+Inspiración:\n
+• Yousician\n
+• Ultimate Guitar Lessons\n
+• Thinking for Innovation\n
+• IEBSchool.com\n\n
+Derechos de autor:\n
+© 2025 Skillful Harmony – Todos los derechos reservados.\n
+Los contenidos originales de la plataforma están protegidos por las leyes de propiedad intelectual.\n
+La música, imágenes y materiales creados por usuarios son responsabilidad de sus autores."
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:lineSpacingExtra="4dp"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Botón para aceptar los términos -->
+    <Button
+        android:id="@+id/botonAceptar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aceptar"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

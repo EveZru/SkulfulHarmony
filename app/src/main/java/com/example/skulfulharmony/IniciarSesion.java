@@ -145,14 +145,25 @@ public class IniciarSesion extends AppCompatActivity {
                                         .addOnSuccessListener(documentSnapshot -> {
                                             if (documentSnapshot.exists()) {
                                                 String rol = documentSnapshot.getString("rol");
-                                                Intent intent;
-                                                if ("admin".equals(rol)) {
-                                                    intent = new Intent(IniciarSesion.this, admi_populares.class);
+
+                                                // Verificar si el usuario ha aceptado los términos
+                                                boolean acceptedTerms = documentSnapshot.getBoolean("acceptedTerms");
+                                                if (!acceptedTerms) {
+                                                    // Si no ha aceptado los términos, redirigir a la pantalla de Términos y Condiciones
+                                                    Intent intent = new Intent(IniciarSesion.this, TerminosCondiciones.class);
+                                                    startActivity(intent);
+                                                    finish();
                                                 } else {
-                                                    intent = new Intent(IniciarSesion.this, Home.class);
+                                                    // Si aceptó los términos, continuar al Home o al rol correspondiente
+                                                    Intent intent;
+                                                    if ("admin".equals(rol)) {
+                                                        intent = new Intent(IniciarSesion.this, admi_populares.class);
+                                                    } else {
+                                                        intent = new Intent(IniciarSesion.this, Home.class);
+                                                    }
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    startActivity(intent);
                                                 }
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                startActivity(intent);
                                             } else {
                                                 Toast.makeText(IniciarSesion.this, "No se encontró el rol del usuario", Toast.LENGTH_SHORT).show();
                                             }

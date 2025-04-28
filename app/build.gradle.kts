@@ -42,6 +42,7 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation ("androidx.core:core:1.7.0")
     implementation(libs.firebase.crashlytics.buildtools)
 
     implementation ("androidx.media3:media3-exoplayer:1.2.0")

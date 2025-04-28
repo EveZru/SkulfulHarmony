@@ -1,8 +1,8 @@
 package com.example.skulfulharmony.javaobjects.users;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -12,12 +12,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class tiempoUsuario {
 
     private final FirebaseFirestore db;
     private final String userId;
     private final Handler handler;
+    private final ExecutorService executor;
     private Runnable updateRunnable;
 
     private long tiempoAcumuladoHoy = 0;
@@ -27,64 +30,73 @@ public class tiempoUsuario {
     public tiempoUsuario(String userId) {
         this.db = FirebaseFirestore.getInstance();
         this.userId = userId;
-        this.handler = new Handler();
+        this.handler = new Handler(Looper.getMainLooper());
+        this.executor = Executors.newSingleThreadExecutor();
         this.fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
     }
 
-    // Inicia el conteo continuo de tiempo
     public void iniciarConteo() {
+        Log.d("TiempoUsuario", "🚀 iniciarConteo() llamado");
         lastActivityTime = System.currentTimeMillis();
 
         updateRunnable = new Runnable() {
             @Override
             public void run() {
                 long currentTime = System.currentTimeMillis();
-                long elapsedMinutes = (currentTime - lastActivityTime) / 1000 / 60;
+                long elapsedSeconds = (currentTime - lastActivityTime) / 1000;
                 lastActivityTime = currentTime;
 
-                String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                Log.d("TiempoUsuario", "⏳ elapsedSeconds: " + elapsedSeconds);
 
-                if (!fechaActual.equals(fechaHoy)) {
-                    subirTiempoAFirebase();
-                    tiempoAcumuladoHoy = 0;
-                    fechaHoy = fechaActual;
-                }
+                tiempoAcumuladoHoy += elapsedSeconds;
 
-                tiempoAcumuladoHoy += elapsedMinutes;
+                Log.d("TiempoUsuario", "🔥 tiempoAcumuladoHoy: " + tiempoAcumuladoHoy + " segundos");
 
-                handler.postDelayed(this, 60000); // cada minuto
+                subirTiempoAFirebase();
+
+                handler.postDelayed(this, 60000);
             }
         };
 
         handler.post(updateRunnable);
     }
 
-    // Llamar este método para guardar el tiempo antes de salir de la app
     public void detenerYGuardar() {
         handler.removeCallbacks(updateRunnable);
         subirTiempoAFirebase();
     }
 
-    // Guarda el tiempo acumulado en Firestore usando la fecha como clave y actualiza el total
+    public void forzarGuardarAhora() {
+        subirTiempoAFirebase();
+    }
+
     private void subirTiempoAFirebase() {
-        DocumentReference userDoc = db.collection("usuarios").document(userId);
+        executor.execute(() -> {
+            Log.d("TiempoUsuario", "🚀 Ejecutando subirTiempoAFirebase()");
 
-        userDoc.get().addOnSuccessListener(documentSnapshot -> {
-            long totalAnterior = 0;
-            if (documentSnapshot.exists()) {
-                Long totalGuardado = documentSnapshot.getLong("tiempoTotal");
-                totalAnterior = (totalGuardado != null) ? totalGuardado : 0;
-            }
+            DocumentReference userDoc = db.collection("usuarios").document(userId);
 
-            long nuevoTotal = totalAnterior + tiempoAcumuladoHoy;
+            long minutosHoy = tiempoAcumuladoHoy / 60;
+
+            Log.d("TiempoUsuario", "🔥 Guardando minutosHoy = " + minutosHoy);
 
             Map<String, Object> data = new HashMap<>();
-            data.put("tiempo_" + fechaHoy, tiempoAcumuladoHoy);
-            data.put("tiempoTotal", nuevoTotal);
+            data.put("tiempo_" + fechaHoy, minutosHoy);
+            data.put("tiempoTotal", minutosHoy);
 
             userDoc.set(data, SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "Tiempo diario y total guardado correctamente"))
-                    .addOnFailureListener(e -> Log.e("TiempoUsuario", "Error al guardar tiempo: " + e.getMessage()));
-        }).addOnFailureListener(e -> Log.e("TiempoUsuario", "Error al obtener documento para guardar tiempo total: " + e.getMessage()));
+                    .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
+                    .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar: " + e.getMessage()));
+        });
+    }
+
+    public static String formatearMinutos(long minutos) {
+        long horas = minutos / 60;
+        long mins = minutos % 60;
+        if (horas > 0) {
+            return horas + "h " + mins + "m";
+        } else {
+            return mins + "m";
+        }
     }
 }
