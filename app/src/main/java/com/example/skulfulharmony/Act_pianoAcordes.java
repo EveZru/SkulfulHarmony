@@ -1,6 +1,8 @@
 package com.example.skulfulharmony;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -82,28 +84,28 @@ public class Act_pianoAcordes extends AppCompatActivity {
 // Inicializar la lista de teclas del piano
         teclasPiano = new ArrayList<>();
         teclasPiano.add(btn_do1);
-        teclasPiano.add(btn_doso1);
+       // teclasPiano.add(btn_doso1);
         teclasPiano.add(btn_re1);
-        teclasPiano.add(btn_reso1);
+       // teclasPiano.add(btn_reso1);
         teclasPiano.add(btn_mi1);
         teclasPiano.add(btn_fa1);
-        teclasPiano.add(btn_faso1);
+      //  teclasPiano.add(btn_faso1);
         teclasPiano.add(btn_sol1);
-        teclasPiano.add(btn_solso1);
+       // teclasPiano.add(btn_solso1);
         teclasPiano.add(btn_la1);
-        teclasPiano.add(btn_laso1);
+       // teclasPiano.add(btn_laso1);
         teclasPiano.add(btn_si1);
         teclasPiano.add(btn_do2);
-        teclasPiano.add(btn_doso2);
+       // teclasPiano.add(btn_doso2);
         teclasPiano.add(btn_re2);
-        teclasPiano.add(btn_reso2);
+       // teclasPiano.add(btn_reso2);
         teclasPiano.add(btn_mi2);
         teclasPiano.add(btn_fa2);
-        teclasPiano.add(btn_faso2);
+        //teclasPiano.add(btn_faso2);
         teclasPiano.add(btn_sol2);
-        teclasPiano.add(btn_solso2);
+        //teclasPiano.add(btn_solso2);
         teclasPiano.add(btn_la2);
-        teclasPiano.add(btn_laso2);
+       // teclasPiano.add(btn_laso2);
         teclasPiano.add(btn_si2);
 
         // Establecer OnClickListener para cada tecla del piano
@@ -155,6 +157,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
 
     private void AcordeRandom() {
+
         int indiceAleatorio = random.nextInt(notas.length);
         acordeActual = notas[indiceAleatorio];
         tv_acorde.setText(acordeActual);
@@ -172,7 +175,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         List<String> acorde = new ArrayList<>();
         int indiceNotaBase = -1;
 
-        // Encontrar el índice de la nota base en el array de notas musicales (sin sostenidos por ahora)
+        // Encontrar el índice de la nota base en el array de notas musicales
         for (int i = 0; i < notas.length; i++) {
             if (notas[i].equals(notaBase)) {
                 indiceNotaBase = i;
@@ -217,16 +220,16 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
             // Verificar si se han presionado todas las teclas correctas (para un acorde mayor son 3)
             if (teclasPresionadasCorrectas == 3) {
-                // ¡Acorde completado! Puedes realizar alguna acción aquí,
-                // como mostrar un mensaje o cargar un nuevo acorde.
+                // ¡Acorde completado
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        AcordeRandom(); // Cargar un nuevo acorde después de 1 segundo
+                    }
+                }, 1000);
                 Toast.makeText(this, "¡Acorde correcto!", Toast.LENGTH_SHORT).show();
-                AcordeRandom(); // Cargar un nuevo acorde
+                 // Cargar un nuevo acorde
             }
-        } else {
-            // La tecla es incorrecta, podrías indicar esto visualmente si lo deseas
-            // Por ejemplo, cambiando brevemente a un color de error y luego volviendo.
-            // botonPresionado.setBackgroundColor(ContextCompat.getColor(this, R.color.colorTeclaIncorrecta));
-            // (Necesitarías lógica adicional para revertir el color)
         }
     }
 }

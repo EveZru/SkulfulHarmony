@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Act_flauta">
+    <LinearLayout
+        android:id="@+id/actividadcontainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="190dp"
+           android:layout_marginLeft="20dp"
+            android:background="@drawable/five_rounder_button"/>
+
+        <FrameLayout
+            android:id="@+id/fl_flauta"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="20dp">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+           <LinearLayout
+               android:layout_width="150dp"
+               android:layout_height="match_parent"
+               android:orientation="vertical">
+               <View
+                   android:layout_width="100dp"
+                   android:layout_height="120dp"
+                   android:layout_gravity="center"
+                   android:layout_marginTop="30dp"
+                   android:background="@drawable/boquillaflauta"/>
+               <View
+                   android:layout_width="100dp"
+                   android:layout_height="20dp"
+                   android:layout_gravity="center"
+                    android:background="@color/black"
+                   />
+               <View
+                   android:layout_width="80dp"
+                   android:layout_height="440dp"
+                   android:layout_gravity="center"
+                   android:background="@color/cafe"/>
+               <View
+                   android:layout_width="100dp"
+                   android:layout_height="20dp"
+                   android:layout_gravity="center"
+                   android:background="@color/black"
+                   />
+               <View
+                   android:layout_width="100dp"
+                   android:layout_height="70dp"
+                   android:layout_gravity="center"
+                   android:background="@drawable/flauta"/>
+               <View
+                   android:layout_width="140dp"
+                   android:layout_height="20dp"
+                   android:layout_gravity="center"
+                   android:background="@color/black"
+                   />
+
+           </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                >
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/five_rounder_button"/>
+
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <LinearLayout
+
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:layout_marginVertical="20dp"
+                android:text="Selecciona las teclas correspondientes al acorde de "/>
+
+            <TextView
+                android:id="@+id/tv_acorde"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:text="..."/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
+            <LinearLayout
+                android:id="@+id/ll_verapuntes"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:clickable="true">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/perfil_logo"/>
+                <TextView
+                    android:text="Ver apuntes "
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_volveralcursop"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:clickable="true">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/atras"/>
+                <TextView
+                    android:text="Volver al curso "
+                    android:textSize="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>

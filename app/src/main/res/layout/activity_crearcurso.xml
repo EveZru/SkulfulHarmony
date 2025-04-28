@@ -35,13 +35,15 @@
 
 
             <EditText
-                android:textColor="@color/black"
                 android:id="@+id/et_nombre_nuevo_curso"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="Agregale un nombre a tu curso"
                 android:layout_margin="10dp"
-                android:padding="8dp" />
+                android:padding="8dp"
+                android:hint="Agregale un nombre a tu curso"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray1"
+                android:backgroundTint="@color/black"/>
 
             <ScrollView
                 android:layout_width="wrap_content"
@@ -52,7 +54,9 @@
                     android:layout_height="wrap_content"
                     android:hint="Agrega una pequeña descripción de tu curso explicando los temas que buscas tratar"
                     android:layout_margin="10dp"
+                    android:backgroundTint="@color/black"
                     android:padding="8dp"
+                    android:textColorHint="@color/gray1"
                     android:textColor="@color/black"
                     android:inputType="textMultiLine"
                     android:gravity="top|start"
@@ -88,7 +92,11 @@
                     android:layout_weight="2"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/black"
+
+
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -113,6 +121,7 @@
                     android:layout_weight="2"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
+                    android:backgroundTint="@color/black"
                     android:textColor="@color/black"/>
             </LinearLayout>
 
@@ -138,7 +147,9 @@
                     android:layout_weight="2"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/black"
+                    />
             </LinearLayout>
 
 
@@ -155,6 +166,7 @@
         android:layout_marginHorizontal="10dp"
         android:background="@drawable/third_rounder_button"
         android:text="publicar"
+        android:textColor="@color/black"
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
         />
