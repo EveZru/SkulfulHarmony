@@ -1,6 +1,7 @@
 package com.example.skulfulharmony.javaobjects.users;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +34,7 @@ public class tiempoUsuario {
     private String fechaHoy;
 
     private boolean enDescanso = false; // 🔥 Si estamos en descanso o no
+    private long tiempoDescanso = 60 * 60; // Valor por defecto (1 hora) en segundos
 
     public tiempoUsuario(String userId, Context context) {
         this.db = FirebaseFirestore.getInstance();
@@ -41,6 +43,9 @@ public class tiempoUsuario {
         this.handler = new Handler(Looper.getMainLooper());
         this.executor = Executors.newSingleThreadExecutor();
         this.fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        cargarTiempoDeHoy(); // Cargar el tiempo acumulado de hoy
+        cargarTiempoDeDescanso(); // Cargar el tiempo de descanso desde Firestore
     }
 
     public void iniciarConteo() {
@@ -68,13 +73,16 @@ public class tiempoUsuario {
 
                 Log.d("TiempoUsuario", "🔥 tiempoAcumuladoHoy: " + tiempoAcumuladoHoy + " segundos");
 
-                // Mandamos al descanso automáticamente después de 2 minutos
-                if (tiempoAcumuladoHoy >= 60 * 60) { // 2 minutos de tiempo
+                // Mandamos al descanso automáticamente después del tiempo configurado (tiempoDescanso)
+                if (tiempoAcumuladoHoy >= tiempoDescanso) { // Tiempo de descanso configurado
                     lanzarPantallaDescanso(); // Mandamos a descanso
                     // No reiniciamos el contador
                 }
 
                 subirTiempoAFirebase(); // Subimos el tiempo a Firebase
+
+                // Guardamos el tiempo acumulado en SharedPreferences
+                guardarTiempoEnSharedPreferences();
 
                 handler.postDelayed(this, 60000); // Cada minuto
             }
@@ -82,14 +90,15 @@ public class tiempoUsuario {
 
         handler.post(updateRunnable);
     }
-
     public void detenerYGuardar() {
         handler.removeCallbacks(updateRunnable); // Detenemos el contador
         subirTiempoAFirebase();
+        guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se detiene la app
     }
 
     public void forzarGuardarAhora() {
         subirTiempoAFirebase();
+        guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se fuerza guardar
     }
 
     // Método para iniciar descanso
@@ -115,13 +124,53 @@ public class tiempoUsuario {
             Log.d("TiempoUsuario", "🔥 Guardando minutosHoy = " + minutosHoy);
 
             Map<String, Object> data = new HashMap<>();
-            data.put("tiempo_" + fechaHoy, minutosHoy);
-            data.put("tiempoTotal", minutosHoy);
+            data.put("tiempo_" + fechaHoy, minutosHoy);  // Guardamos el tiempo de hoy
+            data.put("tiempoTotal", minutosHoy);  // Guardamos el tiempo total (si quieres actualizarlo aquí)
 
             userDoc.set(data, SetOptions.merge())
                     .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
                     .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar: " + e.getMessage()));
         });
+    }
+
+    private void cargarTiempoDeHoy() {
+        // Primero, intentamos recuperar el tiempo desde SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("TiempoAcumulado", Context.MODE_PRIVATE);
+        tiempoAcumuladoHoy = prefs.getLong("tiempoHoy", 0); // Si no se encuentra, asigna 0
+    }
+
+    private void cargarTiempoDeDescanso() {
+        // Recuperar el tiempo de descanso desde Firestore
+        DocumentReference userDoc = db.collection("usuarios").document(userId);
+        userDoc.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Long tiempoDescansoFirestore = documentSnapshot.getLong("tiempo_descanso"); // Tiempo de descanso en Firestore
+                if (tiempoDescansoFirestore != null) {
+                    tiempoDescanso = tiempoDescansoFirestore * 60; // Convertimos a segundos
+                    Log.d("TiempoUsuario", "🔥 Tiempo de descanso recuperado: " + tiempoDescanso);
+                } else {
+                    // Si no hay valor en Firestore, usamos el valor por defecto (60 minutos)
+                    tiempoDescanso = 60 * 60; // 1 hora
+                    Log.d("TiempoUsuario", "🔥 No se encontró el tiempo de descanso, usando valor por defecto: " + tiempoDescanso);
+                }
+            } else {
+                // Si el documento no existe, usamos el valor por defecto
+                tiempoDescanso = 60 * 60; // 1 hora
+                Log.d("TiempoUsuario", "🔥 Documento no encontrado, usando valor por defecto: " + tiempoDescanso);
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("TiempoUsuario", "❌ Error al cargar el tiempo de descanso: " + e.getMessage());
+            // Si ocurre un error, usamos el valor por defecto
+            tiempoDescanso = 60 * 60; // 1 hora
+        });
+    }
+
+    private void guardarTiempoEnSharedPreferences() {
+        // Guardamos el tiempo acumulado en SharedPreferences
+        SharedPreferences prefs = context.getSharedPreferences("TiempoAcumulado", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("tiempoHoy", tiempoAcumuladoHoy);
+        editor.apply(); // Aplicamos los cambios
     }
 
     private void lanzarPantallaDescanso() {
