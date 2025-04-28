@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Título de la pantalla de configuración -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Configura tu tiempo de descanso"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- SeekBar para configurar el tiempo de descanso -->
+    <SeekBar
+        android:id="@+id/seekBarDescanso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="240"
+        android:progress="60"/> <!-- Valor inicial 1 hora -->
+
+    <!-- Mostrar el tiempo seleccionado -->
+    <TextView
+        android:id="@+id/tiempoDescansoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tiempo de descanso: 60 minutos"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Botón para guardar el tiempo de descanso -->
+    <Button
+        android:id="@+id/guardarTiempoDescanso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Guardar Tiempo"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>
+
+
