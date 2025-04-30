@@ -90,6 +90,7 @@ public class Perfil extends AppCompatActivity {
             return;
         }
 
+
         // Referencias UI
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
         tv_NombreUsuario = findViewById(R.id.tv_NombreUsuario);
