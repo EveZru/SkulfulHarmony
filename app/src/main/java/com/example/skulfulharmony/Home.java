@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class Home extends AppCompatActivity {
     private List<Curso> listaCursos;
     private RecyclerView rv_homevercursos;
     private AdapterHomeVerCursos adapterHomeVerCursos;
+    private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,18 +75,25 @@ public class Home extends AppCompatActivity {
         Curso curso2 = new Curso("Repaso de escribir partituras ", null, null, null, null);
         Curso curso3 = new Curso("Simulador de piano", null, null, null, null);
         Curso curso4 = new Curso("Simulador de flauta", null, null, null, null);
+        Curso curso5 = new Curso("Simulador de guitarra", null, null, null, null);
 
         // Agregamos los cursos a la lista
         listaCursos.add(curso1);
         listaCursos.add(curso2);
         listaCursos.add(curso3);
         listaCursos.add(curso4);
+        listaCursos.add(curso5);
+        /*// Ahora actualiza el adaptador
+            adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
+            rv_homevercursos.setAdapter(adapterHomeVerCursos);*/
 
-        RecyclerView recyclerView = findViewById(R.id.rv_homeclasesoriginales);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        RecyclerView recyclerView2 = findViewById(R.id.rv_homeclasesoriginales);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         // Crea el adaptador y establece el RecyclerView
-        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(listaCursos, this);
-        recyclerView.setAdapter(adapter);
+        adapterHomeVerCursosOriginales=new AdapterHomeVerCursosOriginales((Context) this, listaCursos);
+       // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
+        recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
+
 //_________________________________________________
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
