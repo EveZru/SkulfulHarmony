@@ -21,16 +21,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
+import com.example.skulfulharmony.adapters.AdapterHomeVerCursosOriginales;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ public class Home extends AppCompatActivity {
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         rv_homevercursos = findViewById(R.id.rv_homevercursos);
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
+        et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
       // startActivity(new Intent(Home.this, Act_pianoAcordes.class));
@@ -72,24 +71,25 @@ public class Home extends AppCompatActivity {
         // Ejemplo de objetos Curso
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);
         Curso curso2 = new Curso("Repaso de escribir partituras ", null, null, null, null);
-        Curso curso3 = new Curso("Curso de Batería", null, null, null, null);
+        Curso curso3 = new Curso("Simulador de piano", null, null, null, null);
+        Curso curso4 = new Curso("Simulador de flauta", null, null, null, null);
 
         // Agregamos los cursos a la lista
         listaCursos.add(curso1);
         listaCursos.add(curso2);
         listaCursos.add(curso3);
-
+        listaCursos.add(curso4);
 
         RecyclerView recyclerView = findViewById(R.id.rv_homeclasesoriginales);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         // Crea el adaptador y establece el RecyclerView
         AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(listaCursos, this);
         recyclerView.setAdapter(adapter);
-
+//_________________________________________________
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
-        et_buscarhome=findViewById(R.id.et_buscarhome);
+
 
 
         // Inicializar Firebase Auth

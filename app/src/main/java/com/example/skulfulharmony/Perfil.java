@@ -190,6 +190,7 @@ public class Perfil extends AppCompatActivity {
                 tv_No_Cursos.setText("Cursos Creados: " + documentSnapshot.getLong("cursos"));
 
                 // Cargar seguidores y seguidos
+
                 long seguidores = documentSnapshot.getLong("seguidores");
                 long seguidos = documentSnapshot.getLong("seguidos");
 

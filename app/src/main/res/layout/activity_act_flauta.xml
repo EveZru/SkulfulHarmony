@@ -14,6 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_oatras"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="190dp"
@@ -48,6 +49,7 @@
                     android:background="@color/black"
                    />
                <View
+
                    android:layout_width="80dp"
                    android:layout_height="440dp"
                    android:layout_gravity="center"
@@ -68,6 +70,7 @@
                    android:layout_height="20dp"
                    android:layout_gravity="center"
                    android:background="@color/black"
+
                    />
 
            </LinearLayout>
@@ -79,36 +82,43 @@
                 android:layout_gravity="center"
                 >
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_ouno"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_odos"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_otres"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_ocuatro"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_ocinco"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_oseis"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/five_rounder_button"/>
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_oocho"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
@@ -116,6 +126,7 @@
 
 
             </LinearLayout>
+
 
         </FrameLayout>
 
@@ -180,6 +191,19 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/imagencontainer"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:background="@drawable/estella_llena"
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 

@@ -80,6 +80,13 @@
             android:exported="true"
             android:noHistory="true" />
         <activity
+            android:name=".Act_pianoAcordes"
+            android:exported="false" />
+        <activity
+            android:name=".Act_flauta"
+            android:exported="false" />
+
+        <activity
             android:name=".RecuperarContrasena"
             android:exported="false" />
         <activity

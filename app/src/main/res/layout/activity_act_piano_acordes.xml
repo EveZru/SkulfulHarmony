@@ -261,15 +261,6 @@
         android:layout_height="400dp"
         android:background="@drawable/estella_llena"
         android:layout_gravity="center"/>
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_volveract"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Regresar a la actividad"
-            android:textSize="20sp"
-            android:textAllCaps="false"
-            android:padding="10dp"
-            android:background="@drawable/rounded_edit_text"
-            />
+
 </LinearLayout>
 </FrameLayout>

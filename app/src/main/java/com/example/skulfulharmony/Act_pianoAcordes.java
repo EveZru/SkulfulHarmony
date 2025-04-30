@@ -121,7 +121,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
 
 
-
         tv_acorde = findViewById(R.id.tv_acorde);
         ll_verapuntes = findViewById(R.id.ll_verapuntes);
         ll_volveralcursop = findViewById(R.id.ll_volveralcursop);
@@ -157,16 +156,13 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
 
     private void AcordeRandom() {
-
         int indiceAleatorio = random.nextInt(notas.length);
         acordeActual = notas[indiceAleatorio];
         tv_acorde.setText(acordeActual);
-      //  tv_acorde.setText(acordeActual + " Mayor"); // Indicamos que es acorde mayor
         teclasPresionadasCorrectas = 0; // Reiniciar el contador al cambiar de acorde
         notasAcordeActual = obtenerNotasAcordeMayor(acordeActual);
-        // Opcional: Puedes reiniciar el color de las teclas aquí si lo deseas
         for (AppCompatButton tecla : teclasPiano) {
-            tecla.setBackgroundResource(R.drawable.third_rounder_button); // Reemplaza con el background original
+            tecla.setBackgroundResource(R.drawable.third_rounder_button);
         }
     }
 
@@ -194,10 +190,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
     private void verificarTeclaPresionada(AppCompatButton botonPresionado) {
         String nombreTecla = "";
 
-        // Obtener el "nombre" de la tecla presionada. Aquí asumimos que el texto
-        // del botón (o alguna forma de identificar la nota) está disponible.
-        // Necesitarás adaptar esto según cómo hayas nombrado o identificado tus botones.
-        // Por ejemplo, si el ID del botón contiene la nota:
         String idBoton = getResources().getResourceEntryName(botonPresionado.getId());
         if (idBoton.contains("do")) nombreTecla = "Do";
         else if (idBoton.contains("re")) nombreTecla = "Re";
@@ -230,6 +222,20 @@ public class Act_pianoAcordes extends AppCompatActivity {
                 Toast.makeText(this, "¡Acorde correcto!", Toast.LENGTH_SHORT).show();
                  // Cargar un nuevo acorde
             }
+        }else{
+            // La tecla es incorrecta, cambiar su color a rojo y mostrar mensaje
+            // buttonPresionado.setBackgroundResource(R.drawable.error_button);
+            botonPresionado.setBackgroundResource(R.drawable.error_button);
+            Toast.makeText(this, "¡Inténtalo otra vez!", Toast.LENGTH_SHORT).show();
+
+            // Restablecer el color de la tecla después de un breve retraso
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   // botonPresionado.setBackgroundColor(ContextCompat.getColor(this, colorResId)); // Restablece al color original
+                }
+            }, 500); // 500 milisegundos de retraso
+
         }
     }
 }
