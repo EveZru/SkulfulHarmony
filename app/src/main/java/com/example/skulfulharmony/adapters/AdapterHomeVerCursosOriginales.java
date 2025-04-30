@@ -78,27 +78,7 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
                     else Toast.makeText(context, "Clase no disponible por el momento", Toast.LENGTH_SHORT).show();
 
                 }
-            /*  String tituloCurso = curso.getTitulo();
-            Log.d("AdapterOriginales", "Título del curso clickeado: " + tituloCurso);
-            if (tituloCurso != null) {
-                if (tituloCurso.equals("curso4")) {
-                    // Navegar a ActividadSimulador para curso3
-                    Intent intent = new Intent(context, Act_flauta.class);
-                    context.startActivity(intent);
-                } else if (tituloCurso.equals("curso3")) {
-                    // Navegar a otra actividad para curso4 (ejemplo: EscribirPartiturasAct)
-                    Intent intent = new Intent(context, Act_pianoAcordes.class);
-                    context.startActivity(intent);
-                } else if (tituloCurso.equals("curso5")) {
-                    // Navegar a Home para curso1
-                    Intent intent = new Intent(context, Act_flauta.class);
-                    context.startActivity(intent);
-                } else {
-                    // Navegar a la actividad por defecto para otros cursos (ejemplo: Ver_cursos)
-                    Intent intent = new Intent(context, Ver_cursos.class);
-                    context.startActivity(intent);
-                }
-            }*/
+
         });
 
     }

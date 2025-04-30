@@ -3,8 +3,11 @@ package com.example.skulfulharmony;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
@@ -27,7 +30,7 @@ public class Ver_cursos extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
     private int idCurso;
-    private Toolbar menu_cursos;
+    private ImageView desplegarmenu;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +41,15 @@ public class Ver_cursos extends AppCompatActivity {
         tituloCurso = findViewById(R.id.text_vercurso_title);
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
         rvClases = findViewById(R.id.rv_verclasesencurso);
+        desplegarmenu = findViewById(R.id.iv_despegarmenu); // Asegúrate de que la 'D' esté en mayúscula
+        desplegarmenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
 
         firestore = FirebaseFirestore.getInstance();
-        menu_cursos = findViewById(R.id.toolbar_ver_cursos);
         // Obtener idCurso del intent
         idCurso = getIntent().getIntExtra("idCurso", -1);
 
@@ -98,7 +107,7 @@ public class Ver_cursos extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.it_denunciar) {
-            startActivity(new Intent(Ver_cursos.this, CrearClase.class));
+            startActivity(new Intent(Ver_cursos.this, CrearDenuncia.class));
             return true;
         } else if (id == R.id.it_descargar) {
             Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
@@ -108,6 +117,30 @@ public class Ver_cursos extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void showPopupMenu(View view) {
+        // Crear el PopupMenu y asociarlo con la vista 'view' (la ImageView desplegarmenu)
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.menu_cursos, popupMenu.getMenu()); // Usamos el mismo menú que para la ActionBar
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.it_denunciar) {
+                startActivity(new Intent(Ver_cursos.this, CrearDenuncia.class));
+                return true;
+            } else if (id == R.id.it_descargar) {
+                Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.it_compartir) {
+                Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false; // Importante devolver false si no se manejó el clic
+        });
+
+        // Mostrar el menú
+        popupMenu.show();
     }
     //__________
 }

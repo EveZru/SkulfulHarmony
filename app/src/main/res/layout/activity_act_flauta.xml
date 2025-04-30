@@ -141,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="20dp"
                 android:layout_marginVertical="20dp"
-                android:text="Selecciona las teclas correspondientes al acorde de "/>
+                android:text="Selecciona los agujeros correspondientes a la nota de  "/>
 
             <TextView
                 android:id="@+id/tv_acorde"

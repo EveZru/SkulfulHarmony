@@ -14,7 +14,17 @@
         android:layout_width="match_parent"
         android:layout_height="60sp"
         android:background="@color/black"
-         />
+        >
+        <ImageView
+            android:id="@+id/iv_despegarmenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:src="@drawable/mas_logo"
+            android:contentDescription="Toolbar Icon" />
+
+    </androidx.appcompat.widget.Toolbar>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
