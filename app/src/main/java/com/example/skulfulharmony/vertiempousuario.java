@@ -1,8 +1,10 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.skulfulharmony.javaobjects.users.tiempoUsuario;
@@ -26,6 +28,8 @@ public class vertiempousuario extends AppCompatActivity {
     private ProgressBar[] barrasDias;
     private Map<String, Long> tiemposPorDia = new HashMap<>();
     private long tiempoHoy = 0;
+
+    private Button btnModificarTiempo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,16 @@ public class vertiempousuario extends AppCompatActivity {
                 findViewById(R.id.barViernes),
                 findViewById(R.id.barSabado)
         };
+
+        btnModificarTiempo = findViewById(R.id.btnModificarTiempo); // Inicializamos el botón
+
+        // Configuramos el click del botón para redirigir al usuario a la actividad de configuración
+        btnModificarTiempo.setOnClickListener(v -> {
+            // Creamos una intención para llevar al usuario a la actividad de modificación de tiempo
+            Intent intent = new Intent(vertiempousuario.this, modificar_tiempo.class);
+            startActivity(intent);
+        });
+
 
         cargarDatos();
     }
