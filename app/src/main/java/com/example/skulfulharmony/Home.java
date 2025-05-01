@@ -154,7 +154,7 @@ public class Home extends AppCompatActivity {
                      return true;
                  } else if (itemId == R.id.it_new) {
                      // Navegar a la actividad para crear un curso
-                     startActivity(new Intent(Home.this, CrearCurso.class));
+                     startActivity(new Intent(Home.this, VerCursosCreados.class));
                      return true;
                  } else if (itemId == R.id.it_seguidos) {
                      // Navegar a la actividad para ver la Biblioteca

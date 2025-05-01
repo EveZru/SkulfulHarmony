@@ -43,6 +43,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
 
+                        <androidx.appcompat.widget.Toolbar
+                            android:id="@+id/toolbar_ver_cursos_abajo"
+                            android:layout_width="match_parent"
+                            android:layout_height="60sp"
+                            android:background="#00000000"
+                            />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -51,14 +58,26 @@
                             android:background="@drawable/degradado_holder_texts">
 
                             <TextView
+                                android:inputType="textMultiLine"
+                                android:singleLine="false"
                                 android:layout_width="match_parent"
-                                android:layout_height="60dp"
+                                android:layout_height="wrap_content"
                                 android:textSize="40sp"
                                 android:text="lllll"
                                 android:textColor="@color/white"
                                 android:layout_marginHorizontal="10dp"
+                                android:maxLines="2"
                                 android:textStyle="bold"
                                 android:id="@+id/text_vercurso_title" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="30dp"
+                                android:textSize="20sp"
+                                android:textColor="@color/white"
+                                android:layout_marginHorizontal="10dp"
+                                android:layout_marginTop="5dp"
+                                android:id="@+id/text_vercurso_autor"
+                                android:text="Yo mero"/>
 
                             <!-- ScrollView para la descripción -->
                             <ScrollView
@@ -69,16 +88,19 @@
                                 android:layout_marginBottom="5dp"
                                 android:fillViewport="true">
 
-                                <TextView
-                                    android:id="@+id/text_vercurso_descripcion"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textSize="16sp"
-                                    android:textColor="@color/white"
-                                    android:maxLines="6"
-                                    android:scrollbars="vertical"
-                                    android:overScrollMode="ifContentScrolls"
-                                    android:text="Tu descripción larga va aquí para probar cómo se ve con múltiples líneas y que el scroll funcione bien sin romper el diseño." />
+                                    <TextView
+                                        android:inputType="textMultiLine"
+                                        android:padding="10dp"
+                                        android:id="@+id/text_vercurso_descripcion"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:textSize="16sp"
+                                        android:textColor="@color/gray1"
+                                        android:maxLines="6"
+                                        android:scrollbars="vertical"
+                                        android:overScrollMode="ifContentScrolls"
+                                        android:background="#00000000"
+                                        android:text="Tu descripción larga va aquí para probar cómo se ve con múltiples líneas y que el scroll funcione bien sin romper el diseño." />
 
                             </ScrollView>
                         </LinearLayout>

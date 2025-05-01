@@ -43,10 +43,11 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
         holder.tvTextPrincipal.setText(curso.getTitulo());
 
         // Texto secundario opcional (por ejemplo, fecha o descripción)
-        if (curso.getFechaCreacion() != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            holder.tvTextSegundo.setText("Creado el " + dateFormat.format(curso.getFechaCreacion()));
-        } else if (curso.getDescripcion() != null) {
+//        if (curso.getFechaCreacion() != null) {
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+//            holder.tvTextSegundo.setText("Creado el " + dateFormat.format(curso.getFechaCreacion()));
+//        } else
+        if (curso.getDescripcion() != null) {
             holder.tvTextSegundo.setText(curso.getDescripcion());
         } else {
             holder.tvTextSegundo.setText("Curso sin descripción");

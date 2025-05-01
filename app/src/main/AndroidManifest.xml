@@ -23,9 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
+        <activity android:name=".VerCursoComoCreador"
+            android:exported="false"/>
         <activity
             android:name=".imagen"
             android:exported="false" />
+
         <activity
             android:name=".modificar_tiempo"
             android:exported="false" />
@@ -46,6 +49,9 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
         <activity android:name=".vertiempousuario" />
+        <activity
+            android:name=".VerCursosCreados"
+            android:exported="false" />
         <activity
             android:name=".perfil_admin"
             android:exported="false" /> <!-- SPLASH como launcher principal -->

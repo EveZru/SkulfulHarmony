@@ -10,34 +10,8 @@ import java.util.List;
 
 public class Clase {
 
+    private Integer idClase;
     private String nombreCurso;
-
-    public String getImagenCurso() {
-        return imagenCurso;
-    }
-
-    public void setImagenCurso(String imagenCurso) {
-        this.imagenCurso = imagenCurso;
-    }
-
-    private String imagenCurso;
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
     private String titulo;
     private String textos;
     private String imagen;
@@ -47,6 +21,7 @@ public class Clase {
     private List<Comentario> comentarios;
     private int meGusta;
     private Date fechaCreacion;
+
 
     public Clase(String titulo, List<PreguntaCuestionario> preguntas) {
         this.titulo = titulo;
@@ -92,4 +67,33 @@ public class Clase {
     public void setVideo(String video) {
         this.video = video;
     }
+
+    public String getImagenCurso() {
+        return imagenCurso;
+    }
+
+    public void setImagenCurso(String imagenCurso) {
+        this.imagenCurso = imagenCurso;
+    }
+
+    private String imagenCurso;
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+
+
+
 }

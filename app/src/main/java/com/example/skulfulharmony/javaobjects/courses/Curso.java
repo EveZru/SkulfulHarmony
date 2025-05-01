@@ -14,31 +14,8 @@ import java.util.Map;
 
 public class Curso {
 
-    public Curso() {
-        // Initialize collections and maps to avoid NullPointerException
-        this.clases = new ArrayList<>();
-        this.seguidores = new ArrayList<>();
-        this.comentarios = new ArrayList<>();
-        this.instrumento = new HashMap<>();
 
-        this.genero = new HashMap<>();
-        this.dificultad = new HashMap<>();
-    }
-    public Integer getId() {
-        return idCurso;
-    }
-
-    public void setId(Integer id) {
-        this.idCurso = id;
-    }
-
-    public Integer getIdCurso() {
-        return idCurso;
-    }
-
-    public void setIdCurso(Integer idCurso) {
-        this.idCurso = idCurso;
-    }
+    //Atributos
 
     private Integer idCurso;
     private String imagen;
@@ -51,35 +28,30 @@ public class Curso {
     private ClusterCursos cluster;
     private CalificacionCurso calificacion;
     private Date fechaCreacion;
-
-    public Timestamp getFechaCreacionf() {
-        return fechaCreacionf;
-    }
-
-    public void setFechaCreacionf(Timestamp fechaCreacionf) {
-        this.fechaCreacionf = fechaCreacionf;
-    }
-
-    public String getCreador() {
-        return creador;
-    }
-
-    public void setCreador(String creador) {
-        this.creador = creador;
-    }
-
     private Timestamp fechaCreacionf;
     private Map<String,String> instrumento;
     private Map<String,String> genero;
     private Map<String,String> dificultad;
 
+
+    //Constructores
+
+    public Curso() {
+        // Initialize collections and maps to avoid NullPointerException
+        this.clases = new ArrayList<>();
+        this.seguidores = new ArrayList<>();
+        this.comentarios = new ArrayList<>();
+        this.instrumento = new HashMap<>();
+
+        this.genero = new HashMap<>();
+        this.dificultad = new HashMap<>();
+    }
     public Curso(Integer id, String titulo, String imagen, Date fechaCreacion){
         this.idCurso = id;
         this.titulo = titulo;
         this.imagen = imagen;
         this.fechaCreacion = fechaCreacion;
     }
-
     public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad) {
        /* this.titulo = titulo;
         this.creador = creador;
@@ -100,7 +72,6 @@ public class Curso {
         this.genero = genero != null ? genero : null;
         this.dificultad = dificultad != null ? dificultad : null;*/
     }
-
     public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad, String imagen, Timestamp fechaCreacionf) {
         this.titulo = titulo;
         this.creador = creador;
@@ -111,54 +82,82 @@ public class Curso {
         this.fechaCreacionf = fechaCreacionf;
     }
 
-    public String getImagen() {
-        return imagen;
+    //Setters
+    public void setId(Integer id) {
+        this.idCurso = id;
+    }
+    public void setIdCurso(Integer idCurso) {
+        this.idCurso = idCurso;
+    }
+    public void setFechaCreacionf(Timestamp fechaCreacionf) {
+        this.fechaCreacionf = fechaCreacionf;
+    }
+    public void setCreador(String creador) {
+        this.creador = creador;
     }
     public void setImagen(String imagen) {
         this.imagen = imagen;
     }
-    public String getDescripcion() {
-        return descripcion;
-    }
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-    public String getTitulo() {
-        return titulo;
     }
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
-    public ClusterCursos getCluster() {
-        return cluster;
-    }
     public void setCluster(ClusterCursos cluster) {
         this.cluster = cluster;
     }
-    public CalificacionCurso getCalificacion() {
-        return calificacion;
-    }
     public void setCalificacion(CalificacionCurso calificacion) { this.calificacion = calificacion; }
-    public Date getFechaCreacion() {
-        return fechaCreacion;
-    }
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-    public Map<String,String> getDificultad() {
-        return dificultad;
-    }
     public void setDificultad(Map<String,String> dificultad) { this.dificultad = dificultad; }
-    public Map<String,String> getGenero() {
-        return genero;
-    }
     public void setGenero(Map<String,String> genero) {
         this.genero = genero;
-    }
-    public Map<String,String> getInstrumento() {
-        return instrumento;
     }
     public void setInstrumento(Map<String,String> instrumento) {
         this.instrumento = instrumento;
     }
+
+    //Getters
+    public Integer getId() {
+        return idCurso;
+    }
+    public Integer getIdCurso() {
+        return idCurso;
+    }
+    public Timestamp getFechaCreacionf() {
+        return fechaCreacionf;
+    }
+    public String getCreador() {
+        return creador;
+    }
+    public String getImagen() {
+        return imagen;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public String getTitulo() {
+        return titulo;
+    }
+    public ClusterCursos getCluster() {
+        return cluster;
+    }
+    public CalificacionCurso getCalificacion() {
+        return calificacion;
+    }
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+    public Map<String,String> getDificultad() {
+        return dificultad;
+    }
+    public Map<String,String> getGenero() {
+        return genero;
+    }
+    public Map<String,String> getInstrumento() {
+        return instrumento;
+    }
+
 }

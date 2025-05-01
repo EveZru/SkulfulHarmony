@@ -43,7 +43,7 @@ public class Biblioteca extends AppCompatActivity {
                     return true;
                 } else if (itemId == R.id.it_new) {
                     // Navegar a la actividad para crear un curso
-                    startActivity(new Intent(Biblioteca.this, CrearCurso.class));
+                    startActivity(new Intent(Biblioteca.this, VerCursosCreados.class));
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
                     // Estamos en biblioteca

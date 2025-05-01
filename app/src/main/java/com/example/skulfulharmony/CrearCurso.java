@@ -35,6 +35,8 @@ import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.server.config.DropboxConfig;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -218,7 +220,9 @@ public class CrearCurso extends AppCompatActivity {
     }
 
     private void guardarCursoEnFirestore(String urlImagen) {
-        String correo = dbUser.getCorreoUser();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String correo = user.getEmail();
         String titulo = etNombreNuevoCurso.getText().toString();
         String descripcion = etDescripcionNuevoCurso.getText().toString();
 

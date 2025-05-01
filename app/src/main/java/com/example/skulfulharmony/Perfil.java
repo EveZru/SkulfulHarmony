@@ -1,6 +1,7 @@
 package com.example.skulfulharmony;
 
 // 🧠 Clases internas del proyecto
+import com.example.skulfulharmony.server.zip.ComprimirZip; // Para comprimir archivos
 import com.example.skulfulharmony.server.config.DropboxConfig; // Configuración del cliente de Dropbox
 
 // ☁️ Dropbox SDK
@@ -11,6 +12,7 @@ import com.dropbox.core.v2.sharing.SharedLinkMetadata; // Metadatos del enlace c
 
 // 📱 Android básico
 import android.content.Intent; // Navegación entre actividades
+import android.database.Cursor; // Lectura de bases de datos
 import android.net.Uri; // Referencia a recursos (como imágenes)
 import android.os.Bundle; // Datos entre actividades
 import android.os.Handler; // Ejecutar tareas en el hilo principal
@@ -27,6 +29,7 @@ import java.util.concurrent.ExecutorService; // Ejecutor de hilos
 import java.util.concurrent.Executors; // Utilidad para crear ejecutores
 
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.PopupMenu;
 
 // 🖼️ Librería externa para imágenes
@@ -125,7 +128,7 @@ public class Perfil extends AppCompatActivity {
                     startActivity(new Intent(Perfil.this, Home.class));
                     return true;
                 } else if (itemId == R.id.it_new) {
-                    startActivity(new Intent(Perfil.this, CrearCurso.class));
+                    startActivity(new Intent(Perfil.this, VerCursosCreados.class));
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
                     startActivity(new Intent(Perfil.this, Biblioteca.class));
@@ -160,13 +163,10 @@ public class Perfil extends AppCompatActivity {
                 startActivity(new Intent(Perfil.this, EliminarCuenta.class));
                 return true;
             } else if (id == R.id.menuTerminos) {
-                startActivity(new Intent(Perfil.this, verterminos.class));
+                startActivity(new Intent(Perfil.this, TerminosCondiciones.class));
                 return true;
             } else if (id == R.id.menuContactanos) {
                 startActivity(new Intent(Perfil.this, Contactanos.class));
-                return true;
-            }else if (id == R.id.menuCreditos) {
-                startActivity(new Intent(Perfil.this, creditos.class));
                 return true;
             }
             return false;

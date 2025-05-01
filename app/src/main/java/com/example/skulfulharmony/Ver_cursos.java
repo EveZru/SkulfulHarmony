@@ -25,7 +25,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 public class Ver_cursos extends AppCompatActivity {
 
     private ImageView imagenTitulo;
-    private TextView tituloCurso, descripcionCurso;
+    private TextView tituloCurso, descripcionCurso, autorCurso;
     private RecyclerView rvClases; // Puedes llenar esto después con clases del curso
 
     private FirebaseFirestore firestore;
@@ -40,6 +40,7 @@ public class Ver_cursos extends AppCompatActivity {
         imagenTitulo = findViewById(R.id.imgen_vercurso_imagentitulo);
         tituloCurso = findViewById(R.id.text_vercurso_title);
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
+        autorCurso = findViewById(R.id.text_vercurso_autor);
         rvClases = findViewById(R.id.rv_verclasesencurso);
         desplegarmenu = findViewById(R.id.iv_despegarmenu); // Asegúrate de que la 'D' esté en mayúscula
         desplegarmenu.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +75,7 @@ public class Ver_cursos extends AppCompatActivity {
 
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
+                            autorCurso.setText(curso.getCreador()); //Corregir pq esto muestra el correo del creador
                             if(curso.getDescripcion() == null || curso.getDescripcion().isEmpty() || curso.getDescripcion().equals("")){
                                 descripcionCurso.setText("Curso sin descripción");
                             }
@@ -86,6 +88,9 @@ public class Ver_cursos extends AppCompatActivity {
                                     .into(imagenTitulo);
 
                             // Aquí puedes luego cargar clases del curso si quieres
+
+
+
                         }
                     } else {
                         Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();

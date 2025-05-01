@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".VerCursoComoCreador">
+
+    <!-- Tu ScrollView con el contenido -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/gray1">
+
+                <ImageView
+                    android:id="@+id/imgen_vercursocreador_imagentitulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_ver_cursos"
+                    android:layout_width="match_parent"
+                    android:layout_height="60sp"
+                    android:background="#00000000"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:background="@drawable/degradado_holder_texts">
+
+                    <TextView
+                        android:inputType="textMultiLine"
+                        android:singleLine="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="40sp"
+                        android:text="lllll"
+                        android:textColor="@color/white"
+                        android:layout_marginHorizontal="10dp"
+                        android:maxLines="2"
+                        android:textStyle="bold"
+                        android:id="@+id/text_vercursocreador_title" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:textSize="20sp"
+                        android:textColor="@color/white"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginTop="5dp"
+                        android:id="@+id/text_vercursocreador_fecha"
+                        android:text="Yo mero"/>
+
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:id="@+id/text_vercursocreador_descripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/gray1"
+                android:maxLines="6"
+                android:scrollbars="vertical"
+                android:overScrollMode="ifContentScrolls"
+                android:background="#00000000"
+                android:text="Tu descripción larga va aquí para probar cómo se ve con múltiples líneas y que el scroll funcione bien sin romper el diseño." />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_verclasesencursocomocreador"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Aquí el botón flotante -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bttn_vercursocreador_agregarclase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:tintMode="multiply"
+        android:tint="@null"
+        android:src="@drawable/mas_logo"
+        android:contentDescription="Agregar nueva clase"
+        android:backgroundTint="@color/rojo"
+
+    />
+
+</FrameLayout>
+
