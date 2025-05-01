@@ -44,6 +44,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation ("androidx.core:core:1.7.0")
     implementation(libs.firebase.crashlytics.buildtools)
+    implementation ("androidx.work:work-runtime:2.7.0")
 
     implementation ("androidx.media3:media3-exoplayer:1.2.0")
     implementation ("androidx.media3:media3-ui:1.2.0")

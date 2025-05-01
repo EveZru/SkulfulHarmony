@@ -1,8 +1,8 @@
 package com.example.skulfulharmony.javaobjects.users;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class tiempoUsuario {
 
@@ -26,22 +24,20 @@ public class tiempoUsuario {
     private final String userId;
     private final Context context;
     private final Handler handler;
-    private final ExecutorService executor;
-    private Runnable updateRunnable;
-
-    private long tiempoAcumuladoHoy = 0; // 🔥 Acumulamos tiempo en segundos
+    private long tiempoAcumuladoHoy = 0; // Acumulamos tiempo en segundos
     private long lastActivityTime = 0;
     private String fechaHoy;
 
-    private boolean enDescanso = false; // 🔥 Si estamos en descanso o no
+    private boolean enDescanso = false; // Si estamos en descanso o no
     private long tiempoDescanso = 60 * 60; // Valor por defecto (1 hora) en segundos
+
+    private long tiempoRestanteParaDescanso = 0; // Para llevar el control del descanso
 
     public tiempoUsuario(String userId, Context context) {
         this.db = FirebaseFirestore.getInstance();
         this.userId = userId;
         this.context = context;
         this.handler = new Handler(Looper.getMainLooper());
-        this.executor = Executors.newSingleThreadExecutor();
         this.fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         cargarTiempoDeHoy(); // Cargar el tiempo acumulado de hoy
@@ -52,7 +48,7 @@ public class tiempoUsuario {
         Log.d("TiempoUsuario", "🚀 iniciarConteo() llamado");
         lastActivityTime = System.currentTimeMillis();
 
-        updateRunnable = new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 // Verificamos si estamos en descanso
@@ -61,6 +57,16 @@ public class tiempoUsuario {
                     Log.d("TiempoUsuario", "🛑 En descanso, no acumulando tiempo");
                     handler.postDelayed(this, 60000); // Checamos cada minuto
                     return;
+                }
+
+                // Obtener fecha actual
+                String fechaActual = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                // Si el día cambió, reseteamos el acumulado del día
+                if (!fechaActual.equals(fechaHoy)) {
+                    Log.d("TiempoUsuario", "🔥 Nuevo día detectado, reiniciando contador");
+                    tiempoAcumuladoHoy = 0; // Reseteamos el tiempo del día
+                    fechaHoy = fechaActual; // Actualizamos la fecha
                 }
 
                 long currentTime = System.currentTimeMillis();
@@ -73,10 +79,15 @@ public class tiempoUsuario {
 
                 Log.d("TiempoUsuario", "🔥 tiempoAcumuladoHoy: " + tiempoAcumuladoHoy + " segundos");
 
-                // Mandamos al descanso automáticamente después del tiempo configurado (tiempoDescanso)
+                // Mandamos al descanso automáticamente después del tiempo configurado
                 if (tiempoAcumuladoHoy >= tiempoDescanso) { // Tiempo de descanso configurado
-                    lanzarPantallaDescanso(); // Mandamos a descanso
-                    // No reiniciamos el contador
+                    if (tiempoRestanteParaDescanso == 0) {  // Solo enviar al descanso una vez por hora
+                        lanzarPantallaDescanso(); // Mandamos a descanso
+                        tiempoRestanteParaDescanso = tiempoDescanso; // Reset de tiempo restante
+                    }
+                } else {
+                    // Si no estamos en descanso, restamos el tiempo
+                    tiempoRestanteParaDescanso = tiempoDescanso - tiempoAcumuladoHoy; // Lo calculamos para controlar el tiempo restante
                 }
 
                 subirTiempoAFirebase(); // Subimos el tiempo a Firebase
@@ -86,12 +97,21 @@ public class tiempoUsuario {
 
                 handler.postDelayed(this, 60000); // Cada minuto
             }
-        };
-
-        handler.post(updateRunnable);
+        });
     }
+
+    public void pausarConteo() {
+        handler.removeCallbacksAndMessages(null); // Detenemos el contador si la app está en segundo plano
+        Log.d("TiempoUsuario", "🚧 Contador pausado");
+    }
+
+    public void reanudarConteo() {
+        Log.d("TiempoUsuario", "🚀 Reiniciando el contador");
+        iniciarConteo(); // Reanudar el conteo
+    }
+
     public void detenerYGuardar() {
-        handler.removeCallbacks(updateRunnable); // Detenemos el contador
+        handler.removeCallbacksAndMessages(null); // Detenemos el contador
         subirTiempoAFirebase();
         guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se detiene la app
     }
@@ -114,23 +134,20 @@ public class tiempoUsuario {
     }
 
     private void subirTiempoAFirebase() {
-        executor.execute(() -> {
-            Log.d("TiempoUsuario", "🚀 Ejecutando subirTiempoAFirebase()");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userDoc = db.collection("usuarios").document(userId);
 
-            DocumentReference userDoc = db.collection("usuarios").document(userId);
+        long minutosHoy = tiempoAcumuladoHoy / 60; // Convertimos a minutos
 
-            long minutosHoy = tiempoAcumuladoHoy / 60; // Convertimos a minutos
+        Log.d("TiempoUsuario", "🔥 Guardando minutosHoy = " + minutosHoy);
 
-            Log.d("TiempoUsuario", "🔥 Guardando minutosHoy = " + minutosHoy);
+        Map<String, Object> data = new HashMap<>();
+        data.put("tiempo_" + fechaHoy, minutosHoy);  // Guardamos el tiempo de hoy
+        data.put("tiempoTotal", minutosHoy);  // Guardamos el tiempo total (si quieres actualizarlo aquí)
 
-            Map<String, Object> data = new HashMap<>();
-            data.put("tiempo_" + fechaHoy, minutosHoy);  // Guardamos el tiempo de hoy
-            data.put("tiempoTotal", minutosHoy);  // Guardamos el tiempo total (si quieres actualizarlo aquí)
-
-            userDoc.set(data, SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
-                    .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar: " + e.getMessage()));
-        });
+        userDoc.set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
+                .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar: " + e.getMessage()));
     }
 
     private void cargarTiempoDeHoy() {
@@ -141,7 +158,7 @@ public class tiempoUsuario {
 
     private void cargarTiempoDeDescanso() {
         // Recuperar el tiempo de descanso desde Firestore
-        DocumentReference userDoc = db.collection("usuarios").document(userId);
+        DocumentReference userDoc = FirebaseFirestore.getInstance().collection("usuarios").document(userId);
         userDoc.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Long tiempoDescansoFirestore = documentSnapshot.getLong("tiempo_descanso"); // Tiempo de descanso en Firestore
