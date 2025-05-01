@@ -61,7 +61,43 @@ public class VerCursosCreados extends AppCompatActivity {
             startActivity(new Intent(VerCursosCreados.this, CrearCurso.class));
         });
 
+
+        BottomNavigationView bottomNavigationView1 = findViewById(R.id.bottom_navigation);
+        bottomNavigationView1.setSelectedItemId(R.id.it_homme);
+
+
+
+        if (bottomNavigationView1 != null) {
+            // Configurar el listener para los ítems seleccionados
+            bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.it_homme) {
+                    // Acción para Home
+                    startActivity(new Intent(VerCursosCreados.this, Home.class));
+                    return true;
+                } else if (itemId == R.id.it_new) {
+                    // Navegar a la actividad para crear un curso
+
+                    return true;
+                } else if (itemId == R.id.it_seguidos) {
+                    // Navegar a la actividad para ver la Biblioteca
+                    startActivity(new Intent(VerCursosCreados.this, Biblioteca.class));
+                    return true;
+                } else if (itemId == R.id.it_perfil) {
+                    // Navegar a la actividad para buscar perfiles
+                    startActivity(new Intent(VerCursosCreados.this, Perfil.class));
+                    return true;
+                }
+                return false;
+            });
+            // Establecer el ítem seleccionado al inicio (si es necesario)
+            bottomNavigationView1.setSelectedItemId(R.id.it_new);
+        } else {
+            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
+        }
+
     }
+
     private void cargarCursosFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
