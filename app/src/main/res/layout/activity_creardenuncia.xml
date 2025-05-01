@@ -26,6 +26,7 @@
            android:text="¿Cual es el problema?"
            android:textAllCaps="false"
            android:textSize="30sp"
+           android:textColor="@color/black"
            android:layout_marginVertical="10dp"
            />
         <RadioGroup
@@ -38,31 +39,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Contenido ilegal"
+                android:buttonTint="@color/black"
                 />
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Suplantación de identidad"
+                android:buttonTint="@color/black"
             />
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Contenido inapropiado"
+                android:buttonTint="@color/black"
                 />
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Spam"
+                android:buttonTint="@color/black"
                 />
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Abuso de plataforma "
+                android:buttonTint="@color/black"
                 />
             <RadioButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Violación de normas de la plataforma "
+                android:buttonTint="@color/black"
                 />
 
         </RadioGroup>
@@ -73,13 +80,15 @@
             android:text="Especifica un poco mas  \n el problema"
             android:textAllCaps="false"
             android:textSize="20sp"
+            android:textColor="@color/black"
             android:layout_marginVertical="10dp"
             />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Intenta ser consiso y claro"
-
+            android:textColorHint="@color/gray1"
+           android:textColorHighlight="@color/gray1"
             />
         <Space
             android:layout_width="match_parent"
@@ -91,7 +100,7 @@
             android:layout_height="wrap_content"
             android:text="Hacer demanda "
             android:textSize="25sp"
-
+            android:textColor="@color/black"
             android:background="@drawable/third_rounder_button"/>
 
 

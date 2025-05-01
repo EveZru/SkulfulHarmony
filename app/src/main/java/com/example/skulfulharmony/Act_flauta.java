@@ -160,7 +160,7 @@ public class Act_flauta extends AppCompatActivity {
             mostrarMensaje("¡Error! Intenta de nuevo.");
             if (buttonPresionado != null) {
                 buttonPresionado.setBackgroundResource(R.drawable.error_button);
-                AppCompatButton finalButtonPresionado = buttonPresionado; // Necesario para usar dentro del lambda
+                AppCompatButton finalButtonPresionado = buttonPresionado;
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     if (finalButtonPresionado != null) {
                         finalButtonPresionado.setBackgroundResource(R.drawable.five_rounder_button);

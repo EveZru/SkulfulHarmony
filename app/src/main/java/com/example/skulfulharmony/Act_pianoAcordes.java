@@ -227,12 +227,17 @@ public class Act_pianoAcordes extends AppCompatActivity {
             // buttonPresionado.setBackgroundResource(R.drawable.error_button);
             botonPresionado.setBackgroundResource(R.drawable.error_button);
             Toast.makeText(this, "¡Inténtalo otra vez!", Toast.LENGTH_SHORT).show();
-
+/*AppCompatButton finalButtonPresionado = buttonPresionado;
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (finalButtonPresionado != null) {
+                        finalButtonPresionado.setBackgroundResource(R.drawable.five_rounder_button);
+                    }
+                }, 50*/
             // Restablecer el color de la tecla después de un breve retraso
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                   // botonPresionado.setBackgroundColor(ContextCompat.getColor(this, colorResId)); // Restablece al color original
+                    botonPresionado.setBackgroundResource(R.drawable.rounded_button); // Restablece al color original
                 }
             }, 500); // 500 milisegundos de retraso
 
