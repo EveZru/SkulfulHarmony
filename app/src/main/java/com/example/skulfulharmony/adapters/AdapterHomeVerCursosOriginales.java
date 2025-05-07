@@ -24,7 +24,10 @@ import com.example.skulfulharmony.javaobjects.courses.Curso;
 import java.util.List;
 
 public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<AdapterHomeVerCursosOriginales.CursoViewHolder> {
-    //ya que los cursos origunales no se cargan por medio de firebase cre que seria mejor que tubiera un adapter aparte por lo que lo cree por cuestiones de sueño no los termine de vincular porque me daban errores asi que lo deje con lo de firebase por lo que no funciona por que pues no existe jsjsj jiji
+    //ya que los cursos origunales no se cargan por medio de firebase cre que seria mejor que
+    // tubiera un adapter aparte por lo que lo cree por cuestiones de sueño no los termine de vincular
+    // porque me daban errores asi que lo deje con lo de firebase por lo que no funciona por que pues no existe
+    // jsjsj jiji
     private Context context;
     private List<Curso> listaCursos;
 

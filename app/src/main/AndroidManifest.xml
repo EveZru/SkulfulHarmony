@@ -32,12 +32,15 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".VerCursoComoCreador"
-            android:exported="false"/>
+        <activity
+            android:name=".Act_guitarra"
+            android:exported="false" />
+        <activity
+            android:name=".VerCursoComoCreador"
+            android:exported="false" />
         <activity
             android:name=".imagen"
             android:exported="false" />
-
         <activity
             android:name=".modificar_tiempo"
             android:exported="false" />
@@ -103,7 +106,6 @@
         <activity
             android:name=".Act_flauta"
             android:exported="false" />
-
         <activity
             android:name=".RecuperarContrasena"
             android:exported="false" />

@@ -201,8 +201,8 @@
         android:gravity="center_vertical">
         <ImageView
             android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:background="@drawable/estella_llena"
+            android:layout_height="700dp"
+            android:background="@drawable/infografia_flauta"
             android:layout_gravity="center"/>
 
     </LinearLayout>

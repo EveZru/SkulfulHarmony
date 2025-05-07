@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -56,17 +57,19 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Calificacion promedio del curso"
+                android:text="@string/calificacion"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 android:background="@drawable/rounded_edit_text"/>
             <LinearLayout
+                android:id="@+id/ll_estrellas"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="10dp"
                 >
                 <TextView
+                    android:id="@+id/tv_puntuacion"
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:layout_weight="1"
@@ -76,41 +79,55 @@
                     android:background="@drawable/rounded_button"
                     />
                 <ImageView
-                    android:id="@+id/iv_p_estrella"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/iv_1_estrella"
+                    android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/estrella"
                     android:layout_marginHorizontal="3dp"
                     />
                 <ImageView
-                    android:id="@+id/iv_s_estrella"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/iv_2_estrella"
+                    android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/estrella"
                     android:layout_marginHorizontal="3dp"
                     />
                 <ImageView
-                    android:id="@+id/iv_t_estrella"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/iv_3_estrella"
+                    android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/estrella"
                     android:layout_marginHorizontal="3dp"
                     />
                 <ImageView
-                    android:id="@+id/iv_c_estrella"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/iv_4_estrella"
+                    android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/estrella"
                     android:layout_marginHorizontal="3dp"
                     />
                 <ImageView
-                    android:id="@+id/iv_q_estrella"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/iv_5_estrella"
+                    android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:background="@drawable/estrella"
                     android:layout_marginHorizontal="3dp"
                     />
 
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/comentario"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/perfil_logo"/>
 
             </LinearLayout>
 
