@@ -11,14 +11,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.skulfulharmony.ClasesOriginales;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCursos.CursoViewHolder> {
     private Context context;
@@ -42,15 +39,11 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
         // Título del curso
         holder.tvTextPrincipal.setText(curso.getTitulo());
 
-        // Texto secundario opcional (por ejemplo, fecha o descripción)
-//        if (curso.getFechaCreacion() != null) {
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-//            holder.tvTextSegundo.setText("Creado el " + dateFormat.format(curso.getFechaCreacion()));
-//        } else
-        if (curso.getDescripcion() != null) {
-            holder.tvTextSegundo.setText(curso.getDescripcion());
+        // Mostrar el nombre del autor
+        if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
+            holder.tvTextSegundo.setText("Publicado por: " + curso.getCreador());
         } else {
-            holder.tvTextSegundo.setText("Curso sin descripción");
+            holder.tvTextSegundo.setText("Autor desconocido");
         }
 
         // Imagen con Glide
@@ -62,8 +55,8 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
 
         // Click para abrir actividad de clases
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, Ver_cursos.class);//Corregir
-            intent.putExtra("idCurso", curso.getId()); // Asegúrate de tener este método
+            Intent intent = new Intent(context, Ver_cursos.class);
+            intent.putExtra("idCurso", curso.getId());
             context.startActivity(intent);
         });
     }
@@ -83,7 +76,6 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
             cardImage = itemView.findViewById(R.id.cardImage);
             tvTextPrincipal = itemView.findViewById(R.id.tv_textprincipal);
             tvTextSegundo = itemView.findViewById(R.id.tv_textsegundo);
-
         }
     }
 }

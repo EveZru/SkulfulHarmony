@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.net.Uri;
 import android.content.ActivityNotFoundException;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,6 +20,9 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.os.Environment;
+import java.util.Map;
+import java.util.HashMap;
+import com.google.firebase.firestore.SetOptions;
 
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -34,6 +38,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Date;
 
@@ -129,6 +136,24 @@ public class IniciarSesion extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 Toast.makeText(IniciarSesion.this, "Bienvenido " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                                FirebaseMessaging.getInstance().getToken()
+                                        .addOnCompleteListener(tokenTask -> {
+                                            if (tokenTask.isSuccessful()) {
+                                                String token = tokenTask.getResult();
+                                                String uid = user.getUid();
+
+                                                Map<String, Object> tokenMap = new HashMap<>();
+                                                tokenMap.put("fcmToken", token);
+
+                                                FirebaseFirestore.getInstance()
+                                                        .collection("usuarios")
+                                                        .document(uid)
+                                                        .set(tokenMap, SetOptions.merge())
+                                                        .addOnSuccessListener(aVoid -> Log.d("FCM_TOKEN", "Token guardado correctamente"))
+                                                        .addOnFailureListener(e -> Log.e("FCM_TOKEN", "Error al guardar token", e));
+                                            }
+                                        });
 
                                 DbUser dbUser = new DbUser(this);
 
@@ -257,6 +282,26 @@ public class IniciarSesion extends AppCompatActivity {
                         Toast.makeText(IniciarSesion.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                        // 🔥 Obtener y guardar el token FCM
+                        FirebaseMessaging.getInstance().getToken()
+                                .addOnCompleteListener(tokenTask -> {
+                                    if (tokenTask.isSuccessful()) {
+                                        String token = tokenTask.getResult();
+                                        String uid = user.getUid();
+
+                                        Map<String, Object> tokenMap = new HashMap<>();
+                                        tokenMap.put("fcmToken", token);
+
+                                        FirebaseFirestore.getInstance()
+                                                .collection("usuarios")
+                                                .document(uid)
+                                                .set(tokenMap, SetOptions.merge())
+                                                .addOnSuccessListener(aVoid -> Log.d("FCM_TOKEN", "Token guardado correctamente"))
+                                                .addOnFailureListener(e -> Log.e("FCM_TOKEN", "Error al guardar token", e));
+                                    }
+                                });
+
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         db.collection("usuarios").document(user.getUid()).get()

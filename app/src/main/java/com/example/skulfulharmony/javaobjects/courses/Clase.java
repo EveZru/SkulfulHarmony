@@ -56,6 +56,10 @@ public class Clase {
         return archivos;
     }
 
+    public String getNombreCurso() {
+        return nombreCurso;
+    }
+
     public void setArchivos(List<File> archivos) {
         this.archivos = archivos;
     }
