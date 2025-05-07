@@ -20,6 +20,9 @@ public class MyApp extends Application {
         if (userId != null) {
             contadorTiempo = new tiempoUsuario(userId, getApplicationContext());
             contadorTiempo.iniciarConteo(); // 🔥 Inicia el contador
+
+            // Registrar la hora de entrada del usuario al iniciar la app
+            contadorTiempo.registrarHoraEntrada(); // Registrar la hora de entrada
         }
     }
 

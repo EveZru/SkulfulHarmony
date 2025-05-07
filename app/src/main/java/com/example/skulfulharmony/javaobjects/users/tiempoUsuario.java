@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,6 +33,7 @@ public class tiempoUsuario {
     private long tiempoDescanso = 60 * 60; // Valor por defecto (1 hora) en segundos
 
     private long tiempoRestanteParaDescanso = 0; // Para llevar el control del descanso
+    private boolean descansoHechoHoy = false; // Para controlar si ya se hizo el descanso hoy
 
     public tiempoUsuario(String userId, Context context) {
         this.db = FirebaseFirestore.getInstance();
@@ -67,6 +69,7 @@ public class tiempoUsuario {
                     Log.d("TiempoUsuario", "🔥 Nuevo día detectado, reiniciando contador");
                     tiempoAcumuladoHoy = 0; // Reseteamos el tiempo del día
                     fechaHoy = fechaActual; // Actualizamos la fecha
+                    descansoHechoHoy = false; // Reseteamos el estado de descanso
                 }
 
                 long currentTime = System.currentTimeMillis();
@@ -80,31 +83,29 @@ public class tiempoUsuario {
                 Log.d("TiempoUsuario", "🔥 tiempoAcumuladoHoy: " + tiempoAcumuladoHoy + " segundos");
 
                 // Mandamos al descanso automáticamente después del tiempo configurado
-                if (tiempoAcumuladoHoy >= tiempoDescanso) { // Tiempo de descanso configurado
-                    if (tiempoRestanteParaDescanso == 0) {  // Solo enviar al descanso una vez por hora
-                        lanzarPantallaDescanso(); // Mandamos a descanso
-                        tiempoRestanteParaDescanso = tiempoDescanso; // Reset de tiempo restante
-                    }
-                } else {
-                    // Si no estamos en descanso, restamos el tiempo
-                    tiempoRestanteParaDescanso = tiempoDescanso - tiempoAcumuladoHoy; // Lo calculamos para controlar el tiempo restante
+                if (tiempoAcumuladoHoy >= tiempoDescanso && !descansoHechoHoy) { // Tiempo de descanso configurado y no descansó hoy
+                    lanzarPantallaDescanso(); // Mandamos a descanso
+                    descansoHechoHoy = true; // Marcar que ya se hizo el descanso
+                    tiempoRestanteParaDescanso = tiempoDescanso; // Reset de tiempo restante
                 }
 
                 subirTiempoAFirebase(); // Subimos el tiempo a Firebase
 
                 // Guardamos el tiempo acumulado en SharedPreferences
-                guardarTiempoEnSharedPreferences();
+                //guardarTiempoEnSharedPreferences();
 
                 handler.postDelayed(this, 60000); // Cada minuto
             }
         });
     }
 
+    // Método para pausar el conteo si la app está en segundo plano
     public void pausarConteo() {
-        handler.removeCallbacksAndMessages(null); // Detenemos el contador si la app está en segundo plano
+        handler.removeCallbacksAndMessages(null); // Detenemos el contador
         Log.d("TiempoUsuario", "🚧 Contador pausado");
     }
 
+    // Método para reanudar el conteo cuando la app vuelve al primer plano
     public void reanudarConteo() {
         Log.d("TiempoUsuario", "🚀 Reiniciando el contador");
         iniciarConteo(); // Reanudar el conteo
@@ -113,12 +114,12 @@ public class tiempoUsuario {
     public void detenerYGuardar() {
         handler.removeCallbacksAndMessages(null); // Detenemos el contador
         subirTiempoAFirebase();
-        guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se detiene la app
+        //guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se detiene la app
     }
 
     public void forzarGuardarAhora() {
         subirTiempoAFirebase();
-        guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se fuerza guardar
+        //guardarTiempoEnSharedPreferences(); // Guardamos el tiempo cuando se fuerza guardar
     }
 
     // Método para iniciar descanso
@@ -131,6 +132,56 @@ public class tiempoUsuario {
     public void terminarDescanso() {
         enDescanso = false; // Desactivamos el descanso
         Log.d("TiempoUsuario", "🔥 Terminando descanso...");
+    }
+
+    // **Registrar la hora de entrada en Firestore**
+    public void registrarHoraEntrada() {
+        Calendar calendar = Calendar.getInstance();
+        int horaActual = calendar.get(Calendar.HOUR_OF_DAY);
+        int minutosActuales = calendar.get(Calendar.MINUTE);
+        int entradaMinutos = horaActual * 60 + minutosActuales;
+
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        DocumentReference userRef = db.collection("usuarios").document(userId);
+
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Long totalMinutos = documentSnapshot.getLong("totalMinutosAcumuladosEntrada");
+                Long vecesEntrada = documentSnapshot.getLong("vecesEntrada");
+                String ultimaFecha = documentSnapshot.getString("ultimaFechaEntrada");
+
+                totalMinutos = (totalMinutos != null) ? totalMinutos : 0L;
+                vecesEntrada = (vecesEntrada != null) ? vecesEntrada : 0L;
+
+                // Ya se registró hoy, no volvemos a registrar
+                if (hoy.equals(ultimaFecha)) {
+                    Log.d("TiempoUsuario", "⏱️ Ya se registró la entrada hoy: " + hoy);
+                    return;
+                }
+
+                totalMinutos += entradaMinutos;
+                vecesEntrada++;
+
+                long promedio = totalMinutos / vecesEntrada;
+                int horaPromedio = (int) (promedio / 60);
+                int minutosPromedio = (int) (promedio % 60);
+
+                Map<String, Object> data = new HashMap<>();
+                data.put("horaEntrada", horaPromedio);
+                data.put("minutosEntrada", minutosPromedio);
+                data.put("totalMinutosAcumuladosEntrada", totalMinutos);
+                data.put("vecesEntrada", vecesEntrada);
+                data.put("ultimaFechaEntrada", hoy);
+
+                userRef.set(data, SetOptions.merge())
+                        .addOnSuccessListener(aVoid ->
+                                Log.d("TiempoUsuario", "✅ Hora promedio registrada: " + horaPromedio + ":" + minutosPromedio)
+                        ).addOnFailureListener(e ->
+                                Log.e("TiempoUsuario", "❌ Error al guardar hora promedio", e)
+                        );
+            }
+        }).addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al obtener documento", e));
     }
 
     private void subirTiempoAFirebase() {
@@ -156,7 +207,7 @@ public class tiempoUsuario {
         tiempoAcumuladoHoy = prefs.getLong("tiempoHoy", 0); // Si no se encuentra, asigna 0
     }
 
-    private void cargarTiempoDeDescanso() {
+    public void cargarTiempoDeDescanso() {
         // Recuperar el tiempo de descanso desde Firestore
         DocumentReference userDoc = FirebaseFirestore.getInstance().collection("usuarios").document(userId);
         userDoc.get().addOnSuccessListener(documentSnapshot -> {
@@ -180,14 +231,6 @@ public class tiempoUsuario {
             // Si ocurre un error, usamos el valor por defecto
             tiempoDescanso = 60 * 60; // 1 hora
         });
-    }
-
-    private void guardarTiempoEnSharedPreferences() {
-        // Guardamos el tiempo acumulado en SharedPreferences
-        SharedPreferences prefs = context.getSharedPreferences("TiempoAcumulado", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("tiempoHoy", tiempoAcumuladoHoy);
-        editor.apply(); // Aplicamos los cambios
     }
 
     private void lanzarPantallaDescanso() {

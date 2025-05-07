@@ -50,11 +50,7 @@
                 android:singleLine="false"
                 android:maxLines="2"
                 />
-
         </LinearLayout>
-
-
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

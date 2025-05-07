@@ -7,104 +7,112 @@
     android:layout_height="match_parent"
     tools:context=".Busqueda">
 
+    <!-- Barra de búsqueda -->
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="5dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/ll_busqueda"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_margin="10dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <EditText
             android:id="@+id/et_parabuscar"
-            android:layout_width="350dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
+            android:layout_weight="1"
             android:padding="10dp"
-            android:layout_marginVertical="15dp"
             android:hint="Buscar"
-            android:background="@drawable/rounded_edit_text"
-            />
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="10dp"
-        android:background="@drawable/mas_logo"
-        android:clickable="true"
-        />
-</LinearLayout>
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="kajdblakj"
-                    />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_resultadosbusqueda"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+            android:background="@drawable/rounded_edit_text" />
 
-                </androidx.recyclerview.widget.RecyclerView>
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:padding="10dp"
+            android:background="@drawable/mas_logo"
+            android:clickable="true" />
+    </LinearLayout>
 
-            </LinearLayout>
-
-        </ScrollView>
-        
+    <!-- Texto Historial / Resultados -->
     <TextView
-      android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textColor="@color/black"
-    android:textSize="20sp"
-    android:text="Categorias"
-    />
-        <LinearLayout
-            android:layout_width="match_parent"
+        android:id="@+id/tv_historial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Historial reciente:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/ll_busqueda"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Resultados de búsqueda -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_resultadosbusqueda"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_historial"
+        app:layout_constraintBottom_toTopOf="@id/tv_categorias"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"
+        android:scrollbars="vertical"
+        android:clipToPadding="false" />
+
+    <!-- Categorías -->
+    <TextView
+        android:id="@+id/tv_categorias"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:text="Categorías"
+        app:layout_constraintTop_toBottomOf="@id/rv_resultadosbusqueda"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_botones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:weightSum="3"
+        app:layout_constraintTop_toBottomOf="@id/tv_categorias"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_bgenero"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <android.widget.Button
-                android:id="@+id/btn_bgenero"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAllCaps="false"
-                android:text="Genero"
-                />
-            <android.widget.Button
-                android:id="@+id/btn_binstumento"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Instrumento"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Género" />
 
-                android:textAllCaps="false"
-                />
-            <android.widget.Button
-                android:id="@+id/btn_bdificultad"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Dificultad"
+        <Button
+            android:id="@+id/btn_binstumento"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Instrumento" />
 
-                android:textAllCaps="false"
-                />
-
-
-        </LinearLayout>
-       
-
+        <Button
+            android:id="@+id/btn_bdificultad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Dificultad" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

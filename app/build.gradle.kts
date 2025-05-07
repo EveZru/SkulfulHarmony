@@ -59,6 +59,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-messaging:23.4.0")
+    implementation ("com.google.firebase:firebase-firestore:24.0.0")
+
 
     implementation("com.github.bumptech.glide:glide:4.14.2")
     annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
