@@ -16,16 +16,22 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.skulfulharmony.adapters.AdapterCrearVerClasesCreadas;
+import com.example.skulfulharmony.adapters.AdapterCrearVerCursosCreados;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
+import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
@@ -64,11 +70,13 @@ public class VerCursoComoCreador extends AppCompatActivity {
 
         menu_cursos = findViewById(R.id.toolbar_ver_cursos);
 
+        rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
         // Obtener idCurso del intent
         idCurso = getIntent().getIntExtra("idCurso", -1);
 
         if (idCurso != -1) {
-            obtenerCurso(idCurso);
+            cargarClases();
         } else {
             Toast.makeText(this, "Error al obtener la informacion del curso", Toast.LENGTH_SHORT).show();
         }
@@ -83,53 +91,25 @@ public class VerCursoComoCreador extends AppCompatActivity {
         });
     }
 
-    private void obtenerCurso(int idCurso) {
-        CollectionReference cursosRef = firestore.collection("cursos");
+    private void cargarClases() {
+        ArrayList<Clase> listaClases = new ArrayList<>();
+        CollectionReference clasesRef = firestore.collection("clases");
+        Query query = clasesRef.whereEqualTo("idCurso", idCurso).orderBy("fechaCreacionf", Query.Direction.ASCENDING);
 
-        cursosRef.whereEqualTo("idCurso", idCurso)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            Curso curso = doc.toObject(Curso.class);
-
-                            // Mostrar datos
-                            tituloCurso.setText(curso.getTitulo());
-
-                            if(curso.getFechaCreacionf() == null){
-                                fechaCreacion.setText("Error al cargar fecha de creacion");
-                            }else {
-                                Date date = curso.getFechaCreacionf().toDate();
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                                fechaCreacion.setText(sdf.format(date));
-                            }
-
-                            if(curso.getDescripcion() == null || curso.getDescripcion().isEmpty() || curso.getDescripcion().equals("")){
-                                descripcionCurso.setText("Curso sin descripción");
-                            }
-                            descripcionCurso.setText(curso.getDescripcion());
-
-                            Glide.with(this)
-                                    .load(curso.getImagen())
-                                    .placeholder(R.drawable.loading)
-                                    .error(R.drawable.img_defaultclass)
-                                    .into(imagenTitulo);
-
-                            // Aquí puedes luego cargar clases del curso si quieres
-
-
-                        }
-                    } else {
-                        Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener el curso", Toast.LENGTH_SHORT).show();
-                });
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (DocumentSnapshot document : queryDocumentSnapshots) {
+                Clase clase = document.toObject(Clase.class);
+                if (clase != null) {
+                    listaClases.add(clase);
+                }
+            }
+            AdapterCrearVerClasesCreadas adapter = new AdapterCrearVerClasesCreadas(listaClases, VerCursoComoCreador.this);
+            rvClases.setAdapter(adapter);
+        }).addOnFailureListener(e -> {
+            Toast.makeText(VerCursoComoCreador.this, "Error al cargar clases", Toast.LENGTH_SHORT).show();
+            Log.e("Firestore", "Error: ", e);
+        });
     }
-
-
 
 }
 

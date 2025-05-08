@@ -14,13 +14,20 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
+import com.example.skulfulharmony.adapters.AdapterVerClasesCursoOtroUsuario;
+import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
 
 public class Ver_cursos extends AppCompatActivity {
 
@@ -54,6 +61,9 @@ public class Ver_cursos extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
+
+        rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
 
         firestore = FirebaseFirestore.getInstance();
         // Obtener idCurso del intent
@@ -119,6 +129,25 @@ public class Ver_cursos extends AppCompatActivity {
 
                             // Aquí puedes luego cargar clases del curso si quieres
 
+                            ArrayList<Clase> listaClases = new ArrayList<>();
+
+                            CollectionReference clasesRef = firestore.collection("clases");
+                            Query clasesQuery = clasesRef.whereEqualTo("idCurso", idCurso).orderBy("fechaCreacionf", Query.Direction.ASCENDING);
+
+                            clasesQuery.get().addOnSuccessListener(queryDocumentSnapshots1 -> {
+                                for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots1) {
+                                    Clase clase = doc1.toObject(Clase.class);
+                                    if (clase != null)
+                                    listaClases.add(clase);
+                                }
+
+                                AdapterVerClasesCursoOtroUsuario adapter = new AdapterVerClasesCursoOtroUsuario(listaClases, Ver_cursos.this);
+                                rvClases.setAdapter(adapter);
+
+                            }).addOnFailureListener(onFailureListener -> {
+                                Toast.makeText(this, "Error al cargar clases", Toast.LENGTH_SHORT).show();
+                                onFailureListener.printStackTrace();
+                            });
 
 
                         }
