@@ -33,31 +33,57 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
+import com.example.skulfulharmony.server.config.DropboxConfig;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import org.apache.commons.net.ntp.TimeStamp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 public class CrearClase extends AppCompatActivity {
-    private EditText et_pregunta;
-    private Button btn_subirpregunta,btn_subirarchivo;
-    private LinearLayout containerOpciones;
+
+    //Variables
+
+    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
+    private int idCurso;
+    private List<PreguntaCuestionario> preguntasClase = new ArrayList<>();
     private final int MAX_OPCIONES = 4;
     private final ArrayList<View> opcionesList = new ArrayList<>();
-    private ImageView vid,btn_subirvideo;
     private Uri im = Uri.EMPTY;
+
+    //Elementos visibles
+    private EditText et_pregunta,
+            et_titulo,
+            et_texto;
+    private Button btn_subirpregunta,btn_subirarchivo, btn_subirclase;
+    private LinearLayout containerOpciones;
+    private ImageView vid,btn_subirvideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crearclase);
 
+        // -------------------- INICIALIZAR CONTENIDOS ------------------------//
+
+        btn_subirclase=findViewById(R.id.btn_subir_clase);
         btn_subirarchivo=findViewById(R.id.btn_cargar_archivos);
         btn_subirvideo=findViewById(R.id.btn_cargar_video);
         btn_subirpregunta=findViewById(R.id.btn_subir_pregunta);
-
+        et_titulo=findViewById(R.id.et_titulo_nueva_clase);
+        et_texto=findViewById(R.id.et_descripcion_crear_clase);
         et_pregunta = findViewById(R.id.et_ingresar_pregunta);
         btn_subirpregunta = findViewById(R.id.btn_subir_pregunta);
         containerOpciones = findViewById(R.id.container_opciones);
+
+        idCurso = getIntent().getIntExtra("idCurso", -1);
 
        // vid=findViewById(R.id.im_foto);
 
@@ -87,10 +113,15 @@ public class CrearClase extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         View rootView=findViewById(android.R.id.content);
 
+        btn_subirclase.setOnClickListener(new View.OnClickListener() {
+              @Override
+              public void onClick(View view) {
+                  subirClaseAFirebase();
+              }
+          });
 
-        //___________________parte del teclado-----------------------------------
-        View rootView2 = findViewById(R.id.main_scrollview); // Asegúrate de que este sea el ID de tu ScrollView
-
+       /* //___________________  TECLADO MOVIL  -----------------------------------//
+        View rootView2 = findViewById(R.id.main_scrollview);
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             Rect r = new Rect();
             rootView2.getWindowVisibleDisplayFrame(r);
@@ -141,8 +172,9 @@ public class CrearClase extends AppCompatActivity {
                 );
             }
         });
-        //_______________________________________________
+        //_______________________________________________*/
     }
+
 //______parte del las casillas de las preguntas------------------------
     // detectar cambios en los EditText
     private void addTextWatcher(EditText editText) {
@@ -247,6 +279,7 @@ public class CrearClase extends AppCompatActivity {
                         }
                     }
             );
+
     private  long getFileSizeFromUri(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
@@ -289,7 +322,7 @@ public class CrearClase extends AppCompatActivity {
     private void SubirPregunta() {
 
         String preguntaTexto = et_pregunta.getText().toString().trim();
-        ArrayList<String> respuestas = new ArrayList<>();
+        List<String> respuestas = new ArrayList<>();
         Integer respuestaCorrectaIndex = null;
         int respuestasCorrectasCount = 0;
 
@@ -331,7 +364,7 @@ public class CrearClase extends AppCompatActivity {
         // Crear el objeto PreguntaCuestionario
         if (!respuestas.isEmpty() && respuestaCorrectaIndex != null) {
             PreguntaCuestionario preguntaCuestionario = new PreguntaCuestionario(preguntaTexto, respuestas, respuestaCorrectaIndex);
-
+            preguntasClase.add(preguntaCuestionario);
             // Inflar el CardView
             LayoutInflater inflater = LayoutInflater.from(CrearClase.this);
             View cardView = inflater.inflate(R.layout.holder_preguntasinicio, null);
@@ -366,6 +399,7 @@ public class CrearClase extends AppCompatActivity {
                 LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
                 if (containerPreguntasCreadas != null) {
                     containerPreguntasCreadas.removeView(cardView);
+                    preguntasClase.remove(preguntaCuestionario);
                     Toast.makeText(CrearClase.this, "Pregunta eliminada.", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -400,4 +434,63 @@ public class CrearClase extends AppCompatActivity {
         }
     }
 
+    public void subirClaseAFirebase() {
+        //Verificacion de datos
+        String titulo = et_titulo.getText().toString();
+        String imagen = !Uri.EMPTY.equals(im) ? im.toString() : null;
+        String texto = et_texto.getText().toString();
+
+        if (titulo.isEmpty() || titulo.equals("")) {
+            Toast.makeText(this, "Debes ingresar un titulo", Toast.LENGTH_SHORT).show();
+            return;
+        }if (texto.isEmpty() || texto.equals("")) {
+            Toast.makeText(this, "Debes ingresar un texto", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //Logica para subir archivos a firebase
+
+        Toast.makeText(this, "Pidiendo datos al servidor", Toast.LENGTH_SHORT).show();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(this, "No estás logueado", Toast.LENGTH_SHORT).show();
+            return;
+        }else{
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("clases")
+                .whereEqualTo("idCurso", idCurso)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int maxIdClase = 0;
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Long idClase = document.getLong("idClase");
+                        if (idClase != null && idClase > maxIdClase) {
+                            maxIdClase = idClase.intValue();
+                        }
+                    }
+
+                    int nuevoIdClase = maxIdClase + 1;
+                    Toast.makeText(CrearClase.this, "idClase: " + nuevoIdClase, Toast.LENGTH_SHORT).show();
+
+                    Clase clase = new Clase();
+                    clase.setIdCurso(idCurso);
+                    clase.setIdClase(nuevoIdClase);
+                    clase.setNombreCurso(titulo);
+                    clase.setImagen(imagen);
+                    clase.setTextos(texto);
+                    clase.setPreguntas(preguntasClase);
+                    clase.setFechaCreacionf(TimeStamp.getCurrentTime());
+
+                    Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
+                    db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {
+                        Toast.makeText(CrearClase.this, "Clase creada exitosamente", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(CrearClase.this, "Error al subir la clase", Toast.LENGTH_SHORT).show();
+                    });
+                }).addOnFailureListener( e -> {
+                    Toast.makeText(CrearClase.this, "Error al obtener datos"+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
+        }
+    }
 }

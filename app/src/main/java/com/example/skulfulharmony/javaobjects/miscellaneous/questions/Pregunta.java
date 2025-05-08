@@ -2,21 +2,22 @@ package com.example.skulfulharmony.javaobjects.miscellaneous.questions;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Pregunta {
 
     String pregunta;
-    ArrayList<String> respuestas = new ArrayList<>();
+    List<String> respuestas = new ArrayList<>();
 
     public void setPregunta(String pregunta) {
         this.pregunta = pregunta;
     }
 
-    public ArrayList<String> getRespuestas() {
+    public List<String> getRespuestas() {
         return respuestas;
     }
 
-    public void setRespuestas(ArrayList<String> respuestas) {
+    public void setRespuestas(List<String> respuestas) {
         this.respuestas = respuestas;
     }
 

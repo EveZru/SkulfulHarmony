@@ -4,7 +4,10 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
+import org.apache.commons.net.ntp.TimeStamp;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,17 +15,25 @@ public class Clase {
 
     private Integer idClase;
     private String nombreCurso;
+    private Integer idCurso;
     private String titulo;
     private String textos;
     private String imagen;
-    private List<File> archivos;
+    private List<String> archivos;
     private String video;
     private List<PreguntaCuestionario> preguntas;
     private List<Comentario> comentarios;
-    private int meGusta;
+    private Integer meGusta;
     private Date fechaCreacion;
 
 
+
+    public Clase() {
+        this.archivos = new ArrayList<>();
+        this.preguntas = new ArrayList<>();
+        this.comentarios = new ArrayList<>();
+        this.fechaCreacion = new Date();
+    }
     public Clase(String titulo, List<PreguntaCuestionario> preguntas) {
         this.titulo = titulo;
         this.preguntas = preguntas;
@@ -52,7 +63,7 @@ public class Clase {
         this.imagen = imagen;
     }
 
-    public List<File> getArchivos() {
+    public List<String> getArchivos() {
         return archivos;
     }
 
@@ -60,7 +71,7 @@ public class Clase {
         return nombreCurso;
     }
 
-    public void setArchivos(List<File> archivos) {
+    public void setArchivos(List<String> archivos) {
         this.archivos = archivos;
     }
 
@@ -97,6 +108,52 @@ public class Clase {
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+
+    public Integer getIdClase() {
+        return idClase;
+    }
+
+    public void setIdClase(Integer idClase) {
+        this.idClase = idClase;
+    }
+
+    public void setNombreCurso(String nombreCurso) {
+        this.nombreCurso = nombreCurso;
+    }
+
+    public Integer getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(Integer idCurso) {
+        this.idCurso = idCurso;
+    }
+
+    public List<PreguntaCuestionario> getPreguntas() {
+        return preguntas;
+    }
+
+    public void setPreguntas(List<PreguntaCuestionario> preguntas) {
+        this.preguntas = preguntas;
+    }
+
+    public TimeStamp getFechaCreacionf() {
+        return fechaCreacionf;
+    }
+
+    public void setFechaCreacionf(TimeStamp fechaCreacionf) {
+        this.fechaCreacionf = fechaCreacionf;
+    }
+
+    public Integer getMeGusta() {
+        return meGusta;
+    }
+
+    public void setMeGusta(Integer meGusta) {
+        this.meGusta = meGusta;
+    }
+
+    private TimeStamp fechaCreacionf;
 
 
 
