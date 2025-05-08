@@ -95,7 +95,6 @@ public class CrearClase extends AppCompatActivity {
             Rect r = new Rect();
             rootView2.getWindowVisibleDisplayFrame(r);
             int screenHeight = rootView2.getRootView().getHeight();
-
             // Calcular la altura del teclado
           //  int keypadHeight = screenHeight - r.bottom;
             int keypadHeight = rootView2.getRootView().getHeight() - r.bottom;
@@ -129,7 +128,7 @@ public class CrearClase extends AppCompatActivity {
                             rootView2.getPaddingLeft(),
                             rootView2.getPaddingTop(),
                             rootView2.getPaddingRight(),
-                            keypadHeight + 20
+                            keypadHeight
                     );
                 }
             } else {

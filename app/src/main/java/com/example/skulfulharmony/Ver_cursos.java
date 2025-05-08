@@ -31,6 +31,11 @@ public class Ver_cursos extends AppCompatActivity {
     private FirebaseFirestore firestore;
     private int idCurso;
     private ImageView desplegarmenu;
+
+
+    private ImageView[] estrellas;
+    private TextView tvPuntuacion;
+    private int puntuacionActual = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +65,32 @@ public class Ver_cursos extends AppCompatActivity {
             Toast.makeText(this, "ID del curso no válido", Toast.LENGTH_SHORT).show();
             finish();
         }
+        //___coso de estrella____________________
+
+        tvPuntuacion = findViewById(R.id.tv_puntuacion);
+        estrellas = new ImageView[5];
+
+        estrellas[0] = findViewById(R.id.iv_1_estrella);
+        estrellas[1] = findViewById(R.id.iv_2_estrella);
+        estrellas[2] = findViewById(R.id.iv_3_estrella);
+        estrellas[3] = findViewById(R.id.iv_4_estrella);
+        estrellas[4] = findViewById(R.id.iv_5_estrella);
+        // Establecer OnClickListener para cada estrella
+        for (int i = 0; i < estrellas.length; i++) {
+            final int estrellaIndex = i;
+            estrellas[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    actualizarPuntuacion(estrellaIndex + 1);
+                }
+            });
+        }
+
+        // Inicializar la puntuación en 0/5
+        actualizarTextoPuntuacion();
+
     }
+
 
     private void obtenerCurso(int idCurso) {
         CollectionReference cursosRef = firestore.collection("cursos");
@@ -147,5 +177,26 @@ public class Ver_cursos extends AppCompatActivity {
         // Mostrar el menú
         popupMenu.show();
     }
-    //__________
+    //_______estrellas___
+    private void actualizarPuntuacion(int nuevaPuntuacion) {
+        if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {
+            puntuacionActual = nuevaPuntuacion;
+            actualizarTextoPuntuacion();
+            actualizarImagenesEstrellas();
+        }
+    }
+    private void actualizarTextoPuntuacion() {
+        tvPuntuacion.setText(puntuacionActual + " / 5");
+    }
+
+    private void actualizarImagenesEstrellas() {
+        for (int i = 0; i < estrellas.length; i++) {
+            if (i < puntuacionActual) {
+                estrellas[i].setImageResource(R.drawable.estella_llena);
+            } else {
+                estrellas[i].setImageResource(R.drawable.estrella);
+            }
+        }
+    }
+
 }

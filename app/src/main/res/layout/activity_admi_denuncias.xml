@@ -35,6 +35,7 @@
         android:layout_above="@id/barra_navegacion1"
         android:layout_below="@id/toolbar" />
 
+
     <!-- BottomNavigation fijo abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
