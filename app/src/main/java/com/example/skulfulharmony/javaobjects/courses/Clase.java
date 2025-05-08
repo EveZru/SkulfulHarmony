@@ -3,6 +3,7 @@ package com.example.skulfulharmony.javaobjects.courses;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
+import com.google.firebase.Timestamp;
 
 import org.apache.commons.net.ntp.TimeStamp;
 
@@ -24,7 +25,7 @@ public class Clase {
     private List<PreguntaCuestionario> preguntas;
     private List<Comentario> comentarios;
     private Integer meGusta;
-    private Date fechaCreacion;
+    private Timestamp fechaCreacionf;
 
 
 
@@ -32,12 +33,11 @@ public class Clase {
         this.archivos = new ArrayList<>();
         this.preguntas = new ArrayList<>();
         this.comentarios = new ArrayList<>();
-        this.fechaCreacion = new Date();
     }
     public Clase(String titulo, List<PreguntaCuestionario> preguntas) {
         this.titulo = titulo;
         this.preguntas = preguntas;
-        this.fechaCreacion = new Date();
+        this.fechaCreacionf = new Timestamp(new Date());
     }
 
     public Clase(String titulo, String nombreCurso, String imagen, List<PreguntaCuestionario>  preguntaCuestionarios){
@@ -101,12 +101,12 @@ public class Clase {
         this.titulo = titulo;
     }
 
-    public Date getFechaCreacion() {
-        return fechaCreacion;
+    public Timestamp getFechaCreacionf() {
+        return fechaCreacionf;
     }
 
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setFechaCreacion(Timestamp fechaCreacion) {
+        this.fechaCreacionf = fechaCreacion;
     }
 
     public Integer getIdClase() {
@@ -137,11 +137,7 @@ public class Clase {
         this.preguntas = preguntas;
     }
 
-    public TimeStamp getFechaCreacionf() {
-        return fechaCreacionf;
-    }
-
-    public void setFechaCreacionf(TimeStamp fechaCreacionf) {
+    public void setFechaCreacionf(Timestamp fechaCreacionf) {
         this.fechaCreacionf = fechaCreacionf;
     }
 
@@ -152,9 +148,6 @@ public class Clase {
     public void setMeGusta(Integer meGusta) {
         this.meGusta = meGusta;
     }
-
-    private TimeStamp fechaCreacionf;
-
 
 
 }

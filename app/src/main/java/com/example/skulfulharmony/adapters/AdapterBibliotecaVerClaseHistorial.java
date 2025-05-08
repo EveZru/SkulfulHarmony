@@ -97,7 +97,7 @@ public class AdapterBibliotecaVerClaseHistorial extends RecyclerView.Adapter<Ada
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Clase clase = historial.get(position);
         holder.titulo.setText(clase.getTitulo());
-        holder.fecha.setText(clase.getFechaCreacion().toString());
+        //holder.fecha.setText(clase.getFechaCreacion().toString());
         if(clase.getImagenCurso() != null){
             Glide.with(context)
                     .load(clase.getImagenCurso())

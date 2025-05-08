@@ -73,7 +73,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         // Obtener idCurso del intent
-        idCurso = getIntent().getIntExtra("idCurso", -1);
+        idCurso = getIntent().getIntExtra("idCurso",1);
 
         if (idCurso != -1) {
             cargarClases();
@@ -106,7 +106,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
             AdapterCrearVerClasesCreadas adapter = new AdapterCrearVerClasesCreadas(listaClases, VerCursoComoCreador.this);
             rvClases.setAdapter(adapter);
         }).addOnFailureListener(e -> {
-            Toast.makeText(VerCursoComoCreador.this, "Error al cargar clases", Toast.LENGTH_SHORT).show();
+            Toast.makeText(VerCursoComoCreador.this, "Error al cargar clases: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             Log.e("Firestore", "Error: ", e);
         });
     }

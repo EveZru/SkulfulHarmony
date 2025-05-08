@@ -36,6 +36,7 @@ import android.view.ViewTreeObserver;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.server.config.DropboxConfig;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,6 +46,7 @@ import org.apache.commons.net.ntp.TimeStamp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CrearClase extends AppCompatActivity {
@@ -478,7 +480,8 @@ public class CrearClase extends AppCompatActivity {
                     clase.setImagen(imagen);
                     clase.setTextos(texto);
                     clase.setPreguntas(preguntasClase);
-                    clase.setFechaCreacionf(TimeStamp.getCurrentTime());
+                    Timestamp  timestamp = Timestamp.now();
+                    clase.setFechaCreacionf(timestamp);
 
                     Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
                     db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {

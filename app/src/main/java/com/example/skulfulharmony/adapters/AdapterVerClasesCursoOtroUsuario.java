@@ -46,7 +46,7 @@ public class AdapterVerClasesCursoOtroUsuario extends RecyclerView.Adapter<Adapt
         if(clase.getFechaCreacionf() == null){
             holder.tvTextSegundo.setText("Error al cargar fecha de creacion");
         }else {
-            Date date = clase.getFechaCreacionf().getDate();
+            Date date = clase.getFechaCreacionf().toDate();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             holder.tvTextSegundo.setText(sdf.format(date));
         }

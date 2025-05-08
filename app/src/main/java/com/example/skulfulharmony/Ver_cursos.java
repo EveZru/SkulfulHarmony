@@ -67,7 +67,7 @@ public class Ver_cursos extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
         // Obtener idCurso del intent
-        idCurso = getIntent().getIntExtra("idCurso", -1);
+        idCurso = getIntent().getIntExtra("idCurso", 1);
 
         if (idCurso != -1) {
             obtenerCurso(idCurso);
@@ -137,8 +137,10 @@ public class Ver_cursos extends AppCompatActivity {
                             clasesQuery.get().addOnSuccessListener(queryDocumentSnapshots1 -> {
                                 for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots1) {
                                     Clase clase = doc1.toObject(Clase.class);
-                                    if (clase != null)
-                                    listaClases.add(clase);
+                                    if (clase != null){
+                                        listaClases.add(clase);
+                                    }
+
                                 }
 
                                 AdapterVerClasesCursoOtroUsuario adapter = new AdapterVerClasesCursoOtroUsuario(listaClases, Ver_cursos.this);
