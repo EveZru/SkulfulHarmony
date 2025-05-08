@@ -23,6 +23,13 @@ public class Usuario {
     private String correo;
     private Map<String,String> instrumento;
 
+    private String fotoPerfil;
+
+    private String descripcion;
+
+    private int cursos;
+    private int seguidores;
+
     //ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
     private List<Curso> cursosSeguidos;
@@ -134,6 +141,22 @@ public class Usuario {
             public void setCorreo (String correo){
             this.correo = correo;
         }
+
+            public String getDescripcion() { return descripcion; }
+
+            public void setDescripcion(String descripcion) { this.descripcion = descripcion;}
+
+            public int getCursos() { return cursos; }
+
+            public void setCursos(int cursos) { this.cursos = cursos; }
+
+            public int getSeguidores() { return seguidores; }
+
+            public void setSeguidores(int seguidores) { this.seguidores = seguidores; }
+
+            public String getFotoPerfil() { return fotoPerfil; }
+
+            public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }
 
             public Map<String,String> getInstrumento () {
             return instrumento;

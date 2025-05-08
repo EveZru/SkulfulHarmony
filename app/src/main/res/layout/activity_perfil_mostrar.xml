@@ -4,45 +4,29 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="1dp"
-    android:background="@color/white"
-    android:id="@+id/main">
+    android:padding="0dp"
+    android:background="@color/white">
 
+    <!-- Toolbar con botón para compartir -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black">
-
-        <ImageView
-            android:id="@+id/iv_gotoconfiguracion"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:padding="8dp"
-            android:src="@drawable/mas_logo"
-            android:contentDescription="Toolbar Icon" />
-
-        <!-- Botón que se añadirá para navegar al tiempo del usuario -->
-<!--        <Button-->
-<!--            android:id="@+id/btnVerTiempoUsuario"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Ver Tiempo"-->
-<!--            android:textColor="@android:color/white"-->
-<!--            android:layout_gravity="end"-->
-<!--            android:layout_marginEnd="16dp" />-->
+        android:background="@color/black"
+        android:padding="0dp">
 
         <Button
-            android:id="@+id/btnVerVideoPrueba"
+            android:id="@+id/btnCompartirPerfil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ver Video prueba"
+            android:text="Compartir Perfil"
             android:textColor="@android:color/white"
             android:layout_gravity="end"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:background="?android:attr/selectableItemBackground" />
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Imagen y datos del usuario -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -56,7 +40,6 @@
             android:layout_height="100dp"
             app:cardCornerRadius="50dp"
             app:cardElevation="6dp">
-
             <ImageView
                 android:id="@+id/ivProfilePicture"
                 android:layout_width="match_parent"
@@ -109,7 +92,7 @@
                 android:textColor="@color/gray1"
                 android:layout_marginTop="4dp" />
 
-            <!-- Followers and Following -->
+            <!-- Seguidores y Seguidos -->
             <TextView
                 android:id="@+id/tv_Seguidores"
                 android:layout_width="wrap_content"
@@ -130,59 +113,12 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Share Button -->
-    <Button
-        android:id="@+id/btnCompartirPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Compartir Perfil"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        android:gravity="center_horizontal"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:layout_weight="1">-->
-
-<!--        <androidx.appcompat.widget.AppCompatButton-->
-<!--            android:id="@+id/btnEditarPerfil"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:backgroundTint="@color/rojo"-->
-<!--            android:text="Editar Perfil"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:padding="12dp"-->
-<!--            android:textSize="16sp" />-->
-
-<!--        <androidx.appcompat.widget.AppCompatButton-->
-<!--            android:id="@+id/btnCerrarSesion"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:backgroundTint="@color/black"-->
-<!--            android:text="Cerrar Sesión"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:padding="12dp"-->
-<!--            android:textSize="16sp"-->
-<!--            android:layout_marginTop="12dp" />-->
-
-<!--        <androidx.appcompat.widget.AppCompatButton-->
-<!--            android:id="@+id/btnEliminarCuenta"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:backgroundTint="@color/azul"-->
-<!--            android:text="Eliminar Cuenta"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:padding="12dp"-->
-<!--            android:textSize="16sp"-->
-<!--            android:layout_marginTop="12dp" />-->
-<!--    </LinearLayout>-->
+    <!-- Barra de navegación inferior -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"
@@ -191,4 +127,5 @@
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1" />
+
 </LinearLayout>

@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,9 +17,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
+import com.example.skulfulharmony.adapters.AdapterBusquedaUsuarios;
+import com.example.skulfulharmony.adapters.AdapterBusquedaCursos;
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.example.skulfulharmony.javaobjects.users.HistorialManager;
 import com.example.skulfulharmony.utils.IndiceInvertidoManager;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,7 +36,7 @@ public class Busqueda extends AppCompatActivity {
     private EditText et_buscar;
     private Button btn_genero, btn_instrumrnto, btn_dificultad;
     private TextView tv_historial;
-    private RecyclerView rv_resultados;
+    private RecyclerView rv_resultadosbusqueda;  // Cambiar al ID correcto
     private DbUser dbUser = new DbUser(this);
 
     @Override
@@ -47,8 +50,8 @@ public class Busqueda extends AppCompatActivity {
         btn_instrumrnto = findViewById(R.id.btn_binstumento);
         et_buscar = findViewById(R.id.et_parabuscar);
         tv_historial = findViewById(R.id.tv_historial);
-        rv_resultados = findViewById(R.id.rv_resultadosbusqueda);
-        rv_resultados.setLayoutManager(new LinearLayoutManager(this));
+        rv_resultadosbusqueda = findViewById(R.id.rv_resultadosbusqueda);  // Cambiar al ID correcto
+        rv_resultadosbusqueda.setLayoutManager(new LinearLayoutManager(this));
 
         if (getIntent().getBooleanExtra("focus", false)) {
             et_buscar.requestFocus();
@@ -60,7 +63,7 @@ public class Busqueda extends AppCompatActivity {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 String query = et_buscar.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    buscarCursosEnFirebase(query);
+                    buscarUsuariosYCursosEnFirebase(query);
                 }
                 return true;
             }
@@ -90,46 +93,68 @@ public class Busqueda extends AppCompatActivity {
         }
     }
 
-    private void buscarCursosEnFirebase(final String textoBusqueda) {  // Agregar 'final' aquí
+    private void buscarUsuariosYCursosEnFirebase(String textoBusqueda) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Búsqueda de cursos
         CollectionReference cursosRef = db.collection("cursos");
-
         cursosRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            List<Curso> resultados = new ArrayList<>();
-            List<Curso> cursos = new ArrayList<>(); // Lista para almacenar todos los cursos
-
-            // Obtener todos los cursos
+            List<Curso> resultadosCursos = new ArrayList<>();
+            List<Curso> cursos = new ArrayList<>();
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
                 Curso curso = doc.toObject(Curso.class);
                 if (curso != null) {
                     cursos.add(curso);
+                    Log.d("Busqueda", "Curso encontrado: " + curso.getTitulo()); // Verificación
                 }
             }
 
-            // Crear el índice invertido
-            IndiceInvertidoManager indiceInvertidoManager = new IndiceInvertidoManager();
-            indiceInvertidoManager.buildIndex(cursos); // Construir el índice invertido con los cursos
-
-            // Convertir la búsqueda en minúsculas para una comparación sin distinción de mayúsculas/minúsculas
-            String textoBusquedaLower = textoBusqueda.toLowerCase();  // Asignamos a una nueva variable local
-
-            // Buscar los cursos que contienen la palabra buscada en el título
-            for (Curso curso : cursos) {
-                // Comparamos el texto de búsqueda con el título del curso (permitiendo coincidencias parciales)
-                if (curso.getTitulo().toLowerCase().contains(textoBusquedaLower)) {
-                    resultados.add(curso);  // Agregar el curso que coincide
+            // Búsqueda de usuarios
+            CollectionReference usuariosRef = db.collection("usuarios");
+            usuariosRef.get().addOnSuccessListener(queryDocumentSnapshotsUsuarios -> {
+                List<Usuario> resultadosUsuarios = new ArrayList<>();
+                List<Usuario> usuarios = new ArrayList<>();
+                for (DocumentSnapshot docUsuario : queryDocumentSnapshotsUsuarios) {
+                    Usuario usuario = docUsuario.toObject(Usuario.class);
+                    if (usuario != null) {
+                        usuarios.add(usuario);
+                        Log.d("Busqueda", "Usuario encontrado: " + usuario.getNombre()); // Verificación
+                    }
                 }
-            }
 
-            // Mostrar los resultados
-            if (resultados.isEmpty()) {
-                Toast.makeText(this, "No se encontraron cursos.", Toast.LENGTH_SHORT).show();
-            } else {
-                AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(resultados, this);
-                rv_resultados.setAdapter(adapter);
-            }
+                // Mostrar los resultados (usuarios y cursos)
+                mostrarUsuarios(resultadosUsuarios);
+                mostrarCursos(resultadosCursos);
+            });
         }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Error al buscar cursos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error al buscar usuarios o cursos", Toast.LENGTH_SHORT).show();
         });
     }
+
+    private void mostrarUsuarios(List<Usuario> usuarios) {
+        if (usuarios.isEmpty()) {
+            Toast.makeText(this, "No se encontraron usuarios.", Toast.LENGTH_SHORT).show();
+            Log.d("Busqueda", "No se encontraron usuarios");
+        } else {
+            Log.d("Busqueda", "Usuarios encontrados: " + usuarios.size());
+            AdapterBusquedaUsuarios adapterUsuarios = new AdapterBusquedaUsuarios(usuarios, usuario -> {
+                Toast.makeText(this, "Perfil de " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+            });
+            rv_resultadosbusqueda.setAdapter(adapterUsuarios);
+        }
+    }
+
+    private void mostrarCursos(List<Curso> cursos) {
+        if (cursos.isEmpty()) {
+            Toast.makeText(this, "No se encontraron cursos.", Toast.LENGTH_SHORT).show();
+            Log.d("Busqueda", "No se encontraron cursos");
+        } else {
+            Log.d("Busqueda", "Cursos encontrados: " + cursos.size());
+            AdapterBusquedaCursos adapterCursos = new AdapterBusquedaCursos(cursos, curso -> {
+                Toast.makeText(this, "Curso: " + curso.getTitulo(), Toast.LENGTH_SHORT).show();
+            });
+            rv_resultadosbusqueda.setAdapter(adapterCursos);
+        }
+    }
+
 }
