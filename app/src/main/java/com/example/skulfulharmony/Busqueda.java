@@ -20,6 +20,7 @@ import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.HistorialManager;
+import com.example.skulfulharmony.utils.IndiceInvertidoManager;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -89,26 +90,44 @@ public class Busqueda extends AppCompatActivity {
         }
     }
 
-    private void buscarCursosEnFirebase(String textoBusqueda) {
+    private void buscarCursosEnFirebase(final String textoBusqueda) {  // Agregar 'final' aquí
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference cursosRef = db.collection("cursos");
 
         cursosRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             List<Curso> resultados = new ArrayList<>();
+            List<Curso> cursos = new ArrayList<>(); // Lista para almacenar todos los cursos
+
+            // Obtener todos los cursos
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
                 Curso curso = doc.toObject(Curso.class);
-                if (curso != null && curso.getTitulo() != null &&
-                        curso.getTitulo().toLowerCase().contains(textoBusqueda.toLowerCase())) {
-                    resultados.add(curso);
+                if (curso != null) {
+                    cursos.add(curso);
                 }
             }
 
-            if (resultados.isEmpty()) {
-                Toast.makeText(this, "No se encontraron cursos.", Toast.LENGTH_SHORT).show();
+            // Crear el índice invertido
+            IndiceInvertidoManager indiceInvertidoManager = new IndiceInvertidoManager();
+            indiceInvertidoManager.buildIndex(cursos); // Construir el índice invertido con los cursos
+
+            // Convertir la búsqueda en minúsculas para una comparación sin distinción de mayúsculas/minúsculas
+            String textoBusquedaLower = textoBusqueda.toLowerCase();  // Asignamos a una nueva variable local
+
+            // Buscar los cursos que contienen la palabra buscada en el título
+            for (Curso curso : cursos) {
+                // Comparamos el texto de búsqueda con el título del curso (permitiendo coincidencias parciales)
+                if (curso.getTitulo().toLowerCase().contains(textoBusquedaLower)) {
+                    resultados.add(curso);  // Agregar el curso que coincide
+                }
             }
 
-            AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(resultados, this);
-            rv_resultados.setAdapter(adapter);
+            // Mostrar los resultados
+            if (resultados.isEmpty()) {
+                Toast.makeText(this, "No se encontraron cursos.", Toast.LENGTH_SHORT).show();
+            } else {
+                AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(resultados, this);
+                rv_resultados.setAdapter(adapter);
+            }
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error al buscar cursos", Toast.LENGTH_SHORT).show();
         });

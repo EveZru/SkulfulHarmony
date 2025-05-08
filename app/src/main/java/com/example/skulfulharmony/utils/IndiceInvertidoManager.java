@@ -6,54 +6,31 @@ import com.example.skulfulharmony.javaobjects.users.Usuario;
 
 import java.util.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+
 public class IndiceInvertidoManager {
+    // Índice invertido que mapea cada palabra a una lista de ids de cursos.
+    private Map<String, List<String>> invertedIndex = new HashMap<>();
 
-    private final Map<String, List<Object>> indice = new HashMap<>();
-
-    public void agregarCurso(Curso curso) {
-        if (curso == null) return;
-        indexarPalabras(curso.getTitulo(), curso);
-        indexarPalabras(curso.getDescripcion(), curso);
-        indexarPalabras(curso.getCreador(), curso);
-    }
-
-    public void agregarClase(Clase clase) {
-        if (clase == null) return;
-        indexarPalabras(clase.getTitulo(), clase);
-        indexarPalabras(clase.getNombreCurso(), clase);
-    }
-
-    public void agregarUsuario(Usuario usuario) {
-        if (usuario == null) return;
-        indexarPalabras(usuario.getNombre(), usuario);
-        indexarPalabras(usuario.getCorreo(), usuario);
-    }
-
-    private void indexarPalabras(String texto, Object objeto) {
-        if (texto == null || texto.isEmpty()) return;
-
-        String[] palabras = texto.toLowerCase().split("[\\s.,;:!?()\"']+");
-        for (String palabra : palabras) {
-            if (palabra.trim().isEmpty()) continue;
-            indice.computeIfAbsent(palabra, k -> new ArrayList<>()).add(objeto);
-        }
-    }
-
-    public List<Object> buscar(String textoBusqueda) {
-        Set<Object> resultados = new HashSet<>();
-        String[] palabras = textoBusqueda.toLowerCase().split("[\\s.,;:!?()\"']+");
-
-        for (String palabra : palabras) {
-            List<Object> encontrados = indice.get(palabra);
-            if (encontrados != null) {
-                resultados.addAll(encontrados);
+    // Método para construir el índice invertido a partir de una lista de cursos.
+    public void buildIndex(List<Curso> cursos) {
+        invertedIndex.clear();
+        for (Curso curso : cursos) {
+            if (curso != null && curso.getTitulo() != null) {
+                String[] words = curso.getTitulo().toLowerCase().split("\\s+"); // Dividir el título en palabras
+                for (String word : words) {
+                    // Convertir el ID a String antes de agregarlo al índice
+                    invertedIndex.computeIfAbsent(word, k -> new ArrayList<>())
+                            .add(String.valueOf(curso.getId())); // Convertir Integer a String
+                }
             }
         }
-
-        return new ArrayList<>(resultados);
     }
-
-    public void limpiarIndice() {
-        indice.clear();
+    // Método para buscar cursos por una palabra clave.
+    public List<String> search(String query) {
+        return invertedIndex.getOrDefault(query.toLowerCase(), new ArrayList<>());
     }
 }
