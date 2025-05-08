@@ -30,42 +30,49 @@
            android:layout_marginVertical="10dp"
            />
         <RadioGroup
+            android:id="@+id/rg_tipo_denuncia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
 
             >
             <RadioButton
+                android:id="@+id/rb_contenidoilegal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Contenido ilegal"
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:id="@+id/rb_suplantacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Suplantación de identidad"
                 android:buttonTint="@color/black"
             />
             <RadioButton
+                android:id="@+id/rb_inapropiado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Contenido inapropiado"
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:id="@+id/rb_spam"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Spam"
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:id="@+id/rb_abuso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Abuso de plataforma "
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:id="@+id/rb_normas_"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Violación de normas de la plataforma "
@@ -84,6 +91,7 @@
             android:layout_marginVertical="10dp"
             />
         <EditText
+            android:id="@+id/et_descripciondemanda"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Intenta ser consiso y claro"
@@ -96,6 +104,7 @@
             android:layout_weight="1"
             />
         <android.widget.Button
+            android:id="@+id/btn_hacerdemanda"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Hacer demanda "
