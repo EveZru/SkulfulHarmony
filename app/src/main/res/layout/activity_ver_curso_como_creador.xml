@@ -99,12 +99,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_marginRight="16dp"
         android:tintMode="multiply"
-        android:tint="@null"
         android:src="@drawable/mas_logo"
         android:contentDescription="Agregar nueva clase"
         android:backgroundTint="@color/rojo"
+        android:layout_marginBottom="60dp"
 
     />
 

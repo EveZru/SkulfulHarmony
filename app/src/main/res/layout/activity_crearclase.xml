@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
     tools:context=".CrearClase"
-    android:background="@color/white">
-
-    <ScrollView
-        android:id="@+id/main_scrollview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:fitsSystemWindows="true"
-        >
-
+    >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_titulo_nueva_clase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:hint="*Agrega tu titulo aqui*"
+                android:textAlignment="center"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="5"
+                android:scrollbars="vertical"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollHorizontally="false"
+                />
 
             <ImageView
                 android:id="@+id/btn_cargar_video"
@@ -45,31 +51,68 @@
                 android:layout_margin="10dp"
                 android:background="@color/gray1"
                 android:text="Cargar archivos"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                />
+
+            <EditText
+                android:id="@+id/et_descripcion_crear_clase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:hint="Agrega la informacion que le quieres compartir a tus aumnos en este apartado, utiliza: \n* * Para negritas\n_ _ Para cursiva\n-  - Para subrayado"
+                android:background="#ddDDDDDD"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:inputType="textMultiLine"
+                android:minLines="1"
+                android:maxLines="20"
+                android:scrollbars="vertical"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollHorizontally="false"
+
+                />
+            <!-- RecyclerView para mostrar preguntas agregadas -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_preguntas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
 
             <!-- Sección para ingresar preguntas -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="10dp"
+                >
 
                 <EditText
                     android:id="@+id/et_ingresar_pregunta"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textSize="22sp"
                     android:textColorHint="@color/gray2"
                     android:textColor="@color/black"
-                    android:hint="Ingrese posible pregunta"
+                    android:hint="*Añadir pregunta*"
                     android:backgroundTint="@color/black"
-                    android:padding="10dp" />
+                    android:padding="10dp"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:maxLines="5"
+                    android:scrollbars="vertical"
+                    android:overScrollMode="ifContentScrolls"
+                    android:scrollHorizontally="false"
+                    />
 
                 <Button
                     android:id="@+id/btn_subir_pregunta"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:text="+"
-                    android:background="@android:color/holo_blue_light" />
+                    android:backgroundTint="@color/gray1" />
             </LinearLayout>
 
             <!-- Contenedor dinámico de opciones de respuesta -->
@@ -78,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="5dp">
 
                 <!-- Primera opción por defecto -->
                 <LinearLayout
@@ -95,13 +138,21 @@
 
                     <EditText
                         android:id="@+id/et_ingresar_respuesta"
+                        android:inputType="textMultiLine"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textSize="20sp"
                         android:textColorHint="@color/gray1"
                         android:textColor="@color/black"
                         android:backgroundTint="@color/black"
-                        android:hint="Ingresa una opción de respuesta" />
+                        android:hint="Ingresa una opción de respuesta"
+                        android:minLines="1"
+                        android:maxLines="5"
+                        android:scrollbars="vertical"
+                        android:overScrollMode="ifContentScrolls"
+                        android:scrollHorizontally="false"
+                        />
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
@@ -112,24 +163,17 @@
                 android:layout_marginTop="16dp" />
 
 
-
-
-            <!-- RecyclerView para mostrar preguntas agregadas -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_preguntas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-
             <android.widget.Button
+                android:id="@+id/btn_subir_clase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/third_rounder_button"
                 android:text="Subir clase"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:layout_marginBottom="30dp"
+                />
         </LinearLayout>
-    </ScrollView>
 
-</LinearLayout>
+</ScrollView>
