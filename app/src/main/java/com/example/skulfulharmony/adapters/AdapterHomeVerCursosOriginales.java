@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.Act_flauta;
+import com.example.skulfulharmony.Act_guitarra;
 import com.example.skulfulharmony.Act_pianoAcordes;
 import com.example.skulfulharmony.EscribirPartiturasAct;
 import com.example.skulfulharmony.R;
@@ -65,17 +66,19 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
             if(tituloCurso!=null){
 
                     if(tituloCurso.equals("Simulador de flauta"))  {
-                      //  Toast.makeText(context, "click clase 4", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, Act_flauta.class);
                         context.startActivity(intent);
                     } else if(tituloCurso.equals("Simulador de piano"))  {
-                       // Toast.makeText(context, "click clase 4", Toast.LENGTH_SHORT).show();
+
                         Intent intent = new Intent(context, Act_pianoAcordes.class);
                         context.startActivity(intent);
                     }else if(tituloCurso.equals("Repaso de escribir partituras"))  {
-                       // Toast.makeText(context, "click clase 4", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(context, EscribirPartiturasAct.class);
                         context.startActivity(intent);
+                    }else if(tituloCurso.equals("Simulador de guitarra"))  {
+                        Intent intent = new Intent(context, Act_guitarra.class);
+                        context.startActivity(intent);
+
                     }
 
                     else Toast.makeText(context, "Clase no disponible por el momento", Toast.LENGTH_SHORT).show();

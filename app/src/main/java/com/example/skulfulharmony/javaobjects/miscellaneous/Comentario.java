@@ -11,13 +11,42 @@ public class Comentario {
     private ArrayList<Boolean> reacciones = new ArrayList<>();
     private Date fecha;
 
-    public Comentario(Usuario usuario, String texto) {
-        this.usuario = usuario;
-        this.texto = texto;
-        this.fecha = new Date();
+    public Comentario() {
     }
 
     void DarMeGusta(Boolean x){
         reacciones.add(x);
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        //this.usuario = usuario;
+    }
+
+    public String getTexto() {
+        return texto;
+    }
+
+    public void setTexto(String texto) {
+        this.texto = texto;
+    }
+
+    public ArrayList<Boolean> getReacciones() {
+        return reacciones;
+    }
+
+    public void setReacciones(ArrayList<Boolean> reacciones) {
+        this.reacciones = reacciones;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 }

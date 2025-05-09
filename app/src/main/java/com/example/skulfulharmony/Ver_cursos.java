@@ -6,6 +6,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -15,18 +18,25 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.adapters.AdapterVerClasesCursoOtroUsuario;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
+
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.Date;
 import java.util.ArrayList;
 
 public class Ver_cursos extends AppCompatActivity {
@@ -35,11 +45,16 @@ public class Ver_cursos extends AppCompatActivity {
     private TextView tituloCurso, descripcionCurso, autorCurso;
     private RecyclerView rvClases; // Puedes llenar esto después con clases del curso
 
+    private Button crear_comentario;
+    private EditText etcomentario;
+
+
     private FirebaseFirestore firestore;
     private int idCurso;
     private ImageView desplegarmenu;
 
 
+    private UserInfo user;
     private ImageView[] estrellas;
     private TextView tvPuntuacion;
     private int puntuacionActual = 0;
@@ -63,7 +78,6 @@ public class Ver_cursos extends AppCompatActivity {
         });
 
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
 
         firestore = FirebaseFirestore.getInstance();
         // Obtener idCurso del intent
@@ -98,6 +112,25 @@ public class Ver_cursos extends AppCompatActivity {
 
         // Inicializar la puntuación en 0/5
         actualizarTextoPuntuacion();
+
+        //---- comentarios ------
+        crear_comentario=findViewById(R.id.btn_subir_comentario);
+        etcomentario=findViewById(R.id.et_comenntario);
+
+        crear_comentario.setOnClickListener(v->
+        {
+            String coment=etcomentario.toString();
+            Date fecha = new Date( System.currentTimeMillis());
+            Comentario comentario =new Comentario();
+            comentario.setUsuario(user.getEmail());
+            comentario.setTexto(coment);
+            comentario.setFecha(fecha);
+
+            Toast.makeText(this,"subiendo comentario",Toast.LENGTH_SHORT).show();
+
+            // subir el comentario a firebase
+
+        });
 
     }
 
@@ -150,6 +183,7 @@ public class Ver_cursos extends AppCompatActivity {
                                 Toast.makeText(this, "Error al cargar clases", Toast.LENGTH_SHORT).show();
                                 onFailureListener.printStackTrace();
                             });
+
 
 
                         }

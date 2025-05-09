@@ -88,6 +88,7 @@ public class CrearDenuncia extends AppCompatActivity {
                 // Crea el objeto denuncia
                 Demanda demanda = new Demanda(usuario, tipoDenuncia, denuncia,idCurso);
 
+
                 // Muestra un mensaje con los datos de la denuncia
                 Toast.makeText(CrearDenuncia.this, "Denuncia creada:\n" +
                         "Usuario: " + demanda.getUsuario() + "\n" +

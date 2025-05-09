@@ -23,9 +23,8 @@
             android:gravity="end">
             <ImageView
                 android:id="@+id/btn_eliminar_pregunta"
-                android:layout_width="30dp"
+                android:layout_width="27dp"
                 android:layout_height="30dp"
-
                 android:background="@drawable/img_botedebasura"/>
 
         </LinearLayout>

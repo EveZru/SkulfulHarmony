@@ -62,7 +62,7 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
-      startActivity(new Intent(Home.this, Ver_cursos.class));
+      //startActivity(new Intent(Home.this, Act_guitarra.class));
 
         cargarCursosFirebase();
         //-------Parte de los cursos de clases originales -------

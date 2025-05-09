@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +16,11 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
 
+import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.google.protobuf.Empty;
 
+import java.sql.Timestamp;
 import java.util.Date;
 public class Ver_clases extends AppCompatActivity {
     private TextView tvPuntuacion;
@@ -27,6 +31,7 @@ public class Ver_clases extends AppCompatActivity {
     private ExoPlayer player;
     private Button crear_comentario;
     private int puntuacionActual = 0;
+    private UserInfo user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +46,18 @@ public class Ver_clases extends AppCompatActivity {
 
         crear_comentario.setOnClickListener(v->
         {
-            String coment=etcomentario.getText().toString();
+
+              String coment = etcomentario.getText().toString();
+              Date fecha = new Date(System.currentTimeMillis());
+              Comentario comentario = new Comentario();
+              comentario.setUsuario(user.getEmail());
+              comentario.setTexto(coment);
+              comentario.setFecha(fecha);
+
+              Toast.makeText(this, "subiendo comentario", Toast.LENGTH_SHORT).show();
+
+
+              // subir el comentario
 
         });
 
@@ -74,7 +90,8 @@ public class Ver_clases extends AppCompatActivity {
 
         player = new ExoPlayer.Builder(this).build();
 
-        // obtener de firebase
+        // obtener de firebase orita esta igual que el ejemplo
+
         Uri videoUri = Uri.parse("https://dl.dropboxusercontent.com/scl/fi/cl4w3odb9jyiysutjlcps/videoprueba_optimizado.mp4?rlkey=vtwcayh9cktynbu16sjlzw0hc&st=n8c0m2wk");
         MediaItem mediaItem = MediaItem.fromUri(videoUri);
         player.setMediaItem(mediaItem);
@@ -116,7 +133,7 @@ public class Ver_clases extends AppCompatActivity {
 
 
 
-
+// calificacion met odos extra
 
     private void actualizarPuntuacion(int nuevaPuntuacion) {
         if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {

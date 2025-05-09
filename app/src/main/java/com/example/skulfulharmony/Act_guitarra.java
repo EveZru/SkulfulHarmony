@@ -48,7 +48,7 @@ public class Act_guitarra extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_act_piano_acordes);
+        setContentView(R.layout.activity_act_guitarra);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -76,12 +76,12 @@ public class Act_guitarra extends AppCompatActivity {
         }
 
             // Mapeo de acordes a los IDs de los botones que deben estar presionados (basado en la imagen)
-        posicionesAcordes.put("Do", Arrays.asList("l5_t3", "l4_t2", "l3_t0", "l2_t1", "l1_t0")); // Asumiendo 't0' es cuerda al aire y 'x' no se presiona
-        posicionesAcordes.put("Re", Arrays.asList("l4_t0", "l3_t2", "l2_t3", "l1_t2"));
-        posicionesAcordes.put("Mi", Arrays.asList("l6_t0", "l5_t2", "l4_t2", "l3_t1", "l2_t0", "l1_t0"));
+        posicionesAcordes.put("Do", Arrays.asList("l5_t3", "l4_t2", "l2_t1"));
+        posicionesAcordes.put("Re", Arrays.asList("l3_t2", "l2_t3", "l1_t2"));
+        posicionesAcordes.put("Mi", Arrays.asList( "l5_t2", "l4_t2", "l3_t1"));
         posicionesAcordes.put("Fa", Arrays.asList("l6_t1", "l5_t3", "l4_t3", "l3_t2", "l2_t1", "l1_t1"));
-        posicionesAcordes.put("Sol", Arrays.asList("l6_t3", "l5_t2", "l3_t0", "l2_t0", "l1_t3"));
-        posicionesAcordes.put("La", Arrays.asList("l5_t0", "l4_t2", "l3_t2", "l2_t2", "l1_t0"));
+        posicionesAcordes.put("Sol", Arrays.asList("l6_t3", "l5_t2", "l1_t3"));
+        posicionesAcordes.put("La", Arrays.asList( "l4_t2", "l3_t2", "l2_t2"));
         posicionesAcordes.put("Si", Arrays.asList("l5_t2", "l4_t4", "l3_t4", "l2_t3", "l1_t2"));
          imagenContainer.setOnClickListener(v -> {
              imagenContainer.setVisibility(View.GONE);

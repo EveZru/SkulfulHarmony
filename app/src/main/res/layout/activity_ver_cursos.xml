@@ -182,7 +182,8 @@
                 android:orientation="horizontal"
                 android:gravity="center">
                 <EditText
-                    android:layout_width="350dp"
+                    android:id="@+id/et_comenntario"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:hint="@string/comentario"/>
                 <androidx.appcompat.widget.AppCompatButton

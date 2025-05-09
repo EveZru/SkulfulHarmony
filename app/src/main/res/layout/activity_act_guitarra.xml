@@ -7,7 +7,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Act_pianoAcordes">
+    tools:context=".Act_guitarra">
     <LinearLayout
         android:id="@+id/actividadcontainer"
         android:layout_width="match_parent"
@@ -231,7 +231,8 @@
                         android:id="@+id/l1_t2"
                         android:layout_width="10dp"
                         android:layout_height="70dp"
-                        android:background="@color/gray1"/>
+                        android:background="@color/gray1"
+                        />
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/l1_t3"
                         android:layout_width="10dp"
@@ -340,6 +341,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="700dp"
+            android:layout_gravity="center"
+            android:background="@drawable/provicional_guitarra" />
 
 
 
