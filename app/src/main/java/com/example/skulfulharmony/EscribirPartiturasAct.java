@@ -37,7 +37,7 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         }
 
         // Generar una nota aleatoria para mostrar
-        mostrarNotaAleatoria();
+       // mostrarNotaAleatoria();
 
         // Configurar el Listener para mover la nota solo en el eje Y
         ivNota.setOnTouchListener(new View.OnTouchListener() {
@@ -55,15 +55,15 @@ public class EscribirPartiturasAct extends AppCompatActivity {
                         break;
                     case MotionEvent.ACTION_UP:
                         // Verificar si la nota está sobre algún View y mostrar la posición
-                        mostrarPosicionNota(v);
-                        verificarNotaYPosicion();
+                     //   mostrarPosicionNota(v);
+                       // verificarNotaYPosicion();
                         break;
                 }
                 return true;
             }
         });
     }
-
+/*
     //  mostrar una nota aleatoria en el TextView
     private void mostrarNotaAleatoria() {
         // Elegir una nota aleatoria del arreglo
@@ -173,5 +173,5 @@ public class EscribirPartiturasAct extends AppCompatActivity {
         // Verificar si la posición de la nota está dentro de los límites de la línea o espacio
         return (notaX >= posX - tolerance && notaX <= posX + positionView.getWidth() + tolerance)
                 && (notaY >= posY - tolerance && notaY <= posY + positionView.getHeight() + tolerance);
-    }
+    }*/
 }

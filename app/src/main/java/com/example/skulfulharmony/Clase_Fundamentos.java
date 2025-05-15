@@ -14,7 +14,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.skulfulharmony.adapters.AdapterPreguntasEnClasesOriginales;
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnCuestionariosparaContestar;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
@@ -35,21 +34,23 @@ public class Clase_Fundamentos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clase_fundamentos);
 
+
         ivImagenCurso = findViewById(R.id.iv_imagen_curso);
         rvPreguntasCurso = findViewById(R.id.rv_preguntas_curso);
         rvPreguntasCurso.setLayoutManager(new LinearLayoutManager(this));
         btnComprobar = findViewById(R.id.btn_comprobar);
         btnReintentar = findViewById(R.id.btn_reintentar);
 
-        String nombreCurso = getIntent().getStringExtra("nombre_curso");
         listaPreguntas = (List<PreguntaCuestionario>) getIntent().getSerializableExtra("lista_preguntas");
+        String nombreCurso = getIntent().getStringExtra("nombre_curso");
+
+        adapterPreguntas = new  AdapterPreguntasEnCuestionariosparaContestar(this, listaPreguntas);
 
         int imagenResId = obtenerImagenPorCurso(nombreCurso);
         ivImagenCurso.setImageResource(imagenResId);
 
-        adapterPreguntas = new  AdapterPreguntasEnCuestionariosparaContestar(this, listaPreguntas);
         rvPreguntasCurso.setAdapter(adapterPreguntas);
-
+//botones para comprobar respuestas
         btnComprobar.setOnClickListener(v -> {
             adapterPreguntas.comprobarRespuestas();
             List<PreguntaCuestionario> incorrectas = adapterPreguntas.getPreguntasIncorrectas();
@@ -73,14 +74,21 @@ public class Clase_Fundamentos extends AppCompatActivity {
 
     private int obtenerImagenPorCurso(String tituloCurso) {
         switch (tituloCurso) {
+
             case "Curso 1":
-                return R.drawable.atras;
+                return R.drawable.curso_1;
             case "Curso 2":
-                return R.drawable.perfil_icono;
+                return R.drawable.curso_2;
             case "Curso 3":
-                return R.drawable.degradado_holder_background;
+                return R.drawable.curso_3;
+            case"Curso 4":
+                return R.drawable.curso_4;
+            case "Curso 5":
+                return R.drawable.curso_5;
+            case "Curso 6":
+                return R.drawable.curso_6;
             default:
-                return R.drawable.boquillaflauta;
+                return R.drawable.img_background;
         }
     }
 }

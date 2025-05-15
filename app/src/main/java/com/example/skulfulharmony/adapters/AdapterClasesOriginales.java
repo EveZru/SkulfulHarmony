@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.adapters;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -15,17 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.skulfulharmony.Act_guitarra;
 import com.example.skulfulharmony.Clase_Fundamentos;
 import com.example.skulfulharmony.EscribirPartiturasAct;
+import com.example.skulfulharmony.EscribirPartiturasDo;
+import com.example.skulfulharmony.EscribirPartiturasFa;
 import com.example.skulfulharmony.Home;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_clases;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
+import com.example.skulfulharmony.videos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesOriginales.ClaseViewHolder> implements Serializable {
+    //eve
     private Context context;
     private List<Curso> listaCursos;
 
@@ -54,21 +60,38 @@ public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesO
             List<PreguntaCuestionario> listaDePreguntas = new ArrayList<>();
 
             if (tituloClase.equals("Clase 1")) {
-                imagenResId = R.drawable.perfil_logo;
+                imagenResId = R.drawable.img_background;
                 listaDePreguntas.add(new PreguntaCuestionario("Pregunta 1 de Clase 1", Arrays.asList("A", "B", "C"), 0));
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 2 de Clase 1", Arrays.asList("X", "Y", "Z"), 1));
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 2 de Clase 1", Arrays.asList("X", "Y", "Z"), 0));
             } else if (tituloClase.equals("Clase 2")) {
-                imagenResId = R.drawable.perfil_icono;
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta A de Clase 2", Arrays.asList("1", "2", "3"), 2));
+                imagenResId = R.drawable.img_background;
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta A de Clase 2", Arrays.asList("1", "2", "3"), 0));
                 listaDePreguntas.add(new PreguntaCuestionario("Pregunta B de Clase 2", Arrays.asList("T", "F"), 0));
             } else if (tituloClase.equals("Clase 3")) {
-                imagenResId = R.drawable.loading;
-                listaDePreguntas.add(new PreguntaCuestionario("¿Primera pregunta de la tercera?", Arrays.asList("Sí", "No"), 1));
-                listaDePreguntas.add(new PreguntaCuestionario("¿Segunda?", Arrays.asList("Op1", "Op2", "Op3", "Op4"), 3));
-            } else {
+                imagenResId = R.drawable.img_background;
+                listaDePreguntas.add(
+                        new PreguntaCuestionario("¿Primera pregunta de la tercera?", Arrays.asList("Sí", "No"),
+                                0));
+                listaDePreguntas.add(
+                        new PreguntaCuestionario("¿Segunda?", Arrays.asList("Op1", "Op2", "Op3", "Op4"),
+                                0));
+  // las clases de escribir partituras_______________________________________________________________________________________________________________________________________-
+            } else if (tituloClase.equals("Clave sol") ) {
+                // Navegación a la actividad de escribir partituras
+                intent = new Intent(context, EscribirPartiturasAct.class);
+            }else if (tituloClase.equals("Clave fa") ) {
+                // Navegación a la actividad de escribir partituras
+                intent = new Intent(context, EscribirPartiturasFa.class); // Reemplaza con el nombre real de tu Activity
+                    }else if (tituloClase.equals("Clave do") ) {
+                // Navegación a la actividad de escribir partituras
+                intent = new Intent(context, EscribirPartiturasDo.class); // Reemplaza con el nombre real de tu Activity
+            }
+
+            else {
                 imagenResId = R.drawable.loading;
                 listaDePreguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
             }
+            Log.d("AdapterClases", "Tamaño de listaDePreguntas antes de pasar: " + listaDePreguntas.size());
 
             intent.putExtra("imagen_resource", imagenResId);
             intent.putExtra("lista_preguntas", (Serializable) listaDePreguntas);

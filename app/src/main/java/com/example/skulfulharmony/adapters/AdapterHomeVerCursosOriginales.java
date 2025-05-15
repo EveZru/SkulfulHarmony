@@ -17,8 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.Act_flauta;
 import com.example.skulfulharmony.Act_guitarra;
 import com.example.skulfulharmony.Act_pianoAcordes;
-import com.example.skulfulharmony.ClasesOriginales;
-import com.example.skulfulharmony.EscribirPartiturasAct;
+import com.example.skulfulharmony.Afinador;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_cursos_originales;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
@@ -74,21 +73,20 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
                         Intent intent = new Intent(context, Act_pianoAcordes.class);
                         context.startActivity(intent);
                     } else if (tituloCurso.equals("Repaso de escribir partituras")) {
-                      /*  List<Curso> opcionesPartituras = Arrays.asList(
-                                new Curso("Nota de sol", ""),
-                                new Curso("Nota de fa", ""),
-                                new Curso("Nota de do", "")
-                        );*/
                         Intent intent = new Intent(context, Ver_cursos_originales.class);
                         context.startActivity(intent);
                     }else if(tituloCurso.equals("Simulador de guitarra"))  {
                         Intent intent = new Intent(context, Act_guitarra.class);
                         context.startActivity(intent);
 
-                    }else if (tituloCurso.equals("Fundamentos")) {
+                    }else if (tituloCurso.equals("Afinador")) {
+                        Intent intent = new Intent(context, Afinador.class);
+                        context.startActivity(intent);
+
+                    } else if (tituloCurso.equals("Fundamentos")) {
                         // Crear la lista de los cursos de fundamentos
                         List<Curso> cursosFundamentos = Arrays.asList(
-                                new Curso("Curso 1", "", null, null, null), // Asegúrate de que el constructor de Curso coincida
+                                new Curso("Curso 1", "hola", null, null, null), // Asegúrate de que el constructor de Curso coincida
                                 new Curso("Curso 2", "", null, null, null),
                                 new Curso("Curso 3", "", null, null, null),
                                 new Curso("Curso 4", "", null, null, null),
