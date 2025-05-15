@@ -164,9 +164,6 @@
             android:name=".Descanso"
             android:exported="false" />
         <activity
-            android:name=".ClasesOriginales"
-            android:exported="false" />
-        <activity
             android:name=".Ver_cursos"
             android:exported="false" />
         <activity
