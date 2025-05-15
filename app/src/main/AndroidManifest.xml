@@ -29,9 +29,8 @@
         <activity
             android:name=".Ver_cursos_originales"
             android:exported="false" />
-        <activity
-            android:name=".Ver_cursos_originales"
-            android:exported="false" />
+
+
 
         <service
             android:name=".javaobjects.users.TokenService"
