@@ -6,13 +6,14 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.firebase.Timestamp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Curso {
+public class Curso implements Serializable {
 
 
     //Atributos
@@ -36,7 +37,7 @@ public class Curso {
 
     //Constructores
 
-    public Curso() {
+    public Curso(String notaDeSol, String s) {
         // Initialize collections and maps to avoid NullPointerException
         this.clases = new ArrayList<>();
         this.seguidores = new ArrayList<>();
@@ -71,6 +72,13 @@ public class Curso {
         this.instrumento = instrumento != null ? instrumento : null;  // Si no se pasa un objeto, se usa null
         this.genero = genero != null ? genero : null;
         this.dificultad = dificultad != null ? dificultad : null;*/
+    }
+    public Curso() {
+        // Puedes inicializar las variables a valores por defecto si es necesario
+        this.titulo = null;
+        this.imagen = null;
+        this.descripcion = null;
+
     }
     public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad, String imagen, Timestamp fechaCreacionf) {
         this.titulo = titulo;
@@ -159,5 +167,7 @@ public class Curso {
     public Map<String,String> getInstrumento() {
         return instrumento;
     }
+
+
 
 }

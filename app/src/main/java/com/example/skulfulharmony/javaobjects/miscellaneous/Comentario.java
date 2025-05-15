@@ -2,10 +2,11 @@ package com.example.skulfulharmony.javaobjects.miscellaneous;
 
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Comentario {
+public class Comentario implements Serializable {
     private String texto;
     private Usuario usuario;
     private ArrayList<Boolean> reacciones = new ArrayList<>();

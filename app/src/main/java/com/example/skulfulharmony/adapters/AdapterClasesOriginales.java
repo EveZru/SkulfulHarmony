@@ -9,76 +9,84 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.skulfulharmony.Act_guitarra;
+import com.example.skulfulharmony.Clase_Fundamentos;
+import com.example.skulfulharmony.EscribirPartiturasAct;
+import com.example.skulfulharmony.Home;
+import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_clases;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesOriginales.ClaseViewHolder> implements Serializable {
+    private Context context;
+    private List<Curso> listaCursos;
 
-public class AdapterClasesOriginales {
-  /*  private Context context;
-    private List<String> listaOpciones;
-    private String tipoLista;
-
-    public AdapterClasesOriginales(Context context, List<String> listaOpciones, String tipoLista) {
+    public AdapterClasesOriginales(Context context, List<Curso> listaCursos) {
         this.context = context;
-        this.listaOpciones = listaOpciones;
-        this.tipoLista = tipoLista;
+        this.listaCursos = listaCursos;
     }
 
     @NonNull
     @Override
-    public OpcionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.holder_curso_clase, parent, false);
-        return new OpcionViewHolder(itemView);
+    public ClaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.holder_verlista_clase_curso, parent, false);
+        return new ClaseViewHolder(itemView);
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull OpcionViewHolder holder, int position) {
-        String opcion = listaOpciones.get(position);
-        holder.tvOpcion.setText(opcion);
+    public void onBindViewHolder(@NonNull ClaseViewHolder holder, int position) {
+        Curso curso = listaCursos.get(position);
+        holder.tvNombreClase.setText(curso.getTitulo());
 
         holder.itemView.setOnClickListener(v -> {
-            Toast.makeText(context, "Clic en: " + opcion, Toast.LENGTH_SHORT).show();
-            Log.d("AdapterGenerico", "Clic en: " + opcion + ", Tipo de lista: " + tipoLista);
+            String tituloClase = curso.getTitulo();
+            Intent intent = new Intent(context, Clase_Fundamentos.class);
+            int imagenResId = R.drawable.loading; // Valor por defecto
+            List<PreguntaCuestionario> listaDePreguntas = new ArrayList<>();
 
-            if (tipoLista.equals("tres_opciones")) {
-                if (opcion.equals("Opción 1 del grupo 1")) {
-                    Intent intent = new Intent(context, Ver_clases.class);
-                    context.startActivity(intent);
-                } else if (opcion.equals("Opción 2 del grupo 1")) {
-                    Intent intent = new Intent(context, Ver_clases.class);
-                    context.startActivity(intent);
-                } else if (opcion.equals("Opción 3 del grupo 1")) {
-                    Intent intent = new Intent(context, Ver_clases.class);
-                    context.startActivity(intent);
-                }
-            } else if (tipoLista.equals("once_opciones")) {
-                if (opcion.equals("Opción 1 del grupo 2")) {
-                    Intent intent = new Intent(context,Ver_clases.class);
-                    context.startActivity(intent);
-                } else if (opcion.equals("Opción 2 del grupo 2")) {
-                    Intent intent = new Intent(context, Ver_clases.class);
-                    context.startActivity(intent);
-                }
-                // ... y así sucesivamente para las 11 opciones
+            if (tituloClase.equals("Clase 1")) {
+                imagenResId = R.drawable.perfil_logo;
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 1 de Clase 1", Arrays.asList("A", "B", "C"), 0));
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 2 de Clase 1", Arrays.asList("X", "Y", "Z"), 1));
+            } else if (tituloClase.equals("Clase 2")) {
+                imagenResId = R.drawable.perfil_icono;
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta A de Clase 2", Arrays.asList("1", "2", "3"), 2));
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta B de Clase 2", Arrays.asList("T", "F"), 0));
+            } else if (tituloClase.equals("Clase 3")) {
+                imagenResId = R.drawable.loading;
+                listaDePreguntas.add(new PreguntaCuestionario("¿Primera pregunta de la tercera?", Arrays.asList("Sí", "No"), 1));
+                listaDePreguntas.add(new PreguntaCuestionario("¿Segunda?", Arrays.asList("Op1", "Op2", "Op3", "Op4"), 3));
+            } else {
+                imagenResId = R.drawable.loading;
+                listaDePreguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
             }
+
+            intent.putExtra("imagen_resource", imagenResId);
+            intent.putExtra("lista_preguntas", (Serializable) listaDePreguntas);
+            intent.putExtra("nombre_curso", tituloClase); // Pasar el título para usarlo en Clase_Fundamentos
+            context.startActivity(intent);
         });
     }
-
     @Override
     public int getItemCount() {
-        return listaOpciones.size();
+        return listaCursos.size();
     }
 
-    public static class OpcionViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvOpcion;
+    public static class ClaseViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvNombreClase;
 
-        public OpcionViewHolder(@NonNull View itemView) {
+        public ClaseViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvOpcion = itemView.findViewById(R.id.tvOpcionSimple); // Asegúrate de tener este ID
+            tvNombreClase = itemView.findViewById(R.id.txt_principal_verlista_ccc);
         }
-    }*/
+    }
 }

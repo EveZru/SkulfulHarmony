@@ -17,11 +17,14 @@ import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.Act_flauta;
 import com.example.skulfulharmony.Act_guitarra;
 import com.example.skulfulharmony.Act_pianoAcordes;
+import com.example.skulfulharmony.ClasesOriginales;
 import com.example.skulfulharmony.EscribirPartiturasAct;
 import com.example.skulfulharmony.R;
-import com.example.skulfulharmony.Ver_cursos;
+import com.example.skulfulharmony.Ver_cursos_originales;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<AdapterHomeVerCursosOriginales.CursoViewHolder> {
@@ -49,7 +52,6 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
         Curso curso = listaCursos.get(position);
         holder.tvTextPrincipal.setText(curso.getTitulo());
 
-        // Opcional: Establecer un icono diferente si lo tienes en tu objeto CursoLocal
 
         Glide.with(context)
                 .load(curso.getImagen())
@@ -69,19 +71,41 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
                         Intent intent = new Intent(context, Act_flauta.class);
                         context.startActivity(intent);
                     } else if(tituloCurso.equals("Simulador de piano"))  {
-
                         Intent intent = new Intent(context, Act_pianoAcordes.class);
                         context.startActivity(intent);
-                    }else if(tituloCurso.equals("Repaso de escribir partituras"))  {
-                        Intent intent = new Intent(context, EscribirPartiturasAct.class);
+                    } else if (tituloCurso.equals("Repaso de escribir partituras")) {
+                      /*  List<Curso> opcionesPartituras = Arrays.asList(
+                                new Curso("Nota de sol", ""),
+                                new Curso("Nota de fa", ""),
+                                new Curso("Nota de do", "")
+                        );*/
+                        Intent intent = new Intent(context, Ver_cursos_originales.class);
                         context.startActivity(intent);
                     }else if(tituloCurso.equals("Simulador de guitarra"))  {
                         Intent intent = new Intent(context, Act_guitarra.class);
                         context.startActivity(intent);
 
-                    }
+                    }else if (tituloCurso.equals("Fundamentos")) {
+                        // Crear la lista de los cursos de fundamentos
+                        List<Curso> cursosFundamentos = Arrays.asList(
+                                new Curso("Curso 1", "", null, null, null), // Asegúrate de que el constructor de Curso coincida
+                                new Curso("Curso 2", "", null, null, null),
+                                new Curso("Curso 3", "", null, null, null),
+                                new Curso("Curso 4", "", null, null, null),
+                                new Curso("Curso 5", "", null, null, null),
+                                new Curso("Curso 6", "", null, null, null)
+                        );
 
-                    else Toast.makeText(context, "Clase no disponible por el momento", Toast.LENGTH_SHORT).show();
+                        ArrayList<Curso> listaArrayListFundamentos = new ArrayList<>(cursosFundamentos);
+
+                        Intent intent = new Intent(context, Ver_cursos_originales.class);
+                        // Pasar la nueva ArrayList a la siguiente Activity
+                        intent.putExtra("tipo_contenido", "fundamentos");
+                        intent.putExtra("lista_cursos_fundamentos", listaArrayListFundamentos);
+                        context.startActivity(intent);
+                    } else {
+                        Toast.makeText(context, "Clase no disponible por el momento", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
 

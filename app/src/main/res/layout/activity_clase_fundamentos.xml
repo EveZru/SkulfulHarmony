@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/gray1">
+
+    <ImageView
+        android:id="@+id/iv_imagen_curso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:src="@drawable/home_logo" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_preguntas_curso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="Lista de preguntas del cuestionario" />
+
+    <Button
+        android:id="@+id/btn_comprobar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comprobar Resultados"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp" />
+
+    <Button
+        android:id="@+id/btn_reintentar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reintentar Cuestionario"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
+
+</LinearLayout>
+
+</ScrollView>

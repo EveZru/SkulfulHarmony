@@ -7,12 +7,13 @@ import com.google.firebase.Timestamp;
 
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.io.Serializable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Clase {
+public class Clase implements Serializable {
 
     private Integer idClase;
     private String nombreCurso;

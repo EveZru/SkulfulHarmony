@@ -12,7 +12,7 @@ import android.graphics.Rect;
 import android.widget.TextView;
 import android.widget.EditText;
 
-public class EscribirPartiturasAct extends AppCompatActivity {/*
+public class EscribirPartiturasAct extends AppCompatActivity {
 
     private ImageView ivNota;  // El ImageView para la nota
     private TextView tvNota;   // El TextView donde se muestra la nota aleatoria
@@ -173,5 +173,5 @@ public class EscribirPartiturasAct extends AppCompatActivity {/*
         // Verificar si la posición de la nota está dentro de los límites de la línea o espacio
         return (notaX >= posX - tolerance && notaX <= posX + positionView.getWidth() + tolerance)
                 && (notaY >= posY - tolerance && notaY <= posY + positionView.getHeight() + tolerance);
-    }*/
+    }
 }

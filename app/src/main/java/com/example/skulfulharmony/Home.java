@@ -62,7 +62,7 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
-      //startActivity(new Intent(Home.this, Act_guitarra.class));
+     // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
 
         cargarCursosFirebase();
         //-------Parte de los cursos de clases originales -------
@@ -70,9 +70,9 @@ public class Home extends AppCompatActivity {
         listaCursos = new ArrayList<>();
 
 
-        // Ejemplo de objetos Curso
+        // Cursos originale
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);
-        Curso curso2 = new Curso("Repaso de escribir partituras ", null, null, null, null);
+        Curso curso2 = new Curso("Repaso de escribir partituras", null, null, null, null);
         Curso curso3 = new Curso("Simulador de piano", null, null, null, null);
         Curso curso4 = new Curso("Simulador de flauta", null, null, null, null);
         Curso curso5 = new Curso("Simulador de guitarra", null, null, null, null);

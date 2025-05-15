@@ -6,10 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Ver_cursos_originales"
+    android:background="@color/gray1"
     android:orientation="vertical">
 
+
     <androidx.recyclerview.widget.RecyclerView
-        id="@+id/rv_cursos_originales"
+        android:id="@+id/rv_cursos_originales"
         android:layout_width="409dp"
         android:layout_height="729dp"
         app:layout_constraintEnd_toEndOf="parent"
