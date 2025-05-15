@@ -81,7 +81,7 @@ public class AdapterHomeVerClaseHistorial extends RecyclerView.Adapter<AdapterHo
         if(clase.getFechaAcceso() != null){
             Date fecha = clase.getFechaAcceso().toDate();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            holder.descripcion.setText(sdf.format(fecha));
+            holder.descripcion.setText("\n"+sdf.format(fecha));
 
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +111,8 @@ public class AdapterHomeVerClaseHistorial extends RecyclerView.Adapter<AdapterHo
             subtitulo = itemView.findViewById(R.id.tv_complementario);
             descripcion = itemView.findViewById(R.id.tv_textsegundo);
             imagen = itemView.findViewById(R.id.cardImage);
+            subtitulo.setTextSize(11);
+
         }
     }
 }

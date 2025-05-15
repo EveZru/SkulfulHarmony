@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -148,12 +149,34 @@ public class Ver_cursos extends AppCompatActivity {
 
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
-                            autorCurso.setText(curso.getCreador()); //Corregir pq esto muestra el correo del creador
-                            if(curso.getDescripcion() == null || curso.getDescripcion().isEmpty() || curso.getDescripcion().equals("")){
-                                descripcionCurso.setText("Curso sin descripción");
-                            }
-                            descripcionCurso.setText(curso.getDescripcion());
 
+                            if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                CollectionReference usersRef = db.collection("usuarios");
+                                usersRef.whereEqualTo("correo", curso.getCreador())
+                                        .limit(1)
+                                        .get()
+                                        .addOnSuccessListener(queryDocumentSnapshotsuser -> {
+                                            if (!queryDocumentSnapshots.isEmpty()) {
+                                                String nombre = queryDocumentSnapshots.getDocuments().get(0).getString("nombre");
+                                                autorCurso.setText("Publicado por: " + nombre);
+                                            } else {
+                                                autorCurso.setText("Autor desconocido");
+                                                Log.w("Firebase", "No se encontró autor con correo: " + curso.getCreador());
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("Firebase", "Error al obtener el nombre del autor", e);
+                                            autorCurso.setText("Autor desconocido");
+                                        });
+                            } else {
+                                autorCurso.setText("Autor desconocido");
+                            }
+                            if (curso.getDescripcion() == null || curso.getDescripcion().isEmpty()) {
+                                descripcionCurso.setText("Curso sin descripción");
+                            } else {
+                                descripcionCurso.setText(curso.getDescripcion());
+                            }
                             Glide.with(this)
                                     .load(curso.getImagen())
                                     .placeholder(R.drawable.loading)

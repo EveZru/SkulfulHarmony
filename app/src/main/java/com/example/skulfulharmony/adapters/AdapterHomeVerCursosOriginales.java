@@ -66,16 +66,16 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
 
             if(tituloCurso!=null){
 
-                    if(tituloCurso.equals("Simulador de flauta"))  {
+                    if(tituloCurso.equals("Flauta"))  {
                         Intent intent = new Intent(context, Act_flauta.class);
                         context.startActivity(intent);
-                    } else if(tituloCurso.equals("Simulador de piano"))  {
+                    } else if(tituloCurso.equals("Piano"))  {
                         Intent intent = new Intent(context, Act_pianoAcordes.class);
                         context.startActivity(intent);
-                    } else if (tituloCurso.equals("Repaso de escribir partituras")) {
+                    } else if (tituloCurso.equals("Partituras")) {
                         Intent intent = new Intent(context, Ver_cursos_originales.class);
                         context.startActivity(intent);
-                    }else if(tituloCurso.equals("Simulador de guitarra"))  {
+                    }else if(tituloCurso.equals("Guitarra"))  {
                         Intent intent = new Intent(context, Act_guitarra.class);
                         context.startActivity(intent);
 

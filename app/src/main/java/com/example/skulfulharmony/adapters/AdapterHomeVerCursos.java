@@ -2,6 +2,7 @@ package com.example.skulfulharmony.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -41,11 +44,27 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
 
         // Mostrar el nombre del autor
         if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
-            holder.tvTextSegundo.setText("Publicado por: " + curso.getCreador());
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference usersRef = db.collection("usuarios");
+            usersRef.whereEqualTo("correo", curso.getCreador())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            String nombre = queryDocumentSnapshots.getDocuments().get(0).getString("nombre");
+                            holder.tvTextSegundo.setText("Publicado por: " + nombre);
+                        } else {
+                            holder.tvTextSegundo.setText("Autor desconocido");
+                            Log.w("Firebase", "No se encontró autor con correo: " + curso.getCreador());
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("Firebase", "Error al obtener el nombre del autor", e);
+                        holder.tvTextSegundo.setText("Autor desconocido");
+                    });
         } else {
             holder.tvTextSegundo.setText("Autor desconocido");
         }
-
         // Imagen con Glide
         Glide.with(context)
                 .load(curso.getImagen())

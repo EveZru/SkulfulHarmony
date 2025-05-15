@@ -81,10 +81,10 @@ public class Home extends AppCompatActivity {
 
         // Cursos originale
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);
-        Curso curso2 = new Curso("Repaso de escribir partituras", null, null, null, null);
-        Curso curso3 = new Curso("Simulador de piano", null, null, null, null);
-        Curso curso4 = new Curso("Simulador de flauta", null, null, null, null);
-        Curso curso5 = new Curso("Simulador de guitarra", null, null, null, null);
+        Curso curso2 = new Curso("Partituras", null, null, null, null);
+        Curso curso3 = new Curso("Piano", null, null, null, null);
+        Curso curso4 = new Curso("Flauta", null, null, null, null);
+        Curso curso5 = new Curso("Guitarra", null, null, null, null);
         Curso curso6 = new Curso("Afinador", null, null, null, null);
         // Agregamos los cursos a la lista
         listaCursos.add(curso1);

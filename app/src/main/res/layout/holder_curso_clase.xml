@@ -5,56 +5,72 @@
     android:id="@+id/clase_elemento"
     android:layout_width="100dp"
     android:layout_height="match_parent"
-    android:background="@drawable/third_rounder_button"
+
     android:layout_margin="10dp"
     app:cardCornerRadius="10dp"
     android:layout_marginHorizontal="5dp"
     android:layout_marginVertical="5dp"
+    android:elevation="5dp"
+    android:background="@color/gray2"
     android:clickable="true">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/gray2"
+        >
         <ImageView
             android:id="@+id/cardImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
-            android:background="@color/gray1" />
+            android:background="@color/gray2" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical"
-        android:background="@drawable/degradado_holder_texts">
-
-        <TextView
-            android:id="@+id/tv_textprincipal"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:layout_marginTop="5dp"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/white" />
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:background="@color/gray2"
+            >
 
-        <TextView
-            android:id="@+id/tv_complementario"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="11dp"
-            android:textColor="@color/white"
-            android:layout_marginTop="4dp"
-            android:layout_marginHorizontal="8dp"
-            />
+            <TextView
+                android:id="@+id/tv_textprincipal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="5dp"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true" />
 
-        <TextView
-            android:id="@+id/tv_textsegundo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginHorizontal="8dp"
-            android:textSize="11sp"
-            android:textColor="@color/gray1" />
+            <TextView
+                android:id="@+id/tv_complementario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginHorizontal="8dp"
+                android:textSize="11dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                />
+
+            <TextView
+                android:id="@+id/tv_textsegundo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginHorizontal="8dp"
+                android:textSize="11sp"
+                android:textColor="@color/gray1" />
+        </LinearLayout>
+
     </LinearLayout>
+
 
 </androidx.cardview.widget.CardView>
