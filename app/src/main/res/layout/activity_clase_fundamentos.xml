@@ -11,8 +11,8 @@
     <ImageView
         android:id="@+id/iv_imagen_curso"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop"
+        android:layout_height="800dp"
+        android:scaleType="fitXY"
         android:src="@drawable/home_logo" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,19 +21,23 @@
         android:layout_height="wrap_content"
         android:contentDescription="Lista de preguntas del cuestionario" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_comprobar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Comprobar Resultados"
+        android:textColor="@color/black"
+        android:background="@drawable/rounded_edit_text"
         android:layout_gravity="center_horizontal"
         android:layout_margin="16dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_reintentar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reintentar Cuestionario"
+        android:textColor="@color/black"
+        android:background="@drawable/third_rounder_button"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
         android:visibility="gone" />

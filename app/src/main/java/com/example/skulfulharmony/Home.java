@@ -76,13 +76,14 @@ public class Home extends AppCompatActivity {
         Curso curso3 = new Curso("Simulador de piano", null, null, null, null);
         Curso curso4 = new Curso("Simulador de flauta", null, null, null, null);
         Curso curso5 = new Curso("Simulador de guitarra", null, null, null, null);
-
+        Curso curso6 = new Curso("Afinador", null, null, null, null);
         // Agregamos los cursos a la lista
         listaCursos.add(curso1);
         listaCursos.add(curso2);
         listaCursos.add(curso3);
         listaCursos.add(curso4);
         listaCursos.add(curso5);
+        listaCursos.add(curso6);
         /*// Ahora actualiza el adaptador
             adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
             rv_homevercursos.setAdapter(adapterHomeVerCursos);*/

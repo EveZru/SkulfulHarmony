@@ -16,7 +16,7 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCu
 
 import java.security.AccessController;
 import java.util.List;
-
+/*
 public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<AdapterPreguntasEnClasesOriginales.ViewHolder> {
     private List<PreguntaCuestionario> preg;
     private LayoutInflater preginflador;
@@ -36,7 +36,7 @@ public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<Ada
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = preginflador.inflate(R.layout.holder_preguntasinicio, parent, false);
+        View view = preginflador.inflate(R.layout.holder_preguntas_cuestionario, parent, false);
         return new ViewHolder(view);
     }
 
@@ -57,7 +57,8 @@ public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<Ada
         ViewHolder(View itemView) {
             super(itemView);
             pregunta = itemView.findViewById(R.id.tv_preguntatexto);
-          //  respuestas = itemView.findViewById(R.id.rg_opcionespreg);
+
+          // respuestas = itemView.findViewById(R.id.rg_opcionespreg);
         }
 
 
@@ -76,4 +77,4 @@ public class AdapterPreguntasEnClasesOriginales extends RecyclerView.Adapter<Ada
         }
     }
 
-}
+}*/

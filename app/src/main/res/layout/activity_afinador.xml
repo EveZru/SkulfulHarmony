@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp"
+    tools:context=".Afinador"
+    android:background="@color/gray2"
+    >
+
+    <TextView
+        android:id="@+id/frequencyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frecuencia: --- Hz"
+        android:textSize="24sp"
+        android:layout_marginTop="32dp"
+        android:textColor="@color/black"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:id="@+id/noteTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="---"
+        android:textColor="@color/black"
+        android:textSize="60sp"
+        android:layout_marginTop="16dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NotaBuscada"
+        android:textColor="@color/black"
+        android:gravity="center"/>
+
+    <Spinner
+        android:id="@+id/targetNoteSpinner"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:textColor="@color/black"
+        android:background="@color/gray2"
+        android:backgroundTint="@color/gray2"
+        android:layout_marginTop="32dp" />
+
+</LinearLayout>
