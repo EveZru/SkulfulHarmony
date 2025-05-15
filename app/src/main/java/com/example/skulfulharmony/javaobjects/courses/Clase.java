@@ -27,6 +27,7 @@ public class Clase implements Serializable {
     private List<Comentario> comentarios;
     private Integer meGusta;
     private Timestamp fechaCreacionf;
+    private Timestamp fechaAcceso;
 
 
 
@@ -150,5 +151,7 @@ public class Clase implements Serializable {
         this.meGusta = meGusta;
     }
 
+    public Timestamp getFechaAcceso() { return fechaAcceso; }
 
+    public void setFechaAcceso( Timestamp fechaAcceso) { this.fechaAcceso = fechaAcceso; }
 }

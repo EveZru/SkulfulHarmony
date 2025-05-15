@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Usuario {
+public class     Usuario {
 
     //ATRIBUTOS DE IDENTIFICACION
     private String imagen;
@@ -42,6 +42,9 @@ public class Usuario {
     private LocalTime tiempoDeNotificacion;
     private Date ultimoAcceso;
 
+    public Usuario() {
+
+    }
     public Usuario(String nombre, String correo, String imagen, Map<String, String> instrumento) {
         this.nombre = nombre;
         this.correo = correo;
@@ -168,6 +171,14 @@ public class Usuario {
 
     public List<Curso> getHistorialCursos() {
         return historialCursos;
+    }
+
+    public List<Clase> getHistorialClases() {
+        return historialClases;
+    }
+
+    public void setHistorialClases(List<Clase> historialClases) {
+        this.historialClases = historialClases;
     }
 
     public void setHistorialCursos(List<Curso> historialCursos) {

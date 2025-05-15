@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bacground_dialog"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:elevation="20dp">
+
+
+        <TextView
+            android:id="@+id/txt_mensajegrande_dialogcalificacionpreguntas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¡Felicidades!"
+            android:textSize="25sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/txt_mensajepequeno_dialogcalificacionpreguntas"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Has completado la tarea con éxito."
+            android:textColor="@color/white"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/txt_puntuacion_dialogcalificacionpreguntas"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="5/5"
+            android:textSize="15sp"/>
+
+        <Button
+            android:id="@+id/btn_aceptar_dialogcalificacionpreguntas"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Aceptar"
+            android:backgroundTint="@color/verde"
+            />
+</LinearLayout>

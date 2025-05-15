@@ -476,7 +476,7 @@ public class CrearClase extends AppCompatActivity {
                     Clase clase = new Clase();
                     clase.setIdCurso(idCurso);
                     clase.setIdClase(nuevoIdClase);
-                    clase.setNombreCurso(titulo);
+                    clase.setTitulo(titulo);
                     clase.setImagen(imagen);
                     clase.setTextos(texto);
                     clase.setPreguntas(preguntasClase);

@@ -21,19 +21,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 
+import com.example.skulfulharmony.adapters.AdapterHomeVerClaseHistorial;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursosOriginales;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class Home extends AppCompatActivity {
 
@@ -46,7 +52,7 @@ public class Home extends AppCompatActivity {
     private SQLiteDatabase localDatabase;
 
     private List<Curso> listaCursos;
-    private RecyclerView rv_homevercursos;
+    private RecyclerView rv_homevercursos, rv_homehistorial;
     private AdapterHomeVerCursos adapterHomeVerCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
 
@@ -58,13 +64,16 @@ public class Home extends AppCompatActivity {
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         rv_homevercursos = findViewById(R.id.rv_homevercursos);
+        rv_homehistorial = findViewById(R.id.rv_historial_home);
+        rv_homehistorial.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
      // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
 
-        cargarCursosFirebase();
+        cargarCursosCluster();
+        cargarCursosHistorial();
         //-------Parte de los cursos de clases originales -------
         // Aquí creamos los objetos Curso de forma estática
         listaCursos = new ArrayList<>();
@@ -175,7 +184,62 @@ public class Home extends AppCompatActivity {
 
     }
 
-    private void cargarCursosFirebase() {
+    private void cargarCursosHistorial() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("usuarios")
+                .whereEqualTo("correo", user.getEmail())
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+
+                        // Convertimos el documento completo a un objeto Usuario
+                        Usuario usuario = doc.toObject(Usuario.class);
+
+                        if (usuario != null) {
+                            List<Clase> historialClases = usuario.getHistorialClases();
+
+                            if (historialClases != null && !historialClases.isEmpty()) {
+                                Log.d("Historial", "Cargadas " + historialClases.size() + " clases del historial");
+
+                                Collections.sort(historialClases, (a, b) -> {
+                                    if (a.getFechaAcceso() == null && b.getFechaAcceso() == null) return 0;
+                                    if (a.getFechaAcceso() == null) return 1;
+                                    if (b.getFechaAcceso() == null) return -1;
+                                    return b.getFechaAcceso().compareTo(a.getFechaAcceso()); // Más reciente primero
+                                });
+
+                                // Configura el RecyclerView con el historial cargado
+                                AdapterHomeVerClaseHistorial adapter = new AdapterHomeVerClaseHistorial(historialClases, Home.this);
+                                rv_homehistorial.setAdapter(adapter);
+                            } else {
+                                Log.d("Historial", "No hay historial de clases para mostrar");
+                            }
+                        } else {
+                            Log.e("Firestore", "No se pudo convertir el documento a Usuario");
+                        }
+                    } else {
+                        Log.e("Firestore", "Usuario no encontrado en la base de datos");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error al consultar Firestore", e);
+                    Toast.makeText(this, "Error al cargar historial", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
+
+
+    private void cargarCursosCluster() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference cursosRef = db.collection("cursos");
 
@@ -199,7 +263,8 @@ public class Home extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
-        cargarCursosFirebase();
+        cargarCursosCluster();
+        cargarCursosHistorial();
         // Establece el ítem seleccionado
         if (this instanceof Home) {
             bottomNavigationView.setSelectedItemId(R.id.it_homme);
