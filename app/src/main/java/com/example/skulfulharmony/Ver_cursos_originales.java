@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +30,7 @@ public class Ver_cursos_originales extends AppCompatActivity implements Serializ
     private List<Curso> listaCursos;
     private RecyclerView rvCursosOriginales;
     private AdapterClasesOriginales adapterClasesOriginales;
-
+    private ImageView ivRegresar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,14 @@ public class Ver_cursos_originales extends AppCompatActivity implements Serializ
 //
         rvCursosOriginales = findViewById(R.id.rv_cursos_originales);
         rvCursosOriginales.setLayoutManager(new LinearLayoutManager(this));
+        ivRegresar = findViewById(R.id.iv_regresar);
+
+
+
+        ivRegresar.setOnClickListener(v -> {
+            Intent intent = new Intent(Ver_cursos_originales.this, Home.class);
+            startActivity(intent);
+        });
 
         listaCursos = new ArrayList<>();
         ArrayList<Curso> listaFundamentos = (ArrayList<Curso>) getIntent().getSerializableExtra("lista_cursos_fundamentos");

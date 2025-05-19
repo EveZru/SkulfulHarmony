@@ -66,7 +66,7 @@
     <string name="et_nombrecambiar_desc">Campo para cambiar el nombre de usuario</string>
     <string name="et_nuevadescripcion_desc">Campo para cambiar la descripción del usuario</string>
     <string name="btn_cambiardatos_desc">Botón para publicar los cambios realizados en el perfil</string>
-    <string name="instruccionesescribirpartituras">colaco la imagen dejando la parte \\n inferior en donde corresponda</string>
+    <string name="instruccionesescribirpartituras">coloca la imagen \\n donde corresponda</string>
     <string name="calificacion">"Nos importa tu opinion, califica esta clase "</string>
     <string name="comentario">Comentario</string>
 

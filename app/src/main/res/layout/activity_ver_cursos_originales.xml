@@ -8,7 +8,22 @@
     tools:context=".Ver_cursos_originales"
     android:background="@color/gray1"
     android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_ver_cursos"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:background="@color/black"
+        >
+        <ImageView
+            android:id="@+id/iv_regresar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:src="@drawable/bacground_dialog"
+            android:contentDescription="Toolbar Icon" />
 
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cursos_originales"
