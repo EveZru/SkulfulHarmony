@@ -1,5 +1,6 @@
 package com.example.skulfulharmony.utils;
 
+
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -29,6 +30,19 @@ public class IndiceInvertidoManager {
             }
         }
     }
+
+    public void buildIndexUsuarios(List<Usuario> usuarios) {
+        for (Usuario usuario : usuarios) {
+            if (usuario != null && usuario.getNombre() != null) {
+                String[] palabras = usuario.getNombre().toLowerCase().split("\\s+");
+                for (String palabra : palabras) {
+                    invertedIndex.computeIfAbsent(palabra, k -> new ArrayList<>())
+                            .add("U-" + usuario.getNombre().toLowerCase()); // Clave: nombre
+                }
+            }
+        }
+    }
+
     // Método para buscar cursos por una palabra clave.
     public List<String> search(String query) {
         return invertedIndex.getOrDefault(query.toLowerCase(), new ArrayList<>());

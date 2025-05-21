@@ -13,12 +13,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.io.Serializable;
 
-public class     Usuario {
+public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     //ATRIBUTOS DE IDENTIFICACION
     private String imagen;
     private String nombre;
+    private String id;
     private String user;
     private String correo;
     private Map<String,String> instrumento;
@@ -147,7 +151,12 @@ public class     Usuario {
 
             public String getDescripcion() { return descripcion; }
 
-            public void setDescripcion(String descripcion) { this.descripcion = descripcion;}
+            public String getId() { return id; }
+
+            public void setId(String id) { this.id = id; }
+
+
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion;}
 
             public int getCursos() { return cursos; }
 

@@ -24,6 +24,9 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
+            android:name=".perfil_mostrar"
+            android:exported="false" />
+        <activity
             android:name=".Afinador"
             android:exported="false" />
         <activity
@@ -38,8 +41,6 @@
         <activity
             android:name=".Ver_cursos_originales"
             android:exported="false" />
-
-
 
         <service
             android:name=".javaobjects.users.TokenService"
