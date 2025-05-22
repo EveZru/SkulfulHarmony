@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Ver_cursos">
+    android:orientation="vertical"
+    android:background="@color/gray2">
 
+    <!-- Toolbar superior -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_ver_cursos"
         android:layout_width="match_parent"
-        android:layout_height="60sp"
-        android:background="@color/black"
-        >
+        android:layout_height="wrap_content"
+        android:background="@color/black">
         <ImageView
             android:id="@+id/iv_despegarmenu"
             android:layout_width="40dp"
@@ -23,181 +21,212 @@
             android:padding="8dp"
             android:src="@drawable/mas_logo"
             android:contentDescription="Toolbar Icon" />
-
     </androidx.appcompat.widget.Toolbar>
+
+    <!-- Contenido scrollable -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:background="@color/gray2">
 
-                    <androidx.cardview.widget.CardView
+            <!-- Imagen destacada con degradado, título, autor y descripción -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                android:elevation="6dp"
+                app:cardElevation="6dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/gray1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+
+                    <ImageView
+                        android:id="@+id/imgen_vercurso_imagentitulo"
                         android:layout_width="match_parent"
-                        android:layout_height="300dp"
-                        android:background="@color/gray1">
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/logo_sh" />
 
-                        <ImageView
-                            android:id="@+id/imgen_vercurso_imagentitulo"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                    <!-- Degradado inferior -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:orientation="vertical"
+                        android:background="@drawable/degradado_holder_texts"
+                        android:padding="10dp">
 
-                        <androidx.appcompat.widget.Toolbar
-                            android:id="@+id/toolbar_ver_cursos_abajo"
-                            android:layout_width="match_parent"
-                            android:layout_height="60sp"
-                            android:background="#00000000"
-                            />
-
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/text_vercurso_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:orientation="vertical"
-                            android:background="@drawable/degradado_holder_texts">
+                            android:text="Título del Curso"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:maxLines="2" />
 
-                            <TextView
-                                android:inputType="textMultiLine"
-                                android:singleLine="false"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="40sp"
-                                android:text="lllll"
-                                android:textColor="@color/white"
-                                android:layout_marginHorizontal="10dp"
-                                android:maxLines="2"
-                                android:textStyle="bold"
-                                android:id="@+id/text_vercurso_title" />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="30dp"
-                                android:textSize="20sp"
-                                android:textColor="@color/white"
-                                android:layout_marginHorizontal="10dp"
-                                android:layout_marginTop="5dp"
-                                android:id="@+id/text_vercurso_autor"
-                                android:text="Yo mero"/>
+                        <TextView
+                            android:id="@+id/text_vercurso_autor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Autor"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
-                            <!-- ScrollView para la descripción -->
-                            <ScrollView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:maxHeight="120dp"
-                                android:layout_marginHorizontal="10dp"
-                                android:layout_marginBottom="5dp"
-                                android:fillViewport="true">
+            <!-- Descripción -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray1"
+                app:cardBackgroundColor="@color/gray1"
+                app:cardCornerRadius="8dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="16dp">
 
-                                    <TextView
-                                        android:inputType="textMultiLine"
-                                        android:padding="10dp"
-                                        android:id="@+id/text_vercurso_descripcion"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="16sp"
-                                        android:textColor="@color/gray1"
-                                        android:maxLines="6"
-                                        android:scrollbars="vertical"
-                                        android:overScrollMode="ifContentScrolls"
-                                        android:background="#00000000"
-                                        android:text="Tu descripción larga va aquí para probar cómo se ve con múltiples líneas y que el scroll funcione bien sin romper el diseño." />
+                <TextView
+                    android:id="@+id/text_vercurso_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="Aquí va la descripción del curso. Puede ser un texto más largo con varias líneas."
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/gray1"/>
+            </androidx.cardview.widget.CardView>
 
-                            </ScrollView>
-                        </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
+            <!-- Lista de clases (RecyclerView) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clases incluidas"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:paddingBottom="8dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_verclasesencurso"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="20dp" />
 
-            </androidx.recyclerview.widget.RecyclerView>
-
+            <!-- Calificación -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/calificacion"
                 android:textSize="15sp"
                 android:textColor="@color/white"
-                android:background="@drawable/rounded_edit_text"/>
+                android:background="@drawable/rounded_edit_text"
+                android:padding="10dp" />
+
             <LinearLayout
                 android:id="@+id/ll_estrellas"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginHorizontal="10dp"
-                >
+                android:gravity="center_vertical"
+                android:layout_marginVertical="10dp">
+
                 <TextView
                     android:id="@+id/tv_puntuacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text=" x / 5"
-                    android:textSize="20sp"
+                    android:text="x / 5"
+                    android:textSize="22sp"
                     android:textColor="@color/black"
                     android:background="@drawable/rounded_button"
-                    />
-                <ImageView
-                    android:id="@+id/iv_1_estrella"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_2_estrella"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_3_estrella"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_4_estrella"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
-                <ImageView
-                    android:id="@+id/iv_5_estrella"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/estrella"
-                    android:layout_marginHorizontal="3dp"
-                    />
+                    android:layout_marginRight="5dp"
+                    android:padding="8dp" />
 
-
+                <ImageView android:id="@+id/iv_1_estrella"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="3dp"
+                    android:background="@drawable/estrella" />
+                <ImageView android:id="@+id/iv_2_estrella"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="3dp"
+                    android:background="@drawable/estrella" />
+                <ImageView android:id="@+id/iv_3_estrella"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="3dp"
+                    android:background="@drawable/estrella" />
+                <ImageView android:id="@+id/iv_4_estrella"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="3dp"
+                    android:background="@drawable/estrella" />
+                <ImageView android:id="@+id/iv_5_estrella"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="3dp"
+                    android:background="@drawable/estrella" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center">
-                <EditText
-                    android:id="@+id/et_comenntario"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/comentario"/>
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_subir_comentario"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/perfil_logo"/>
+                android:gravity="center"
+                android:background="@color/gray2"
+                >
 
+                <EditText
+                    android:id="@+id/et_comentario_vercurso"
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Escribe un comentario\n"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/gray1"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:maxLines="10"
+                    android:scrollHorizontally="false"
+                    android:padding="10dp"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_subir_comentario_curso"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/perfil_logo"
+                    android:contentDescription="Subir comentario" />
             </LinearLayout>
+
+            <!-- Lista de comentarios -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comentarios_vercurso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:padding="10dp" />
         </LinearLayout>
 
 
     </ScrollView>
-
-
-
 </LinearLayout>

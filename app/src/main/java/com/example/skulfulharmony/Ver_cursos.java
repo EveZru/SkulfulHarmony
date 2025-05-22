@@ -28,24 +28,33 @@ import com.bumptech.glide.Glide;
 import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.adapters.AdapterVerClasesCursoOtroUsuario;
+import com.example.skulfulharmony.adapters.AdapterVerCursoVerComentarios;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Ver_cursos extends AppCompatActivity {
 
     private ImageView imagenTitulo;
     private TextView tituloCurso, descripcionCurso, autorCurso;
     private RecyclerView rvClases; // Puedes llenar esto después con clases del curso
-
+    private RecyclerView rvComentarios;
     private Button crear_comentario;
     private EditText etcomentario;
 
@@ -54,8 +63,6 @@ public class Ver_cursos extends AppCompatActivity {
     private int idCurso;
     private ImageView desplegarmenu;
 
-
-    private UserInfo user;
     private ImageView[] estrellas;
     private TextView tvPuntuacion;
     private int puntuacionActual = 0;
@@ -70,6 +77,7 @@ public class Ver_cursos extends AppCompatActivity {
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
         autorCurso = findViewById(R.id.text_vercurso_autor);
         rvClases = findViewById(R.id.rv_verclasesencurso);
+        rvComentarios = findViewById(R.id.rv_comentarios_vercurso);
         desplegarmenu = findViewById(R.id.iv_despegarmenu); // Asegúrate de que la 'D' esté en mayúscula
         desplegarmenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,23 +123,69 @@ public class Ver_cursos extends AppCompatActivity {
         actualizarTextoPuntuacion();
 
         //---- comentarios ------
-        crear_comentario=findViewById(R.id.btn_subir_comentario);
-        etcomentario=findViewById(R.id.et_comenntario);
+        crear_comentario=findViewById(R.id.btn_subir_comentario_curso);
+        etcomentario=findViewById(R.id.et_comentario_vercurso);
 
-        crear_comentario.setOnClickListener(v->
-        {
-            String coment=etcomentario.toString();
-            Date fecha = new Date( System.currentTimeMillis());
-            Comentario comentario =new Comentario();
+        crear_comentario.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String coment = etcomentario.getText().toString().trim(); // CORREGIDO
+            Timestamp fecha = Timestamp.now();
+
+            if (user == null ) {
+                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (coment.isEmpty()) {
+                Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Comentario comentario = new Comentario();
             comentario.setUsuario(user.getEmail());
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
+            comentario.setIdCurso(idCurso);
+            comentario.setIdClase(null);
 
-            Toast.makeText(this,"subiendo comentario",Toast.LENGTH_SHORT).show();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // subir el comentario a firebase
+            db.collection("cursos")
+                    .whereEqualTo("idCurso", idCurso)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                            String docId = doc.getId();
 
+                            // Obtener lista actual de comentarios
+                            Curso curso = doc.toObject(Curso.class);
+                            List<Comentario> comentarios = curso.getComentarios();
+                            if (comentarios == null)
+                                comentarios = new ArrayList<>();
+                            Integer nuevaId = comentarios.size() + 1;
+                            comentario.setIdComentario(nuevaId);
+                            comentarios.add(comentario);
+
+                            // Subir la nueva lista de comentarios
+                            db.collection("cursos")
+                                    .document(docId)
+                                    .update("comentarios", comentarios)
+                                    .addOnSuccessListener(unused -> {
+                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                        etcomentario.setText(""); // limpiar campo
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al buscar el curso", Toast.LENGTH_SHORT).show();
+                    });
         });
+
 
     }
 
@@ -146,6 +200,13 @@ public class Ver_cursos extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                             Curso curso = doc.toObject(Curso.class);
+
+                            if (curso.getComentarios() == null){
+                                curso.setComentarios(new ArrayList<>());
+                            }
+                            AdapterVerCursoVerComentarios adapterVerCursoVerComentarios = new AdapterVerCursoVerComentarios(curso.getComentarios(),idCurso);
+                            rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                            rvComentarios.setAdapter(adapterVerCursoVerComentarios);
 
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
@@ -177,6 +238,7 @@ public class Ver_cursos extends AppCompatActivity {
                             } else {
                                 descripcionCurso.setText(curso.getDescripcion());
                             }
+
                             Glide.with(this)
                                     .load(curso.getImagen())
                                     .placeholder(R.drawable.loading)

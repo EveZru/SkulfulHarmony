@@ -1,0 +1,236 @@
+package com.example.skulfulharmony.adapters;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.view.GestureDetector;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.skulfulharmony.R;
+import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterVerClaseVerComentarios.ViewHolder> {
+    List<Comentario> listaComentarios;
+    Integer idClase;
+    Integer idCurso;
+
+    public AdapterVerClaseVerComentarios(List<Comentario> comentarios, Integer idCurso, Integer idClase) {
+        this.listaComentarios = comentarios;
+        this.idClase = idClase;
+        this.idCurso = idCurso;
+    }
+
+    @NonNull
+    @Override
+    public AdapterVerClaseVerComentarios.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.holder_verlista_comentarios, parent, false);
+        return new AdapterVerClaseVerComentarios.ViewHolder(view, parent.getContext());
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull AdapterVerClaseVerComentarios.ViewHolder holder, int position) {
+        Comentario comentario = listaComentarios.get(position);
+        holder.bind(comentario, position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return listaComentarios.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView txt_comentario_usuario;
+        TextView txt_comentario_fecha;
+        TextView txt_comentario_texto;
+        ImageView img_comentario_perfil;
+        ImageView img_comentario_megusta;
+        TextView txt_comentario_megusta_cantidad;
+        TextView txt_comentario_reportar;
+
+        GestureDetectorCompat gestureDetector;
+        Context context;
+
+        public ViewHolder(@NonNull View itemView, Context context) {
+            super(itemView);
+            this.context = context;
+
+            txt_comentario_usuario = itemView.findViewById(R.id.txt_comentario_usuario);
+            txt_comentario_fecha = itemView.findViewById(R.id.txt_comentario_fecha);
+            txt_comentario_texto = itemView.findViewById(R.id.txt_comentario_texto);
+            img_comentario_perfil = itemView.findViewById(R.id.img_comentario_perfil);
+            img_comentario_megusta = itemView.findViewById(R.id.img_comentario_megusta);
+            txt_comentario_megusta_cantidad = itemView.findViewById(R.id.txt_comentario_megusta_cantidad);
+            txt_comentario_reportar = itemView.findViewById(R.id.txt_comentario_reportar);
+        }
+
+        public void bind(Comentario comentario, int position) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String correoUsuario = user != null ? user.getEmail() : "";
+
+            txt_comentario_usuario.setText(comentario.getUsuario());
+            txt_comentario_fecha.setText(comentario.getFecha().toDate().toString());
+            txt_comentario_texto.setText(comentario.getTexto());
+
+            // Reacciones
+            int cantidad = comentario.getReacciones() == null ? 0 : comentario.getReacciones().size();
+            txt_comentario_megusta_cantidad.setText(String.valueOf(cantidad));
+
+            if (comentario.getReacciones() != null && comentario.getReacciones().contains(correoUsuario)) {
+                img_comentario_megusta.setImageResource(R.drawable.heart_red);
+            } else {
+                img_comentario_megusta.setImageResource(R.drawable.heart_corner);
+            }
+
+            // Foto y nombre de usuario
+            db.collection("usuarios")
+                    .whereEqualTo("correo", comentario.getUsuario())
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            String nombre = snapshot.getDocuments().get(0).getString("nombre");
+                            String foto = snapshot.getDocuments().get(0).getString("foto");
+                            txt_comentario_usuario.setText(nombre);
+                            Glide.with(context)
+                                    .load(foto)
+                                    .placeholder(R.drawable.loading)
+                                    .error(R.drawable.default_profile)
+                                    .into(img_comentario_perfil);
+                            } else {
+                            txt_comentario_usuario.setText("Usuario desconocido");
+                        }
+                    }).addOnFailureListener(e -> {
+                        txt_comentario_usuario.setText("Usuario desconocido");
+                    });
+
+            img_comentario_megusta.setOnClickListener(view -> {
+                if (user != null) {
+                    ArrayList<String> reacciones = comentario.getReacciones() == null
+                            ? new ArrayList<>()
+                            : new ArrayList<>(comentario.getReacciones());
+
+                    if (reacciones.contains(correoUsuario)) {
+                        reacciones.remove(correoUsuario);
+                        img_comentario_megusta.setImageResource(R.drawable.heart_corner);
+                    }else {
+                        reacciones.add(correoUsuario);
+                        img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                    }
+
+                    comentario.setReacciones(reacciones);
+                    listaComentarios.set(position, comentario);
+                    notifyItemChanged(position);
+
+                    db.collection("clases")
+                            .whereEqualTo("idCurso", idCurso)
+                            .whereEqualTo("idClase", idClase)
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                if (!snapshot.isEmpty()) {
+                                    String id = snapshot.getDocuments().get(0).getId();
+                                    db.collection("clases")
+                                            .document(id)
+                                            .update("comentarios", listaComentarios);
+
+                                }
+                            }).addOnFailureListener(e -> {
+                                txt_comentario_usuario.setText("Usuario desconocido");
+                            });
+                }
+            });
+
+            gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    if (user != null && comentario.getUsuario().equals(user.getEmail())) {
+                        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
+                        EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
+                        editTextComentario.setText(comentario.getTexto());
+
+                        new AlertDialog.Builder(context)
+                                .setTitle("Editar comentario")
+                                .setView(dialogView)
+                                .setPositiveButton("Guardar", (dialog, which) -> {
+                                    String nuevoTexto = editTextComentario.getText().toString().trim();
+                                    comentario.setTexto(nuevoTexto);
+                                    listaComentarios.set(position, comentario);
+                                    notifyItemChanged(position);
+
+                                    db.collection("clases")
+                                            .whereEqualTo("idCurso", idCurso)
+                                            .whereEqualTo("idClase", idClase)
+                                            .get()
+                                            .addOnSuccessListener(snapshot -> {
+                                                if (!snapshot.isEmpty()) {
+                                                    String id = snapshot.getDocuments().get(0).getId();
+                                                    db.collection("clases")
+                                                            .document(id)
+                                                            .update("comentarios", listaComentarios);
+                                                }
+                                            });
+                                }).setNegativeButton("Cancelar", null)
+                                .show();
+
+                    }
+                    return true;
+                }
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    if (user != null) {
+                        ArrayList<String> reacciones = comentario.getReacciones() == null
+                                ? new ArrayList<>()
+                                : new ArrayList<>(comentario.getReacciones());
+
+                        if (reacciones.contains(correoUsuario)) {
+                            reacciones.remove(correoUsuario);
+                            img_comentario_megusta.setImageResource(R.drawable.heart_corner);
+                        } else {
+                            reacciones.add(correoUsuario);
+                            img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                        }
+
+                        comentario.setReacciones(reacciones);
+                        listaComentarios.set(position, comentario);
+                        notifyItemChanged(position);
+
+                        db.collection("clases")
+                                .whereEqualTo("idCurso", idCurso)
+                                .whereEqualTo("idClase", idClase)
+                                .get()
+                                .addOnSuccessListener(snapshot -> {
+                                    if (!snapshot.isEmpty()) {
+                                        String id = snapshot.getDocuments().get(0).getId();
+                                        db.collection("clases")
+                                                .document(id)
+                                                .update("comentarios", listaComentarios);
+                                    }
+                                    })
+                                .addOnFailureListener(ex -> {
+                                    txt_comentario_usuario.setText("Usuario desconocido");
+                                });
+                    }
+                    return true;
+                }
+
+            });
+            itemView.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
+        }
+
+    }
+}

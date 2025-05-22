@@ -25,7 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnVerClase;
+import com.example.skulfulharmony.adapters.AdapterVerClaseVerComentarios;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -34,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
@@ -59,6 +62,7 @@ public class Ver_clases extends AppCompatActivity {
     private int idCurso;
     private Clase clase;
     private RecyclerView verPreguntas;
+    private RecyclerView verComentarios;
     private AdapterPreguntasEnVerClase adapterPreguntasEnVerClase;
     private int cantidadRespuestasCorrectas;
 
@@ -102,7 +106,8 @@ public class Ver_clases extends AppCompatActivity {
         verPreguntas = findViewById(R.id.rv_preguntasporclase_verclase);
         btnCalificar = findViewById(R.id.btt_revisar_respuestas_verclase);
         //-----------------------------------------
-        crear_comentario=findViewById(R.id.btn_subir_comentario);
+        crear_comentario=findViewById(R.id.btn_subir_comentario_clase);
+        verComentarios = findViewById(R.id.rv_comentarios_verclase);
 
         Intent intent = getIntent();
         idClase = intent.getIntExtra("idClase", 1);
@@ -166,7 +171,6 @@ public class Ver_clases extends AppCompatActivity {
                                 });
                             }
 
-                            //Aqui la logica para el historial de clase
 
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
@@ -176,6 +180,9 @@ public class Ver_clases extends AppCompatActivity {
                             verPreguntas.setLayoutManager(layoutManager);
                             verPreguntas.setAdapter(adapterPreguntasEnVerClase);
 
+                            AdapterVerClaseVerComentarios adapterVerClaseVerComentarios = new AdapterVerClaseVerComentarios(clase.getComentarios(), clase.getIdCurso(), clase.getIdClase());
+                            verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                            verComentarios.setAdapter(adapterVerClaseVerComentarios);
                             btnCalificar.setOnClickListener(v -> {
                                 cantidadRespuestasCorrectas = 0;
                                for(PreguntaCuestionario pregunta : clase.getPreguntas()){
@@ -247,19 +254,64 @@ public class Ver_clases extends AppCompatActivity {
         crear_comentario.setOnClickListener(v->
         {
 
-              String coment = etcomentario.getText().toString();
-              Date fecha = new Date(System.currentTimeMillis());
-              Comentario comentario = new Comentario();
-              comentario.setUsuario(user.getEmail());
-              comentario.setTexto(coment);
-              comentario.setFecha(fecha);
 
-              Toast.makeText(this, "subiendo comentario", Toast.LENGTH_SHORT).show();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String coment = etcomentario.getText().toString().trim(); // CORREGIDO
+            Timestamp fecha = Timestamp.now();
 
+            if (user == null ) {
+                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (coment.isEmpty()) {
+                Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-              // subir el comentario
+            Comentario comentario = new Comentario();
+            comentario.setUsuario(user.getEmail());
+            comentario.setTexto(coment);
+            comentario.setFecha(fecha);
+            comentario.setIdCurso(idCurso);
+            comentario.setIdClase(null);
 
+            db.collection("clases")
+                    .whereEqualTo("idCurso", idCurso)
+                    .whereEqualTo("idClase", idClase)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                            String docId = doc.getId();
+                            // Obtener lista actual de comentarios
+                            Clase clase = doc.toObject(Clase.class);
+                            List<Comentario> comentarios = clase.getComentarios();
+                            if (comentarios == null)
+                                comentarios = new ArrayList<>();
+                            Integer nuevaId = comentarios.size() + 1;
+                            comentario.setIdComentario(nuevaId);
+                            comentarios.add(comentario);
+
+                            // Subir la nueva lista de comentarios
+                            db.collection("clases")
+                                    .document(docId)
+                                    .update("comentarios", comentarios)
+                                    .addOnSuccessListener(unused -> {
+                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                        etcomentario.setText(""); // limpiar campo
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
+                    });
         });
+
 
 
 
@@ -286,10 +338,6 @@ public class Ver_clases extends AppCompatActivity {
         actualizarTextoPuntuacion();
         //-coso para el video-----------------------------------------------------------------
         playerViewPortrait = findViewById(R.id.vv_videoclase);
-//        btnPlayPause = findViewById(R.id.btn_play);
-//        btnRewind = findViewById(R.id.btn_adelantar);
-//        btnForward = findViewById(R.id.btn_retroceder);
-
         player = new ExoPlayer.Builder(this).build();
 
         // obtener de firebase orita esta igual que el ejemplo
@@ -300,38 +348,6 @@ public class Ver_clases extends AppCompatActivity {
         player.prepare();
 
         playerViewPortrait.setPlayer(player);
-
-        // Reproducir o pausar
-//        btnPlayPause.setOnClickListener(v -> {
-//            if (player.isPlaying()) {
-//                player.pause();
-//                btnPlayPause.setImageResource(R.drawable.jugar); // Cambiar imagen a "Play"
-//            } else {
-//                player.play();
-//                btnPlayPause.setImageResource(R.drawable.pausa); // Cambiar imagen a "Pause"
-//            }
-//        });
-//        btnForward.setOnClickListener(v -> {
-//            long currentPosition = player.getCurrentPosition();
-//            long duration = player.getDuration();
-//            if (currentPosition + 5000 < duration) {
-//                player.seekTo(currentPosition + 5000);
-//            } else {
-//                player.seekTo(duration);
-//            }
-//        });
-//
-//        // Retroceder 5 segundos
-//        btnRewind.setOnClickListener(v -> {
-//                    long currentPosition = player.getCurrentPosition();
-//                    if (currentPosition - 5000 > 0) {
-//                        player.seekTo(currentPosition - 5000);
-//                    } else {
-//                        player.seekTo(0);
-//                    }
-//                }
-//        );
-
 
     }
 
@@ -360,9 +376,7 @@ public class Ver_clases extends AppCompatActivity {
             }
         }
     }
-    private void obtenerFirebase (){
 
-    }
     // para la reprocuccion de video
     @Override
     protected void onStop() {

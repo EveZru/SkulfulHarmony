@@ -40,7 +40,7 @@ public class AdapterBibliotecaVerClaseHistorial extends RecyclerView.Adapter<Ada
 
     private void cargarHistorial() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference historialRef = db.collection("usuario")
+        DocumentReference historialRef = db.collection("usuarios")
                 .document(correo)
                 .collection("historialClases")
                 .document("clase");

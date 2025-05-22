@@ -3,74 +3,77 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/clase_elemento"
-    android:layout_width="100dp"
-    android:layout_height="match_parent"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@color/gray1"
+    android:background="@android:color/transparent"
+    app:cardElevation="10dp"
+    app:cardPreventCornerOverlap="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?selectableItemBackground">
 
-    android:layout_margin="10dp"
-    app:cardCornerRadius="10dp"
-    android:layout_marginHorizontal="5dp"
-    android:layout_marginVertical="5dp"
-    android:elevation="5dp"
-    android:background="@color/gray2"
-    android:clickable="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/gray2"
-        >
-        <ImageView
-            android:id="@+id/cardImage"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:background="@color/gray2" />
+        android:orientation="vertical">
 
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:padding="5dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/cardImage"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@color/gray1"
+                android:src="@drawable/logo_sh"
+                app:shapeAppearanceOverlay="@style/CardShapeRounded"
+                />
+
+
+        <!-- Contenedor de textos -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
             android:orientation="vertical"
-            android:background="@color/gray2"
-            >
+            android:padding="10dp">
 
+            <!-- Título principal -->
             <TextView
                 android:id="@+id/tv_textprincipal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginTop="5dp"
-                android:textSize="15sp"
-                android:textStyle="bold"
+                android:text="Nombre del curso"
+                android:textSize="16sp"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 android:maxLines="1"
-                android:ellipsize="end"
-                android:singleLine="true" />
+                android:ellipsize="end" />
 
+            <!-- Texto complementario -->
             <TextView
                 android:id="@+id/tv_complementario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Complemento"
+                android:textSize="13sp"
                 android:textColor="@color/white"
-                android:layout_marginHorizontal="8dp"
-                android:textSize="11dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:singleLine="true"
-                />
+                android:layout_marginTop="2dp"/>
 
+            <!-- Texto secundario -->
             <TextView
                 android:id="@+id/tv_textsegundo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:layout_marginHorizontal="8dp"
-                android:textSize="11sp"
-                android:textColor="@color/gray1" />
+                android:text="Descripción corta"
+                android:textSize="12sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="4dp" />
         </LinearLayout>
-
     </LinearLayout>
-
-
 </androidx.cardview.widget.CardView>
+

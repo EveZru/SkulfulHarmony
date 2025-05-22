@@ -49,6 +49,14 @@ public class Clase implements Serializable {
         preguntas = preguntaCuestionarios;
     }
 
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios){
+        this.comentarios = comentarios;
+    }
+
     public String getTextos() {
         return textos;
     }

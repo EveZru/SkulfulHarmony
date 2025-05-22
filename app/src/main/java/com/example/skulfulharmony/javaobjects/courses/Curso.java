@@ -167,7 +167,22 @@ public class Curso implements Serializable {
     public Map<String,String> getInstrumento() {
         return instrumento;
     }
-
-
-
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+    public List<Usuario> getSeguidores() {
+        return seguidores;
+    }
+    public void setSeguidores(List<Usuario> seguidores) {
+        this.seguidores = seguidores;
+    }
+    public List<Clase> getClases() {
+        return clases;
+    }
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
+    }
 }
