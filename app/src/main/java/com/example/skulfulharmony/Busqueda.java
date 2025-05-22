@@ -146,7 +146,9 @@ public class Busqueda extends AppCompatActivity {
                         AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(resultadosCombinados, new AdapterBusquedaGeneral.OnItemClickListener() {
                             @Override
                             public void onCursoClick(Curso curso) {
-                                // TODO: manejar click en curso
+//                                Intent intent = new Intent(Busqueda.this, DetalleCursoActivity.class);
+//                                intent.putExtra("cursoId", curso.getId());
+//                                startActivity(intent);
                             }
 
                             @Override
@@ -158,7 +160,9 @@ public class Busqueda extends AppCompatActivity {
 
                             @Override
                             public void onClaseClick(Clase clase) {
-                                // TODO: manejar click en clase
+//                                Intent intent = new Intent(Busqueda.this, DetalleClaseActivity.class);
+//                                intent.putExtra("claseId", clase.getId());
+//                                startActivity(intent);
                             }
                         });
                         rv_resultados.setAdapter(adapter);
