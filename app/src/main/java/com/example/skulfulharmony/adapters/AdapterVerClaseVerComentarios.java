@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -157,38 +158,44 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
 
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
-                public boolean onSingleTapUp(MotionEvent e) {
+                public void onLongPress(MotionEvent e) {
                     if (user != null && comentario.getUsuario().equals(user.getEmail())) {
                         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
                         EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
+                        Button btn_cancelar = dialogView.findViewById(R.id.btn_cancelar_dialogcalificacionpreguntas);
+                        Button btn_aceptar = dialogView.findViewById(R.id.btn_aceptar_dialogcalificacionpreguntas);
                         editTextComentario.setText(comentario.getTexto());
 
-                        new AlertDialog.Builder(context)
-                                .setTitle("Editar comentario")
+                        AlertDialog dialog = new AlertDialog.Builder(context)
                                 .setView(dialogView)
-                                .setPositiveButton("Guardar", (dialog, which) -> {
-                                    String nuevoTexto = editTextComentario.getText().toString().trim();
-                                    comentario.setTexto(nuevoTexto);
-                                    listaComentarios.set(position, comentario);
-                                    notifyItemChanged(position);
+                                .create();
 
-                                    db.collection("clases")
-                                            .whereEqualTo("idCurso", idCurso)
-                                            .whereEqualTo("idClase", idClase)
-                                            .get()
-                                            .addOnSuccessListener(snapshot -> {
-                                                if (!snapshot.isEmpty()) {
-                                                    String id = snapshot.getDocuments().get(0).getId();
-                                                    db.collection("clases")
-                                                            .document(id)
-                                                            .update("comentarios", listaComentarios);
-                                                }
-                                            });
-                                }).setNegativeButton("Cancelar", null)
-                                .show();
+                        btn_aceptar.setOnClickListener(view -> {
+                            String nuevoTexto = editTextComentario.getText().toString().trim();
+                            comentario.setTexto(nuevoTexto);
+                            listaComentarios.set(position, comentario);
+                            notifyItemChanged(position);
 
+                            db.collection("clases")
+                                    .whereEqualTo("idCurso", idCurso)
+                                    .whereEqualTo("idClase", idClase)
+                                    .get()
+                                    .addOnSuccessListener(snapshot -> {
+                                        if (!snapshot.isEmpty()) {
+                                            String id = snapshot.getDocuments().get(0).getId();
+                                            db.collection("clases")
+                                                    .document(id)
+                                                    .update("comentarios", listaComentarios);
+                                        }
+                                    });
+                            dialog.dismiss();
+                        });
+                        btn_cancelar.setOnClickListener(view -> {
+                            dialog.dismiss();
+                        });
+
+                        dialog.show();
                     }
-                    return true;
                 }
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
@@ -229,7 +236,18 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                 }
 
             });
-            itemView.setOnTouchListener((v, event) -> gestureDetector.onTouchEvent(event));
+
+            itemView.setClickable(true);
+            itemView.setFocusable(true);
+            itemView.setFocusableInTouchMode(true);
+            itemView.setLongClickable(true); // Necesario para que funcione el double tap
+
+            itemView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return gestureDetector.onTouchEvent(event);
+                }
+            });
         }
 
     }

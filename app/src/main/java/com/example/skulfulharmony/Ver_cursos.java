@@ -177,6 +177,12 @@ public class Ver_cursos extends AppCompatActivity {
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
                                     });
+                            Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                            etcomentario.setText(""); // limpiar campo
+
+                            AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(comentarios, idCurso);
+                            rvComentarios.setAdapter(adapter);
+
                         } else {
                             Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                         }

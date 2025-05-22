@@ -303,6 +303,10 @@ public class Ver_clases extends AppCompatActivity {
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
                                     });
+
+                            AdapterVerClaseVerComentarios adapter = new AdapterVerClaseVerComentarios(comentarios, idCurso, idClase);
+                            verComentarios.setAdapter(adapter);
+
                         } else {
                             Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
                         }

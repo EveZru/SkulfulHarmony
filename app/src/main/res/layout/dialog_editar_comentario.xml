@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Escribe un nuevo comentario\n"
-                android:textSize="10sp"
+                android:textSize="13sp"
                 android:textColor="@color/white"
                 android:textColorHint="#DDdddddd"
                 android:inputType="textMultiLine"
@@ -55,12 +55,28 @@
 
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btn_aceptar_dialogcalificacionpreguntas"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aceptar"
-        android:backgroundTint="@color/verde"
-        />
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_cancelar_dialogcalificacionpreguntas"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:backgroundTint="@color/rojo_oscuro"
+            android:layout_marginHorizontal="2dp"
+            />
+        <Button
+            android:id="@+id/btn_aceptar_dialogcalificacionpreguntas"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guardar"
+            android:backgroundTint="@color/verde"
+            android:layout_marginHorizontal="2dp"
+            />
+    </LinearLayout>
+
 </LinearLayout>
