@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,9 +37,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class Home extends AppCompatActivity {
@@ -175,6 +179,23 @@ public class Home extends AppCompatActivity {
         } else {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
+
+
+        //____coso de habrir lo de las preguntas incorrectas
+       /* SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
+        String lastDate = prefs.getString("last_open_date", "");
+
+        String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+
+        if (!today.equals(lastDate)) {
+            // Primera vez que abres hoy la app, lanzas PreguntasIncorrectas
+            Intent intent = new Intent(this, PreguntasIncorrectas.class);
+            startActivity(intent);
+
+            // Guardas la fecha para no volver a lanzar hoy
+            prefs.edit().putString("last_open_date", today).apply();
+        }*/
+
 
     }
 

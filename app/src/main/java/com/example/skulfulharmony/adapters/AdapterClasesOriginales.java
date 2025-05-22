@@ -57,26 +57,9 @@ public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesO
             String tituloClase = curso.getTitulo();
             Intent intent = new Intent(context, Clase_Fundamentos.class);
             int imagenResId = R.drawable.loading; // Valor por defecto
-            List<PreguntaCuestionario> listaDePreguntas = new ArrayList<>();
+          //  List<PreguntaCuestionario> listaDePreguntas = new ArrayList<>();
 
-            if (tituloClase.equals("Clase 1")) {
-                imagenResId = R.drawable.img_background;
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 1 de Clase 1", Arrays.asList("A", "B", "C"), 0));
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta 2 de Clase 1", Arrays.asList("X", "Y", "Z"), 0));
-            } else if (tituloClase.equals("Clase 2")) {
-                imagenResId = R.drawable.img_background;
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta A de Clase 2", Arrays.asList("1", "2", "3"), 0));
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta B de Clase 2", Arrays.asList("T", "F"), 0));
-            } else if (tituloClase.equals("Clase 3")) {
-                imagenResId = R.drawable.img_background;
-                listaDePreguntas.add(
-                        new PreguntaCuestionario("¿Primera pregunta de la tercera?", Arrays.asList("Sí", "No"),
-                                0));
-                listaDePreguntas.add(
-                        new PreguntaCuestionario("¿Segunda?", Arrays.asList("Op1", "Op2", "Op3", "Op4"),
-                                0));
-  // las clases de escribir partituras_______________________________________________________________________________________________________________________________________-
-            } else if (tituloClase.equals("Clave sol") ) {
+            if (tituloClase.equals("Clave sol") ) {
                 // Navegación a la actividad de escribir partituras
                 intent = new Intent(context, EscribirPartiturasAct.class);
             }else if (tituloClase.equals("Clave fa") ) {
@@ -89,12 +72,12 @@ public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesO
 
             else {
                 imagenResId = R.drawable.loading;
-                listaDePreguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
+           //     listaDePreguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
             }
-            Log.d("AdapterClases", "Tamaño de listaDePreguntas antes de pasar: " + listaDePreguntas.size());
+           // Log.d("AdapterClases", "Tamaño de listaDePreguntas antes de pasar: " + listaDePreguntas.size());
 
             intent.putExtra("imagen_resource", imagenResId);
-            intent.putExtra("lista_preguntas", (Serializable) listaDePreguntas);
+           // intent.putExtra("lista_preguntas", (Serializable) listaDePreguntas);
             intent.putExtra("nombre_curso", tituloClase); // Pasar el título para usarlo en Clase_Fundamentos
             context.startActivity(intent);
         });

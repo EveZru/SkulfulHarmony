@@ -65,7 +65,7 @@ public class Perfil extends AppCompatActivity {
 
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
-    private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario, btnVerVideoPrueba;
+    private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario, btnVerVideoPrueba,btn_preguntas_incorrectas;
     private ImageView btn_gotoconfiguracion ;
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -103,6 +103,9 @@ public class Perfil extends AppCompatActivity {
         tv_correo = findViewById(R.id.tv_correo);
         tv_Seguidores = findViewById(R.id.tv_Seguidores);
         tv_Seguido = findViewById(R.id.tv_Seguido);
+
+        btn_preguntas_incorrectas = findViewById(R.id.btn_preguntas_incorrectas);
+        btn_preguntas_incorrectas.setOnClickListener(v -> startActivity(new Intent(Perfil.this, PreguntasIncorrectas.class)));
 
         cargarDatosUsuario();
 

@@ -40,6 +40,7 @@
             android:textColor="@android:color/white"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp" />
+
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -137,6 +138,11 @@
         android:text="Compartir Perfil"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp" />
+    <Button
+        android:id="@+id/btn_preguntas_incorrectas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ver preguntas incorrectas"/>
 
 <!--    <LinearLayout-->
 <!--        android:layout_width="match_parent"-->

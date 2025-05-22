@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnCuestionariosparaContestar;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
+
+import com.example.skulfulharmony.PreguntasIncorrectas;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +45,12 @@ public class Clase_Fundamentos extends AppCompatActivity {
         btnComprobar = findViewById(R.id.btn_comprobar);
         btnReintentar = findViewById(R.id.btn_reintentar);
 
-        listaPreguntas = (List<PreguntaCuestionario>) getIntent().getSerializableExtra("lista_preguntas");
+       // listaPreguntas = (List<PreguntaCuestionario>) getIntent().getSerializableExtra("lista_preguntas");
         String nombreCurso = getIntent().getStringExtra("nombre_curso");
 
+      //  A r rayList<Object> Listapreguntas = new ArrayList<>();
+
+        listaPreguntas = obtenerPreguntas(nombreCurso);
         adapterPreguntas = new  AdapterPreguntasEnCuestionariosparaContestar(this, listaPreguntas);
 
         int imagenResId = obtenerImagenPorCurso(nombreCurso);
@@ -54,9 +61,42 @@ public class Clase_Fundamentos extends AppCompatActivity {
         btnComprobar.setOnClickListener(v -> {
             adapterPreguntas.comprobarRespuestas();
             List<PreguntaCuestionario> incorrectas = adapterPreguntas.getPreguntasIncorrectas();
-            Toast.makeText(this, "Incorrectas: " + incorrectas.size(), Toast.LENGTH_SHORT).show();
             btnComprobar.setVisibility(View.GONE);
             btnReintentar.setVisibility(View.VISIBLE);
+            Gson gson = new Gson();
+            SharedPreferences prefs = getSharedPreferences("cuestionario", MODE_PRIVATE);
+            String jsonGuardado = prefs.getString("preguntas_incorrectas", null);
+
+// Lista existente
+            List<String> preguntasGuardadas;
+            if (jsonGuardado != null) {
+                preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
+            } else {
+                preguntasGuardadas = new ArrayList<>();
+            }
+
+// Formatear nuevas preguntas
+            for (PreguntaCuestionario pregunta : incorrectas) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(pregunta.getPregunta()).append("\n");
+                List<String> respuestas = pregunta.getRespuestas();
+                for (int i = 0; i < respuestas.size(); i++) {
+                    String r = respuestas.get(i);
+                    if (i == pregunta.getRespuestaCorrecta()) {
+                        sb.append(" - ").append(r).append(" (correcta)").append("\n");
+                    } else {
+                        sb.append(" - ").append(r).append("\n");
+                    }
+                }
+                preguntasGuardadas.add(sb.toString());
+            }
+
+// Guardar la lista actualizada
+            String jsonNuevo = gson.toJson(preguntasGuardadas);
+            prefs.edit().putString("preguntas_incorrectas", jsonNuevo).apply();
+
+
+
         });
 
         btnReintentar.setOnClickListener(v -> {
@@ -70,11 +110,11 @@ public class Clase_Fundamentos extends AppCompatActivity {
             // adapterPreguntas.resetSelecciones();
             adapterPreguntas.notifyDataSetChanged();
         });
-    }
+
+        }
 
     private int obtenerImagenPorCurso(String tituloCurso) {
         switch (tituloCurso) {
-
             case "Curso 1":
                 return R.drawable.curso_1;
             case "Curso 2":
@@ -88,7 +128,43 @@ public class Clase_Fundamentos extends AppCompatActivity {
             case "Curso 6":
                 return R.drawable.curso_6;
             default:
-                return R.drawable.img_background;
+                return R.drawable.third_rounder_button;
         }
     }
+    private List<PreguntaCuestionario> obtenerPreguntas(String tituloCurso){
+        List<PreguntaCuestionario> Preguntas = new ArrayList<>();
+
+        switch (tituloCurso) {
+            case  "Curso 1":
+               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de sol?", Arrays.asList("\uD834\uDD1E sol en el primer espacio", "\uD834\uDD1E sol en la segunda linea de ","\uD834\uDD1Esol en el tercer espacio "), 1));
+               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de fa?", Arrays.asList("\uD834\uDD22 fa en la cuarta linea ", "\uD834\uDD22 fa en el tercer espacio ","\uD834\uDD22 fa en la tercera linea"), 0));
+               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de do?", Arrays.asList("\uD834\uDD21do en el tercer espacio", "\uD834\uDD21do el la cuarta linea","\uD834\uDD21 do en la tercer linea "), 2));
+               break;
+            case"Curso 2":
+               Preguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
+
+                break;
+            case "Curso 3":
+                Preguntas.add(new PreguntaCuestionario("¿Cuántos tiempos dura una redonda?", Arrays.asList("4 tiempos", "2 tiempos", "1 tiempo"), 0));
+                Preguntas.add(new PreguntaCuestionario("¿Qué figura representa 1/2 tiempo?", Arrays.asList("Corchea", "Negra", "Blanca"), 0));
+                break;
+            case "Curso 4":
+               Preguntas.add(new PreguntaCuestionario("¿Cuántas blancas caben en un compás de 4/4?", Arrays.asList("1", "2", "4"), 1));
+               Preguntas.add(new PreguntaCuestionario("¿Cuántas negras caben en un compás de 2/4?", Arrays.asList("2", "4", "8"), 0));
+                break;
+            case "Curso 5":
+                Preguntas.add(new PreguntaCuestionario("¿Cuál es el rango de BPM del tempo Andante?", Arrays.asList("76–108 BPM", "120–168 BPM", "66–76 BPM"), 0));
+                Preguntas.add(new PreguntaCuestionario("¿Qué tempo es más rápido?", Arrays.asList("Adagio", "Presto", "Largo"), 1));
+                break;
+            case "Curso 6":
+                 Preguntas.add(new PreguntaCuestionario("¿Qué símbolo representa un sostenido?", Arrays.asList(" ♭ ", " ♮ ", " ♯ "), 2));
+                 Preguntas.add(new PreguntaCuestionario("¿Qué hace un becuadro?", Arrays.asList("Sube medio tono", "Cancela una alteración previa", "Baja medio tono"), 1));
+
+            default:
+               Preguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
+                break;
+        }
+        return Preguntas;
+    }
+
 }
