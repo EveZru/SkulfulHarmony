@@ -8,41 +8,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class PerfilMostrar extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
     private Button btnCompartirPerfil;
-    private String userId;
+    private String usuarioId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil_mostrar); // Asegúrate de que el layout esté correctamente configurado
+        setContentView(R.layout.activity_perfil_mostrar);
 
-        // Inicializar Firebase
-        mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Obtener el UID del usuario actual
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-            userId = user.getUid(); // Obtener el ID del usuario autenticado
-        } else {
-            // Si el usuario no está autenticado, redirige al login
-            startActivity(new Intent(this, IniciarSesion.class));
-            finish();
-            return;
-        }
-
-        // Referencias UI
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
         tv_NombreUsuario = findViewById(R.id.tv_NombreUsuario);
         tv_No_Cursos = findViewById(R.id.tv_No_Cursos);
@@ -52,55 +35,57 @@ public class PerfilMostrar extends AppCompatActivity {
         tv_Seguido = findViewById(R.id.tv_Seguido);
         btnCompartirPerfil = findViewById(R.id.btnCompartirPerfil);
 
-        cargarDatosUsuario();
+        usuarioId = getIntent().getStringExtra("usuarioId");
 
-        // Configurar el botón de compartir perfil
+        if (usuarioId == null) {
+            Toast.makeText(this, "ID de usuario no recibido", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        cargarDatosUsuario(usuarioId);
+
         btnCompartirPerfil.setOnClickListener(v -> compartirPerfil());
     }
 
-    private void cargarDatosUsuario() {
-        if (userId == null) return;
-
-        // Obtener los datos del usuario desde Firestore
+    private void cargarDatosUsuario(String userId) {
         DocumentReference docRef = db.collection("usuarios").document(userId);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Cargar los datos del usuario en los TextViews
                 tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
                 tv_correo.setText(documentSnapshot.getString("correo"));
                 tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
-                tv_No_Cursos.setText("Cursos Creados: " + documentSnapshot.getLong("cursos"));
+                Long cursos = documentSnapshot.getLong("cursos");
+                tv_No_Cursos.setText("Cursos Creados: " + (cursos != null ? cursos : 0));
 
-                // Cargar seguidores y seguidos
-                long seguidores = documentSnapshot.getLong("seguidores");
-                long seguidos = documentSnapshot.getLong("seguidos");
+                Long seguidores = documentSnapshot.getLong("seguidores");
+                Long seguidos = documentSnapshot.getLong("seguidos");
+                tv_Seguidores.setText("Seguidores: " + (seguidores != null ? seguidores : 0));
+                tv_Seguido.setText("Seguidos: " + (seguidos != null ? seguidos : 0));
 
-                tv_Seguidores.setText("Seguidores: " + seguidores);
-                tv_Seguido.setText("Seguidos: " + seguidos);
-
-                // Cargar la foto de perfil desde la URL almacenada en Firestore
                 String fotoUrl = documentSnapshot.getString("fotoPerfil");
                 if (fotoUrl != null && !fotoUrl.isEmpty()) {
                     Glide.with(this)
                             .load(fotoUrl)
-                            .into(ivProfilePicture); // Se mantiene la foto incluso después de cerrar y abrir la app
+                            .into(ivProfilePicture);
                 }
             } else {
                 Toast.makeText(this, "No se encontró el perfil", Toast.LENGTH_SHORT).show();
+                finish();
             }
-        }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show();
+            finish();
+        });
     }
 
-    // Método para compartir el perfil
     private void compartirPerfil() {
-        // Simulando que tienes una URL del perfil del usuario
-        String perfilUrl = "https://tuapp.com/perfil?usuario=" + userId;
+        String perfilUrl = "https://tuapp.com/perfil?usuario=" + usuarioId;
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, "Mira el perfil de este usuario: " + perfilUrl);
 
-        // Verifica que hay aplicaciones que puedan manejar este Intent
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(Intent.createChooser(intent, "Compartir perfil"));
         } else {

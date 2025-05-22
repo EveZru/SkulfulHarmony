@@ -67,7 +67,6 @@ public class Busqueda extends AppCompatActivity {
     private void buscarEnFirebase(final String textoBusqueda) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Primero carga cursos
         db.collection("cursos").get().addOnSuccessListener(queryDocumentSnapshots -> {
             cursos.clear();
             for (DocumentSnapshot doc : queryDocumentSnapshots) {
@@ -75,15 +74,16 @@ public class Busqueda extends AppCompatActivity {
                 if (curso != null) cursos.add(curso);
             }
 
-            // Luego usuarios
             db.collection("usuarios").get().addOnSuccessListener(qdsUsuarios -> {
                 usuarios.clear();
                 for (DocumentSnapshot doc : qdsUsuarios) {
                     Usuario usuario = doc.toObject(Usuario.class);
-                    if (usuario != null) usuarios.add(usuario);
+                    if (usuario != null) {
+                        usuario.setId(doc.getId());  // Asignar el ID del documento Firestore
+                        usuarios.add(usuario);
+                    }
                 }
 
-                // Ahora busca usando índice invertido mejorado
                 List<Object> resultadosCombinados = buscarConIndiceInvertidoMejorado(textoBusqueda, cursos, usuarios);
 
                 if (resultadosCombinados.isEmpty()) {
@@ -93,13 +93,12 @@ public class Busqueda extends AppCompatActivity {
                         @Override
                         public void onCursoClick(Curso curso) {
                             Toast.makeText(Busqueda.this, "Curso: " + curso.getTitulo(), Toast.LENGTH_SHORT).show();
-                            // Aquí puedes abrir detalle curso
                         }
 
                         @Override
                         public void onUsuarioClick(Usuario usuario) {
-                            Intent intent = new Intent(Busqueda.this, perfil_mostrar.class);
-                            intent.putExtra("usuario", usuario);  // Usuario debe implementar Serializable
+                            Intent intent = new Intent(Busqueda.this, PerfilMostrar.class);
+                            intent.putExtra("usuarioId", usuario.getId());  // Solo enviamos el ID
                             startActivity(intent);
                         }
                     });
@@ -114,58 +113,31 @@ public class Busqueda extends AppCompatActivity {
     }
 
     private List<Object> buscarConIndiceInvertidoMejorado(String textoBusqueda, List<Curso> cursos, List<Usuario> usuarios) {
-        // Construimos índice invertido más flexible (mapa palabra->lista IDs)
-        Map<String, List<String>> indiceCursos = new HashMap<>();
-        Map<String, List<String>> indiceUsuarios = new HashMap<>();
-
-        // Indexar cursos (palabra -> id del curso)
-        for (Curso c : cursos) {
-            if (c != null && c.getTitulo() != null) {
-                String[] palabras = c.getTitulo().toLowerCase().split("\\s+");
-                for (String palabra : palabras) {
-                    indiceCursos.computeIfAbsent(palabra, k -> new ArrayList<>()).add(String.valueOf(c.getId()));
-                }
-            }
-        }
-
-        // Indexar usuarios (palabra -> nombre usuario en minúsculas)
-        for (Usuario u : usuarios) {
-            if (u != null && u.getNombre() != null) {
-                String[] palabras = u.getNombre().toLowerCase().split("\\s+");
-                for (String palabra : palabras) {
-                    indiceUsuarios.computeIfAbsent(palabra, k -> new ArrayList<>()).add(u.getNombre().toLowerCase());
-                }
-            }
-        }
-
-        String busquedaLower = textoBusqueda.toLowerCase();
-
-        // Buscar cursos que contengan la palabra (parcial)
         Set<String> cursosEncontrados = new HashSet<>();
-        for (String key : indiceCursos.keySet()) {
-            if (key.contains(busquedaLower) || busquedaLower.contains(key)) {
-                cursosEncontrados.addAll(indiceCursos.get(key));
+        Set<String> usuariosEncontrados = new HashSet<>();
+
+        String textoLower = textoBusqueda.toLowerCase();
+
+        for (Curso c : cursos) {
+            if (c.getTitulo().toLowerCase().contains(textoLower)) {
+                cursosEncontrados.add(String.valueOf(c.getId()));
             }
         }
 
-        // Buscar usuarios que contengan la palabra (parcial)
-        Set<String> usuariosEncontrados = new HashSet<>();
-        for (String key : indiceUsuarios.keySet()) {
-            if (key.contains(busquedaLower) || busquedaLower.contains(key)) {
-                usuariosEncontrados.addAll(indiceUsuarios.get(key));
+        for (Usuario u : usuarios) {
+            if (u.getNombre().toLowerCase().contains(textoLower)) {
+                usuariosEncontrados.add(u.getNombre().toLowerCase());
             }
         }
 
         List<Object> resultados = new ArrayList<>();
 
-        // Agregar cursos que coinciden
         for (Curso c : cursos) {
             if (cursosEncontrados.contains(String.valueOf(c.getId()))) {
                 resultados.add(c);
             }
         }
 
-        // Agregar usuarios que coinciden
         for (Usuario u : usuarios) {
             if (usuariosEncontrados.contains(u.getNombre().toLowerCase())) {
                 resultados.add(u);
