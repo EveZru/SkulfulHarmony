@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CrearDenuncia"
-    android:background="@color/white">
+    android:background="@color/gray2">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,17 +26,16 @@
            android:text="¿Cual es el problema?"
            android:textAllCaps="false"
            android:textSize="30sp"
-           android:textColor="@color/black"
+           android:textColor="@color/white"
            android:layout_marginVertical="10dp"
            />
         <RadioGroup
             android:id="@+id/rg_tipo_denuncia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-
             >
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_contenidoilegal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -44,6 +43,7 @@
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_suplantacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -51,6 +51,7 @@
                 android:buttonTint="@color/black"
             />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_inapropiado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_spam"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,6 +67,7 @@
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_abuso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,10 +75,19 @@
                 android:buttonTint="@color/black"
                 />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rb_normas_"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Violación de normas de la plataforma "
+                android:buttonTint="@color/black"
+                />
+            <RadioButton
+                android:textColor="@color/white"
+                android:id="@+id/rb_otro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Otro"
                 android:buttonTint="@color/black"
                 />
 
@@ -87,7 +99,7 @@
             android:text="Especifica un poco mas  \n el problema"
             android:textAllCaps="false"
             android:textSize="20sp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:layout_marginVertical="10dp"
             />
         <EditText
@@ -97,6 +109,12 @@
             android:hint="Intenta ser consiso y claro"
             android:textColorHint="@color/gray1"
            android:textColorHighlight="@color/gray1"
+            android:textColor="@color/white"
+            android:maxLines="10"
+            android:minLines="1"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:inputType="textMultiLine"
             />
         <Space
             android:layout_width="match_parent"

@@ -298,7 +298,9 @@ public class Ver_cursos extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.it_denunciar) {
-            startActivity(new Intent(Ver_cursos.this, CrearDenuncia.class));
+            Intent denuncia = new Intent(Ver_cursos.this, CrearDenuncia.class);
+            denuncia.putExtra("idCurso",idCurso);
+            startActivity(denuncia);
             return true;
         } else if (id == R.id.it_descargar) {
             Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
@@ -318,7 +320,11 @@ public class Ver_cursos extends AppCompatActivity {
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.it_denunciar) {
-                startActivity(new Intent(Ver_cursos.this, CrearDenuncia.class));
+                Intent denuncia = new Intent(Ver_cursos.this, CrearDenuncia.class);
+                denuncia.putExtra("idCurso",idCurso);
+                startActivity(denuncia);
+
+
                 return true;
             } else if (id == R.id.it_descargar) {
                 Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
