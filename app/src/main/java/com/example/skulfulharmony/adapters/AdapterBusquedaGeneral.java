@@ -139,12 +139,12 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             txtCurso = itemView.findViewById(R.id.txt_holder_busqueda_titulocurso);
         }
 
-        public void bind(Clase clase,Curso curso, OnItemClickListener listener) {
+        public void bind(Clase clase, OnItemClickListener listener) {
             txtTituloClase.setText(clase.getTitulo());
-            txtCurso.setText(curso.titulo() != null ? curso.titulo() : "Curso desconocido");
+            txtCurso.setText(clase.getNombreCurso() != null ? clase.getNombreCurso() : "Curso desconocido");
 
             Glide.with(itemView.getContext())
-                    .load(curso.getImagen() != null ? clase.getImagen() : "")
+                    .load(clase.getImagen() != null ? clase.getImagen() : "")
                     .placeholder(R.drawable.logo_sh)
                     .centerCrop()
                     .into(imgClase);

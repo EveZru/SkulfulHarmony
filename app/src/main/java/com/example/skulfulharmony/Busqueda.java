@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Busqueda extends AppCompatActivity {
@@ -34,6 +35,14 @@ public class Busqueda extends AppCompatActivity {
     private List<Clase> clases = new ArrayList<>();
 
     private Button btnGenero, btnInstrumento, btnDificultad;
+    private Map<String, String> instrumento;
+    private Map<String, String> genero;
+    private Map<String, String> dificultad;
+
+    private String filtroGenero = null;
+    private String filtroInstrumento = null;
+    private String filtroDificultad = null;
+
 
     private final String[] instrumentos = {"Guitarra", "Bajo", "Flauta", "Trompeta", "Batería", "Piano", "Ukelele", "Violin", "Canto", "Otro"};
     private final String[] niveles = {"Principiante", "Intermedio", "Avanzado"};
@@ -54,18 +63,18 @@ public class Busqueda extends AppCompatActivity {
         btnDificultad = findViewById(R.id.btn_bdificultad);
 
         btnGenero.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona un género", generos, opcion -> {
-            Toast.makeText(this, "Género seleccionado: " + opcion, Toast.LENGTH_SHORT).show();
-            // Aquí puedes guardar o aplicar filtro con opción
+            filtroGenero = opcion;
+//            aplicarFiltros();
         }));
 
         btnInstrumento.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona un instrumento", instrumentos, opcion -> {
-            Toast.makeText(this, "Instrumento seleccionado: " + opcion, Toast.LENGTH_SHORT).show();
-            // Aquí puedes guardar o aplicar filtro con opción
+            filtroInstrumento = opcion;
+//            aplicarFiltros();
         }));
 
         btnDificultad.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona dificultad", niveles, opcion -> {
-            Toast.makeText(this, "Dificultad seleccionada: " + opcion, Toast.LENGTH_SHORT).show();
-            // Aquí puedes guardar o aplicar filtro con opción
+            filtroDificultad = opcion;
+//            aplicarFiltros();
         }));
 
         et_buscar.setOnKeyListener((v, keyCode, event) -> {
@@ -166,6 +175,7 @@ public class Busqueda extends AppCompatActivity {
                                 startActivity(intent);
                             }
                         });
+
                         rv_resultados.setAdapter(adapter);
                     }
                 }).addOnFailureListener(e -> {
@@ -233,4 +243,48 @@ public class Busqueda extends AppCompatActivity {
 
         return resultados;
     }
+
+//    private void aplicarFiltros() {
+//        List<Object> cursosFiltrados = new ArrayList<>();
+//
+//        for (Curso curso : cursos) {
+//            boolean coincide = true;
+//
+//            if (filtroGenero != null && (curso.getGenero() == null || !curso.getGenero().containsKey(filtroGenero))) {
+//                coincide = false;
+//            }
+//
+//            if (filtroInstrumento != null && (curso.getInstrumento() == null || !curso.getInstrumento().containsKey(filtroInstrumento))) {
+//                coincide = false;
+//            }
+//
+//            if (filtroDificultad != null && (curso.getDificultad() == null || !curso.getDificultad().containsKey(filtroDificultad))) {
+//                coincide = false;
+//            }
+//
+//            if (coincide) cursosFiltrados.add(curso);
+//        }
+//
+//        AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(cursosFiltrados, new AdapterBusquedaGeneral.OnItemClickListener() {
+//            @Override
+//            public void onCursoClick(Curso curso) {
+//                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+//                intent.putExtra("idCurso", curso.getId());
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onUsuarioClick(Usuario usuario) {}
+//
+//            @Override
+//            public void onClaseClick(Clase clase) {}
+//        });
+//
+//        rv_resultados.setAdapter(adapter);
+//
+//        if (cursosFiltrados.isEmpty()) {
+//            Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
 }
