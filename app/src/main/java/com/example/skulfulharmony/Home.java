@@ -182,7 +182,7 @@ public class Home extends AppCompatActivity {
 
 
         //____coso de habrir lo de las preguntas incorrectas
-       /* SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
         String lastDate = prefs.getString("last_open_date", "");
 
         String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
@@ -194,7 +194,7 @@ public class Home extends AppCompatActivity {
 
             // Guardas la fecha para no volver a lanzar hoy
             prefs.edit().putString("last_open_date", today).apply();
-        }*/
+        }
 
 
     }

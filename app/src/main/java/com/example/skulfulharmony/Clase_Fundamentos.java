@@ -136,14 +136,18 @@ public class Clase_Fundamentos extends AppCompatActivity {
 
         switch (tituloCurso) {
             case  "Curso 1":
-               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de sol?", Arrays.asList("\uD834\uDD1E sol en el primer espacio", "\uD834\uDD1E sol en la segunda linea de ","\uD834\uDD1Esol en el tercer espacio "), 1));
-               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de fa?", Arrays.asList("\uD834\uDD22 fa en la cuarta linea ", "\uD834\uDD22 fa en el tercer espacio ","\uD834\uDD22 fa en la tercera linea"), 0));
-               Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de do?", Arrays.asList("\uD834\uDD21do en el tercer espacio", "\uD834\uDD21do el la cuarta linea","\uD834\uDD21 do en la tercer linea "), 2));
-               break;
-            case"Curso 2":
-               Preguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
+                Preguntas.add(new PreguntaCuestionario("¿Cuál clave se usa para tonos altos ?", Arrays.asList("\uD834\uDD1E", "\uD834\uDD22 ","\uD834\uDD21"), 0));
+                Preguntas.add(new PreguntaCuestionario("¿Cuál clave se usa para tonos intermedios ?", Arrays.asList("\uD834\uDD1E", "\uD834\uDD22 ","\uD834\uDD21"), 2));
+                Preguntas.add(new PreguntaCuestionario("¿Cuál clave se usa para tonos graves?", Arrays.asList("\uD834\uDD1E", "\uD834\uDD22 ","\uD834\uDD21"), 1));
+
 
                 break;
+            case"Curso 2":
+
+            Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de sol?", Arrays.asList("\uD834\uDD1E sol en el primer espacio", "\uD834\uDD1E sol en la segunda linea de ","\uD834\uDD1Esol en el tercer espacio "), 1));
+            Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de fa?", Arrays.asList("\uD834\uDD22 fa en la cuarta linea ", "\uD834\uDD22 fa en el tercer espacio ","\uD834\uDD22 fa en la tercera linea"), 0));
+            Preguntas.add(new PreguntaCuestionario("¿Cuál es la nota guia en la clave de do?", Arrays.asList("\uD834\uDD21do en el tercer espacio", "\uD834\uDD21do el la cuarta linea","\uD834\uDD21 do en la tercer linea "), 2));
+            break;
             case "Curso 3":
                 Preguntas.add(new PreguntaCuestionario("¿Cuántos tiempos dura una redonda?", Arrays.asList("4 tiempos", "2 tiempos", "1 tiempo"), 0));
                 Preguntas.add(new PreguntaCuestionario("¿Qué figura representa 1/2 tiempo?", Arrays.asList("Corchea", "Negra", "Blanca"), 0));
@@ -161,7 +165,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
                  Preguntas.add(new PreguntaCuestionario("¿Qué hace un becuadro?", Arrays.asList("Sube medio tono", "Cancela una alteración previa", "Baja medio tono"), 1));
 
             default:
-               Preguntas.add(new PreguntaCuestionario("Pregunta por defecto", Arrays.asList("Uno", "Dos"), 0));
+               Preguntas.add(new PreguntaCuestionario("error al cargar preguntas", Arrays.asList(".", "."), 1));
                 break;
         }
         return Preguntas;

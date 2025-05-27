@@ -21,4 +21,11 @@
             android:layout_height="wrap_content"/>
 
     </ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        id="@+id/coso_preguntas_incorrectas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>
