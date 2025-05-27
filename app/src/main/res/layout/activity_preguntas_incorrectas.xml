@@ -7,25 +7,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PreguntasIncorrectas">
+    <TextView
+        android:id="@+id/tv_preguntas_incorrectas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
-    <ScrollView
-        android:id="@+id/rv_preguntas_incorrectas"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
-        <TextView
-            android:id="@+id/tv_preguntas_incorrectas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </ScrollView>
     <androidx.recyclerview.widget.RecyclerView
-        id="@+id/coso_preguntas_incorrectas"
+       android:id="@+id/rv_preguntas_incorrectas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_comprobar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Comprobar Resultados"
+        android:textColor="@color/black"
+        android:background="@drawable/rounded_edit_text"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_reintentar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reintentar Cuestionario"
+        android:textColor="@color/black"
+        android:background="@drawable/third_rounder_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" />
 </LinearLayout>

@@ -6,21 +6,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnCuestionariosparaContestar;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
-import com.example.skulfulharmony.PreguntasIncorrectas;
 import com.google.gson.Gson;
-
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +26,10 @@ public class Clase_Fundamentos extends AppCompatActivity {
     private ImageView ivImagenCurso;
     private RecyclerView rvPreguntasCurso;
     private AdapterPreguntasEnCuestionariosparaContestar adapterPreguntas;
-    private Button btnComprobar;
-    private Button btnReintentar;
+    private Button btnComprobar,btnReintentar;
     private List<PreguntaCuestionario> listaPreguntas;
+
+    private static final String TAG = "Clase_Fundamentos"; // Para logs de depuración
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +57,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
         rvPreguntasCurso.setAdapter(adapterPreguntas);
 //botones para comprobar respuestas
         btnComprobar.setOnClickListener(v -> {
+
             adapterPreguntas.comprobarRespuestas();
             List<PreguntaCuestionario> incorrectas = adapterPreguntas.getPreguntasIncorrectas();
             btnComprobar.setVisibility(View.GONE);
@@ -68,27 +67,27 @@ public class Clase_Fundamentos extends AppCompatActivity {
             String jsonGuardado = prefs.getString("preguntas_incorrectas", null);
 
 // Lista existente
-            List<String> preguntasGuardadas;
+            List<PreguntaCuestionario> preguntasGuardadas;
             if (jsonGuardado != null) {
-                preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
+                Type listType = new TypeToken<List<PreguntaCuestionario>>() {}.getType();
+                try{
+                    preguntasGuardadas = gson.fromJson(jsonGuardado, listType);
+                }catch (Exception e) {
+                    Log.e(TAG, "Error al cargar preguntas incorrectas: " + e.getMessage());
+                    preguntasGuardadas = new ArrayList<>();
+                }
+
+                //  preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
             } else {
-                preguntasGuardadas = new ArrayList<>();
+
+               preguntasGuardadas=new ArrayList<>();
             }
 
 // Formatear nuevas preguntas
             for (PreguntaCuestionario pregunta : incorrectas) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(pregunta.getPregunta()).append("\n");
-                List<String> respuestas = pregunta.getRespuestas();
-                for (int i = 0; i < respuestas.size(); i++) {
-                    String r = respuestas.get(i);
-                    if (i == pregunta.getRespuestaCorrecta()) {
-                        sb.append(" - ").append(r).append(" (correcta)").append("\n");
-                    } else {
-                        sb.append(" - ").append(r).append("\n");
-                    }
-                }
-                preguntasGuardadas.add(sb.toString());
+              if(!preguntasGuardadas.contains(pregunta)){
+                  preguntasGuardadas.add(pregunta);
+              }
             }
 
 // Guardar la lista actualizada
@@ -106,8 +105,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
             btnComprobar.setVisibility(View.VISIBLE);
             btnReintentar.setVisibility(View.GONE);
             adapterPreguntas.setMostrarResultados(false);
-            // Para resetear las selecciones,
-            // adapterPreguntas.resetSelecciones();
+
             adapterPreguntas.notifyDataSetChanged();
         });
 
