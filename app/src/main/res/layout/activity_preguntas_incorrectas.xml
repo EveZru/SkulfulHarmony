@@ -6,7 +6,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PreguntasIncorrectas">
+    tools:context=".PreguntasIncorrectas"
+    android:background="@color/white"
+    >
     <TextView
         android:id="@+id/tv_preguntas_incorrectas"
         android:layout_width="match_parent"
@@ -14,6 +16,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+
        android:id="@+id/rv_preguntas_incorrectas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

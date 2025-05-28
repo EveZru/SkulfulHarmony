@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -40,8 +41,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.Empty;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +68,8 @@ public class Ver_clases extends AppCompatActivity {
     private RecyclerView verComentarios;
     private AdapterPreguntasEnVerClase adapterPreguntasEnVerClase;
     private int cantidadRespuestasCorrectas;
+
+    private static final String TAG = "Ver_clases";
 
     private enum MensajeCalificacion {
         CIEN_CORRECTO(100, "¡Perfecto!"),
@@ -112,6 +117,11 @@ public class Ver_clases extends AppCompatActivity {
         Intent intent = getIntent();
         idClase = intent.getIntExtra("idClase", 1);
         idCurso = intent.getIntExtra("idCurso", 1);
+
+        //----guardar preguntas incorrectas-------------------------------------
+        Gson gson = new Gson();
+        SharedPreferences prefs = getSharedPreferences("cuestionario", MODE_PRIVATE);
+        String jsonGuardado = prefs.getString("preguntas_incorrectas", null);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference docRef = db.collection("clases");
@@ -174,6 +184,8 @@ public class Ver_clases extends AppCompatActivity {
 
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
+// parte de las preguntas aqui deberia de pegar
+
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                             adapterPreguntasEnVerClase = new AdapterPreguntasEnVerClase(clase.getPreguntas(),Ver_clases.this);
@@ -200,6 +212,36 @@ public class Ver_clases extends AppCompatActivity {
                                    ) {
                                        cantidadRespuestasCorrectas++;
                                    }
+
+                                   //List<PreguntaCuestionario> preguntasGuardadas;
+                                   List<PreguntaCuestionario> preguntasIncorrectasDeEstaClase = new ArrayList<>();
+                                   if (jsonGuardado != null) {
+                                       Type listType = new TypeToken<List<PreguntaCuestionario>>() {}.getType();
+                                       try{
+                                           preguntasIncorrectasDeEstaClase = gson.fromJson(jsonGuardado, listType);
+                                       }catch (Exception e) {
+                                           Log.e(TAG, "Error al cargar preguntas incorrectas: " + e.getMessage());
+                                           preguntasIncorrectasDeEstaClase = new ArrayList<>();
+                                       }
+
+                                       //  preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
+                                   } else {
+
+                                       preguntasIncorrectasDeEstaClase=new ArrayList<>();
+                                   }
+                                   for (PreguntaCuestionario  preguntaIndividual : clase.getPreguntas()) {// aqui marca error en pregunta
+                                       if(!preguntasIncorrectasDeEstaClase.contains(pregunta)){
+                                           preguntasIncorrectasDeEstaClase.add(pregunta);
+                                       }
+                                   }
+
+// Guardar la lista actualizada
+                                   String jsonNuevo = gson.toJson(preguntasIncorrectasDeEstaClase);
+                                   prefs.edit().putString("preguntas_incorrectas", jsonNuevo).apply();
+
+
+
+
                                }
 
                                 Dialog dialog = new Dialog(Ver_clases.this);
@@ -221,6 +263,9 @@ public class Ver_clases extends AppCompatActivity {
                                 puntuacion.setText(cantidadRespuestasCorrectas + "/" + total);
 
                                 //Aquí añadir la logica para guardar la calificacion del usuario en el algoritmo de mejora
+// aqui se guardan las preguntas incorrectas
+
+
 
                                 aceptar.setOnClickListener(v1 -> {
                                     dialog.dismiss();

@@ -66,7 +66,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences("cuestionario", MODE_PRIVATE);
             String jsonGuardado = prefs.getString("preguntas_incorrectas", null);
 
-// Lista existente
+// Lista existente /* esta parte de aqui*/
             List<PreguntaCuestionario> preguntasGuardadas;
             if (jsonGuardado != null) {
                 Type listType = new TypeToken<List<PreguntaCuestionario>>() {}.getType();
@@ -96,7 +96,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
 
 
 
-        });
+        });/*hasta aqui */
 
         btnReintentar.setOnClickListener(v -> {
             // Aquí puedes implementar la lógica para reintentar el cuestionario

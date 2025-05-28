@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray2"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context=".Home">
 
@@ -35,7 +35,9 @@
                     android:layout_weight="1"
                     android:background="@drawable/rounded_edit_text"
                     android:hint="Buscar"
-                    android:textColor="@color/gray1" />
+                    android:textColorHint="@color/tinto"
+                    android:textColor="@color/black"
+                    android:backgroundTint="@color/gray1"/>
 
                 <ImageView
                     android:layout_width="60dp"
@@ -97,6 +99,10 @@
     </ScrollView>
 
     <!-- Barra de navegación fija en la parte inferior -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray2"/>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"

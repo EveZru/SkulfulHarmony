@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnCuestionariosparaContestar;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken; // Importación correcta para TypeToken (no com.google.common.reflect.TypeToken)
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -71,10 +71,6 @@ public class PreguntasIncorrectas extends AppCompatActivity {
             if (btnComprobar != null) btnComprobar.setVisibility(View.GONE);
             if (btnReintentar != null) btnReintentar.setVisibility(View.GONE);
         } else {
-            // El tvPreguntasIncorrectas podría ser el título, si es así, no lo ocultes.
-            // Si solo quieres mostrar el mensaje cuando está vacío, el id del TextView debería ser tv_preguntas_incorrectas_vacio
-            // como en la solución anterior, y el tvPreguntasIncorrectas que usas aquí debería ser ese.
-            // Para este ejemplo, lo dejaremos como si tvPreguntasIncorrectas es el que actúa como mensaje.
             tvPreguntasIncorrectas.setVisibility(View.GONE); // Oculta el mensaje si hay preguntas
             rvPreguntasIncorrectas.setVisibility(View.VISIBLE);
 
