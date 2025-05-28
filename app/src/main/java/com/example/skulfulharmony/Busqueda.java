@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,17 +65,23 @@ public class Busqueda extends AppCompatActivity {
 
         btnGenero.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona un género", generos, opcion -> {
             filtroGenero = opcion;
-//            aplicarFiltros();
+            btnGenero.setText(filtroGenero);
+            Log.d("FiltroDebug", "Genero seleccionado: " + filtroGenero);
+            aplicarFiltros();
         }));
 
         btnInstrumento.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona un instrumento", instrumentos, opcion -> {
             filtroInstrumento = opcion;
-//            aplicarFiltros();
+            btnInstrumento.setText(filtroInstrumento);
+            Log.d("FiltroDebug", "Instrumento seleccionado: " + filtroInstrumento);
+            aplicarFiltros();
         }));
 
         btnDificultad.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona dificultad", niveles, opcion -> {
             filtroDificultad = opcion;
-//            aplicarFiltros();
+            btnDificultad.setText(filtroDificultad);
+            Log.d("FiltroDebug", "Dificultad seleccionado: " + filtroDificultad);
+            aplicarFiltros();
         }));
 
         et_buscar.setOnKeyListener((v, keyCode, event) -> {
@@ -244,47 +251,82 @@ public class Busqueda extends AppCompatActivity {
         return resultados;
     }
 
-//    private void aplicarFiltros() {
-//        List<Object> cursosFiltrados = new ArrayList<>();
-//
-//        for (Curso curso : cursos) {
-//            boolean coincide = true;
-//
-//            if (filtroGenero != null && (curso.getGenero() == null || !curso.getGenero().containsKey(filtroGenero))) {
-//                coincide = false;
-//            }
-//
-//            if (filtroInstrumento != null && (curso.getInstrumento() == null || !curso.getInstrumento().containsKey(filtroInstrumento))) {
-//                coincide = false;
-//            }
-//
-//            if (filtroDificultad != null && (curso.getDificultad() == null || !curso.getDificultad().containsKey(filtroDificultad))) {
-//                coincide = false;
-//            }
-//
-//            if (coincide) cursosFiltrados.add(curso);
-//        }
-//
-//        AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(cursosFiltrados, new AdapterBusquedaGeneral.OnItemClickListener() {
-//            @Override
-//            public void onCursoClick(Curso curso) {
-//                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
-//                intent.putExtra("idCurso", curso.getId());
-//                startActivity(intent);
-//            }
-//
-//            @Override
-//            public void onUsuarioClick(Usuario usuario) {}
-//
-//            @Override
-//            public void onClaseClick(Clase clase) {}
-//        });
-//
-//        rv_resultados.setAdapter(adapter);
-//
-//        if (cursosFiltrados.isEmpty()) {
-//            Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private void aplicarFiltros() {
+        List<Object> cursosFiltrados = new ArrayList<>();
+
+        for (Curso curso : cursos) {
+            boolean coincide = true;
+
+            Map<String, String> generoCurso = curso.getGenero();
+            Map<String, String> instrumentoCurso = curso.getInstrumento();
+            Map<String, String> dificultadCurso = curso.getDificultad();
+
+            Log.d("FiltroDebug", "Curso: " + curso.getTitulo());
+            Log.d("FiltroDebug", "  Claves género: " + (generoCurso != null ? generoCurso.keySet().toString() : "null"));
+            Log.d("FiltroDebug", "  Claves instrumento: " + (instrumentoCurso != null ? instrumentoCurso.keySet().toString() : "null"));
+            Log.d("FiltroDebug", "  Claves dificultad: " + (dificultadCurso != null ? dificultadCurso.keySet().toString() : "null"));
+
+            if (filtroGenero != null) {
+                if (generoCurso == null || generoCurso.isEmpty()) {
+                    coincide = false;
+                } else {
+                    boolean found = generoCurso.values().stream()
+                            .filter(v -> v != null)
+                            .map(v -> v.trim().toLowerCase())
+                            .anyMatch(v -> v.equals(filtroGenero.trim().toLowerCase()));
+                    if (!found) coincide = false;
+                }
+            }
+
+            if (filtroInstrumento != null) {
+                if (instrumentoCurso == null || instrumentoCurso.isEmpty()) {
+                    coincide = false;
+                } else {
+                    boolean found = instrumentoCurso.values().stream()
+                            .filter(v -> v != null)
+                            .map(v -> v.trim().toLowerCase())
+                            .anyMatch(v -> v.equals(filtroInstrumento.trim().toLowerCase()));
+                    if (!found) coincide = false;
+                }
+            }
+
+            if (filtroDificultad != null) {
+                if (dificultadCurso == null || dificultadCurso.isEmpty()) {
+                    coincide = false;
+                } else {
+                    boolean found = dificultadCurso.values().stream()
+                            .filter(v -> v != null)
+                            .map(v -> v.trim().toLowerCase())
+                            .anyMatch(v -> v.equals(filtroDificultad.trim().toLowerCase()));
+                    if (!found) coincide = false;
+                }
+            }
+
+            if (coincide) {
+                cursosFiltrados.add(curso);
+            }
+        }
+
+        AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(cursosFiltrados, new AdapterBusquedaGeneral.OnItemClickListener() {
+        @Override
+        public void onCursoClick(Curso curso) {
+            Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+            intent.putExtra("idCurso", curso.getId());
+            startActivity(intent);
+        }
+
+        @Override
+        public void onUsuarioClick(Usuario usuario) {}
+
+        @Override
+        public void onClaseClick(Clase clase) {}
+    });
+
+    rv_resultados.setAdapter(adapter);
+
+    if (cursosFiltrados.isEmpty()) {
+        Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
+    }
+}
 
 }

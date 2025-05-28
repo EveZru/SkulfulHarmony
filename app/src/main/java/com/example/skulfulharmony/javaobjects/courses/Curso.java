@@ -43,7 +43,6 @@ public class Curso implements Serializable {
         this.seguidores = new ArrayList<>();
         this.comentarios = new ArrayList<>();
         this.instrumento = new HashMap<>();
-
         this.genero = new HashMap<>();
         this.dificultad = new HashMap<>();
     }
@@ -125,6 +124,19 @@ public class Curso implements Serializable {
     }
     public void setInstrumento(Map<String,String> instrumento) {
         this.instrumento = instrumento;
+    }
+
+    // Método nuevo para obtener el nivel de dificultad en número
+    public int getNivelDificultad() {
+        if (dificultad == null) return 1; // Principiante por default
+        String nivel = dificultad.get("nivel"); // Ajusta la clave si usas otro nombre
+        if (nivel == null) return 1;
+        switch (nivel.toLowerCase()) {
+            case "principiante": return 1;
+            case "intermedio": return 2;
+            case "avanzado": return 3;
+            default: return 1;
+        }
     }
 
     //Getters
