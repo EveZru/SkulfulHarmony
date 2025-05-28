@@ -27,12 +27,14 @@ public class Curso implements Serializable {
     private List<Usuario> seguidores;
     private List<Comentario> comentarios;
     private ClusterCursos cluster;
-    private CalificacionCurso calificacion;
     private Date fechaCreacion;
     private Timestamp fechaCreacionf;
     private Map<String,String> instrumento;
     private Map<String,String> genero;
     private Map<String,String> dificultad;
+    private Integer visitas;
+    private Integer cantidadDescargas;
+    private List<Integer> calificacionCursos;
 
 
     //Constructores
@@ -114,7 +116,7 @@ public class Curso implements Serializable {
     public void setCluster(ClusterCursos cluster) {
         this.cluster = cluster;
     }
-    public void setCalificacion(CalificacionCurso calificacion) { this.calificacion = calificacion; }
+
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
@@ -164,9 +166,7 @@ public class Curso implements Serializable {
     public ClusterCursos getCluster() {
         return cluster;
     }
-    public CalificacionCurso getCalificacion() {
-        return calificacion;
-    }
+
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
@@ -196,5 +196,29 @@ public class Curso implements Serializable {
     }
     public void setClases(List<Clase> clases) {
         this.clases = clases;
+    }
+
+    public Integer getVisitas() {
+        return visitas;
+    }
+
+    public void setVisitas(Integer visitas) {
+        this.visitas = visitas;
+    }
+
+    public Integer getCantidadDescargas() {
+        return cantidadDescargas;
+    }
+
+    public void setCantidadDescargas(Integer cantidadDescargas) {
+        this.cantidadDescargas = cantidadDescargas;
+    }
+
+    public List<Integer> getCalificacionCursos() {
+        return calificacionCursos;
+    }
+
+    public void setCalificacionCursos(List<Integer> calificacionCursos) {
+        this.calificacionCursos = calificacionCursos;
     }
 }

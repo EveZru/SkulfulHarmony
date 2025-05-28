@@ -61,32 +61,50 @@
                         android:elevation="0dp"
                         app:cardElevation="0dp"
                         >
-                        <TextView
-                            android:padding="5dp"
-                            android:id="@+id/tv_info_verclase"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Texto de información super hiper mega importante de vital importancia"
-                            android:textColor="@color/white"
-                            android:textSize="15sp"
-                            android:background="@color/gray2"
-                            />
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Informacion"
+                                android:textSize="22sp"
+                                android:background="@color/gray2"
+                                android:textColor="@color/white"
+                                android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
+                                />
+                            <TextView
+                                android:padding="5dp"
+                                android:id="@+id/tv_info_verclase"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Texto de información super hiper mega importante de vital importancia"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:background="@color/gray2"
+                                />
+                        </LinearLayout>
+
                     </androidx.cardview.widget.CardView>
                     <!-- Archivos: usa RecyclerView o LinearLayout -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/gray2"
                         app:cardCornerRadius="5dp"
                         android:elevation="0dp"
                         app:cardElevation="0dp"
                         android:layout_marginTop="10dp"
+                        app:cardBackgroundColor="@color/gray2"
                         >
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:background="@color/gray2">
+                            >
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -95,6 +113,8 @@
                                 android:background="@color/gray2"
                                 android:textColor="@color/white"
                                 android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
                                 />
                             <androidx.recyclerview.widget.RecyclerView
                                 android:background="@color/gray2"
@@ -116,12 +136,13 @@
                         android:elevation="0dp"
                         app:cardElevation="0dp"
                         android:layout_marginTop="10dp"
+                        app:cardBackgroundColor="@color/gray2"
                         >
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="vertical"
-                            android:background="@color/gray2">
+                            >
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -130,6 +151,8 @@
                                 android:background="@color/gray2"
                                 android:textColor="@color/white"
                                 android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
                                 />
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rv_preguntasporclase_verclase"

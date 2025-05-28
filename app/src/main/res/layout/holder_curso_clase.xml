@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/clase_elemento"
-    android:layout_width="160dp"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardBackgroundColor="@color/gray1"
-    android:background="@android:color/transparent"
-    app:cardElevation="10dp"
-    app:cardPreventCornerOverlap="true"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?selectableItemBackground">
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <androidx.cardview.widget.CardView
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/gray1"
+        app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="true"
+        android:clickable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -27,53 +30,54 @@
                 android:id="@+id/cardImage"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:background="@color/gray1"
-                android:src="@drawable/logo_sh"
                 app:shapeAppearanceOverlay="@style/CardShapeRounded"
+                android:src="@drawable/img_encabezado"
+
                 />
 
 
-        <!-- Contenedor de textos -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <!-- Título principal -->
-            <TextView
-                android:id="@+id/tv_textprincipal"
+            <!-- Contenedor de textos -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre del curso"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:orientation="vertical"
+                android:padding="10dp">
 
-            <!-- Texto complementario -->
-            <TextView
-                android:id="@+id/tv_complementario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Complemento"
-                android:textSize="13sp"
-                android:textColor="@color/white"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:layout_marginTop="2dp"/>
+                <!-- Título principal -->
+                <TextView
+                    android:id="@+id/tv_textprincipal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del curso"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
 
-            <!-- Texto secundario -->
-            <TextView
-                android:id="@+id/tv_textsegundo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Descripción corta"
-                android:textSize="12sp"
-                android:textColor="@color/white"
-                android:layout_marginTop="4dp" />
+                <!-- Texto complementario -->
+                <TextView
+                    android:id="@+id/tv_complementario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Complemento"
+                    android:textSize="13sp"
+                    android:textColor="@color/white"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_marginTop="2dp"/>
+
+                <!-- Texto secundario -->
+                <TextView
+                    android:id="@+id/tv_textsegundo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descripción corta"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
 

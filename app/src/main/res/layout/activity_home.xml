@@ -22,6 +22,32 @@
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="@color/white">
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/logo_sh"/>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="5dp"
+                    android:text="Skillfull Harmony"/>
+            </androidx.appcompat.widget.Toolbar>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,27 +57,38 @@
                     android:id="@+id/et_buscarhome"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
-                    android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:background="@drawable/rounded_edit_text"
+                    android:background="@color/gray1"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp"
                     android:hint="Buscar"
                     android:textColorHint="@color/tinto"
                     android:textColor="@color/black"
                     android:backgroundTint="@color/gray1"/>
 
                 <ImageView
+                    android:padding="5dp"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="10dp"
-                    android:background="@drawable/home_logo" />
+                    android:layout_marginHorizontal="0dp"
+                    android:background="@color/gray1"
+                    android:src="@drawable/home_logo"
+                    />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/gray2"/>
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/populares_top"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_margin="16dp" />
+                android:layout_marginBottom="10dp"
+                android:background="@color/gray1"
+                />
 
             <TextView
                 android:layout_width="match_parent"

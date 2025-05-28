@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/gray2"
     android:id="@+id/main">
 
     <androidx.appcompat.widget.Toolbar
@@ -39,7 +39,8 @@
             android:text="Ver Video prueba"
             android:textColor="@android:color/white"
             android:layout_gravity="end"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/rojo_oscuro"/>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -80,7 +81,7 @@
                 android:text="Nombre del Usuario"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/tv_correo"
@@ -137,7 +138,8 @@
         android:layout_height="wrap_content"
         android:text="Compartir Perfil"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/verde"/>
     <Button
         android:id="@+id/btn_preguntas_incorrectas"
         android:layout_width="wrap_content"
