@@ -125,7 +125,7 @@
         android:backgroundTint="@color/rojo"
         android:textColor="@android:color/white" />
 
-    <!-- RecyclerView para cursos del usuario -->
+    <!-- Texto para cursos -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -137,22 +137,24 @@
         android:paddingBottom="4dp"
         android:textColor="@color/black" />
 
+    <!-- RecyclerView para cursos (horizontal) con peso para que ocupe todo el espacio restante -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCursosUsuario"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp" />
+        android:paddingEnd="16dp"
+        android:clipToPadding="false" />
 
-    <!-- Barra de navegación inferior -->
+    <!-- Barra de navegación inferior siempre fija abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/barra_navegacionprincipal"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
-        app:itemTextColor="@color/gray1" />
+        app:itemTextColor="@color/gray1"
+        app:menu="@menu/barra_navegacionprincipal" />
 
 </LinearLayout>

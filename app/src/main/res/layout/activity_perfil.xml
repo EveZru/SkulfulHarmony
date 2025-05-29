@@ -186,10 +186,18 @@
 <!--            android:textSize="16sp"-->
 <!--            android:layout_marginTop="12dp" />-->
 <!--    </LinearLayout>-->
-    <View
+
+    <!-- Aquí el RecyclerView vertical para "categorías de cursos" -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCursosCategorias"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Barra de navegación -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"

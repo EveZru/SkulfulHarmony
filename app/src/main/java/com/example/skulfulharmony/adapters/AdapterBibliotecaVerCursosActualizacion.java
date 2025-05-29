@@ -74,7 +74,7 @@ public class AdapterBibliotecaVerCursosActualizacion extends RecyclerView.Adapte
         Curso curso = seguidos.get(position);
 
         holder.nombreCurso.setText(curso.getTitulo());
-      //  holder.fechaActualizacion.setText(""+curso.getCalificacion().getPuntuacion());
+        holder.fechaActualizacion.setText(""+curso.getCalificacion().getPuntuacion());
 
         // Cargar imagen con Glide
         Glide.with(context)

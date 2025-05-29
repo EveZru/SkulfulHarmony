@@ -126,8 +126,11 @@ public class Busqueda extends AppCompatActivity {
                 for (DocumentSnapshot doc : queryUsuarios) {
                     Usuario usuario = doc.toObject(Usuario.class);
                     if (usuario != null) {
-                        usuario.setId(doc.getId());
-                        usuarios.add(usuario);
+                        String rol = doc.getString("rol");  // o el nombre que uses para el campo rol
+                        if (rol == null || !rol.equalsIgnoreCase("admin")) { // Solo agregamos si no es admin
+                            usuario.setId(doc.getId());
+                            usuarios.add(usuario);
+                        }
                     }
                 }
 

@@ -119,9 +119,6 @@ public class Home extends AppCompatActivity {
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
-
-
-
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -139,7 +136,6 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, Busqueda.class);
-                intent.putExtra("focus", true); // Enviar extra para enfocar el EditText en la otra actividad
                 startActivity(intent);
             }
         });
