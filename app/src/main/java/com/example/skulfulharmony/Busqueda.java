@@ -308,25 +308,25 @@ public class Busqueda extends AppCompatActivity {
         }
 
         AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(cursosFiltrados, new AdapterBusquedaGeneral.OnItemClickListener() {
-        @Override
-        public void onCursoClick(Curso curso) {
-            Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
-            intent.putExtra("idCurso", curso.getId());
-            startActivity(intent);
+            @Override
+            public void onCursoClick(Curso curso) {
+                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+                intent.putExtra("idCurso", curso.getId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onUsuarioClick(Usuario usuario) {}
+
+            @Override
+            public void onClaseClick(Clase clase) {}
+        });
+
+        rv_resultados.setAdapter(adapter);
+
+        if (cursosFiltrados.isEmpty()) {
+            Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
         }
-
-        @Override
-        public void onUsuarioClick(Usuario usuario) {}
-
-        @Override
-        public void onClaseClick(Clase clase) {}
-    });
-
-    rv_resultados.setAdapter(adapter);
-
-    if (cursosFiltrados.isEmpty()) {
-        Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
     }
-}
 
 }
