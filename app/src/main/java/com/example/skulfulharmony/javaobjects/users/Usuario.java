@@ -33,6 +33,7 @@ public class Usuario implements Serializable {
 
     private int cursos;
     private int seguidores;
+    private int seguidos;
 
     // ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
@@ -80,6 +81,15 @@ public class Usuario implements Serializable {
         this.correo = correo;
         this.gestionClustering = gestionClustering;
     }
+
+    public int getSeguidos() {
+        return seguidos;
+    }
+
+    public void setSeguidos(int seguidos) {
+        this.seguidos = seguidos;
+    }
+
 
     // Métodos nuevos para progreso
 
