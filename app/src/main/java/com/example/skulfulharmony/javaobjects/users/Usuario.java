@@ -5,6 +5,7 @@ import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaInicio;
 
 import java.time.LocalTime;
@@ -40,6 +41,7 @@ public class Usuario implements Serializable {
     private GestionClustering gestionClustering;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
+    private List<PreguntaCuestionario> preguntasRepaso;
     //private List<PreguntaInicio> preguntasInicio;
     private RecomendacionDeUsuario recomendacionesUsuario;
     private List<Date> horasEntrada;
@@ -184,6 +186,14 @@ public class Usuario implements Serializable {
 
     public List<Clase> getHistorialClases() {
         return historialClases;
+    }
+
+    public List<PreguntaCuestionario> getPreguntasRepaso(){
+        return preguntasRepaso;
+    }
+
+    public void setPreguntasRepaso(List<PreguntaCuestionario> preguntasRepaso){
+        this.preguntasRepaso = preguntasRepaso;
     }
 
     public void setHistorialClases(List<Clase> historialClases) {

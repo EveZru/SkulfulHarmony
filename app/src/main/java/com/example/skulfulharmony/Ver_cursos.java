@@ -1,6 +1,7 @@
 package com.example.skulfulharmony;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -57,6 +58,11 @@ public class Ver_cursos extends AppCompatActivity {
     private RecyclerView rvComentarios;
     private Button crear_comentario;
     private EditText etcomentario;
+    private Intent visualizaciones,calificaciones;
+
+    //--- contador de visitas
+    private final static String Prefers_name="nombreclase";
+    private final static String Cuentas_Visitas="Contador";
 
 
     private FirebaseFirestore firestore;
@@ -192,6 +198,8 @@ public class Ver_cursos extends AppCompatActivity {
                     });
         });
 
+       // SharedPreferences sharedPreferences=getsa
+
 
     }
 
@@ -287,7 +295,7 @@ public class Ver_cursos extends AppCompatActivity {
                 });
     }
 
-    //___________
+    //_____parte del menu _____
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_cursos, menu);
@@ -339,7 +347,7 @@ public class Ver_cursos extends AppCompatActivity {
         // Mostrar el menú
         popupMenu.show();
     }
-    //_______estrellas___
+    //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {
         if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {
             puntuacionActual = nuevaPuntuacion;
@@ -360,5 +368,7 @@ public class Ver_cursos extends AppCompatActivity {
             }
         }
     }
+    //---- contador de visitas-----
+
 
 }

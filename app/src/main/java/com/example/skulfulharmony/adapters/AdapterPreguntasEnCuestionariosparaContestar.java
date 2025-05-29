@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -73,6 +74,7 @@ public class AdapterPreguntasEnCuestionariosparaContestar extends RecyclerView.A
             RadioButton radioButton = new RadioButton(context);
             radioButton.setText(pregunta.getRespuestas().get(i));
             radioButton.setId(i); // Usar el índice como ID
+            radioButton.setButtonTintList(ContextCompat.getColorStateList(holder.itemView.getContext(),R.color.radiobutton_tint));
             holder.rgOpciones.addView(radioButton);
         }
 
