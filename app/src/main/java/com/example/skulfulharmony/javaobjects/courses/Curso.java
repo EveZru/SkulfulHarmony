@@ -35,7 +35,7 @@ public class Curso implements Serializable {
     private Integer visitas;
     private Integer cantidadDescargas;
     private List<Integer> calificacionCursos;
-
+    private Double popularidad;
 
     //Constructores
 
@@ -91,10 +91,13 @@ public class Curso implements Serializable {
         this.fechaCreacionf = fechaCreacionf;
     }
 
+
+
+
     //Setters
-    public void setId(Integer id) {
-        this.idCurso = id;
-    }
+    public void setPopularidad(Double popularidad) {this.popularidad = popularidad;}
+
+    public void setId(Integer id) { this.idCurso = id; }
     public void setIdCurso(Integer idCurso) {
         this.idCurso = idCurso;
     }
@@ -142,6 +145,9 @@ public class Curso implements Serializable {
     }
 
     //Getters
+
+    public Double getPopularidad() { return popularidad; }
+
     public Integer getId() {
         return idCurso;
     }

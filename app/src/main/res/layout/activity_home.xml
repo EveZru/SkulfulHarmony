@@ -83,12 +83,10 @@
                 android:background="@color/gray2"/>
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/populares_top"
+                android:id="@+id/view_populares"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/gray1"
-                />
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:layout_width="match_parent"

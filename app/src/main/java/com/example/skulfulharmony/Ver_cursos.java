@@ -34,6 +34,8 @@ import com.example.skulfulharmony.javaobjects.courses.Clase;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,9 +44,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
+
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Date;
 import java.util.ArrayList;
@@ -199,6 +206,27 @@ public class Ver_cursos extends AppCompatActivity {
         });
 
        // SharedPreferences sharedPreferences=getsa
+
+        //---- contador de visitas-----
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                        String docId = doc.getId();
+
+                        db.collection("cursos").document(docId)
+                                .update("visitas", com.google.firebase.firestore.FieldValue.increment(1))
+                                .addOnSuccessListener(aVoid -> Log.d("VISITAS", "Visita incrementada"))
+                                .addOnFailureListener(e -> Log.w("VISITAS", "Error al incrementar visitas", e));
+                    } else {
+                        Log.w("VISITAS", "Curso no encontrado para incrementar visitas");
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("VISITAS", "Error buscando el curso", e));
 
 
     }
@@ -368,7 +396,11 @@ public class Ver_cursos extends AppCompatActivity {
             }
         }
     }
-    //---- contador de visitas-----
+
+
+
+
+
 
 
 }

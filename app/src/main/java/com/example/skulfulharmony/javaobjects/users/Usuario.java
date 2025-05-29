@@ -5,6 +5,7 @@ import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaInicio;
 
 import java.time.LocalTime;
@@ -26,6 +27,16 @@ public class Usuario implements Serializable {
     private String user;
     private String correo;
     private Map<String,String> instrumento;
+
+    public ArrayList<PreguntaCuestionario> getPreguntasRepaso() {
+        return preguntasRepaso;
+    }
+
+    public void setPreguntasRepaso(ArrayList<PreguntaCuestionario> preguntasRepaso) {
+        this.preguntasRepaso = preguntasRepaso;
+    }
+
+    private ArrayList<PreguntaCuestionario> preguntasRepaso;
 
     private String fotoPerfil;
 

@@ -75,6 +75,9 @@
             android:name=".creditos"
             android:exported="false" />
         <activity
+            android:name=".VerClaseComoCreador"
+            android:exported="false"/>
+        <activity
             android:name=".verterminos"
             android:exported="false" />
         <activity
