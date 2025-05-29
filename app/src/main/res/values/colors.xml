@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#020000</color>
+    <color name="black">#0E0E0E</color>
     <color name="white">#FFFFFF</color>
     <color name="gray1">#FA5B5B5B</color>
     <color name="gray2">#FA303030</color>
-    <color name ="rojo">#CA2121</color>
-    <color name ="rojo_oscuro">#731414</color>
+    <color name ="rojo">#CA2121</color><!--#CA2121-->
+    <color name ="rojo_oscuro">#731414</color> <!-- #731414-->
     <color name ="tinto">#491B0B</color>
     <color name ="verde">#0D7531</color>
     <color name ="azul">#0040FF</color>

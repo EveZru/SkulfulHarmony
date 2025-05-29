@@ -45,6 +45,7 @@
                 android:text="Tipo: "
                 android:maxLines="1"
                 android:ellipsize="end"
+                android:textStyle="bold"
                 />
 
             <TextView
@@ -80,6 +81,8 @@
             android:text="Cancelar"
             android:backgroundTint="@color/rojo_oscuro"
             android:layout_marginHorizontal="2dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
             />
         <Button
             android:id="@+id/btn_enviar_dialog_creardenuncia"
@@ -89,6 +92,8 @@
             android:text="  Enviar  "
             android:backgroundTint="@color/verde"
             android:layout_marginHorizontal="2dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
             />
     </LinearLayout>
 

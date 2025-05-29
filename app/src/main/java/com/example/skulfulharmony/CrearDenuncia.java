@@ -32,6 +32,8 @@ public class CrearDenuncia extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
     private int idCurso;
+    private int idClase;
+    private int idComentario;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,8 @@ public class CrearDenuncia extends AppCompatActivity {
                 firestore = FirebaseFirestore.getInstance();
                 // Obtener idCurso del intent
                 idCurso = getIntent().getIntExtra("idCurso", -1);
+                idClase = getIntent().getIntExtra("idClase", -1);
+                idComentario = getIntent().getIntExtra("idComentario", -1);
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 String usuario = user.getEmail();
@@ -110,9 +114,24 @@ public class CrearDenuncia extends AppCompatActivity {
                 }
 
                 // Crea el objeto denuncia
-                Denuncia denuncia = new Denuncia(usuario, tipoDenuncia, txtDenuncia,idCurso);
-                denuncia.setIdClase(null);
+                Denuncia denuncia = new Denuncia(usuario, tipoDenuncia, txtDenuncia, idCurso);
+                denuncia.setIdClase(idClase);
                 denuncia.setFecha_denuncia(Timestamp.now());
+                denuncia.setIdComentario(idComentario);
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                db.collection("denuncias")
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            int idDenuncia = queryDocumentSnapshots.size() + 1;
+                            denuncia.setIdDenuncia(idDenuncia);
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(CrearDenuncia.this, "Error al obtener el ID de la denuncia", Toast.LENGTH_SHORT).show();
+                        });
+
+
                 View dialogView = LayoutInflater.from(CrearDenuncia.this).inflate(R.layout.dialog_crear_denuncia, null);
 
                 // ✅ Buscar dentro del layout del diálogo, no en la actividad
@@ -143,11 +162,6 @@ public class CrearDenuncia extends AppCompatActivity {
 
                 alertDialog.show();
 
-
-                tipo_denuncia.setText("Tipo: " + tipoDenuncia);
-                denuncia_texto.setMovementMethod(new ScrollingMovementMethod());
-                denuncia_texto.setText("Contenido: \n" + txtDenuncia);
-                alertDialog.show();
 
             }//
         });

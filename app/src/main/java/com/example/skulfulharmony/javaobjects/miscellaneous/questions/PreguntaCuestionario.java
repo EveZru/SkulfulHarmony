@@ -7,6 +7,7 @@ import java.util.List;
 public class PreguntaCuestionario extends Pregunta implements Serializable {
 
     Integer respuestaCorrecta;
+    private Integer respuestaUsuario;
 
     public PreguntaCuestionario(String pregunta, List<String> respuestas, Integer respuestaCorrecta) {
         this.pregunta = pregunta;
@@ -43,4 +44,6 @@ public class PreguntaCuestionario extends Pregunta implements Serializable {
     public void setRespuestas(List<String> respuestas) {
         this.respuestas = respuestas;
     }
+    public Integer getRespuestaUsuario() { return respuestaUsuario; }
+    public void setRespuestaUsuario(Integer respuestaUsuario) { this.respuestaUsuario = respuestaUsuario; }
 }

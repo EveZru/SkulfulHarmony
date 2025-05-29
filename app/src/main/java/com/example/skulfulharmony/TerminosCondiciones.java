@@ -72,5 +72,6 @@ public class TerminosCondiciones extends AppCompatActivity {
         Intent intent = new Intent(TerminosCondiciones.this, IniciarSesion.class);
         startActivity(intent);
         finishAffinity(); // Cierra todas las actividades previas
+        super.onBackPressed();
     }
 }

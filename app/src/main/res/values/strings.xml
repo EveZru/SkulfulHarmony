@@ -24,9 +24,9 @@
 
     <!--homme leyendas-->
     <string name="buscar">Buscar</string>
-    <string name="leyenda_continua">Continua aprendiendo</string>
-    <string name="leyenda_recomendados">Te recomendamos</string>
-    <string name="leyenda_originales">Clases originales</string>
+    <string name="leyenda_continua">Continua aprendiendo:</string>
+    <string name="leyenda_recomendados">Te recomendamos:</string>
+    <string name="leyenda_originales">Clases originales:</string>
     <string name="google_login">Google</string>
     <string name="toggle_password_visibility">ver\n</string>
     <!--configuracion-->

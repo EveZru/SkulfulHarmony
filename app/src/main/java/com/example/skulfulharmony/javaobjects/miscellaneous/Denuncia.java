@@ -9,8 +9,10 @@ public class Denuncia {
     private String tipo;
     private String texto;
     private Timestamp fecha;
+    private Integer idDenuncia;
     private Integer idCurso;
     private Integer idClase;
+    private Integer idComentario;
 
     // Constructor sin argumentos
     public Denuncia() {
@@ -55,6 +57,14 @@ public class Denuncia {
         this.fecha = fecha_denuncia;
     }
 
+    public Integer getIdDenuncia() {
+        return idDenuncia;
+    }
+
+    public void setIdDenuncia(Integer idDenuncia) {
+        this.idDenuncia = idDenuncia;
+    }
+
     public Integer getIdCurso() {
         return idCurso;
     }
@@ -71,4 +81,11 @@ public class Denuncia {
         this.idClase = idClase;
     }
 
+    public Integer getIdComentario() {
+        return idComentario;
+    }
+
+    public void setIdComentario(Integer idComentario) {
+        this.idComentario = idComentario;
+    }
 }
