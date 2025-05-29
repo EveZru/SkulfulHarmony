@@ -46,29 +46,24 @@ public class AdapterAdminVerCursosDenunciados extends RecyclerView.Adapter<Adapt
         Denuncia denuncia = denuncias.get(position);
         holder.txt_holder_denuncias_curso_fecha.setText(denuncia.getFecha_denuncia().toDate().toString());
         holder.txt_holder_denuncias_curso_tipo.setText(denuncia.getTipo_denuncia());
+        int color;
         switch (denuncia.getTipo_denuncia()) {
             case "Contenido ilegal":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.rojo_oscuro));
+                color = R.color.rojo_oscuro;
                 break;
             case "Suplantación de identidad":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.rojo));
-                break;
             case "Contenido inapropiado":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.rojo));
+                color = R.color.rojo;
                 break;
             case "Spam":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.cafe));
-                break;
             case "Abuso de plataforma":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.cafe));
-                break;
-            case "Violación de normas de la plataforma":
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.verde));
+                color = R.color.cafe;
                 break;
             default:
-                holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(R.color.verde));
+                color = R.color.verde;
                 break;
         }
+        holder.card_holder_denuncias_curso.setCardBackgroundColor(holder.itemView.getResources().getColor(color));
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("denuncias")
                 .whereEqualTo("idCurso", denuncia.getIdCurso())

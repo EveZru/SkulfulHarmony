@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.adapters.AdapterAdminVerClasesDenunciadas;
+import com.example.skulfulharmony.adapters.AdapterAdminVerComentarioComoAdministrador;
 import com.example.skulfulharmony.adapters.AdapterAdminVerCursosDenunciados;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Denuncia;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -64,7 +65,7 @@ public class admi_denuncias extends AppCompatActivity {
                         recycler_demandas.setAdapter(new AdapterAdminVerCursosDenunciados(denunciasCursos));
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("Error", "Error al obtener denuncias de cursos", e);
+                        Log.e("Error", "Error al obtener denuncias de cursos" + e, e);
                     });
         });
 
@@ -89,7 +90,31 @@ public class admi_denuncias extends AppCompatActivity {
                        }
                     })
                     .addOnFailureListener( e -> {
-                        Log.e("Error", "Error al obtener denuncias de clases", e);
+                        Log.e("Error", "Error al obtener denuncias de clases" + e, e);
+                    });
+        });
+
+        btn_vercomentarios_verdenuncias.setOnClickListener(view -> {
+            List<Denuncia> denunciasComentarios = new ArrayList<>();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            db.collection("denuncias")
+                    .whereNotEqualTo("idComentario",-1)
+                    .get()
+                    .addOnSuccessListener(QueryDocumentSnapshot->{
+                        if(!QueryDocumentSnapshot.isEmpty()){
+                            for (DocumentSnapshot document : QueryDocumentSnapshot ){
+                                Denuncia denuncia = document.toObject(Denuncia.class);
+                                if(denuncia != null){
+                                    denunciasComentarios.add(denuncia);
+                                }
+                            }
+                            recycler_demandas.setLayoutManager(new LinearLayoutManager( admi_denuncias.this, LinearLayoutManager.VERTICAL, false));
+                            recycler_demandas.setAdapter(new AdapterAdminVerComentarioComoAdministrador(denunciasComentarios));
+                        }
+                    })
+                    .addOnFailureListener(e->{
+                        Log.e("Error", "Error al obtener denuncias de Comentarios" + e ,e);
                     });
         });
 

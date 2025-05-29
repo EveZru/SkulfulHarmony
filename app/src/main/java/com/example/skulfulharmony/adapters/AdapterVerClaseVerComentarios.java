@@ -2,6 +2,8 @@ package com.example.skulfulharmony.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.text.method.ScrollingMovementMethod;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,6 +19,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.skulfulharmony.CrearDenuncia;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,6 +123,16 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                         txt_comentario_usuario.setText("Usuario desconocido");
                     });
 
+            txt_comentario_reportar.setOnClickListener( view -> {
+                if(user != null){
+                    Intent intent = new Intent(itemView.getContext(), CrearDenuncia.class);
+                    intent.putExtra("idCurso", idCurso);
+                    intent.putExtra("idClase", idClase);
+                    intent.putExtra("idComentario", comentario.getIdComentario());
+                    itemView.getContext().startActivity(intent);
+                }
+            });
+
             img_comentario_megusta.setOnClickListener(view -> {
                 if (user != null) {
                     ArrayList<String> reacciones = comentario.getReacciones() == null
@@ -158,7 +171,7 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
 
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
-                public void onLongPress(MotionEvent e) {
+                public boolean onSingleTapUp(MotionEvent e) {
                     if (user != null && comentario.getUsuario().equals(user.getEmail())) {
                         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
                         EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
@@ -196,7 +209,43 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
 
                         dialog.show();
                     }
+                    return true;
                 }
+
+                @Override
+                public void onLongPress(@NonNull MotionEvent e) {
+                    if(user != null){
+                        View dialogView = LayoutInflater.from(itemView.getContext()).inflate(R.layout.dialog_preguntar_denunciarcomentario,null);
+                        TextView usuario = dialogView.findViewById(R.id.txt_verusario_denunciar_comentario);
+                        TextView mensajecom = dialogView.findViewById(R.id.txt_vermensaje_denunciar_comentario);
+                        Button cancelardialog = dialogView.findViewById(R.id.btn_cancelar_dialog_denunciar_comentario);
+                        Button aceptardialog = dialogView.findViewById(R.id.btn_enviar_dialog_denunciar_comentario);
+
+                        mensajecom.setMovementMethod(new ScrollingMovementMethod());
+                        usuario.setText(comentario.getUsuario());
+                        mensajecom.setText(comentario.getTexto());
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(itemView.getContext())
+                                .setView(dialogView)
+                                .create();
+
+
+                        cancelardialog.setOnClickListener( view -> {
+                            alertDialog.dismiss();
+                        });
+
+                        aceptardialog.setOnClickListener( view -> {
+                            Intent intent = new Intent(itemView.getContext(), CrearDenuncia.class);
+                            intent.putExtra("idCurso", idCurso);
+                            intent.putExtra("idClase", idClase);
+                            intent.putExtra("idComentario", comentario.getIdComentario());
+                            itemView.getContext().startActivity(intent);
+                            alertDialog.dismiss();
+                        });
+                        alertDialog.show();
+                    }
+                }
+
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
                     if (user != null) {

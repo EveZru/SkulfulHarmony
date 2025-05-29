@@ -2,6 +2,7 @@ package com.example.skulfulharmony.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import androidx.core.view.GestureDetectorCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.skulfulharmony.CrearDenuncia;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.google.firebase.auth.FirebaseAuth;
@@ -154,8 +156,19 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
             });
             // GESTURES: simple tap = editar, double tap = me gusta
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
+
                 @Override
-                public void onLongPress(MotionEvent e) {
+                public void onLongPress(@NonNull MotionEvent e) {
+                    if(user != null){
+                        Intent intent = new Intent(itemView.getContext(), CrearDenuncia.class);
+                        intent.putExtra("idCurso", idCurso);
+                        intent.putExtra("idComentario", comentario.getIdComentario());
+                        itemView.getContext().startActivity(intent);
+                    }
+                }
+
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
                     if (user != null && comentario.getUsuario().equals(user.getEmail())) {
                         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
                         EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
@@ -190,7 +203,7 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                         });
                         dialog.show();
                     }
-
+                    return true;
                 }
 
                 @Override

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Ver_clases extends AppCompatActivity {
+    private Toolbar toolbar;
     private TextView tvPuntuacion, tvInfo, tvTitulo;
     private Button btnCalificar;
     private EditText etcomentario;
@@ -195,24 +197,16 @@ public class Ver_clases extends AppCompatActivity {
                             AdapterVerClaseVerComentarios adapterVerClaseVerComentarios = new AdapterVerClaseVerComentarios(clase.getComentarios(), clase.getIdCurso(), clase.getIdClase());
                             verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
                             verComentarios.setAdapter(adapterVerClaseVerComentarios);
+
+
+                            //Calificar preguntas
+
                             btnCalificar.setOnClickListener(v -> {
                                 cantidadRespuestasCorrectas = 0;
                                for(PreguntaCuestionario pregunta : clase.getPreguntas()){
-                                   if(
-                                           pregunta
-                                                   .getRespuestaCorrecta()
-                                                    .equals(
-                                                            adapterPreguntasEnVerClase.
-                                                                getRespuestas()
-                                                                .get(
-                                                                       clase.getPreguntas()
-                                                                            .indexOf(pregunta)
-                                                                )
-                                                    )
-                                   ) {
+                                   if(pregunta.getRespuestaCorrecta().equals(adapterPreguntasEnVerClase.getRespuestas().get(clase.getPreguntas().indexOf(pregunta)))) {
                                        cantidadRespuestasCorrectas++;
                                    }
-
                                    //List<PreguntaCuestionario> preguntasGuardadas;
                                    List<PreguntaCuestionario> preguntasIncorrectasDeEstaClase = new ArrayList<>();
                                    if (jsonGuardado != null) {
@@ -226,7 +220,6 @@ public class Ver_clases extends AppCompatActivity {
 
                                        //  preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
                                    } else {
-
                                        preguntasIncorrectasDeEstaClase=new ArrayList<>();
                                    }
                                    for (PreguntaCuestionario  preguntaIndividual : clase.getPreguntas()) {// aqui marca error en pregunta
@@ -234,14 +227,9 @@ public class Ver_clases extends AppCompatActivity {
                                            preguntasIncorrectasDeEstaClase.add(pregunta);
                                        }
                                    }
-
-// Guardar la lista actualizada
+                                   // Guardar la lista actualizada
                                    String jsonNuevo = gson.toJson(preguntasIncorrectasDeEstaClase);
                                    prefs.edit().putString("preguntas_incorrectas", jsonNuevo).apply();
-
-
-
-
                                }
 
                                 Dialog dialog = new Dialog(Ver_clases.this);
@@ -263,9 +251,7 @@ public class Ver_clases extends AppCompatActivity {
                                 puntuacion.setText(cantidadRespuestasCorrectas + "/" + total);
 
                                 //Aquí añadir la logica para guardar la calificacion del usuario en el algoritmo de mejora
-// aqui se guardan las preguntas incorrectas
-
-
+                                // aqui se guardan las preguntas incorrectas
 
                                 aceptar.setOnClickListener(v1 -> {
                                     dialog.dismiss();
@@ -281,7 +267,15 @@ public class Ver_clases extends AppCompatActivity {
                     Toast.makeText(this, "Error al obtener la clase", Toast.LENGTH_SHORT).show();
                     finish();
                 });
-
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(Ver_clases.this, CrearDenuncia.class);
+                intent1.putExtra("idCurso", idCurso);
+                intent1.putExtra("idClase", idClase);
+                startActivity(intent1);
+            }
+        });
 
         etcomentario.setMovementMethod(new ScrollingMovementMethod());
 
