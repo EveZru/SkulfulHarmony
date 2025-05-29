@@ -30,9 +30,6 @@
             android:name=".VerCursoComoAdministrador"
             android:exported="false" />
         <activity
-            android:name=".perfil_mostrar"
-            android:exported="false" />
-        <activity
             android:name=".PreguntasIncorrectas"
             android:exported="false" />
         <activity
