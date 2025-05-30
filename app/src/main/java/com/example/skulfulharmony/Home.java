@@ -66,7 +66,7 @@ public class Home extends AppCompatActivity {
     private RecyclerView rv_homevercursos, rv_homehistorial;
     private AdapterHomeVerCursos adapterHomeVerCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
-    private ViewPager2 viewPager;
+    //private ViewPager2 viewPager;
 
 
     @Override
@@ -378,15 +378,15 @@ public class Home extends AppCompatActivity {
         AdapterPopulares adapterPopulares;
         Handler handler = new Handler();
         adapterPopulares = new AdapterPopulares(listaCursos);
-        viewPager = findViewById(R.id.view_populares);
-        viewPager.setAdapter(adapterPopulares);
+//        viewPager = findViewById(R.id.view_populares);
+//        viewPager.setAdapter(adapterPopulares);
 
         final int[] currentIndex = {0};
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if (adapterPopulares.getItemCount() == 0) return;
-                viewPager.setCurrentItem(currentIndex[0], true);
+                //viewPager.setCurrentItem(currentIndex[0], true);
                 currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
                 handler.postDelayed(this, 3000);
             }

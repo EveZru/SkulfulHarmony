@@ -16,13 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.adapters.AdapterCursosUsuario;
+import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -76,7 +79,7 @@ public class PerfilMostrar extends AppCompatActivity {
         tvSeguidos = tv_Seguido;
         btnSeguirUsuario = findViewById(R.id.btnSeguirUsuario);
         rvCursosUsuario = findViewById(R.id.rvCursosUsuario);
-        BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
+
 
         // Intent puede enviar usuario completo o solo ID, aquí comprobamos
         usuarioPerfil = (Usuario) getIntent().getSerializableExtra("usuario");
@@ -130,35 +133,6 @@ public class PerfilMostrar extends AppCompatActivity {
 
         btnCompartirPerfil.setOnClickListener(v -> compartirPerfil());
 
-
-//        if (bottomNavigationView1 != null) {
-//            // Configurar el listener para los ítems seleccionados
-//            bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
-//                int itemId = item.getItemId();
-//                if (itemId == R.id.it_homme) {
-//                    // Acción para Home
-//                    startActivity(new Intent(PerfilMostrar.this, Home.class));
-//                    return true;
-//                } else if (itemId == R.id.it_new) {
-//                    // Navegar a la actividad para crear un curso
-//                    startActivity(new Intent(PerfilMostrar.this, VerCursosCreados.class));
-//                    return true;
-//                } else if (itemId == R.id.it_seguidos) {
-//                    // Navegar a la actividad para ver la Biblioteca
-//                    startActivity(new Intent(PerfilMostrar.this, Biblioteca.class));
-//                    return true;
-//                } else if (itemId == R.id.it_perfil) {
-//                    // Navegar a la actividad para buscar perfiles
-//                    startActivity(new Intent(PerfilMostrar.this, Perfil.class));
-//                    return true;
-//                }
-//                return false;
-//            });
-//            // Establecer el ítem seleccionado al inicio (si es necesario)
-//            bottomNavigationView1.setSelectedItemId(R.id.it_homme);
-//        } else {
-//            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
-//        }
     }
 
     private void mostrarDatosUsuarioCompleto(Usuario usuario) {
@@ -273,9 +247,11 @@ public class PerfilMostrar extends AppCompatActivity {
                         cursos.add(curso);
                     }
                     Log.d("PerfilMostrar", "Cursos encontrados: " + cursos.size());
-                    AdapterCursosUsuario adapter = new AdapterCursosUsuario(this, cursos);
+
+                    AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursos, this);
                     rvCursosUsuario.setAdapter(adapter);
                     rvCursosUsuario.setVisibility(View.VISIBLE);
+                    rvCursosUsuario.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)); // Si quieres horizontal
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
@@ -283,20 +259,57 @@ public class PerfilMostrar extends AppCompatActivity {
                 });
     }
 
+
     private void verificarSiSigue(String correoActual, String correoPerfilBuscado) {
-        db.collection("usuarios").document(correoActual)
-                .collection("seguidosname")
-                .document(correoPerfilBuscado) // Si el ID del documento es el correo
+        db.collection("usuarios")
+                .whereEqualTo("correo", correoActual)
+                .limit(1)
                 .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        siguiendo = task.getResult().exists();
-                        Log.d("DEBUG", "Documento existe? " + siguiendo);
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot docUsuario = querySnapshot.getDocuments().get(0);
+
+                        // Opción 1: Si usas lista de seguidos en el documento
+                        if (docUsuario.contains("seguidosname")) {
+                            List<Map<String, String>> seguidos = (List<Map<String, String>>) docUsuario.get("seguidosname");
+                            siguiendo = false;
+
+                            if (seguidos != null) {
+                                for (Map<String, String> seguido : seguidos) {
+                                    if (correoPerfilBuscado.equals(seguido.get("correo"))) {
+                                        siguiendo = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        // Opción 2: Si usas subcolección (mejor para muchos seguidos)
+                        else {
+                            docUsuario.getReference()
+                                    .collection("seguidosname")
+                                    .document(correoPerfilBuscado)
+                                    .get()
+                                    .addOnSuccessListener(seguidoDoc -> {
+                                        siguiendo = seguidoDoc.exists();
+                                        actualizarBotonSeguir();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        siguiendo = false;
+                                        actualizarBotonSeguir();
+                                    });
+                            return;
+                        }
+
+                        actualizarBotonSeguir();
                     } else {
-                        Log.e("ERROR", "Error al verificar", task.getException());
                         siguiendo = false;
+                        actualizarBotonSeguir();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    siguiendo = false;
                     actualizarBotonSeguir();
+                    Log.e("PerfilMostrar", "Error al verificar seguimiento", e);
                 });
     }
 
@@ -380,29 +393,87 @@ public class PerfilMostrar extends AppCompatActivity {
                 });
     }
 
-
     private void dejarDeSeguir(String correoActual, String correoPerfil) {
-        DocumentReference refPerfil = db.collection("usuarios").document(correoPerfil);
-        DocumentReference refActual = db.collection("usuarios").document(correoActual);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "No autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        WriteBatch batch = db.batch();
-        batch.update(refPerfil, "seguidores", FieldValue.increment(-1));
-        batch.update(refActual, "seguidos", FieldValue.increment(-1));
+        if (!user.getEmail().equalsIgnoreCase(correoActual)) {
+            Toast.makeText(this, "No tienes permisos", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        batch.commit()
-                .addOnSuccessListener(aVoid -> {
-                    db.collection("usuarios").document(correoPerfil)
-                            .collection("seguidoresname").document(correoActual)
-                            .delete();
+        // Busca documento perfil a dejar de seguir
+        db.collection("usuarios")
+                .whereEqualTo("correo", correoPerfil)
+                .get()
+                .addOnSuccessListener(queryPerfil -> {
+                    if (queryPerfil.isEmpty()) {
+                        Toast.makeText(this, "No se encontró el perfil a dejar de seguir", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    DocumentSnapshot docPerfil = queryPerfil.getDocuments().get(0);
+                    String idDocPerfil = docPerfil.getId();
+                    String nombrePerfil = docPerfil.getString("nombre");
 
-                    db.collection("usuarios").document(correoActual)
-                            .collection("seguidosname").document(correoPerfil)
-                            .delete();
+                    // Busca documento usuario actual
+                    db.collection("usuarios")
+                            .whereEqualTo("correo", correoActual)
+                            .get()
+                            .addOnSuccessListener(queryActual -> {
+                                if (queryActual.isEmpty()) {
+                                    Toast.makeText(this, "No se encontró tu usuario", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                DocumentSnapshot docActual = queryActual.getDocuments().get(0);
+                                String idDocActual = docActual.getId();
+                                String nombreActual = docActual.getString("nombre");
 
-                    siguiendo = false;
-                    actualizarBotonSeguir();
-                    Toast.makeText(this, "Has dejado de seguir a este usuario", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> Toast.makeText(this, "Error al dejar de seguir", Toast.LENGTH_SHORT).show());
+                                Map<String, Object> seguidorData = new HashMap<>();
+                                seguidorData.put("nombre", nombreActual != null ? nombreActual : correoActual);
+                                seguidorData.put("correo", correoActual);
+
+                                Map<String, Object> seguidoData = new HashMap<>();
+                                seguidoData.put("nombre", nombrePerfil != null ? nombrePerfil : correoPerfil);
+                                seguidoData.put("correo", correoPerfil);
+
+                                DocumentReference refPerfil = db.collection("usuarios").document(idDocPerfil);
+                                DocumentReference refActual = db.collection("usuarios").document(idDocActual);
+
+                                WriteBatch batch = db.batch();
+
+                                batch.update(refPerfil, "seguidoresname", FieldValue.arrayRemove(seguidorData));
+                                batch.update(refActual, "seguidosname", FieldValue.arrayRemove(seguidoData));
+
+                                batch.update(refPerfil, "seguidores", FieldValue.increment(-1));
+                                batch.update(refActual, "seguidos", FieldValue.increment(-1));
+
+                                batch.commit().addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(this, "Dejaste de seguir al usuario", Toast.LENGTH_SHORT).show();
+
+                                        // Aquí reiniciamos la actividad para refrescar la vista
+                                        Intent intent = getIntent();
+                                        finish();
+                                        startActivity(intent);
+
+                                    } else {
+                                        Log.e("FirestoreError", "Error al dejar de seguir: ", task.getException());
+                                        Toast.makeText(this, "Error al dejar de seguir", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error buscando tu usuario: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e("FirestoreError", "Error buscando usuario actual", e);
+                            });
+
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error buscando perfil a dejar de seguir: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("FirestoreError", "Error buscando perfil", e);
+                });
     }
+
 }

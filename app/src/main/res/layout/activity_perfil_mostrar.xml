@@ -147,14 +147,4 @@
         android:paddingEnd="16dp"
         android:clipToPadding="false" />
 
-    <!-- Barra de navegación inferior siempre fija abajo -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/barra_navegacion1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:itemBackground="@color/black"
-        app:itemIconTint="@color/rojo"
-        app:itemTextColor="@color/gray1"
-        app:menu="@menu/barra_navegacionprincipal" />
-
 </LinearLayout>
