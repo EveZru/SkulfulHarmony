@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,8 +19,11 @@ import com.example.skulfulharmony.adapters.AdapterBusquedaGeneral;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +33,7 @@ import java.util.Set;
 
 public class Busqueda extends AppCompatActivity {
 
+    private FirebaseFirestore db;
     private EditText et_buscar;
     private RecyclerView rv_resultados;
     private List<Curso> cursos = new ArrayList<>();
@@ -54,6 +59,8 @@ public class Busqueda extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_busqueda);
+
+        db = FirebaseFirestore.getInstance();
 
         et_buscar = findViewById(R.id.et_parabuscar);
         rv_resultados = findViewById(R.id.rv_resultadosbusqueda);
@@ -255,81 +262,71 @@ public class Busqueda extends AppCompatActivity {
     }
 
     private void aplicarFiltros() {
-        List<Object> cursosFiltrados = new ArrayList<>();
+        db.collection("cursos")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Object> resultados = new ArrayList<>();
 
-        for (Curso curso : cursos) {
-            boolean coincide = true;
+                    for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
+                        Curso curso = doc.toObject(Curso.class);
+                        if (curso != null) {
+                            boolean cumpleFiltro = true;
 
-            Map<String, String> generoCurso = curso.getGenero();
-            Map<String, String> instrumentoCurso = curso.getInstrumento();
-            Map<String, String> dificultadCurso = curso.getDificultad();
+                            if (filtroGenero != null && !filtroGenero.isEmpty()) {
+                                Map<String, Object> mapaGenero = (Map<String, Object>) doc.get("genero");
+                                if (mapaGenero == null || !mapaGenero.containsKey(filtroGenero)) {
+                                    cumpleFiltro = false;
+                                }
+                            }
 
-            Log.d("FiltroDebug", "Curso: " + curso.getTitulo());
-            Log.d("FiltroDebug", "  Claves género: " + (generoCurso != null ? generoCurso.keySet().toString() : "null"));
-            Log.d("FiltroDebug", "  Claves instrumento: " + (instrumentoCurso != null ? instrumentoCurso.keySet().toString() : "null"));
-            Log.d("FiltroDebug", "  Claves dificultad: " + (dificultadCurso != null ? dificultadCurso.keySet().toString() : "null"));
+                            if (cumpleFiltro && filtroInstrumento != null && !filtroInstrumento.isEmpty()) {
+                                Map<String, Object> mapaInstrumento = (Map<String, Object>) doc.get("instrumento");
+                                if (mapaInstrumento == null || !mapaInstrumento.containsKey(filtroInstrumento)) {
+                                    cumpleFiltro = false;
+                                }
+                            }
 
-            if (filtroGenero != null) {
-                if (generoCurso == null || generoCurso.isEmpty()) {
-                    coincide = false;
-                } else {
-                    boolean found = generoCurso.values().stream()
-                            .filter(v -> v != null)
-                            .map(v -> v.trim().toLowerCase())
-                            .anyMatch(v -> v.equals(filtroGenero.trim().toLowerCase()));
-                    if (!found) coincide = false;
-                }
-            }
+                            if (cumpleFiltro && filtroDificultad != null && !filtroDificultad.isEmpty()) {
+                                Map<String, Object> mapaDificultad = (Map<String, Object>) doc.get("dificultad");
+                                if (mapaDificultad == null || !mapaDificultad.containsKey(filtroDificultad)) {
+                                    cumpleFiltro = false;
+                                }
+                            }
 
-            if (filtroInstrumento != null) {
-                if (instrumentoCurso == null || instrumentoCurso.isEmpty()) {
-                    coincide = false;
-                } else {
-                    boolean found = instrumentoCurso.values().stream()
-                            .filter(v -> v != null)
-                            .map(v -> v.trim().toLowerCase())
-                            .anyMatch(v -> v.equals(filtroInstrumento.trim().toLowerCase()));
-                    if (!found) coincide = false;
-                }
-            }
+                            if (cumpleFiltro) {
+                                curso.setFirestoreId(doc.getId());  // asigna el id Firestore aquí
+                                resultados.add(curso);
+                            }
+                        }
+                    }
 
-            if (filtroDificultad != null) {
-                if (dificultadCurso == null || dificultadCurso.isEmpty()) {
-                    coincide = false;
-                } else {
-                    boolean found = dificultadCurso.values().stream()
-                            .filter(v -> v != null)
-                            .map(v -> v.trim().toLowerCase())
-                            .anyMatch(v -> v.equals(filtroDificultad.trim().toLowerCase()));
-                    if (!found) coincide = false;
-                }
-            }
 
-            if (coincide) {
-                cursosFiltrados.add(curso);
-            }
-        }
 
-        AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(cursosFiltrados, new AdapterBusquedaGeneral.OnItemClickListener() {
-            @Override
-            public void onCursoClick(Curso curso) {
-                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
-                intent.putExtra("idCurso", curso.getId());
-                startActivity(intent);
-            }
+                    if (resultados.isEmpty()) {
+                        Toast.makeText(Busqueda.this,
+                                "No se encontraron cursos con los filtros seleccionados",
+                                Toast.LENGTH_SHORT).show();
+                    }
 
-            @Override
-            public void onUsuarioClick(Usuario usuario) {}
+                    AdapterBusquedaGeneral.OnItemClickListener listener = new AdapterBusquedaGeneral.OnItemClickListener() {
+                        @Override
+                        public void onCursoClick(Curso curso) {
+                            Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+                            intent.putExtra("idCurso", curso.getId());
+                            startActivity(intent);
+                        }
+                        @Override public void onUsuarioClick(Usuario usuario) {}
+                        @Override public void onClaseClick(Clase clase) {}
+                    };
 
-            @Override
-            public void onClaseClick(Clase clase) {}
-        });
-
-        rv_resultados.setAdapter(adapter);
-
-        if (cursosFiltrados.isEmpty()) {
-            Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados.", Toast.LENGTH_SHORT).show();
-        }
+                    rv_resultados.setAdapter(new AdapterBusquedaGeneral(resultados, listener));
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(Busqueda.this,
+                            "Error al buscar cursos: " + e.getLocalizedMessage(),
+                            Toast.LENGTH_LONG).show();
+                    Log.e("Busqueda", "Error al buscar cursos", e);
+                });
     }
 
 }
