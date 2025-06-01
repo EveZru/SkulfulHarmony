@@ -58,6 +58,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView; // Bar
 // 🎨 Compatibilidad
 import androidx.appcompat.app.AppCompatActivity; // Actividad compatible
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import android.graphics.Color;
+
 public class Perfil extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -65,18 +81,19 @@ public class Perfil extends AppCompatActivity {
 
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
-    private Button btnEditarPerfil, btnCerrarSesion, btnEliminarCuenta, btnVerTiempoUsuario, btnVerVideoPrueba,btn_preguntas_incorrectas;
+    private Button btnVerVideoPrueba,btn_preguntas_incorrectas;
     private ImageView btn_gotoconfiguracion ;
-
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId;
     private static final String ACCESS_TOKEN = "sl.u.AFqeDvp_JKR9GLx7kywtI0eUGP8JyMZ2irluDz2eHqc4at1DctebmYJRuAo_UW-P-sIVwg1zeG-XmMcgnqwkYIZ7hd1u3XkRZZNVEUEMv_OJrquA3kyeqMwdyZBc0xq-dr1LLsORke3HkNvji32DjYFi57ggFwfTonvCKsOnuyTY-vfEl2z-6EfpyYfoAtIFTt3AbbUlAdk48l9jtQnutAiXpOnPkZtt_SO0S_gRiiu3pnSPH1aCGKiRqWGb6uax_hCgeVqF4d187dVkOm9V3YMw5NOrr0Ir8WROrNNrTL0JK92Cb-XMnjYlSPRNelOXjMpHOyCxrg0LGK8IN6K8GoTl8JoLN1-GdfdMaOpdf-fj4VzagzOxRGhFzf7LR0ILiKxYMb-A4oO80Ms0s2ellH443X_lG1wB9lW_V79m6LFo9jT7ZhezxXedGntqsDUcQmN5sxxAWFSAhZUvMrUP-UaQEeWGf6vYGzMyXhF4UhpIpSCCFCasVT95ACuoqJY1Khww2D0E1KJ1gwr5OpZwI_J3Uab0o88nUqKfP7RLbWzSIyY57YVXaGaNvOs02b0BuPyy0hVku5E5DqksytSJkGp4-e5tIJWDWgGardM5XhG1F_V4HS2UnzEb37slvZQ9SB1rdIqNvb8II7HFyzuzPGZWMUDP2mcpodGEW81L8iw9bQBAMOhdehb2xf5jZrjzHz0TzImHChOxHbCdqxQtcj46cd3AYHZ52ENIrXFbRtrsFsCIXHYb35SYXiEDo5VaCQzKoCTzCpJdVsUH3xWmOJyWehwTQdkUAjraBkZnQKJPORDVLo7ISHhLfwdIdrVQQn23jVgzlHPeUN3KtZthYZlyjCrVj-ILsrvUhyZfgJk8stuVjJ4tlv1gOc8XjbLsOiJX_DUIVYVmv0FeISduwTQv5WRk5GxWqxmE-UpM5Nq1rTAWslt4d4NAAurnM6oszOehtU3rltsiP8ZHZsKLYDPAh3jYUYTVSyjqXeqxQjhPR6NWl-teo68mApW1hw095WEqLNns4jCwhC6W2bb5_-uK_t3UlTC2crTgnkRGZVxtrmP65iOAIXG0_37pUqSsZDTTzpNAMAs1jBEHq2rxYFcAsmeAOV9-8nKlkbS0lZyDMRuXaG7pv0Em-pvSqUZXo_6PQj_8LH3DOFdTISznVLBBsq1F70JZSAXmw6sFF5-s_Pr9ty8U_zPg_KRiRg-meJ2hN50OXg-qjSsP2DILwl4tOF94uVyjwsA_z2yqtrdosTCdY0xtadNAROzV_pI89LkctL_AB7sbrFLNuYzl0hR_krLLmJvfGhqiJlwx_7oLqzmmrIyfZslilUiPWtcu8y4LxRh1ZWM2RvuZr6XNMzjt9a2wLNBfwQHwMfMPMP9M4R6wyeRWuUCu4zdpRPRN3CR0mCqLlgatMAx_ZKqMEAI-nsPBU5wKUIeSxa-G4YHiCw"; // Coloca tu token de Dropbox aquí
+    private LineChart chartPracticaSemanal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil); // Asegúrate de que el layout esté correctamente configurado
+
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -114,15 +131,12 @@ public class Perfil extends AppCompatActivity {
 
         // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
-        //btnEditarPerfil.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EditarPerfil.class)));
-        //btnCerrarSesion.setOnClickListener(v -> startActivity(new Intent(Perfil.this, CerrarSesion.class)));
-        //btnEliminarCuenta.setOnClickListener(v -> startActivity(new Intent(Perfil.this, EliminarCuenta.class)));
-        //btnVerTiempoUsuario.setOnClickListener(v -> startActivity(new Intent(Perfil.this, vertiempousuario.class)));
         btnVerVideoPrueba.setOnClickListener(v -> startActivity(new Intent(Perfil.this, videos.class)));
 
         // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
+        chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
 
         if (bottomNavigationView1 != null) {
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -182,33 +196,45 @@ public class Perfil extends AppCompatActivity {
     private void cargarDatosUsuario() {
         if (userId == null) return;
 
-        // Obtener los datos del usuario desde Firestore
         DocumentReference docRef = db.collection("usuarios").document(userId);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Cargar los datos del usuario en los TextViews
+                // Cargar datos básicos
                 tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
                 tv_correo.setText(documentSnapshot.getString("correo"));
                 tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
-                tv_No_Cursos.setText("Cursos Creados: " + documentSnapshot.getLong("cursos"));
 
-                // Cargar seguidores y seguidos
+                Long cursos = documentSnapshot.getLong("cursos");
+                tv_No_Cursos.setText("Cursos Creados: " + (cursos != null ? cursos : 0));
 
-                long seguidores = documentSnapshot.getLong("seguidores");
-                long seguidos = documentSnapshot.getLong("seguidos");
+                Long seguidores = documentSnapshot.getLong("seguidores");
+                Long seguidos = documentSnapshot.getLong("seguidos");
+                tv_Seguidores.setText("Seguidores: " + (seguidores != null ? seguidores : 0));
+                tv_Seguido.setText("Seguidos: " + (seguidos != null ? seguidos : 0));
 
-                tv_Seguidores.setText("Seguidores: " + seguidores);
-                tv_Seguido.setText("Seguidos: " + seguidos);
-
-                // Cargar la foto de perfil desde la URL almacenada en Firestore
                 String fotoUrl = documentSnapshot.getString("fotoPerfil");
                 if (fotoUrl != null && !fotoUrl.isEmpty()) {
-                    Glide.with(this)
-                            .load(fotoUrl)
-                            .into(ivProfilePicture); // Se mantiene la foto incluso después de cerrar y abrir la app
+                    Glide.with(this).load(fotoUrl).into(ivProfilePicture);
+                }
+
+                // Procesar tiempos diarios para gráfica
+                Map<String, Object> datos = documentSnapshot.getData();
+                if (datos != null) {
+                    Map<String, Integer> tiemposPorDia = new HashMap<>();
+                    for (String key : datos.keySet()) {
+                        if (key.startsWith("tiempo_")) {
+                            Object val = datos.get(key);
+                            if (val instanceof Number) {
+                                tiemposPorDia.put(key.substring(7), ((Number) val).intValue());
+                            }
+                        }
+                    }
+
+                    Map<Integer, Integer> tiemposPorSemana = agruparPorSemana(tiemposPorDia);
+                    cargarGraficaPractica(tiemposPorSemana);
                 }
             } else {
-                // Si el documento no existe, crea uno con valores predeterminados
+                // Crear perfil nuevo con valores predeterminados
                 Map<String, Object> userData = new HashMap<>();
                 userData.put("nombre", "Usuario");
                 userData.put("correo", FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -223,6 +249,71 @@ public class Perfil extends AppCompatActivity {
             }
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
     }
+
+    private Map<Integer, Integer> agruparPorSemana(Map<String, Integer> tiemposPorDia) {
+        Map<Integer, Integer> tiemposPorSemana = new HashMap<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+
+        for (String fechaStr : tiemposPorDia.keySet()) {
+            try {
+                Date fecha = sdf.parse(fechaStr);
+                cal.setTime(fecha);
+                int semana = cal.get(Calendar.WEEK_OF_YEAR);
+                int tiempo = tiemposPorDia.get(fechaStr);
+
+                tiemposPorSemana.put(semana, tiemposPorSemana.getOrDefault(semana, 0) + tiempo);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return tiemposPorSemana;
+    }
+
+    private void cargarGraficaPractica(Map<Integer, Integer> tiemposPorSemana) {
+        List<Entry> entries = new ArrayList<>();
+        List<Integer> semanasOrdenadas = new ArrayList<>(tiemposPorSemana.keySet());
+        Collections.sort(semanasOrdenadas);
+
+        final List<String> etiquetasSemanas = new ArrayList<>();
+
+        for (int i = 0; i < semanasOrdenadas.size(); i++) {
+            int semana = semanasOrdenadas.get(i);
+            int minutos = tiemposPorSemana.get(semana);
+            entries.add(new Entry(i, minutos));
+            etiquetasSemanas.add("Semana " + semana);
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Minutos de práctica por semana");
+        dataSet.setColor(Color.BLUE);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        LineData lineData = new LineData(dataSet);
+        chartPracticaSemanal.setData(lineData);
+
+        // Configurar eje X con etiquetas
+        XAxis xAxis = chartPracticaSemanal.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(etiquetasSemanas));
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        // Configurar eje Y
+        chartPracticaSemanal.getAxisLeft().setAxisMinimum(0f);
+        chartPracticaSemanal.getAxisRight().setEnabled(false);
+
+        // Descripción y leyenda
+        chartPracticaSemanal.getDescription().setText("Minutos de práctica semanal");
+        chartPracticaSemanal.getDescription().setTextSize(14f);
+        chartPracticaSemanal.getLegend().setEnabled(true);
+
+        // Animación
+        chartPracticaSemanal.animateY(1000);
+
+        chartPracticaSemanal.invalidate(); // refrescar gráfica
+    }
+
 
     // Método para seleccionar una imagen
     private void seleccionarImagen() {
