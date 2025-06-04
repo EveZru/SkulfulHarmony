@@ -5,6 +5,7 @@
     android:id="@+id/clase_elemento"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
+    android:clickable="true"
     android:orientation="vertical"
     android:padding="5dp">
 

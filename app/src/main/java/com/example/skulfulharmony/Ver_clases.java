@@ -115,7 +115,7 @@ public class Ver_clases extends AppCompatActivity {
         //-----------------------------------------
         crear_comentario=findViewById(R.id.btn_subir_comentario_clase);
         verComentarios = findViewById(R.id.rv_comentarios_verclase);
-
+        toolbar = findViewById(R.id.toolbartituloclase);
         Intent intent = getIntent();
         idClase = intent.getIntExtra("idClase", 1);
         idCurso = intent.getIntExtra("idCurso", 1);
@@ -242,6 +242,7 @@ public class Ver_clases extends AppCompatActivity {
                                 TextView mensajePequeno = dialog.findViewById(R.id.txt_mensajepequeno_dialogcalificacionpreguntas);
                                 TextView puntuacion = dialog.findViewById(R.id.txt_puntuacion_dialogcalificacionpreguntas);
                                 Button aceptar = dialog.findViewById(R.id.btn_aceptar_dialogcalificacionpreguntas);
+                                Button reintentar = dialog.findViewById(R.id.btn_reintentar_dialogcalificacionpreguntas);
 
                                 int total = clase.getPreguntas().size();
                                 int porcentaje = (int) (((double) cantidadRespuestasCorrectas / total) * 100);
@@ -256,6 +257,10 @@ public class Ver_clases extends AppCompatActivity {
 
                                 aceptar.setOnClickListener(v1 -> {
                                     dialog.dismiss();
+                                });
+
+                                reintentar.setOnClickListener(v1 -> {
+                                    verPreguntas.getAdapter().notifyDataSetChanged();
                                 });
 
                                 dialog.show();

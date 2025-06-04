@@ -1,12 +1,9 @@
 package com.example.skulfulharmony.javaobjects.users;
 
-import com.example.skulfulharmony.javaobjects.clustering.GestionClustering;
-import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
-import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaInicio;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -49,7 +46,6 @@ public class Usuario implements Serializable {
     // ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
     private List<Curso> cursosSeguidos;
-    private GestionClustering gestionClustering;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
     private RecomendacionDeUsuario recomendacionesUsuario;
@@ -87,11 +83,6 @@ public class Usuario implements Serializable {
         this.ultimoAcceso = ultimoAcceso;
     }
 
-    public Usuario(String nombre, String correo, GestionClustering gestionClustering) {
-        this.nombre = nombre;
-        this.correo = correo;
-        this.gestionClustering = gestionClustering;
-    }
 
     public int getSeguidos() {
         return seguidos;
@@ -254,10 +245,6 @@ public class Usuario implements Serializable {
         this.historialCursos = historialCursos;
     }
 
-    public List<Curso> obtenerCursosRecomendados() {
-        RecomendacionDeUsuario recomendacion = new RecomendacionDeUsuario(new RanqueadorCluster(), gestionClustering);
-        return recomendacion.generarRecomendaciones(this);
-    }
 
     // Método para actualizar tiempo de notificaciones (ya lo tienes, no modificado)
     public void actualizarTiempoNotificaciones() {
