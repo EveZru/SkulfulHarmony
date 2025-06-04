@@ -57,7 +57,14 @@ public class Clase_Fundamentos extends AppCompatActivity {
         rvPreguntasCurso.setAdapter(adapterPreguntas);
 //botones para comprobar respuestas
         btnComprobar.setOnClickListener(v -> {
-
+            int errores = adapterPreguntas.getTotalErrores();
+            int intentos = adapterPreguntas.getIntentosComprobacion();
+            // Guardar estadísticas en SharedPreferences
+            SharedPreferences statsPrefs = getSharedPreferences("estadisticas_" + nombreCurso, MODE_PRIVATE);
+            SharedPreferences.Editor editor = statsPrefs.edit();
+            editor.putInt("errores_totales", errores); // Este es el total del intento actual
+            editor.putInt("intentos_totales", intentos);
+            editor.apply();
             adapterPreguntas.comprobarRespuestas();
             List<PreguntaCuestionario> incorrectas = adapterPreguntas.getPreguntasIncorrectas();
             btnComprobar.setVisibility(View.GONE);
@@ -99,17 +106,24 @@ public class Clase_Fundamentos extends AppCompatActivity {
         });/*hasta aqui */
 
         btnReintentar.setOnClickListener(v -> {
-            // Aquí puedes implementar la lógica para reintentar el cuestionario
-            // Por ejemplo, podrías recrear la Activity o resetear el adapter
+            // Guardar los errores del intento actual ANTES de reiniciar
+            int errores = adapterPreguntas.getTotalErrores();
+            SharedPreferences historyPrefs = getSharedPreferences("historial_errores_" + nombreCurso, MODE_PRIVATE);
+            int intento = adapterPreguntas.getIntentosComprobacion();
+
+            SharedPreferences.Editor editor = historyPrefs.edit();
+            editor.putInt("intento_" + intento, errores);
+            editor.apply();
+
+            // Reiniciar cuestionario
             Toast.makeText(this, "Reintentando cuestionario...", Toast.LENGTH_SHORT).show();
             btnComprobar.setVisibility(View.VISIBLE);
             btnReintentar.setVisibility(View.GONE);
             adapterPreguntas.setMostrarResultados(false);
-
             adapterPreguntas.notifyDataSetChanged();
         });
 
-        }
+    }
 
     private int obtenerImagenPorCurso(String tituloCurso) {
         switch (tituloCurso) {
