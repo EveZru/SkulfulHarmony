@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.skulfulharmony.Home;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
@@ -21,7 +22,6 @@ public class AdapterPopulares extends RecyclerView.Adapter<AdapterPopulares.Curs
     public AdapterPopulares(List<Curso> listaCursos) {
         this.listaCursos = listaCursos;
     }
-
     @NonNull
     @Override
     public CursoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

@@ -7,41 +7,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PreguntasIncorrectas"
-    android:background="@color/white"
+    android:background="@color/gray2"
     >
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white" > <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/black" > <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Preguntas de Repaso"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="center" />
+    </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" > <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp" >
+
     <TextView
-        android:id="@+id/tv_preguntas_incorrectas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    android:id="@+id/tv_preguntas_incorrectas"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+        android:textColor="@color/white"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_preguntas_incorrectas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reintentar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comprobar"
+            android:textColor="@color/black"
+            android:background="@drawable/third_rounder_button"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
 
-       android:id="@+id/rv_preguntas_incorrectas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_comprobar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Comprobar Resultados"
-        android:textColor="@color/black"
-        android:background="@drawable/rounded_edit_text"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="16dp" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_reintentar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reintentar Cuestionario"
-        android:textColor="@color/black"
-        android:background="@drawable/third_rounder_button"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone" />
+    </LinearLayout>
+    </ScrollView>
 </LinearLayout>

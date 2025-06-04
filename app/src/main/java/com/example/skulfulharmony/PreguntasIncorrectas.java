@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,9 +31,11 @@ public class PreguntasIncorrectas extends AppCompatActivity {
     private RecyclerView rvPreguntasIncorrectas;
     private TextView tvPreguntasIncorrectas;
     private AdapterPreguntasEnCuestionariosparaContestar adapterPreguntas;
-    private Button btnReintentar, btnComprobar;
+    private Button btnAccionPrincipal;
     private static final String TAG = "PreguntasIncorrectas";
     private final FirebaseFirestore bd = FirebaseFirestore.getInstance();
+    private List<PreguntaCuestionario> preguntasIncorrectasCargadas;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +44,18 @@ public class PreguntasIncorrectas extends AppCompatActivity {
 
         tvPreguntasIncorrectas = findViewById(R.id.tv_preguntas_incorrectas);
         rvPreguntasIncorrectas = findViewById(R.id.rv_preguntas_incorrectas);
-        btnReintentar = findViewById(R.id.btn_reintentar);
-        btnComprobar = findViewById(R.id.btn_comprobar);
+        btnAccionPrincipal = findViewById(R.id.btn_reintentar); // Este botón ahora funcionará para ambas acciones
 
         rvPreguntasIncorrectas.setLayoutManager(new LinearLayoutManager(this));
 
-        final List<PreguntaCuestionario> preguntasGuardadas = new ArrayList<>();
+        preguntasIncorrectasCargadas = new ArrayList<>();
+        prefs = getSharedPreferences("cuestionario", MODE_PRIVATE);
 
-        SharedPreferences prefs = getSharedPreferences("cuestionario", MODE_PRIVATE);
+        cargarPreguntasDesdeSharedPreferences();
+        setupUIAndListeners();
+    }
+
+    private void cargarPreguntasDesdeSharedPreferences() {
         String json = prefs.getString("preguntas_incorrectas", null);
 
         if (json != null && !json.trim().isEmpty()) {
@@ -57,79 +64,82 @@ public class PreguntasIncorrectas extends AppCompatActivity {
             try {
                 List<PreguntaCuestionario> listaTemporal = gson.fromJson(json, listType);
                 if (listaTemporal != null) {
-                    preguntasGuardadas.addAll(listaTemporal);
+                    preguntasIncorrectasCargadas.addAll(listaTemporal);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Error al cargar preguntas incorrectas: " + e.getMessage(), e);
+                Log.e(TAG, "Error al cargar preguntas incorrectas desde SharedPreferences: " + e.getMessage(), e);
                 Toast.makeText(this, "Error al cargar preguntas incorrectas", Toast.LENGTH_SHORT).show();
             }
         }
+    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getEmail() != null) {
-            bd.collection("usuarios")
-                    .whereEqualTo("correo", user.getEmail())
-                    .get()
-                    .addOnSuccessListener(query -> {
-                        if (!query.isEmpty()) {
-                            DocumentSnapshot docUsuario = query.getDocuments().get(0);
-                            String idUsuario = docUsuario.getId();
-                            Usuario usuario = docUsuario.toObject(Usuario.class);
-
-                            List<PreguntaCuestionario> preguntasViejas = new ArrayList<>();
-                            if (usuario != null && usuario.getPreguntasRepaso() != null) {
-                                preguntasViejas.addAll(usuario.getPreguntasRepaso());
-                            }
-
-                            for (PreguntaCuestionario pregunta : preguntasGuardadas) {
-                                if (!preguntasViejas.contains(pregunta)) {
-                                    preguntasViejas.add(pregunta);
-                                }
-                            }
-
-                            bd.collection("usuarios")
-                                    .document(idUsuario)
-                                    .update("preguntasRepaso", preguntasViejas)
-                                    .addOnSuccessListener(a -> Log.d(TAG, "Preguntas de refuerzo actualizadas"))
-                                    .addOnFailureListener(e -> Log.e(TAG, "Error actualizando preguntas de refuerzo", e));
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e(TAG, "Error obteniendo usuario", e));
-        }
-
-        if (preguntasGuardadas.isEmpty()) {
+    private void setupUIAndListeners() {
+        if (preguntasIncorrectasCargadas.isEmpty()) {
             tvPreguntasIncorrectas.setText("No hay preguntas incorrectas registradas aún. ¡Sigue practicando!");
             tvPreguntasIncorrectas.setVisibility(View.VISIBLE);
             rvPreguntasIncorrectas.setVisibility(View.GONE);
-            if (btnComprobar != null) btnComprobar.setVisibility(View.GONE);
-            if (btnReintentar != null) btnReintentar.setVisibility(View.GONE);
+            btnAccionPrincipal.setVisibility(View.GONE);
         } else {
             tvPreguntasIncorrectas.setVisibility(View.GONE);
             rvPreguntasIncorrectas.setVisibility(View.VISIBLE);
 
-            adapterPreguntas = new AdapterPreguntasEnCuestionariosparaContestar(this, preguntasGuardadas);
-            adapterPreguntas.setMostrarResultados(true);
+
+            adapterPreguntas = new AdapterPreguntasEnCuestionariosparaContestar(this, preguntasIncorrectasCargadas);
+            // Mostrar las preguntas en modo para contestar al principio
+            adapterPreguntas.setMostrarResultados(false); // Importante: Inicialmente no se muestran resultados
             rvPreguntasIncorrectas.setAdapter(adapterPreguntas);
 
-            if (btnComprobar != null && btnReintentar != null) {
-                btnComprobar.setVisibility(View.GONE);
-                btnReintentar.setVisibility(View.VISIBLE);
+            // Configuramos el botón para que diga "Comprobar" inicialmente
+            btnAccionPrincipal.setText("Comprobar");
+            btnAccionPrincipal.setVisibility(View.VISIBLE);
 
-                btnComprobar.setOnClickListener(v -> {
-                    adapterPreguntas.comprobarRespuestas();
-                    Toast.makeText(this, "Respuestas comprobadas.", Toast.LENGTH_SHORT).show();
-                    btnComprobar.setVisibility(View.GONE);
-                    btnReintentar.setVisibility(View.VISIBLE);
-                });
-
-                btnReintentar.setOnClickListener(v -> {
-                    Toast.makeText(this, "Reintentando las preguntas incorrectas...", Toast.LENGTH_SHORT).show();
-                    adapterPreguntas.setMostrarResultados(false);
-                    adapterPreguntas.notifyDataSetChanged();
-                    btnComprobar.setVisibility(View.VISIBLE);
-                    btnReintentar.setVisibility(View.GONE);
-                });
-            }
+            btnAccionPrincipal.setOnClickListener(v -> {
+                if (btnAccionPrincipal.getText().toString().equals("Comprobar")) {
+                    procesarRespuestas();
+                } else { // Si el texto es "Salir"
+                    Intent intent = new Intent(PreguntasIncorrectas.this, Home.class); // Asegúrate que 'Home.class' sea la actividad correcta
+                    startActivity(intent);
+                    finish();
+                }
+            });
         }
     }
+
+    private void procesarRespuestas() {
+        adapterPreguntas.comprobarRespuestas();
+        Toast.makeText(this, "Respuestas comprobadas", Toast.LENGTH_SHORT).show();
+
+        //  Obtener la lista de preguntas que el adaptador identificó como INCORRECTAS
+
+        List<PreguntaCuestionario> preguntasQueQuedaronIncorrectas = adapterPreguntas.getPreguntasIncorrectas();
+
+        preguntasIncorrectasCargadas.clear();
+        preguntasIncorrectasCargadas.addAll(preguntasQueQuedaronIncorrectas);
+
+        // 4. Notificar al adaptador que los datos subyacentes han cambiado (aunque su lista interna ya refleja esto).
+        //    Esto es más una buena práctica si el adaptador estuviera observando la lista original.
+        //    En tu caso, `adapterPreguntas.comprobarRespuestas()` ya llama a `notifyDataSetChanged()`,
+        //    así que esto podría ser redundante, pero no hace daño.
+        adapterPreguntas.notifyDataSetChanged();
+
+
+        // 5. Guardar la lista actualizada (solo las preguntas incorrectas restantes) en SharedPreferences.
+        Gson gson = new Gson();
+        String jsonActualizado = gson.toJson(preguntasIncorrectasCargadas);
+        prefs.edit().putString("preguntas_incorrectas", jsonActualizado).apply();
+        Log.d(TAG, "Preguntas restantes guardadas en SharedPreferences. Cantidad: " + preguntasIncorrectasCargadas.size());
+
+        //  Cambiar el texto del botón a "Salir".
+        btnAccionPrincipal.setText("Salir");
+
+        // Actualizar la interfaz de usuario si no quedan preguntas incorrectas.
+        if (preguntasIncorrectasCargadas.isEmpty()) {
+            tvPreguntasIncorrectas.setText("¡Felicidades! Has respondido correctamente todas las preguntas incorrectas. ¡Sigue practicando!");
+            tvPreguntasIncorrectas.setVisibility(View.VISIBLE);
+            rvPreguntasIncorrectas.setVisibility(View.GONE);
+        }
+    }
+
+
+
 }

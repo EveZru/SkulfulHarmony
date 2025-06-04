@@ -8,78 +8,64 @@
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"> <androidx.cardview.widget.CardView
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardBackgroundColor="@color/gray1"
+    app:cardElevation="8dp"
+    app:cardPreventCornerOverlap="true"> <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="160dp"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:padding="5dp"
+        android:scaleType="centerCrop"
+        android:id="@+id/cardImage"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        app:shapeAppearanceOverlay="@style/CardShapeRounded"
+        android:src="@drawable/img_encabezado" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="@color/gray1"
-        app:cardElevation="8dp"
-        app:cardPreventCornerOverlap="true"
-        android:clickable="true">
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_textprincipal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:text="Nombre del curso"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
+        <TextView
+            android:id="@+id/tv_complementario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Complemento"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginTop="2dp"/>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:padding="5dp"
-                android:scaleType="centerCrop"
-                android:id="@+id/cardImage"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                app:shapeAppearanceOverlay="@style/CardShapeRounded"
-                android:src="@drawable/img_encabezado"
-
-                />
-
-
-            <!-- Contenedor de textos -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-                <!-- Título principal -->
-                <TextView
-                    android:id="@+id/tv_textprincipal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Nombre del curso"
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-
-                <!-- Texto complementario -->
-                <TextView
-                    android:id="@+id/tv_complementario"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Complemento"
-                    android:textSize="13sp"
-                    android:textColor="@color/white"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:layout_marginTop="2dp"/>
-
-                <!-- Texto secundario -->
-                <TextView
-                    android:id="@+id/tv_textsegundo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Descripción corta"
-                    android:textSize="12sp"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="4dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/tv_textsegundo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descripción corta"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="4dp" />
+    </LinearLayout>
 </LinearLayout>
-
+</androidx.cardview.widget.CardView>
+</LinearLayout>

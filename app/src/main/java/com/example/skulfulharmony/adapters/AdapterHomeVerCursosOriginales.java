@@ -86,7 +86,7 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
                     } else if (tituloCurso.equals("Fundamentos")) {
                         // Crear la lista de los cursos de fundamentos
                         List<Curso> cursosFundamentos = Arrays.asList(
-                                new Curso("Curso 1", "hola", null, null, null), // Asegúrate de que el constructor de Curso coincida
+                                new Curso("Curso 1", "", null, null, null), // Asegúrate de que el constructor de Curso coincida
                                 new Curso("Curso 2", "", null, null, null),
                                 new Curso("Curso 3", "", null, null, null),
                                 new Curso("Curso 4", "", null, null, null),

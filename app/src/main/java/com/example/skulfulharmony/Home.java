@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -51,15 +52,19 @@ import java.util.Map;
 
 public class Home extends AppCompatActivity {
 
+
+
+
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
 
     private Handler backPressHandler = new Handler();
     private EditText et_buscarhome;
 
+    private SQLiteDatabase localDatabase;
 
     private List<Curso> listaCursos;
-    private RecyclerView rv_homevercursos, rv_homehistorial;
+    private RecyclerView rv_populares,rv_homevercursos, rv_homehistorial,rv_homeclasesoriginales;
     private AdapterHomeVerCursos adapterHomeVerCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
     //private ViewPager2 viewPager;
@@ -78,7 +83,7 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
-        // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
+     // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
 
         cargarCursosCluster();
         cargarCursosHistorial();
@@ -111,7 +116,9 @@ public class Home extends AppCompatActivity {
        // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
 
-        //_________________________________________________
+//_________________________________________________
+        DbHelper dbHelper = new DbHelper(Home.this);
+        localDatabase = dbHelper.getReadableDatabase();
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -149,31 +156,38 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        // para mostrar los populares  colaloca
+        rv_populares = findViewById(R.id.rv_populares_homme);
+        rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        // de omomento lo tengo asi de que vea x
+
+
+
 
         if (bottomNavigationView1 != null) {
             // Configurar el listener para los ítems seleccionados
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
                 int itemId = item.getItemId();
-                 if (itemId == R.id.it_homme) {
-                     // Acción para Home
-                     return true;
-                 } else if (itemId == R.id.it_new) {
-                     // Navegar a la actividad para crear un curso
-                     startActivity(new Intent(Home.this, VerCursosCreados.class));
-                     return true;
-                 } else if (itemId == R.id.it_seguidos) {
-                     // Navegar a la actividad para ver la Biblioteca
-                     startActivity(new Intent(Home.this, Biblioteca.class));
-                     return true;
-                 } else if (itemId == R.id.it_perfil) {
-                        // Navegar a la actividad para buscar perfiles
-                        startActivity(new Intent(Home.this, Perfil.class));
-                        return true;
-                    }
-                    return false;
-                });
-                // Establecer el ítem seleccionado al inicio (si es necesario)
-                bottomNavigationView1.setSelectedItemId(R.id.it_homme);
+                if (itemId == R.id.it_homme) {
+                    // Acción para Home
+                    return true;
+                } else if (itemId == R.id.it_new) {
+                    // Navegar a la actividad para crear un curso
+                    startActivity(new Intent(Home.this, VerCursosCreados.class));
+                    return true;
+                } else if (itemId == R.id.it_seguidos) {
+                    // Navegar a la actividad para ver la Biblioteca
+                    startActivity(new Intent(Home.this, Biblioteca.class));
+                    return true;
+                } else if (itemId == R.id.it_perfil) {
+                    // Navegar a la actividad para buscar perfiles
+                    startActivity(new Intent(Home.this, Perfil.class));
+                    return true;
+                }
+                return false;
+            });
+            // Establecer el ítem seleccionado al inicio (si es necesario)
+            bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         } else {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
@@ -194,24 +208,24 @@ public class Home extends AppCompatActivity {
             prefs.edit().putString("last_open_date", today).apply();
         }
         // para populares  cargar los populares de firebase -------------
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        listaCursos = new ArrayList<>();
-//       // List<Curso> listaCursos = new ArrayList<>();
-//
-//        db.collection("cursos")
-//                .orderBy("popularidad", Query.Direction.DESCENDING)
-//                .limit(10)
-//                .get()
-//                .addOnSuccessListener(queryDocumentSnapshots -> {
-//                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-//                        Curso curso = doc.toObject(Curso.class);
-//                        listaCursos.add(curso);
-//                    }
-//                    //mostrarCarrusel(listaCursos); // ← siguiente paso
-//                })
-//                .addOnFailureListener(e -> {
-//                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
-//                });
+     /*   FirebaseFirestore db = FirebaseFirestore.getInstance();
+        listaCursos = new ArrayList<>();
+       // List<Curso> listaCursos = new ArrayList<>();
+
+        db.collection("cursos")
+                .orderBy("popularidad", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        Curso curso = doc.toObject(Curso.class);
+                        listaCursos.add(curso);
+                    }
+                    mostrarCarrusel(listaCursos); // ← siguiente paso
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
+                });*/
 
 
 
@@ -286,11 +300,15 @@ public class Home extends AppCompatActivity {
             // Ahora actualiza el adaptador
             adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
             rv_homevercursos.setAdapter(adapterHomeVerCursos);
+            Log.d("Home", "Cursos cluster cargados: " + listaCursost.size()); // Log para depurar
         }).addOnFailureListener(e -> {
             Toast.makeText(Home.this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
             Log.e("Firestore", "Error: ", e);
         });
+
     }
+    //populares
+
 
     @Override
     protected void onResume() {
@@ -304,11 +322,10 @@ public class Home extends AppCompatActivity {
 
         }
     }
-    /*private void cargarCursosPopulares() {
+    private void cargarCursosPopulares() {
         double alpha = 1.0;
         double beta = 2.0;
         double gamma = 3.0;
-        double delta = 1.5;
         double epsilon = 0.5;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -347,10 +364,9 @@ public class Home extends AppCompatActivity {
                 double popularidad = alpha * visitas +
                         beta * interacciones +
                         gamma * calificaciones +
-                      //  1.5 * progreso +
                         epsilon * descargas;
 
-                curso.setPopularidad(popularidad); // debes agregar este campo a tu modelo
+                curso.setPopularidad(popularidad);
 
                 listaCursosPopulares.add(curso);
             }
@@ -360,31 +376,35 @@ public class Home extends AppCompatActivity {
 
             // Tomar los 10 más populares
             List<Curso> top10 = listaCursosPopulares.subList(0, Math.min(10, listaCursosPopulares.size()));
+            rv_populares.setAdapter(adapterHomeVerCursos);
 
            // mostrarCarrusel(top10); // lo creamos en el siguiente paso
         }).addOnFailureListener(e -> {
             Toast.makeText(Home.this, "Error al cargar cursos populares", Toast.LENGTH_SHORT).show();
             Log.e("Firestore", "Error: ", e);
         });
-    }*/
+    }
 
-//    private void mostrarCarrusel(List<Curso> listaCursos) {
-//        AdapterPopulares adapterPopulares;
-//        Handler handler = new Handler();
-//        adapterPopulares = new AdapterPopulares(listaCursos);
-//
-//        final int[] currentIndex = {0};
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                if (adapterPopulares.getItemCount() == 0) return;
-//                currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
-//                handler.postDelayed(this, 3000);
-//            }
-//        };
-//        handler.postDelayed(runnable, 3000);
-//
-//    }
+    private void mostrarCarrusel(List<Curso> listaCursos) {
+        AdapterPopulares adapterPopulares;
+        Handler handler = new Handler();
+        adapterPopulares = new AdapterPopulares(listaCursos);
+//        viewPager = findViewById(R.id.view_populares);
+//        viewPager.setAdapter(adapterPopulares);
+
+        final int[] currentIndex = {0};
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (adapterPopulares.getItemCount() == 0) return;
+                //viewPager.setCurrentItem(currentIndex[0], true);
+                currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
+                handler.postDelayed(this, 3000);
+            }
+        };
+        handler.postDelayed(runnable, 3000);
+
+    }
 
 
 }

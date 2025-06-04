@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/et_buscarhome"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
@@ -61,10 +61,12 @@
                     android:background="@color/gray1"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="10dp"
+                    android:gravity="start"
                     android:hint="Buscar"
                     android:textColorHint="@color/tinto"
                     android:textColor="@color/black"
-                    android:backgroundTint="@color/gray1"/>
+                    android:textSize="26sp"
+                  />
 
                 <ImageView
                     android:padding="5dp"
@@ -77,16 +79,11 @@
                     />
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/gray2"/>
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/view_populares"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_populares_homme"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="16dp" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:layout_width="match_parent"

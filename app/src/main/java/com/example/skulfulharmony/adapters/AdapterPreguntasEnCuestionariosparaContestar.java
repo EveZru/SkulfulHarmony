@@ -128,6 +128,15 @@ public class AdapterPreguntasEnCuestionariosparaContestar extends RecyclerView.A
             rgOpciones = itemView.findViewById(R.id.rg_opciones);
         }
     }
+    // Nuevo lista de preguntas
+    public List<PreguntaCuestionario> getListaPreguntas() {
+        return listaPreguntas;
+    }
+
+    // Nuevo mrespuestas seleccionadas
+    public List<Integer> getRespuestasSeleccionadas() {
+        return respuestasSeleccionadas;
+    }
 
     public void comprobarRespuestas() {
         mostrarResultados = true;

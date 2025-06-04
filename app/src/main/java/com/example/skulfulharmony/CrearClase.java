@@ -122,59 +122,7 @@ public class CrearClase extends AppCompatActivity {
               }
           });
 
-       /* //___________________  TECLADO MOVIL  -----------------------------------//
-        View rootView2 = findViewById(R.id.main_scrollview);
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            Rect r = new Rect();
-            rootView2.getWindowVisibleDisplayFrame(r);
-            int screenHeight = rootView2.getRootView().getHeight();
-            // Calcular la altura del teclado
-          //  int keypadHeight = screenHeight - r.bottom;
-            int keypadHeight = rootView2.getRootView().getHeight() - r.bottom;
 
-            if (keypadHeight > screenHeight * 0.1) { // Umbral: si el teclado ocupa más del 15% de la pantalla
-                // Teclado está visible, ajustar el paddingBottom del ScrollView
-                View lastEditText = containerOpciones.getChildAt(containerOpciones.getChildCount() - 1);
-                if (lastEditText != null) {
-                    int[] location = new int[2];
-                    lastEditText.getLocationOnScreen(location);
-                    int editTextBottom = location[1] + lastEditText.getHeight();
-                    int overlap = editTextBottom - r.bottom; // Cuánto se superpone el EditText con la parte visible
-
-                    if (overlap > 0) {
-                        rootView2.setPadding(
-                                rootView2.getPaddingLeft(),
-                                rootView2.getPaddingTop(),
-                                rootView2.getPaddingRight(),
-                                keypadHeight + overlap // Añadir un pequeño margen extra
-                        );
-                    } else {
-                        rootView2.setPadding(
-                                rootView2.getPaddingLeft(),
-                                rootView2.getPaddingTop(),
-                                rootView2.getPaddingRight(),
-                                keypadHeight  // Añadir un pequeño margen si no hay superposición
-                        );
-                    }
-                } else {
-                    rootView2.setPadding(
-                            rootView2.getPaddingLeft(),
-                            rootView2.getPaddingTop(),
-                            rootView2.getPaddingRight(),
-                            keypadHeight
-                    );
-                }
-            } else {
-                // Teclado no está visible, restablecer el paddingBottom
-                rootView2.setPadding(
-                        rootView2.getPaddingLeft(),
-                        rootView2.getPaddingTop(),
-                        rootView2.getPaddingRight(),
-                        0
-                );
-            }
-        });
-        //_______________________________________________*/
     }
 
 //______parte del las casillas de las preguntas------------------------
@@ -237,7 +185,7 @@ public class CrearClase extends AppCompatActivity {
             EditText editText = option.findViewById(R.id.et_opcrespuesta);
             if (editText != null && editText.getText().toString().trim().isEmpty()) {
                 emptyCount++;
-                lastEmptyView = option; // Guarda la última vista vacía encontrada
+                lastEmptyView = option;
             }
         }
 
