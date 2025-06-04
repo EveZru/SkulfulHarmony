@@ -36,6 +36,8 @@ public class AdapterPreguntasEnCuestionariosparaContestar extends RecyclerView.A
     private boolean mostrarResultados = false;
     private List<PreguntaCuestionario> preguntasIncorrectas;
     private List<Integer> respuestasSeleccionadas; // Para guardar la selección de cada pregunta
+    private int totalErrores=0;
+    private int intentosComprobacion=0;
 
     public AdapterPreguntasEnCuestionariosparaContestar(Context context, List<PreguntaCuestionario> listaPreguntas) {
         this.context = context;
@@ -132,12 +134,24 @@ public class AdapterPreguntasEnCuestionariosparaContestar extends RecyclerView.A
     public void comprobarRespuestas() {
         mostrarResultados = true;
         preguntasIncorrectas.clear();
+        totalErrores=0;
+        intentosComprobacion++;
         for (int i = 0; i < listaPreguntas.size(); i++) {
             int respuestaSeleccionada = respuestasSeleccionadas.get(i);
             if (respuestaSeleccionada != listaPreguntas.get(i).getRespuestaCorrecta()) {
                 preguntasIncorrectas.add(listaPreguntas.get(i));
+                totalErrores++;
             }
         }
         notifyDataSetChanged();
     }
+
+    public int getTotalErrores() {
+        return totalErrores;
+    }
+
+    public int getIntentosComprobacion() {
+        return intentosComprobacion;
+    }
+
 }

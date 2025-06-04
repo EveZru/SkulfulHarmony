@@ -205,6 +205,7 @@ public class Ver_clases extends AppCompatActivity {
                                 cantidadRespuestasCorrectas = 0;
                                for(PreguntaCuestionario pregunta : clase.getPreguntas()){
                                    if(pregunta.getRespuestaCorrecta().equals(adapterPreguntasEnVerClase.getRespuestas().get(clase.getPreguntas().indexOf(pregunta)))) {
+
                                        cantidadRespuestasCorrectas++;
                                    }
                                    //List<PreguntaCuestionario> preguntasGuardadas;
