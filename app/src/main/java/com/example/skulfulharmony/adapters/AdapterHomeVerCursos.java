@@ -71,12 +71,16 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.img_defaultclass)
                 .into(holder.cardImage);
-
+        Log.e("Completo", "Todo listo para correr");
+        Log.d("ya cargo los datos del curso"+ curso.getId(),curso.getTitulo());
         // Click para abrir actividad de clases
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, Ver_cursos.class);
             intent.putExtra("idCurso", curso.getId());
-            context.startActivity(intent);
+            Log.e("Se abrio el abrir curso","se supone que esto jala");
+            Log.d("Ya tiene los datos el intent por lo que ya aceptó el clic", "" + curso.getId());
+            holder.itemView.getContext().startActivity(intent);
+            Log.d("Ya se cargo el intent", "" +curso.getId());
         });
     }
 

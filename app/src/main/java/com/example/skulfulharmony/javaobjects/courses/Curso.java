@@ -1,7 +1,6 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
 //import com.example.skulfulharmony.javaobjects.clustering.ClusterClases;
-import com.example.skulfulharmony.javaobjects.clustering.ClusterCursos;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.firebase.Timestamp;
@@ -26,17 +25,20 @@ public class Curso implements Serializable {
     private String creador;
     private List<Usuario> seguidores;
     private List<Comentario> comentarios;
-    private ClusterCursos cluster;
     private Date fechaCreacion;
     private Timestamp fechaCreacionf;
-    private Map<String,String> instrumento;
-    private Map<String,String> genero;
-    private Map<String,String> dificultad;
+    private Map<String,Integer> instrumento;
+    private Map<String,Integer> genero;
+    private Map<String,Integer> dificultad;
     private Integer visitas;
     private Integer cantidadDescargas;
     private List<Integer> calificacionCursos;
     private Double popularidad;
     private String firestoreId;
+
+
+
+    private Integer cluster;
 
     //Constructores
 
@@ -55,7 +57,7 @@ public class Curso implements Serializable {
         this.imagen = imagen;
         this.fechaCreacion = fechaCreacion;
     }
-    public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad) {
+    public Curso(String titulo, String creador, Map<String,Integer> instrumento, Map<String,Integer> genero, Map<String,Integer> dificultad) {
        /* this.titulo = titulo;
         this.creador = creador;
         this.instrumento = instrumento;
@@ -82,7 +84,7 @@ public class Curso implements Serializable {
         this.descripcion = null;
 
     }
-    public Curso(String titulo, String creador, Map<String,String> instrumento, Map<String,String> genero, Map<String,String> dificultad, String imagen, Timestamp fechaCreacionf) {
+    public Curso(String titulo, String creador, Map<String,Integer> instrumento, Map<String,Integer> genero, Map<String,Integer> dificultad, String imagen, Timestamp fechaCreacionf) {
         this.titulo = titulo;
         this.creador = creador;
         this.instrumento = instrumento;
@@ -117,18 +119,14 @@ public class Curso implements Serializable {
     public void setTitulo(String titulo) {
         this.titulo = titulo;
     }
-    public void setCluster(ClusterCursos cluster) {
-        this.cluster = cluster;
-    }
-
     public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
-    public void setDificultad(Map<String,String> dificultad) { this.dificultad = dificultad; }
-    public void setGenero(Map<String,String> genero) {
+    public void setDificultad(Map<String,Integer> dificultad) { this.dificultad = dificultad; }
+    public void setGenero(Map<String,Integer> genero) {
         this.genero = genero;
     }
-    public void setInstrumento(Map<String,String> instrumento) {
+    public void setInstrumento(Map<String,Integer> instrumento) {
         this.instrumento = instrumento;
     }
     public void setFirestoreId(String firestoreId) {
@@ -160,20 +158,17 @@ public class Curso implements Serializable {
     public String getTitulo() {
         return titulo;
     }
-    public ClusterCursos getCluster() {
-        return cluster;
-    }
 
     public Date getFechaCreacion() {
         return fechaCreacion;
     }
-    public Map<String,String> getDificultad() {
+    public Map<String,Integer> getDificultad() {
         return dificultad;
     }
-    public Map<String,String> getGenero() {
+    public Map<String,Integer> getGenero() {
         return genero;
     }
-    public Map<String,String> getInstrumento() {
+    public Map<String,Integer> getInstrumento() {
         return instrumento;
     }
     public List<Comentario> getComentarios() {
@@ -225,14 +220,21 @@ public class Curso implements Serializable {
 
     // Método nuevo para obtener el nivel de dificultad en número
     public int getNivelDificultad() {
-        if (dificultad == null) return 1; // Principiante por default
-        String nivel = dificultad.get("nivel"); // Ajusta la clave si usas otro nombre
-        if (nivel == null) return 1;
-        switch (nivel.toLowerCase()) {
-            case "principiante": return 1;
-            case "intermedio": return 2;
-            case "avanzado": return 3;
-            default: return 1;
+        if (dificultad == null) return 1; // Principiante por defecto
+        Integer nivel = dificultad.get("nivel"); // Obtenemos el valor Integer directamente
+        if (nivel == null) return 1; // Si no existe la clave "nivel", se usa el valor por defecto
+        // Validamos que esté en el rango 1-3 (1: Principiante, 2: Intermedio, 3: Avanzado)
+        if (nivel >= 1 && nivel <= 3) {
+            return nivel;
         }
+        return 1; // Valor por defecto si está fuera del rango esperado
+    }
+
+    public Integer getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(Integer cluster) {
+        this.cluster = cluster;
     }
 }

@@ -81,6 +81,7 @@ public class Ver_cursos extends AppCompatActivity {
     private int puntuacionActual = 0;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d("Ya entro al curso", "creando curso");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_cursos);
 
@@ -98,7 +99,7 @@ public class Ver_cursos extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
-
+        Log.d("Ya entro al curso", "creando curso");
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         firestore = FirebaseFirestore.getInstance();

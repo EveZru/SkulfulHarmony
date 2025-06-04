@@ -1,8 +1,5 @@
 package com.example.skulfulharmony.javaobjects.users;
 
-import com.example.skulfulharmony.javaobjects.clustering.ClusterCursos;
-import com.example.skulfulharmony.javaobjects.clustering.GestionClustering;
-import com.example.skulfulharmony.javaobjects.clustering.RanqueadorCluster;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
 import java.util.List;

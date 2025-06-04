@@ -51,16 +51,12 @@ import java.util.Map;
 
 public class Home extends AppCompatActivity {
 
-
-
-
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
 
     private Handler backPressHandler = new Handler();
     private EditText et_buscarhome;
 
-    private SQLiteDatabase localDatabase;
 
     private List<Curso> listaCursos;
     private RecyclerView rv_homevercursos, rv_homehistorial;
@@ -82,7 +78,7 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
-     // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
+        // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
 
         cargarCursosCluster();
         cargarCursosHistorial();
@@ -115,9 +111,7 @@ public class Home extends AppCompatActivity {
        // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
 
-//_________________________________________________
-        DbHelper dbHelper = new DbHelper(Home.this);
-        localDatabase = dbHelper.getReadableDatabase();
+        //_________________________________________________
 
         // Inicializar Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -193,31 +187,31 @@ public class Home extends AppCompatActivity {
 
         if (!today.equals(lastDate)) {
             // Primera vez que abres hoy la app, lanzas PreguntasIncorrectas
-            Intent intent = new Intent(this, PreguntasIncorrectas.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, PreguntasIncorrectas.class);
+//            startActivity(intent);
 
             // Guardas la fecha para no volver a lanzar hoy
             prefs.edit().putString("last_open_date", today).apply();
         }
         // para populares  cargar los populares de firebase -------------
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        listaCursos = new ArrayList<>();
-       // List<Curso> listaCursos = new ArrayList<>();
-
-        db.collection("cursos")
-                .orderBy("popularidad", Query.Direction.DESCENDING)
-                .limit(10)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Curso curso = doc.toObject(Curso.class);
-                        listaCursos.add(curso);
-                    }
-                    mostrarCarrusel(listaCursos); // ← siguiente paso
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
-                });
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        listaCursos = new ArrayList<>();
+//       // List<Curso> listaCursos = new ArrayList<>();
+//
+//        db.collection("cursos")
+//                .orderBy("popularidad", Query.Direction.DESCENDING)
+//                .limit(10)
+//                .get()
+//                .addOnSuccessListener(queryDocumentSnapshots -> {
+//                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+//                        Curso curso = doc.toObject(Curso.class);
+//                        listaCursos.add(curso);
+//                    }
+//                    //mostrarCarrusel(listaCursos); // ← siguiente paso
+//                })
+//                .addOnFailureListener(e -> {
+//                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
+//                });
 
 
 
@@ -310,7 +304,7 @@ public class Home extends AppCompatActivity {
 
         }
     }
-    private void cargarCursosPopulares() {
+    /*private void cargarCursosPopulares() {
         double alpha = 1.0;
         double beta = 2.0;
         double gamma = 3.0;
@@ -372,28 +366,25 @@ public class Home extends AppCompatActivity {
             Toast.makeText(Home.this, "Error al cargar cursos populares", Toast.LENGTH_SHORT).show();
             Log.e("Firestore", "Error: ", e);
         });
-    }
+    }*/
 
-    private void mostrarCarrusel(List<Curso> listaCursos) {
-        AdapterPopulares adapterPopulares;
-        Handler handler = new Handler();
-        adapterPopulares = new AdapterPopulares(listaCursos);
-//        viewPager = findViewById(R.id.view_populares);
-//        viewPager.setAdapter(adapterPopulares);
-
-        final int[] currentIndex = {0};
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (adapterPopulares.getItemCount() == 0) return;
-                //viewPager.setCurrentItem(currentIndex[0], true);
-                currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
-                handler.postDelayed(this, 3000);
-            }
-        };
-        handler.postDelayed(runnable, 3000);
-
-    }
+//    private void mostrarCarrusel(List<Curso> listaCursos) {
+//        AdapterPopulares adapterPopulares;
+//        Handler handler = new Handler();
+//        adapterPopulares = new AdapterPopulares(listaCursos);
+//
+//        final int[] currentIndex = {0};
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                if (adapterPopulares.getItemCount() == 0) return;
+//                currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
+//                handler.postDelayed(this, 3000);
+//            }
+//        };
+//        handler.postDelayed(runnable, 3000);
+//
+//    }
 
 
 }
