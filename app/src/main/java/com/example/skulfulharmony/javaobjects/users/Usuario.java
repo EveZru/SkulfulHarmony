@@ -48,7 +48,7 @@ public class Usuario implements Serializable {
     private List<Curso> cursosSeguidos;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
-    private RecomendacionDeUsuario recomendacionesUsuario;
+    //private RecomendacionDeUsuario recomendacionesUsuario;
     private List<Date> horasEntrada;
     private LocalTime tiempoDeNotificacion;
     private Date ultimoAcceso;
