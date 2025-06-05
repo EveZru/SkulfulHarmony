@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -52,14 +53,11 @@ import java.util.Map;
 
 public class Home extends AppCompatActivity {
 
-
-
-
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
 
     private Handler backPressHandler = new Handler();
-    private EditText et_buscarhome;
+    private AppCompatButton et_buscarhome;
 
     private SQLiteDatabase localDatabase;
 
