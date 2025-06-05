@@ -49,8 +49,9 @@ dependencies {
 
 //    implementation ("androidx.media3:media3-exoplayer:1.2.0")
 //    implementation ("androidx.media3:media3-ui:1.2.0")
+    implementation(files("D:\\SkulfulHarmony\\app\\libs\\TarsosDSP-Android-2.4.jar"))
 
-    testImplementation(libs.junit)
+            testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
