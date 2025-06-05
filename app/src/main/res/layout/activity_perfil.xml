@@ -144,11 +144,22 @@
                 android:layout_height="wrap_content"
                 android:text="ver preguntas incorrectas"/>
 
+            <TextView
+                android:id="@+id/tv_nivelDificultad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="📚 Progreso por curso:"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chartPracticaSemanal"
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:layout_margin="16dp"/>
+                android:layout_margin="16dp" />
 
             <TextView
                 android:id="@+id/tvComparacionSemana"

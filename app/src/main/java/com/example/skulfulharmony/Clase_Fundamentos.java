@@ -18,9 +18,12 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCu
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Clase_Fundamentos extends AppCompatActivity {
     private ImageView ivImagenCurso;
@@ -50,6 +53,24 @@ public class Clase_Fundamentos extends AppCompatActivity {
 
         listaPreguntas = obtenerPreguntas(nombreCurso);
         adapterPreguntas = new  AdapterPreguntasEnCuestionariosparaContestar(this, listaPreguntas);
+
+        // 🧠 Detectar nivel y guardar progreso
+        int nivel = 1; // por defecto Principiante
+        switch (nombreCurso) {
+            case "Curso 1":
+            case "Curso 2":
+                nivel = 1;
+                break;
+            case "Curso 3":
+            case "Curso 4":
+                nivel = 2;
+                break;
+            case "Curso 5":
+            case "Curso 6":
+                nivel = 3;
+                break;
+        }
+        guardarDificultadProgreso(nivel, nombreCurso);
 
         int imagenResId = obtenerImagenPorCurso(nombreCurso);
         ivImagenCurso.setImageResource(imagenResId);
@@ -182,5 +203,31 @@ public class Clase_Fundamentos extends AppCompatActivity {
         }
         return Preguntas;
     }
+
+    private int obtenerNivelDesdeNombre(String nombreCurso) {
+        switch (nombreCurso) {
+            case "Curso 1":
+            case "Curso 2":
+                return 1;
+            case "Curso 3":
+            case "Curso 4":
+                return 2;
+            case "Curso 5":
+            case "Curso 6":
+                return 3;
+            default:
+                return 1;
+        }
+    }
+
+    private void guardarDificultadProgreso(int nivelCurso, String nombreCurso) {
+        SharedPreferences prefs = getSharedPreferences("progreso_dificultad_por_curso", MODE_PRIVATE);
+        int nivelPrevio = prefs.getInt(nombreCurso, -1);
+
+        if (nivelCurso > nivelPrevio) {
+            prefs.edit().putInt(nombreCurso, nivelCurso).apply();
+        }
+    }
+
 
 }

@@ -43,13 +43,14 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     //implementation ("androidx.core:core:1.7.0")
+    implementation ("androidx.recyclerview:recyclerview:1.3.2")
     implementation ("androidx.core:core:1.10.1")
     implementation(libs.firebase.crashlytics.buildtools)
     implementation ("androidx.work:work-runtime:2.7.0")
 
 //    implementation ("androidx.media3:media3-exoplayer:1.2.0")
 //    implementation ("androidx.media3:media3-ui:1.2.0")
-    implementation(files("D:\\SkulfulHarmony\\app\\libs\\TarsosDSP-Android-2.4.jar"))
+//    implementation(files("D:\\SkulfulHarmony\\app\\libs\\TarsosDSP-Android-2.4.jar"))
 
             testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

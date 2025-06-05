@@ -37,33 +37,7 @@
             android:clickable="true" />
     </LinearLayout>
 
-    <!-- Texto Historial / Resultados -->
-    <TextView
-        android:id="@+id/tv_historial"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Historial reciente:"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/ll_busqueda"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="16dp" />
-
-    <!-- Resultados de búsqueda -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_resultadosbusqueda"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_historial"
-        app:layout_constraintBottom_toTopOf="@id/tv_categorias"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp"
-        android:scrollbars="vertical"
-        android:clipToPadding="false" />
-
-    <!-- Categorías -->
+    <!-- Texto Categorías -->
     <TextView
         android:id="@+id/tv_categorias"
         android:layout_width="0dp"
@@ -71,12 +45,13 @@
         android:textColor="@color/black"
         android:textSize="20sp"
         android:text="Categorías"
-        app:layout_constraintTop_toBottomOf="@id/rv_resultadosbusqueda"
+        app:layout_constraintTop_toBottomOf="@id/ll_busqueda"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp" />
 
+    <!-- Botones de filtro -->
     <LinearLayout
         android:id="@+id/ll_botones"
         android:layout_width="0dp"
@@ -87,8 +62,7 @@
         android:weightSum="3"
         app:layout_constraintTop_toBottomOf="@id/tv_categorias"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/btn_bgenero"
@@ -115,14 +89,40 @@
             android:text="Dificultad" />
     </LinearLayout>
 
-    <!-- Coloca esto justo antes de cerrar el ConstraintLayout -->
+    <!-- Texto Historial -->
+    <TextView
+        android:id="@+id/tv_historial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Historial reciente:"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/ll_botones"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp" />
+
+    <!-- Resultados de búsqueda -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_resultadosbusqueda"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_historial"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"
+        android:scrollbars="vertical"
+        android:clipToPadding="false" />
+
+    <!-- Barra de carga -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/tv_historial"
-        app:layout_constraintBottom_toTopOf="@id/tv_categorias"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
