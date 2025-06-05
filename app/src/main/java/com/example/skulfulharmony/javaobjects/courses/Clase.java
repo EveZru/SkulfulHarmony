@@ -28,7 +28,8 @@ public class Clase implements Serializable {
     private Integer meGusta;
     private Timestamp fechaCreacionf;
     private Timestamp fechaAcceso;
-
+    private String contenido;
+    private String videoUrl;
 
 
     public Clase() {
@@ -95,6 +96,14 @@ public class Clase implements Serializable {
 
     public String getImagenCurso() {
         return imagenCurso;
+    }
+
+    public String getContenido() {
+        return contenido;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
     }
 
     public void setImagenCurso(String imagenCurso) {

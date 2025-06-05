@@ -16,7 +16,7 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:hardwareAccelerated="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/logo_sh"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
@@ -25,10 +25,10 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
-            android:name=".VerClaseComoAdministrador"
+            android:name=".VerClaseOffline"
             android:exported="false" />
         <activity
-            android:name=".VerClaseComoCreador"
+            android:name=".VerClaseComoAdministrador"
             android:exported="false" />
         <activity
             android:name=".VerCursoComoAdministrador"
@@ -74,6 +74,9 @@
             android:exported="false" />
         <activity
             android:name=".creditos"
+            android:exported="false" />
+        <activity
+            android:name=".VerClaseComoCreador"
             android:exported="false" />
         <activity
             android:name=".verterminos"

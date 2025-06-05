@@ -1,7 +1,13 @@
 package com.example.skulfulharmony;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,6 +25,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -34,6 +43,9 @@ import com.example.skulfulharmony.javaobjects.courses.Clase;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.example.skulfulharmony.modooffline.ClaseFirebase;
+import com.example.skulfulharmony.modooffline.DropboxDownloader;
+import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -53,6 +65,7 @@ import com.google.firebase.firestore.Transaction;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.File;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +92,17 @@ public class Ver_cursos extends AppCompatActivity {
     private ImageView[] estrellas;
     private TextView tvPuntuacion;
     private int puntuacionActual = 0;
+    private static final int REQUEST_CODE_NOTIF = 1001;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d("Ya entro al curso", "creando curso");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_cursos);
+        crearCanalNotificacion();
+        pedirPermisoNotificaciones();
+
 
         // Vincular vistas
         imagenTitulo = findViewById(R.id.imgen_vercurso_imagentitulo);
@@ -360,11 +379,9 @@ public class Ver_cursos extends AppCompatActivity {
                 Intent denuncia = new Intent(Ver_cursos.this, CrearDenuncia.class);
                 denuncia.putExtra("idCurso",idCurso);
                 startActivity(denuncia);
-
-
                 return true;
             } else if (id == R.id.it_descargar) {
-                Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
+                descargarCursoCompletoFirestore();
                 return true;
             } else if (id == R.id.it_compartir) {
                 Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
@@ -398,10 +415,160 @@ public class Ver_cursos extends AppCompatActivity {
         }
     }
 
+    private void crearCanalNotificacion() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "canal_descarga",
+                    "Descarga de cursos",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
 
+    private void pedirPermisoNotificaciones() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIF);
+        }
+    }
 
+    private void mostrarProgresoCurso(String tituloCurso, int progreso) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "canal_descargas")
+                .setSmallIcon(R.drawable.ic_cloud_download)
+                .setContentTitle("Descargando curso")
+                .setContentText(tituloCurso)
+                .setProgress(100, progreso, false)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
 
+        NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
+    }
 
+    private void mostrarFinalizadoCurso(String tituloCurso) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "canal_descargas")
+                .setSmallIcon(R.drawable.ic_check)
+                .setContentTitle("Curso descargado")
+                .setContentText("El curso '" + tituloCurso + "' está listo para usarse sin conexión.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
+    }
+
+    private void descargarCursoCompletoFirestore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(cursoQuery -> {
+                    if (!cursoQuery.isEmpty()) {
+                        DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
+                        Curso curso = cursoDoc.toObject(Curso.class);
+                        if (curso == null) {
+                            Toast.makeText(this, "Error al leer el curso", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mostrarProgresoCurso(curso.getTitulo(), 0);
+
+                        DbHelper dbHelper = new DbHelper(this);
+
+                        // Guardamos el curso y recuperamos el ID insertado
+                        SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
+                        ContentValues cursoValues = new ContentValues();
+                        cursoValues.put("titulo", curso.getTitulo());
+                        cursoValues.put("descripcion", curso.getDescripcion());
+                        cursoValues.put("imagen", curso.getImagen());
+                        long cursoLocalId = sqlDB.insert("cursodescargado", null, cursoValues);
+
+                        if (cursoLocalId == -1) {
+                            Toast.makeText(this, "Error guardando curso local", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        db.collection("clases")
+                                .whereEqualTo("idCurso", idCurso)
+                                .get()
+                                .addOnSuccessListener(clasesQuery -> {
+                                    List<DocumentSnapshot> documentos = clasesQuery.getDocuments();
+                                    int total = documentos.size();
+                                    if (total == 0) {
+                                        mostrarFinalizadoCurso(curso.getTitulo());
+                                        return;
+                                    }
+
+                                    int[] contador = {0};
+
+                                    for (DocumentSnapshot claseDoc : documentos) {
+                                        Clase clase = claseDoc.toObject(Clase.class);
+                                        ClaseFirebase claseFirebase = new ClaseFirebase(
+                                                clase.getTitulo(),
+                                                clase.getContenido(),
+                                                clase.getImagen(),
+                                                clase.getVideoUrl()
+                                        );
+
+                                        String titulo = clase.getTitulo().replace(" ", "_");
+
+                                        DropboxDownloader.descargarArchivo(this, clase.getImagen(), "img_" + titulo + ".jpg", new DropboxDownloader.Callback() {
+                                            @Override
+                                            public void onSuccess(File imagenLocal) {
+                                                claseFirebase.setImagenUrl(imagenLocal.getAbsolutePath());
+
+                                                DropboxDownloader.descargarArchivo(Ver_cursos.this, clase.getVideoUrl(), "video_" + titulo + ".mp4", new DropboxDownloader.Callback() {
+                                                    @Override
+                                                    public void onSuccess(File videoLocal) {
+                                                        claseFirebase.setVideoUrl(videoLocal.getAbsolutePath());
+
+                                                        dbHelper.guardarClaseDescargada(claseFirebase, (int) cursoLocalId);
+
+                                                        contador[0]++;
+                                                        mostrarProgresoCurso(curso.getTitulo(), (int) ((contador[0] / (float) total) * 100));
+
+                                                        if (contador[0] == total) {
+                                                            mostrarFinalizadoCurso(curso.getTitulo());
+                                                            Toast.makeText(Ver_cursos.this, "Curso descargado correctamente", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Exception e) {
+                                                        Toast.makeText(Ver_cursos.this, "Error al descargar video de clase", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onError(Exception e) {
+                                                Toast.makeText(Ver_cursos.this, "Error al descargar imagen de clase", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al obtener clases", Toast.LENGTH_SHORT).show();
+                                });
+
+                    } else {
+                        Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al obtener curso", Toast.LENGTH_SHORT).show();
+                });
+    }
 
 }

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/gray2">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbartituloclase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aa000000">
+        <TextView
+            android:id="@+id/verclase_vertitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Titulo de la clase"
+            android:textColor="@color/white"
+            android:textSize="25sp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </androidx.appcompat.widget.Toolbar>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/gray2"
+            >
+            <!-- Card de la clase -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@color/gray1"
+                app:cardCornerRadius="10dp"
+                android:elevation="6dp"
+                app:cardElevation="6dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/gray1"
+                    android:padding="10dp">
+                    <!-- Video -->
+                    <androidx.media3.ui.PlayerView
+                        android:id="@+id/vv_videoclase"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="10dp" />
+
+                    <ImageView
+                        android:id="@+id/imagenClaseOffline"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginBottom="10dp"/>
+                    <Button
+                        android:id="@+id/btn_ver_documento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Ver documento"
+                        android:visibility="gone"
+                        android:backgroundTint="@color/rojo"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="10dp"/>
+
+                    <!-- Info texto -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/gray2"
+                        app:cardCornerRadius="5dp"
+                        android:elevation="0dp"
+                        app:cardElevation="0dp"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Informacion"
+                                android:textSize="22sp"
+                                android:background="@color/gray2"
+                                android:textColor="@color/white"
+                                android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
+                                />
+                            <TextView
+                                android:padding="5dp"
+                                android:id="@+id/tv_info_verclase"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Texto de información super hiper mega importante de vital importancia"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:background="@color/gray2"
+                                />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+                    <!-- Archivos: usa RecyclerView o LinearLayout -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="5dp"
+                        android:elevation="0dp"
+                        app:cardElevation="0dp"
+                        android:layout_marginTop="10dp"
+                        app:cardBackgroundColor="@color/gray2"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Archivos de la clase"
+                                android:textSize="22sp"
+                                android:background="@color/gray2"
+                                android:textColor="@color/white"
+                                android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
+                                />
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:background="@color/gray2"
+                                android:id="@+id/rv_archivos"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false"
+                                android:layout_marginBottom="5dp"
+
+                                />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- Preguntas -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/gray2"
+                        app:cardCornerRadius="5dp"
+                        android:elevation="0dp"
+                        app:cardElevation="0dp"
+                        android:layout_marginTop="10dp"
+                        app:cardBackgroundColor="@color/gray2"
+                        >
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cuestionario de la clase"
+                                android:textSize="22sp"
+                                android:background="@color/gray2"
+                                android:textColor="@color/white"
+                                android:padding="5dp"
+                                android:gravity="center|top"
+                                android:textStyle="bold"
+                                />
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_preguntasporclase_verclase"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false" />
+                            <Button
+                                android:id="@+id/btt_revisar_respuestas_verclase"
+                                android:layout_margin="5dp"
+                                android:textColor="@color/white"
+                                android:textSize="20sp"
+                                android:text="Revisar respuestas"
+                                android:layout_width="match_parent"
+                                android:layout_height="50dp"
+                                android:backgroundTint="@color/rojo_oscuro"
+                                />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <!-- Calificación -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/calificacion"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:background="@color/gray2"
+                android:padding="10dp" />
+            <LinearLayout
+                android:id="@+id/ll_estrellas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginVertical="10dp"
+                android:background="@color/gray2"
+                >
+                <TextView
+                    android:id="@+id/tv_puntuacion"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="x / 5"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:background="@drawable/rounded_button"
+                    android:layout_marginLeft="5dp"
+                    android:padding="8dp" />
+                <!-- Estrellas -->
+                <ImageView android:id="@+id/iv_1_estrella"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/estrella"
+                    android:layout_marginHorizontal="3dp" />
+                <ImageView android:id="@+id/iv_2_estrella"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/estrella"
+                    android:layout_marginHorizontal="3dp" />
+                <ImageView android:id="@+id/iv_3_estrella"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/estrella"
+                    android:layout_marginHorizontal="3dp" />
+                <ImageView android:id="@+id/iv_4_estrella"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/estrella"
+                    android:layout_marginHorizontal="3dp" />
+                <ImageView android:id="@+id/iv_5_estrella"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/estrella"
+                    android:layout_marginHorizontal="3dp" />
+            </LinearLayout>
+            <!-- Comentario -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@color/gray2">
+                <EditText
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/et_comentario_verclase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Escribe un comentario\n"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/gray1"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:maxLines="10"
+                    android:scrollHorizontally="false"
+                    android:padding="10dp"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    />
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_subir_comentario_clase"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/perfil_logo"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="2dp"/>
+            </LinearLayout>
+            <!-- Comentarios -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comentarios_verclase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
