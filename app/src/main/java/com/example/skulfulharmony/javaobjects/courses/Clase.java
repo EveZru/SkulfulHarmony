@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.javaobjects.courses;
 
+import android.content.Context;
+
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.Pregunta;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
@@ -30,6 +32,7 @@ public class Clase implements Serializable {
     private Timestamp fechaAcceso;
     private String contenido;
     private String videoUrl;
+    private transient Context context;
 
 
     public Clase() {
@@ -171,4 +174,12 @@ public class Clase implements Serializable {
     public Timestamp getFechaAcceso() { return fechaAcceso; }
 
     public void setFechaAcceso( Timestamp fechaAcceso) { this.fechaAcceso = fechaAcceso; }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public Context getContext() {
+        return context;
+    }
 }

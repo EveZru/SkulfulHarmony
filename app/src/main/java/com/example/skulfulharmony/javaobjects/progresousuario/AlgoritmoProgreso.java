@@ -1,5 +1,8 @@
 package com.example.skulfulharmony.javaobjects.progresousuario;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
@@ -27,24 +30,26 @@ public class AlgoritmoProgreso {
     private static double calcularPromedioCalificacion(List<Clase> clases) {
         if (clases == null || clases.isEmpty()) return 0;
 
-        int totalPreguntas = 0;
-        int correctas = 0;
+        int totalIntentos = 0;
+        int totalErrores = 0;
 
         for (Clase clase : clases) {
-            List<PreguntaCuestionario> preguntas = clase.getPreguntas();
-            if (preguntas == null) continue;
-            for (PreguntaCuestionario p : preguntas) {
-                totalPreguntas++;
-                if (p.getRespuestaCorrecta() == p.getRespuestaUsuario()) {
-                    correctas++;
-                }
-            }
+            String nombreCurso = clase.getNombreCurso(); // o usa clase.getIdCurso() si es más confiable
+            SharedPreferences prefs = clase.getContext().getSharedPreferences("estadisticas_" + nombreCurso, Context.MODE_PRIVATE);
+
+            int errores = prefs.getInt("errores_totales", 0);
+            int intentos = prefs.getInt("intentos_totales", 0);
+
+            totalErrores += errores;
+            totalIntentos += intentos;
         }
 
-        if (totalPreguntas == 0) return 0;
+        if (totalIntentos == 0) return 1.0; // asume perfecto si no hay errores registrados aún
 
-        return (double) correctas / totalPreguntas;
+        double promedio = 1.0 - ((double) totalErrores / (totalIntentos * 3)); // 3 preguntas por intento
+        return Math.max(0, Math.min(promedio, 1.0));
     }
+
 
     private static double calcularFrecuencia(List<Date> fechasAcceso) {
         if (fechasAcceso == null || fechasAcceso.isEmpty()) return 0;

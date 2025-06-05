@@ -1,151 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/gray2"
     android:id="@+id/main">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Contenido scrollable -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black">
-
-        <ImageView
-            android:id="@+id/iv_gotoconfiguracion"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:padding="8dp"
-            android:src="@drawable/mas_logo"
-            android:contentDescription="Toolbar Icon" />
-
-
-        <Button
-            android:id="@+id/btnVerVideoPrueba"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ver Video prueba"
-            android:textColor="@android:color/white"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/rojo_oscuro"/>
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_margin="16dp">
-
-        <!-- Imagen de perfil -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="6dp">
-
-            <ImageView
-                android:id="@+id/ivProfilePicture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/default_profile"
-                android:contentDescription="Profile Picture" />
-        </androidx.cardview.widget.CardView>
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_NombreUsuario"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black">
+
+                <ImageView
+                    android:id="@+id/iv_gotoconfiguracion"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end"
+                    android:padding="8dp"
+                    android:src="@drawable/mas_logo"
+                    android:contentDescription="Toolbar Icon" />
+
+                <Button
+                    android:id="@+id/btnVerVideoPrueba"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ver Video prueba"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="@color/rojo_oscuro"/>
+            </androidx.appcompat.widget.Toolbar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_margin="16dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="6dp">
+
+                    <ImageView
+                        android:id="@+id/ivProfilePicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_profile"
+                        android:contentDescription="Profile Picture" />
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_NombreUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nombre del Usuario"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_correo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Correo"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray1" />
+
+                    <TextView
+                        android:id="@+id/tv_DescripcionUsuario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Descripción breve del usuario"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray1"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tv_No_Cursos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cursos Creados: 10"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray1"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tv_Seguidores"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguidores: 200"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray1"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:id="@+id/tv_Seguido"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguidos: 150"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray1"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnCompartirPerfil"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre del Usuario"
-                android:textSize="20sp"
+                android:text="Compartir Perfil"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/verde"/>
+
+            <Button
+                android:id="@+id/btn_preguntas_incorrectas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ver preguntas incorrectas"/>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chartPracticaSemanal"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:layout_margin="16dp"/>
+
+            <TextView
+                android:id="@+id/tvComparacionSemana"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:text="Comparación semanal" />
+
+            <!-- Nueva gráfica de progreso -->
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chartProgresoCuestionarios"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:layout_margin="16dp"
+                android:visibility="visible"/>
 
             <TextView
-                android:id="@+id/tv_correo"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvResumenErrores"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Correo"
-                android:textSize="18sp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@color/gray1" />
-
-            <TextView
-                android:id="@+id/tv_DescripcionUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Descripción breve del usuario"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/tv_No_Cursos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cursos Creados: 10"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <!-- Followers and Following -->
-            <TextView
-                android:id="@+id/tv_Seguidores"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seguidores: 200"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/tv_Seguido"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seguidos: 150"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
+                android:text="Promedio de errores por intento: 0" />
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-    <!-- Share Button -->
-    <Button
-        android:id="@+id/btnCompartirPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Compartir Perfil"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/verde"/>
-    <Button
-        android:id="@+id/btn_preguntas_incorrectas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ver preguntas incorrectas"/>
-
-
-    <!-- Gráfica de tiempo de práctica semanal -->
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chartPracticaSemanal"
-        android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:layout_margin="16dp"/>
-
-    <!-- Barra de navegación -->
+    <!-- Barra de navegación abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"

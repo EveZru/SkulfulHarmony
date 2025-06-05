@@ -12,6 +12,7 @@ import com.dropbox.core.v2.sharing.SharedLinkMetadata; // Metadatos del enlace c
 
 // 📱 Android básico
 import android.content.Intent; // Navegación entre actividades
+import android.content.SharedPreferences;
 import android.database.Cursor; // Lectura de bases de datos
 import android.net.Uri; // Referencia a recursos (como imágenes)
 import android.os.Bundle; // Datos entre actividades
@@ -88,6 +89,7 @@ public class Perfil extends AppCompatActivity {
     private String userId;
     private static final String ACCESS_TOKEN = "sl.u.AFqeDvp_JKR9GLx7kywtI0eUGP8JyMZ2irluDz2eHqc4at1DctebmYJRuAo_UW-P-sIVwg1zeG-XmMcgnqwkYIZ7hd1u3XkRZZNVEUEMv_OJrquA3kyeqMwdyZBc0xq-dr1LLsORke3HkNvji32DjYFi57ggFwfTonvCKsOnuyTY-vfEl2z-6EfpyYfoAtIFTt3AbbUlAdk48l9jtQnutAiXpOnPkZtt_SO0S_gRiiu3pnSPH1aCGKiRqWGb6uax_hCgeVqF4d187dVkOm9V3YMw5NOrr0Ir8WROrNNrTL0JK92Cb-XMnjYlSPRNelOXjMpHOyCxrg0LGK8IN6K8GoTl8JoLN1-GdfdMaOpdf-fj4VzagzOxRGhFzf7LR0ILiKxYMb-A4oO80Ms0s2ellH443X_lG1wB9lW_V79m6LFo9jT7ZhezxXedGntqsDUcQmN5sxxAWFSAhZUvMrUP-UaQEeWGf6vYGzMyXhF4UhpIpSCCFCasVT95ACuoqJY1Khww2D0E1KJ1gwr5OpZwI_J3Uab0o88nUqKfP7RLbWzSIyY57YVXaGaNvOs02b0BuPyy0hVku5E5DqksytSJkGp4-e5tIJWDWgGardM5XhG1F_V4HS2UnzEb37slvZQ9SB1rdIqNvb8II7HFyzuzPGZWMUDP2mcpodGEW81L8iw9bQBAMOhdehb2xf5jZrjzHz0TzImHChOxHbCdqxQtcj46cd3AYHZ52ENIrXFbRtrsFsCIXHYb35SYXiEDo5VaCQzKoCTzCpJdVsUH3xWmOJyWehwTQdkUAjraBkZnQKJPORDVLo7ISHhLfwdIdrVQQn23jVgzlHPeUN3KtZthYZlyjCrVj-ILsrvUhyZfgJk8stuVjJ4tlv1gOc8XjbLsOiJX_DUIVYVmv0FeISduwTQv5WRk5GxWqxmE-UpM5Nq1rTAWslt4d4NAAurnM6oszOehtU3rltsiP8ZHZsKLYDPAh3jYUYTVSyjqXeqxQjhPR6NWl-teo68mApW1hw095WEqLNns4jCwhC6W2bb5_-uK_t3UlTC2crTgnkRGZVxtrmP65iOAIXG0_37pUqSsZDTTzpNAMAs1jBEHq2rxYFcAsmeAOV9-8nKlkbS0lZyDMRuXaG7pv0Em-pvSqUZXo_6PQj_8LH3DOFdTISznVLBBsq1F70JZSAXmw6sFF5-s_Pr9ty8U_zPg_KRiRg-meJ2hN50OXg-qjSsP2DILwl4tOF94uVyjwsA_z2yqtrdosTCdY0xtadNAROzV_pI89LkctL_AB7sbrFLNuYzl0hR_krLLmJvfGhqiJlwx_7oLqzmmrIyfZslilUiPWtcu8y4LxRh1ZWM2RvuZr6XNMzjt9a2wLNBfwQHwMfMPMP9M4R6wyeRWuUCu4zdpRPRN3CR0mCqLlgatMAx_ZKqMEAI-nsPBU5wKUIeSxa-G4YHiCw"; // Coloca tu token de Dropbox aquí
     private LineChart chartPracticaSemanal;
+    private  LineChart chartProgresoCuestionarios;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +139,8 @@ public class Perfil extends AppCompatActivity {
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
         chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
+        chartProgresoCuestionarios = findViewById(R.id.chartProgresoCuestionarios);
+        cargarGraficaErroresCuestionarios(chartProgresoCuestionarios);
 
         if (bottomNavigationView1 != null) {
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -310,9 +314,111 @@ public class Perfil extends AppCompatActivity {
 
         // Animación
         chartPracticaSemanal.animateY(1000);
-
         chartPracticaSemanal.invalidate(); // refrescar gráfica
+
+        // 🔍 Comparación entre semana actual y anterior
+        TextView tvComparacion = findViewById(R.id.tvComparacionSemana);
+
+        if (semanasOrdenadas.size() >= 2) {
+            int semanaActual = semanasOrdenadas.get(semanasOrdenadas.size() - 1);
+            int semanaAnterior = semanasOrdenadas.get(semanasOrdenadas.size() - 2);
+
+            int tiempoActual = tiemposPorSemana.get(semanaActual);
+            int tiempoAnterior = tiemposPorSemana.get(semanaAnterior);
+
+            if (tiempoAnterior > 0) {
+                float diferencia = ((float) (tiempoActual - tiempoAnterior) / tiempoAnterior) * 100;
+                String mensaje = "Tu tiempo esta semana fue " + tiempoActual + " min, ";
+
+                if (diferencia > 0) {
+                    mensaje += "un " + String.format("%.1f", diferencia) + "% más que la semana anterior 🚀";
+                    tvComparacion.setTextColor(Color.parseColor("#66BB6A")); // verde
+                } else if (diferencia < 0) {
+                    mensaje += "un " + String.format("%.1f", -diferencia) + "% menos que la semana anterior 😓";
+                    tvComparacion.setTextColor(Color.parseColor("#EF5350")); // rojo
+                } else {
+                    mensaje += "igual que la semana anterior 😐";
+                    tvComparacion.setTextColor(Color.parseColor("#FFEB3B")); // amarillo
+                }
+
+                tvComparacion.setText(mensaje);
+            } else {
+                tvComparacion.setText("Tu tiempo esta semana fue " + tiempoActual + " min. No hay datos anteriores.");
+                tvComparacion.setTextColor(Color.GRAY);
+            }
+        } else {
+            tvComparacion.setText("Necesitas al menos dos semanas de práctica para comparar.");
+            tvComparacion.setTextColor(Color.LTGRAY);
+        }
     }
+
+    private void cargarGraficaErroresCuestionarios(LineChart chart) {
+        SharedPreferences prefs = getSharedPreferences("historial_errores_Curso 1", MODE_PRIVATE);
+
+        List<Entry> entries = new ArrayList<>();
+        List<String> etiquetas = new ArrayList<>();
+
+        int i = 0;
+        while (prefs.contains("intento_" + (i + 1))) {
+            i++;
+            int errores = prefs.getInt("intento_" + i, 0);
+            entries.add(new Entry(i - 1, errores));
+            etiquetas.add("Intento " + i);
+        }
+
+        if (entries.isEmpty()) {
+            chart.setVisibility(View.GONE);
+            TextView tvResumen = findViewById(R.id.tvResumenErrores);
+            tvResumen.setText("No hay errores registrados aún.");
+            tvResumen.setTextColor(Color.GRAY);
+            return;
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Errores por intento");
+        dataSet.setColor(Color.RED);
+        dataSet.setCircleColor(Color.RED);
+        dataSet.setValueTextSize(12f);
+
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(etiquetas));
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        chart.getAxisLeft().setAxisMinimum(0f);
+        chart.getAxisRight().setEnabled(false);
+
+        chart.getDescription().setText("Errores en cuestionarios");
+        chart.getDescription().setTextSize(14f);
+        chart.getLegend().setEnabled(true);
+
+        chart.animateY(1000);
+        chart.invalidate();
+
+        // 🔢 Mostrar resumen debajo de la gráfica
+        TextView tvResumen = findViewById(R.id.tvResumenErrores);
+
+        int totalErrores = 0;
+        for (Entry entry : entries) {
+            totalErrores += entry.getY();
+        }
+
+        float promedio = entries.size() > 0 ? (float) totalErrores / entries.size() : 0;
+        tvResumen.setText("Promedio de errores por intento: " + String.format("%.2f", promedio));
+
+        if (promedio >= 2.0f) {
+            tvResumen.setTextColor(Color.RED); // demasiado errores
+        } else if (promedio >= 1.0f) {
+            tvResumen.setTextColor(Color.YELLOW); // promedio moderado
+        } else {
+            tvResumen.setTextColor(Color.GREEN); // buen resultado
+        }
+    }
+
+
 
 
     // Método para seleccionar una imagen
