@@ -106,21 +106,21 @@ public class PreguntasIncorrectas extends AppCompatActivity {
     }
 
     private void procesarRespuestas() {
-        adapterPreguntas.comprobarRespuestas();
-        Toast.makeText(this, "Respuestas comprobadas", Toast.LENGTH_SHORT).show();
 
-        //  Obtener la lista de preguntas que el adaptador identificó como INCORRECTAS
 
-        List<PreguntaCuestionario> preguntasQueQuedaronIncorrectas = adapterPreguntas.getPreguntasIncorrectas();
+            adapterPreguntas.comprobarRespuestas();
+            Toast.makeText(this, "Respuestas comprobadas", Toast.LENGTH_SHORT).show();
 
-        preguntasIncorrectasCargadas.clear();
-        preguntasIncorrectasCargadas.addAll(preguntasQueQuedaronIncorrectas);
+            // Obtener la lista de preguntas que el adaptador identificó como INCORRECTAS
+            List<PreguntaCuestionario> preguntasQueQuedaronIncorrectas = adapterPreguntas.getPreguntasIncorrectas();
 
-        // 4. Notificar al adaptador que los datos subyacentes han cambiado (aunque su lista interna ya refleja esto).
-        //    Esto es más una buena práctica si el adaptador estuviera observando la lista original.
-        //    En tu caso, `adapterPreguntas.comprobarRespuestas()` ya llama a `notifyDataSetChanged()`,
-        //    así que esto podría ser redundante, pero no hace daño.
-        adapterPreguntas.notifyDataSetChanged();
+            // Actualizar la lista de la actividad con las preguntas que aún son incorrectas
+            preguntasIncorrectasCargadas.clear();
+            preguntasIncorrectasCargadas.addAll(preguntasQueQuedaronIncorrectas);
+
+            adapterPreguntas.notifyDataSetChanged();
+
+
 
 
         // 5. Guardar la lista actualizada (solo las preguntas incorrectas restantes) en SharedPreferences.

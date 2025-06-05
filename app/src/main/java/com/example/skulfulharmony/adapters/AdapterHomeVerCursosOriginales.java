@@ -61,8 +61,6 @@ public class AdapterHomeVerCursosOriginales extends RecyclerView.Adapter<Adapter
         // Click para abrir actividad de clases
         holder.itemView.setOnClickListener(v -> {
             String tituloCurso = curso.getTitulo();
-            Log.d("AdapterOriginales", "Título del curso clickeado: " + tituloCurso);
-            Toast.makeText(context, "Clic en: " + tituloCurso, Toast.LENGTH_SHORT).show();
 
             if(tituloCurso!=null){
 
