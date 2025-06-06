@@ -252,28 +252,6 @@ public class Perfil extends AppCompatActivity {
                         .addOnFailureListener(e -> Toast.makeText(this, "Error al crear perfil", Toast.LENGTH_SHORT).show());
             }
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show());
-
-        SharedPreferences prefsNiveles = getSharedPreferences("progreso_dificultad_por_curso", MODE_PRIVATE);
-        Map<String, ?> cursos = prefsNiveles.getAll();
-
-        StringBuilder resumen = new StringBuilder("📚 Progreso por curso en fundamentos:\n");
-
-        for (Map.Entry<String, ?> entry : cursos.entrySet()) {
-            String curso = entry.getKey();
-            int nivel = (int) entry.getValue();
-            String textoNivel = switch (nivel) {
-                case 1 -> "🥉 Principiante";
-                case 2 -> "🥈 Intermedio";
-                case 3 -> "🥇 Avanzado";
-                default -> "❓ Desconocido";
-            };
-            resumen.append("- ").append(curso).append(": ").append(textoNivel).append("\n");
-        }
-
-        TextView tvProgresoPorCurso = findViewById(R.id.tv_nivelDificultad);
-        tvProgresoPorCurso.setText(resumen.toString());
-
-
     }
 
     private Map<Integer, Integer> agruparPorSemana(Map<String, Integer> tiemposPorDia) {
