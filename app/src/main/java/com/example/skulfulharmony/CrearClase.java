@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.Editable;
@@ -33,6 +35,9 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.server.config.DropboxConfig;
@@ -44,10 +49,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CrearClase extends AppCompatActivity {
 
@@ -59,6 +70,7 @@ public class CrearClase extends AppCompatActivity {
     private final int MAX_OPCIONES = 4;
     private final ArrayList<View> opcionesList = new ArrayList<>();
     private Uri im = Uri.EMPTY;
+    private String urlVideoSubido = null;
 
     //Elementos visibles
     private EditText et_pregunta,
@@ -196,39 +208,94 @@ public class CrearClase extends AppCompatActivity {
         }
     }
     //---parte de subir el video
+
+    private void subirVideoADropbox(File archivo) {
+        if (archivo == null) {
+            Toast.makeText(this, "Archivo inválido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        long fileSize = archivo.length(); // Tamaño en bytes
+        long maxFileSize = 100 * 1024 * 1024; // 100 MB
+
+        if (fileSize > maxFileSize) {
+            Toast.makeText(this, "El video es demasiado grande (máx 100MB)", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+
+            try (FileInputStream fis = new FileInputStream(archivo)) {
+                FileMetadata metadata = client.files()
+                        .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
+                        .uploadAndFinish(fis);
+
+                SharedLinkMetadata linkMetadata = client.sharing()
+                        .createSharedLinkWithSettings(metadata.getPathLower());
+
+                String urlVideo = linkMetadata.getUrl()
+                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                        .replace("?dl=0", "");
+
+                handler.post(() -> {
+                    Toast.makeText(this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
+                    guardarVideoTemporal(urlVideo); // ← guarda el link para usarlo al crear la clase
+                });
+
+            } catch (Exception e) {
+                Log.e("Dropbox", "Error al subir video", e);
+                handler.post(() -> Toast.makeText(this, "Error al subir video", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void guardarVideoTemporal(String url) {
+        urlVideoSubido = url;
+    }
+
     private void Subirvideo(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         intent.setType("video/*");
-        imagePickerLauncher.launch(intent);
+        videoPickerLauncher.launch(intent);
     }
 
+    private final ActivityResultLauncher<Intent> videoPickerLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri videoUri = result.getData().getData();
+                    im = videoUri;
 
-    private ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                            Uri videoUri = result.getData().getData();
-                            im = videoUri;
-                            long videoSizeInBytes = getFileSizeFromUri(videoUri);
-                            long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
+                    long videoSizeInBytes = getFileSizeFromUri(videoUri);
+                    long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
 
-                            if (videoSizeInBytes <= maxSizeInBytes) {
+                    if (videoSizeInBytes <= maxSizeInBytes) {
+                        Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
 
-                                Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
-
-                                try {
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), videoUri);
-                                     btn_subirvideo.setImageBitmap(bitmap);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                            } else {
-
-                                Toast.makeText(this, "El video supera los 200MB", Toast.LENGTH_LONG).show();
-                            }
+                        try {
+                            // Mostrar imagen previa del video (opcional)
+                            Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(
+                                    getContentResolver(),
+                                    Long.parseLong(videoUri.getLastPathSegment()),
+                                    MediaStore.Video.Thumbnails.MINI_KIND,
+                                    null
+                            );
+                            btn_subirvideo.setImageBitmap(bitmap);
+                        } catch (Exception e) {
+                            Log.e("VideoPreview", "Error al generar miniatura", e);
                         }
+
+                        File archivoTemporal = copiarUriAArchivoTemporal(videoUri);
+                        subirVideoADropbox(archivoTemporal);
+                    } else {
+                        Toast.makeText(this, "El video supera los 200MB", Toast.LENGTH_LONG).show();
                     }
-            );
+                }
+            });
+
 
     private  long getFileSizeFromUri(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -428,6 +495,7 @@ public class CrearClase extends AppCompatActivity {
                     clase.setImagen(imagen);
                     clase.setTextos(texto);
                     clase.setPreguntas(preguntasClase);
+                    clase.setVideoUrl(urlVideoSubido); // 🔥 Guarda el enlace de Dropbox del video
                     Timestamp  timestamp = Timestamp.now();
                     clase.setFechaCreacionf(timestamp);
 
@@ -444,4 +512,24 @@ public class CrearClase extends AppCompatActivity {
                 });
         }
     }
+
+    private File copiarUriAArchivoTemporal(Uri uri) {
+        try {
+            File tempFile = File.createTempFile("temp_video", ".mp4", getCacheDir());
+            try (InputStream inputStream = getContentResolver().openInputStream(uri);
+                 FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            Log.e("Archivo", "Error al copiar URI a archivo temporal", e);
+            return null;
+        }
+    }
+
 }

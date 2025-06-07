@@ -162,6 +162,10 @@ public class Clase implements Serializable {
     public void setFechaCreacionf(Timestamp fechaCreacionf) {
         this.fechaCreacionf = fechaCreacionf;
     }
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
 
     public Integer getMeGusta() {
         return meGusta;
@@ -182,4 +186,5 @@ public class Clase implements Serializable {
     public Context getContext() {
         return context;
     }
+
 }

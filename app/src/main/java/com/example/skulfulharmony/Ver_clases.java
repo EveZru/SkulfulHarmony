@@ -186,6 +186,17 @@ public class Ver_clases extends AppCompatActivity {
 
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
+
+                            String videoUrl = clase.getVideoUrl();
+                            if (videoUrl != null && !videoUrl.isEmpty()) {
+                                Uri videoUri = Uri.parse(videoUrl);
+                                MediaItem mediaItem = MediaItem.fromUri(videoUri);
+                                player.setMediaItem(mediaItem);
+                                player.prepare();
+                                playerViewPortrait.setPlayer(player);
+                            } else {
+                                Toast.makeText(this, "No hay video disponible para esta clase", Toast.LENGTH_SHORT).show();
+                            }
 // parte de las preguntas aqui deberia de pegar
 
 
@@ -388,15 +399,6 @@ public class Ver_clases extends AppCompatActivity {
         //-coso para el video-----------------------------------------------------------------
         playerViewPortrait = findViewById(R.id.vv_videoclase);
         player = new ExoPlayer.Builder(this).build();
-
-        // obtener de firebase orita esta igual que el ejemplo
-
-        Uri videoUri = Uri.parse("https://dl.dropboxusercontent.com/scl/fi/cl4w3odb9jyiysutjlcps/videoprueba_optimizado.mp4?rlkey=vtwcayh9cktynbu16sjlzw0hc&st=n8c0m2wk");
-        MediaItem mediaItem = MediaItem.fromUri(videoUri);
-        player.setMediaItem(mediaItem);
-        player.prepare();
-
-        playerViewPortrait.setPlayer(player);
 
     }
 
