@@ -88,6 +88,7 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
         });
     }
 
+
     @Override
     public int getItemCount() {
         return listaCursos.size();

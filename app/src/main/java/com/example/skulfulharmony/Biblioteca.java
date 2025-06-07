@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
+import com.example.skulfulharmony.adapters.AdapterCursosDescargados;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
@@ -42,14 +42,22 @@ public class Biblioteca extends AppCompatActivity {
         btnVerDescargas.setOnClickListener(v -> {
             DbHelper dbHelper = new DbHelper(Biblioteca.this);
             List<Curso> cursos = dbHelper.obtenerCursosDescargados();
-            AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursos, Biblioteca.this);
+            AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursos, curso -> {
+                Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
+                intent.putExtra("curso_id", curso.getId());
+                startActivity(intent);
+            });
             rvDescargados.setAdapter(adapter);
         });
 
         // Mostrar cursos descargados al inicio también (opcional)
         DbHelper dbHelper = new DbHelper(this);
         List<Curso> cursosDescargados = dbHelper.obtenerCursosDescargados();
-        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursosDescargados, this);
+        AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursosDescargados, curso -> {
+            Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
+            intent.putExtra("curso_id", curso.getId()); // Asegúrate que Curso tenga bien el id
+            startActivity(intent);
+        });
         rvDescargados.setAdapter(adapter);
 
         bottomNavigationView = findViewById(R.id.barra_navegacion);

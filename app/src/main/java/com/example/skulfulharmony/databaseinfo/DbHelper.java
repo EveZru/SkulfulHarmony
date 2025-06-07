@@ -118,21 +118,61 @@ public class DbHelper extends SQLiteOpenHelper {
     public List<Curso> obtenerCursosDescargados() {
         List<Curso> lista = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT titulo, descripcion, imagen FROM " + TABLE_COURSE, null);
+        Cursor cursor = db.rawQuery("SELECT id, titulo, descripcion, imagen FROM " + TABLE_COURSE, null);
 
         if (cursor.moveToFirst()) {
             do {
                 Curso curso = new Curso();
-                curso.setTitulo(cursor.getString(0));
-                curso.setDescripcion(cursor.getString(1));
-                curso.setImagen(cursor.getString(2));
+                curso.setId(cursor.getInt(0));               // 🔥 Aquí seteas el ID
+                curso.setTitulo(cursor.getString(1));
+                curso.setDescripcion(cursor.getString(2));
+                curso.setImagen(cursor.getString(3));
                 lista.add(curso);
             } while (cursor.moveToNext());
         }
+
 
         cursor.close();
         db.close();
         return lista;
     }
 
+    public Curso obtenerCursoPorId(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT titulo, descripcion, imagen FROM " + TABLE_COURSE + " WHERE id = ?", new String[]{String.valueOf(id)});
+
+        Curso curso = null;
+        if (cursor.moveToFirst()) {
+            curso = new Curso();
+            curso.setTitulo(cursor.getString(0));
+            curso.setDescripcion(cursor.getString(1));
+            curso.setImagen(cursor.getString(2));
+        }
+
+        cursor.close();
+        db.close();
+        return curso;
+    }
+
+    public List<ClaseFirebase> obtenerClasesPorCurso(int cursoId) {
+        List<ClaseFirebase> clases = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT titulo, textos, imagen, video FROM " + TABLE_CLASS + " WHERE curso_id = ?", new String[]{String.valueOf(cursoId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                ClaseFirebase clase = new ClaseFirebase(
+                        cursor.getString(0),
+                        cursor.getString(1), // documento
+                        cursor.getString(2), // imagen
+                        cursor.getString(3)  // video
+                );
+                clases.add(clase);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return clases;
+    }
 }
