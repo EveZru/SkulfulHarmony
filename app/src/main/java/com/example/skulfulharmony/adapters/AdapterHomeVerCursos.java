@@ -39,6 +39,11 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
     public void onBindViewHolder(CursoViewHolder holder, int position) {
         Curso curso = listaCursos.get(position);
 
+        if (curso == null) {
+            Log.e("AdapterHomeVerCursos", "Curso en posición " + position + " es null");
+            return;
+        }
+
         // Título del curso
         holder.tvTextPrincipal.setText(curso.getTitulo());
 
@@ -65,22 +70,21 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
         } else {
             holder.tvTextSegundo.setText("Autor desconocido");
         }
+
         // Imagen con Glide
         Glide.with(context)
                 .load(curso.getImagen())
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.img_defaultclass)
                 .into(holder.cardImage);
-        Log.e("Completo", "Todo listo para correr");
-        Log.d("ya cargo los datos del curso"+ curso.getId(),curso.getTitulo());
+
+        Log.d("AdapterHomeVerCursos", "Curso cargado: " + curso.getTitulo());
+
         // Click para abrir actividad de clases
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, Ver_cursos.class);
             intent.putExtra("idCurso", curso.getId());
-            Log.e("Se abrio el abrir curso","se supone que esto jala");
-            Log.d("Ya tiene los datos el intent por lo que ya aceptó el clic", "" + curso.getId());
-            holder.itemView.getContext().startActivity(intent);
-            Log.d("Ya se cargo el intent", "" +curso.getId());
+            context.startActivity(intent);
         });
     }
 
