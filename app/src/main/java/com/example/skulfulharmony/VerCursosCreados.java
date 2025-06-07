@@ -142,8 +142,11 @@ public class VerCursosCreados extends AppCompatActivity {
 
     }
 
-
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarCursosFirebase();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -18,15 +18,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.bumptech.glide.Glide;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
@@ -35,11 +30,8 @@ import com.example.skulfulharmony.javaobjects.clustering.DataPoint;
 import com.example.skulfulharmony.javaobjects.clustering.KMeans;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.server.config.DropboxConfig;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -49,14 +41,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-// Importaciones omitidas por brevedad (iguales a las que ya tienes)
+
 public class CrearCurso extends AppCompatActivity {
 
     private EditText etNombreNuevoCurso, etDescripcionNuevoCurso;
@@ -181,24 +169,44 @@ public class CrearCurso extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("cursos")
-                .whereEqualTo("instrumento", instrumento)
+                .whereEqualTo("instrumento." + instrumento, instrumentoNum)
                 .get()
                 .addOnSuccessListener(snapshot -> {
                     List<DataPoint> puntos = new ArrayList<>();
+                    List<QueryDocumentSnapshot> documentos = new ArrayList<>();
+
                     for (QueryDocumentSnapshot doc : snapshot) {
-                        Integer d = mapaDificultad.get(doc.getString("dificultad"));
-                        Integer g = mapaGenero.get(doc.getString("genero"));
-                        if (d != null && g != null) {
-                            puntos.add(new DataPoint(new double[]{d, g}));
+                        Map<String, Long> dificultadMap = (Map<String, Long>) doc.get("dificultad");
+                        Map<String, Long> generoMap = (Map<String, Long>) doc.get("genero");
+
+                        if (dificultadMap != null && generoMap != null) {
+                            String difKey = dificultadMap.keySet().iterator().next();
+                            String genKey = generoMap.keySet().iterator().next();
+
+                            Integer d = mapaDificultad.get(difKey);
+                            Integer g = mapaGenero.get(genKey);
+
+                            if (d != null && g != null) {
+                                puntos.add(new DataPoint(new double[]{d, g}));
+                                documentos.add(doc);
+                            }
                         }
                     }
 
                     DataPoint nuevo = new DataPoint(new double[]{dificultadNum, generoNum});
                     puntos.add(nuevo);
-                    int k = Math.min(4, puntos.size());
+                    int k = Math.min(3, puntos.size());
                     KMeans kmeans = new KMeans(k, 100);
                     kmeans.fit(puntos);
+
+                    // Actualizar los cursos existentes con sus nuevos clusters
+                    for (int i = 0; i < documentos.size(); i++) {
+                        int pred = kmeans.predict(puntos.get(i));
+                        documentos.get(i).getReference().update("cluster", pred);
+                    }
+
                     int cluster = kmeans.predict(nuevo);
+
                     db.collection("cursos")
                             .orderBy("idCurso", Query.Direction.DESCENDING)
                             .limit(1)
@@ -210,20 +218,17 @@ public class CrearCurso extends AppCompatActivity {
                                     if (last != null) nuevoId = last.intValue() + 1;
                                 }
 
-                                // Crear los mapas que se subirán como Map<String, Integer>
                                 Map<String, Integer> mapInstrumento = new HashMap<>();
                                 mapInstrumento.put(instrumento, instrumentoNum);
-
                                 Map<String, Integer> mapGenero = new HashMap<>();
                                 mapGenero.put(genero, generoNum);
-
                                 Map<String, Integer> mapDificultad = new HashMap<>();
                                 mapDificultad.put(dificultad, dificultadNum);
 
-                                // Crear objeto Curso y asignar los valores
                                 Curso curso = new Curso();
                                 curso.setIdCurso(nuevoId);
-                                curso.setCreador(nombre);
+                                curso.setTitulo(nombre);
+                                curso.setCreador(FirebaseAuth.getInstance().getCurrentUser().getEmail());
                                 curso.setDescripcion(descripcion);
                                 curso.setInstrumento(mapInstrumento);
                                 curso.setGenero(mapGenero);
@@ -245,10 +250,8 @@ public class CrearCurso extends AppCompatActivity {
                                             Toast.makeText(this, "Error al guardar curso", Toast.LENGTH_SHORT).show();
                                         });
                             });
-
-                }).addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener cursos", Toast.LENGTH_SHORT).show();
-                });
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error al obtener cursos", Toast.LENGTH_SHORT).show());
     }
 
     private File copiarUriAArchivoTemporal(Uri uri) {

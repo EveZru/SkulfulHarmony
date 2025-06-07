@@ -3,7 +3,6 @@ package com.example.skulfulharmony.javaobjects.clustering;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
 import java.util.List;
-
 import java.util.*;
 
 public class KMeans {
@@ -39,6 +38,10 @@ public class KMeans {
             }
         }
         return clusters.indexOf(nearestCluster);
+    }
+
+    public List<Cluster> getClusters() {
+        return clusters;
     }
 
     private void initializeClusters() {

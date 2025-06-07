@@ -109,7 +109,7 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                     .addOnSuccessListener(snapshot -> {
                         if (!snapshot.isEmpty()) {
                             String nombre = snapshot.getDocuments().get(0).getString("nombre");
-                            String foto = snapshot.getDocuments().get(0).getString("foto");
+                            String foto = snapshot.getDocuments().get(0).getString("fotoPerfil");
                             txt_comentario_usuario.setText(nombre);
                             Glide.with(context)
                                     .load(foto)
