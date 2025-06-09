@@ -38,12 +38,19 @@ public class DescargarClases extends AppCompatActivity {
     private AdapterDescarga adapter;
     private List<ClaseFirebase> listaClases = new ArrayList<>();
     private Set<String> clasesDescargadas = new HashSet<>();
-    private String cursoId = "ID_DEL_CURSO"; // Reemplaza esto con el ID real
+    private int cursoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_descargar_clases);
+
+        cursoId = getIntent().getIntExtra("curso_id", -1);
+        if (cursoId == -1) {
+            Toast.makeText(this, "Error: ID de curso inválido", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         crearCanalDeNotificacion();
         pedirPermisoDeNotificacionSiEsNecesario();
@@ -55,7 +62,7 @@ public class DescargarClases extends AppCompatActivity {
 
         FirebaseFirestore.getInstance()
                 .collection("Cursos")
-                .document(cursoId)
+                .document(String.valueOf(cursoId))
                 .collection("Clases")
                 .get()
                 .addOnSuccessListener(query -> {
@@ -111,11 +118,10 @@ public class DescargarClases extends AppCompatActivity {
 
     private void cargarClasesLocales() {
         SQLiteDatabase db = new DbHelper(this).getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT titulo FROM clasedescargada WHERE curso_id = ?", new String[]{cursoId});
+        Cursor cursor = db.rawQuery("SELECT titulo FROM clasedescargada WHERE curso_id = ?", new String[]{String.valueOf(cursoId)});
         if (cursor.moveToFirst()) {
             do {
-                String titulo = cursor.getString(0);
-                clasesDescargadas.add(titulo);
+                clasesDescargadas.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -129,63 +135,92 @@ public class DescargarClases extends AppCompatActivity {
 
     private void descargarYGuardarClase(ClaseFirebase clase) {
         String titulo = clase.getTitulo().replace(" ", "_");
-
         mostrarProgreso(clase.getTitulo(), 0);
 
-        DropboxDownloader.descargarArchivo(this, clase.getImagenUrl(), "img_" + titulo + ".jpg", new DropboxDownloader.Callback() {
-            @Override
-            public void onSuccess(File archivoImagen) {
-                clase.setImagenUrl(archivoImagen.getAbsolutePath());
-                mostrarProgreso(clase.getTitulo(), 50);
+        if (clase.getImagenUrl() != null && !clase.getImagenUrl().isEmpty()) {
+            DropboxDownloader.descargarArchivo(this, clase.getImagenUrl(), "img_" + titulo + ".jpg", new DropboxDownloader.Callback() {
+                @Override
+                public void onSuccess(File archivoImagen) {
+                    clase.setImagenUrl(archivoImagen.getAbsolutePath());
+                    mostrarProgreso(clase.getTitulo(), 33);
+                    continuarConVideo(clase, titulo);
+                }
 
-                DropboxDownloader.descargarArchivo(DescargarClases.this, clase.getVideoUrl(), "video_" + titulo + ".mp4", new DropboxDownloader.Callback() {
-                    @Override
-                    public void onSuccess(File archivoVideo) {
-                        clase.setVideoUrl(archivoVideo.getAbsolutePath());
-                        mostrarProgreso(clase.getTitulo(), 100);
+                @Override
+                public void onError(Exception e) {
+                    continuarConVideo(clase, titulo);
+                }
+            });
+        } else {
+            continuarConVideo(clase, titulo);
+        }
+    }
 
-                        guardarClaseEnLocal(clase);
-                        mostrarFinalizado(clase); // <--- actualizado
+    private void continuarConVideo(ClaseFirebase clase, String titulo) {
+        if (clase.getVideoUrl() != null && !clase.getVideoUrl().isEmpty()) {
+            DropboxDownloader.descargarArchivo(this, clase.getVideoUrl(), "video_" + titulo + ".mp4", new DropboxDownloader.Callback() {
+                @Override
+                public void onSuccess(File archivoVideo) {
+                    clase.setVideoUrl(archivoVideo.getAbsolutePath());
+                    mostrarProgreso(clase.getTitulo(), 66);
+                    continuarConDocumento(clase, titulo);
+                }
 
-                        runOnUiThread(() -> {
-                            Toast.makeText(DescargarClases.this, "Clase '" + clase.getTitulo() + "' descargada", Toast.LENGTH_SHORT).show();
-                            clasesDescargadas.add(clase.getTitulo());
-                            adapter.notifyDataSetChanged();
-                        });
-                    }
+                @Override
+                public void onError(Exception e) {
+                    continuarConDocumento(clase, titulo);
+                }
+            });
+        } else {
+            continuarConDocumento(clase, titulo);
+        }
+    }
 
-                    @Override
-                    public void onError(Exception e) {
-                        runOnUiThread(() -> Toast.makeText(DescargarClases.this, "Error al descargar video", Toast.LENGTH_SHORT).show());
-                    }
-                });
-            }
+    private void continuarConDocumento(ClaseFirebase clase, String titulo) {
+        if (clase.getDocumentoUrl() != null && !clase.getDocumentoUrl().isEmpty()) {
+            DropboxDownloader.descargarArchivo(this, clase.getDocumentoUrl(), "doc_" + titulo + ".pdf", new DropboxDownloader.Callback() {
+                @Override
+                public void onSuccess(File archivoDoc) {
+                    clase.setDocumentoUrl(archivoDoc.getAbsolutePath());
+                    finalizarDescarga(clase);
+                }
 
-            @Override
-            public void onError(Exception e) {
-                runOnUiThread(() -> Toast.makeText(DescargarClases.this, "Error al descargar imagen", Toast.LENGTH_SHORT).show());
-            }
+                @Override
+                public void onError(Exception e) {
+                    finalizarDescarga(clase);
+                }
+            });
+        } else {
+            finalizarDescarga(clase);
+        }
+    }
+
+    private void finalizarDescarga(ClaseFirebase clase) {
+        mostrarProgreso(clase.getTitulo(), 100);
+        guardarClaseEnLocal(clase);
+        mostrarFinalizado(clase);
+
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Clase '" + clase.getTitulo() + "' descargada", Toast.LENGTH_SHORT).show();
+            clasesDescargadas.add(clase.getTitulo());
+            adapter.notifyDataSetChanged();
         });
     }
 
     private void guardarClaseEnLocal(ClaseFirebase clase) {
         SQLiteDatabase db = new DbHelper(this).getWritableDatabase();
-
         ContentValues values = new ContentValues();
         values.put("curso_id", cursoId);
         values.put("titulo", clase.getTitulo());
         values.put("documento", clase.getDocumentoUrl());
         values.put("imagen", clase.getImagenUrl());
         values.put("video", clase.getVideoUrl());
-
         db.insert("clasedescargada", null, values);
         db.close();
     }
 
     private void mostrarProgreso(String tituloClase, int progreso) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "canal_descargas")
                 .setSmallIcon(R.drawable.ic_cloud_download)
@@ -198,9 +233,7 @@ public class DescargarClases extends AppCompatActivity {
     }
 
     private void mostrarFinalizado(ClaseFirebase clase) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
 
         Intent intent = new Intent(this, VerClaseOffline.class);
         intent.putExtra("titulo", clase.getTitulo());

@@ -125,9 +125,7 @@ public class DbUser extends DbHelper {
     public void deleteUser() {
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(DbHelper.TABLE_OPTIONS, null, null);
-        db.delete(DbHelper.TABLE_QUESTION, null, null);
-        db.delete(DbHelper.TABLE_PROGRESS, null, null);
+        //db.delete(DbHelper.TABLE_PROGRESS, null, null);
         db.delete(DbHelper.TABLE_CLASS, null, null);
         db.delete(DbHelper.TABLE_COURSE, null, null);
         db.delete(DbHelper.TABLE_USER, null, null);

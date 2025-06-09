@@ -30,35 +30,20 @@ public class Biblioteca extends AppCompatActivity {
     private RecyclerView rvDescargados;
     private Button btnVerDescargas;
 
+    private static final int REQUEST_VER_CURSO = 101;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_biblioteca);
 
-        rvDescargados = findViewById(R.id.rv_bliblioteca); // Asegúrate de corregir el ID si tiene typo
-        rvDescargados.setLayoutManager(new LinearLayoutManager(this));
-
+        rvDescargados = findViewById(R.id.rv_bliblioteca);
         btnVerDescargas = findViewById(R.id.btn_gotodescargados);
-        btnVerDescargas.setOnClickListener(v -> {
-            DbHelper dbHelper = new DbHelper(Biblioteca.this);
-            List<Curso> cursos = dbHelper.obtenerCursosDescargados();
-            AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursos, curso -> {
-                Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
-                intent.putExtra("curso_id", curso.getId());
-                startActivity(intent);
-            });
-            rvDescargados.setAdapter(adapter);
-        });
 
-        // Mostrar cursos descargados al inicio también (opcional)
-        DbHelper dbHelper = new DbHelper(this);
-        List<Curso> cursosDescargados = dbHelper.obtenerCursosDescargados();
-        AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursosDescargados, curso -> {
-            Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
-            intent.putExtra("curso_id", curso.getId()); // Asegúrate que Curso tenga bien el id
-            startActivity(intent);
-        });
-        rvDescargados.setAdapter(adapter);
+        rvDescargados.setLayoutManager(new LinearLayoutManager(this));
+        btnVerDescargas.setOnClickListener(v -> cargarCursosDescargados());
+
+        cargarCursosDescargados(); // Mostrar cursos al iniciar
 
         bottomNavigationView = findViewById(R.id.barra_navegacion);
 
@@ -93,8 +78,23 @@ public class Biblioteca extends AppCompatActivity {
         }
     }
 
+    private void cargarCursosDescargados() {
+        DbHelper dbHelper = new DbHelper(this);
+        List<Curso> cursos = dbHelper.obtenerCursosDescargados();
+
+        AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursos, curso -> {
+            Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
+            intent.putExtra("curso_id", curso.getId());
+            startActivityForResult(intent, REQUEST_VER_CURSO);
+        });
+        rvDescargados.setAdapter(adapter);
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VER_CURSO && resultCode == RESULT_OK) {
+            cargarCursosDescargados();
+        }
     }
 }

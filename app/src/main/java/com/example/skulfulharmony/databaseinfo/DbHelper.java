@@ -15,14 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; // <--- subir a 2 o más
     protected static final String DATABASE_NAME = "localdata.db";
     public static final String TABLE_USER = "usuario";
     public static final String TABLE_COURSE = "cursodescargado";
     public static final String TABLE_CLASS = "clasedescargada";
-    public static final String TABLE_QUESTION = "pregunta";
-    public static final String TABLE_OPTIONS = "respuesta";
-    public static final String TABLE_PROGRESS = "progreso";
 
     public DbHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,45 +47,15 @@ public class DbHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "curso_id INTEGER NOT NULL, " +
                 "titulo TEXT NOT NULL, " +
-                "textos TEXT, " +
+                "documento TEXT, " +
                 "imagen TEXT, " +
                 "video TEXT, " +
-                "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE" +
-                ");");
-
-        db.execSQL("CREATE TABLE " + TABLE_QUESTION + " (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "clase_id INTEGER NOT NULL, " +
-                "pregunta TEXT NOT NULL, " +
-                "respuesta_correcta TEXT NOT NULL, " +
-                "respuesta_usuario TEXT, " +
-                "es_pregunta_inicio INTEGER NOT NULL DEFAULT 0, " +
-                "fecha DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                "FOREIGN KEY (clase_id) REFERENCES " + TABLE_CLASS + "(id) ON DELETE CASCADE" +
-                ");");
-
-        db.execSQL("CREATE TABLE " + TABLE_OPTIONS + " (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "pregunta_id INTEGER NOT NULL, " +
-                "opcion TEXT NOT NULL, " +
-                "FOREIGN KEY (pregunta_id) REFERENCES " + TABLE_QUESTION + "(id) ON DELETE CASCADE" +
-                ");");
-
-        db.execSQL("CREATE TABLE " + TABLE_PROGRESS + " (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "curso_id INTEGER NOT NULL, " +
-                "indice_progreso REAL DEFAULT 0, " +
-                "respuestas_correctas INTEGER DEFAULT 0, " +
-                "respuestas_incorrectas INTEGER DEFAULT 0, " +
                 "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE" +
                 ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROGRESS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OPTIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COURSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
@@ -123,14 +90,13 @@ public class DbHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Curso curso = new Curso();
-                curso.setId(cursor.getInt(0));               // 🔥 Aquí seteas el ID
+                curso.setId(cursor.getInt(0));
                 curso.setTitulo(cursor.getString(1));
                 curso.setDescripcion(cursor.getString(2));
                 curso.setImagen(cursor.getString(3));
                 lista.add(curso);
             } while (cursor.moveToNext());
         }
-
 
         cursor.close();
         db.close();
@@ -157,15 +123,15 @@ public class DbHelper extends SQLiteOpenHelper {
     public List<ClaseFirebase> obtenerClasesPorCurso(int cursoId) {
         List<ClaseFirebase> clases = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT titulo, textos, imagen, video FROM " + TABLE_CLASS + " WHERE curso_id = ?", new String[]{String.valueOf(cursoId)});
+        Cursor cursor = db.rawQuery("SELECT titulo, documento, imagen, video FROM " + TABLE_CLASS + " WHERE curso_id = ?", new String[]{String.valueOf(cursoId)});
 
         if (cursor.moveToFirst()) {
             do {
                 ClaseFirebase clase = new ClaseFirebase(
                         cursor.getString(0),
-                        cursor.getString(1), // documento
-                        cursor.getString(2), // imagen
-                        cursor.getString(3)  // video
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3)
                 );
                 clases.add(clase);
             } while (cursor.moveToNext());
@@ -174,5 +140,12 @@ public class DbHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return clases;
+    }
+
+    public void eliminarCursoYClasesPorId(int cursoId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("clasedescargada", "curso_id = ?", new String[]{String.valueOf(cursoId)});
+        db.delete("cursodescargado", "id = ?", new String[]{String.valueOf(cursoId)});
+        db.close();
     }
 }
