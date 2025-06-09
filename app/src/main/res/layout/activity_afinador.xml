@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="16dp"
     tools:context=".Afinador"
-    android:background="@color/gray2"
-    >
+    android:background="@color/black1">
 
     <TextView
         android:id="@+id/frequencyTextView"
@@ -17,31 +17,44 @@
         android:text="Frecuencia: --- Hz"
         android:textSize="24sp"
         android:layout_marginTop="32dp"
-        android:textColor="@color/black"
+        android:textColor="@color/grayrojo"
         android:layout_gravity="center_horizontal"/>
 
-    <TextView
-        android:id="@+id/noteTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="---"
-        android:textColor="@color/black"
-        android:textSize="60sp"
-        android:layout_marginTop="16dp" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        app:cardBackgroundColor="@color/grayverde2"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="20dp"
+        android:layout_marginVertical="20dp"
+        >
+        <TextView
+            android:id="@+id/noteTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="---"
+            android:textColor="@color/grayverde"
+            android:textSize="60sp"
+            android:layout_marginTop="16dp" />
+
+    </androidx.cardview.widget.CardView>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="NotaBuscada"
-        android:textColor="@color/black"
+        android:textColor="@color/grayrojo"
+        android:textSize="18dp"
         android:gravity="center"/>
 
     <Spinner
         android:id="@+id/targetNoteSpinner"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:textColor="@color/black"
-        android:background="@color/gray2"
-        android:backgroundTint="@color/gray2"
+        android:textColor="@color/grayrojo"
+        android:background="@color/cafe2"
+        android:backgroundTint="@color/black1"
         android:layout_marginTop="32dp" />
 
 </LinearLayout>

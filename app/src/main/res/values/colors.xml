@@ -1,18 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#0E0E0E</color>
+    <color name="black1">#180000</color>
     <color name="white">#FFFFFF</color>
+    <color name="whiterojo">#F8DBDB</color>
+
     <color name="gray1">#FA5B5B5B</color>
     <color name="gray2">#FA303030</color>
-    <color name ="rojo">#CA2121</color><!--#CA2121-->
-    <color name ="rojo_oscuro">#731414</color> <!-- #731414-->
-    <color name ="tinto">#491B0B</color>
+
+    <color name="grayrojo1">#FA281717</color>
+    <color name="grayverde1">#FA1E2E1E</color>
+
+    <color name="grayrojo2">#FA240808</color>
+    <color name="grayverde2">#FA091F09</color>
+
+    <color name="grayrojo">#AD9494</color>
+    <color name="grayverde">#94AD94</color>
+
+    <color name ="rojo">#8a000d</color><!--#CA2121-->
+    <color name ="rojo_oscuro">#4D0000</color> <!-- #731414-->
+    <color name ="tinto">#521A0A</color>
+
     <color name ="verde">#0D7531</color>
+
     <color name ="azul">#0040FF</color>
-    <color name ="cafe">#F9E177</color>
 
-
-
-
-
+    <color name ="cafe">#ebbf5c</color>
+    <color name ="cafe1">#998044</color>
+    <color name ="cafe2">#FAF7E0</color>
+    <color name="cafe3">#32260e</color>
 </resources>

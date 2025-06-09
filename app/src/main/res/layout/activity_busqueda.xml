@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/gray1"
     tools:context=".Busqueda">
 
     <!-- Barra de búsqueda -->
@@ -26,6 +27,7 @@
             android:layout_weight="1"
             android:padding="10dp"
             android:hint="Buscar"
+            android:textColorHint="@color/rojo_oscuro"
             android:background="@drawable/rounded_edit_text" />
 
         <ImageView
@@ -33,7 +35,7 @@
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:padding="10dp"
-            android:background="@drawable/mas_logo"
+            android:background="@drawable/buscar_ico"
             android:clickable="true" />
     </LinearLayout>
 

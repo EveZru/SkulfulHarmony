@@ -22,15 +22,14 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black">
+                android:background="@color/gray2">
 
                 <ImageView
                     android:id="@+id/iv_gotoconfiguracion"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_gravity="end"
-                    android:padding="8dp"
-                    android:src="@drawable/mas_logo"
+                    android:src="@drawable/config_ico"
                     android:contentDescription="Toolbar Icon" />
 
                 <Button
@@ -43,6 +42,11 @@
                     android:layout_marginEnd="16dp"
                     android:backgroundTint="@color/rojo_oscuro"/>
             </androidx.appcompat.widget.Toolbar>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/tinto"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
