@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +32,7 @@ public class Busqueda extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private EditText et_buscar;
+    private ImageView iv_buscar;
     private RecyclerView rv_resultados;
     private Button btnGenero, btnInstrumento, btnDificultad;
 
@@ -61,6 +63,14 @@ public class Busqueda extends AppCompatActivity {
         btnGenero = findViewById(R.id.btn_bgenero);
         btnInstrumento = findViewById(R.id.btn_binstumento);
         btnDificultad = findViewById(R.id.btn_bdificultad);
+        iv_buscar = findViewById(R.id.iv_buscar);
+
+        iv_buscar.setOnClickListener(v -> {
+            String query = et_buscar.getText().toString().trim();
+            if (!query.isEmpty()) {
+                buscarEnFirebase(query);
+            }
+        });
 
         btnGenero.setOnClickListener(v -> mostrarDialogoSeleccion("Selecciona un género", generos, opcion -> {
             filtroGenero = opcion;
