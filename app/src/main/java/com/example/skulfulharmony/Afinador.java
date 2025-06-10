@@ -127,6 +127,7 @@ public class Afinador extends AppCompatActivity {
             public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
                 float pitchInHz = pitchDetectionResult.getPitch(); // Obtiene la frecuencia en Hz
 
+
                 // Actualizar la UI en el hilo principal
                 runOnUiThread(new Runnable() {
                     @Override

@@ -15,6 +15,7 @@ import java.util.Map;
 public class Curso implements Serializable {
 
 
+
     //Atributos
 
     private Integer idCurso;

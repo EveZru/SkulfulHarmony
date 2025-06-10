@@ -7,6 +7,7 @@ public class ClaseFirebase {
     private String imagenUrl;
     private String videoUrl;
 
+
     public ClaseFirebase() {} // Necesario para Firebase
 
     public ClaseFirebase(String titulo, String documento, String imagenUrl, String videoUrl) {

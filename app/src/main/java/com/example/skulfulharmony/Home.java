@@ -308,6 +308,7 @@ public class Home extends AppCompatActivity {
         RecyclerView rvPopulares = findViewById(R.id.rv_populares_homme);
         rvPopulares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
+
         db.collection("cursos")
                 .orderBy("popularidad", Query.Direction.DESCENDING)
                 .limit(10)
