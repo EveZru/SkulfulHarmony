@@ -118,7 +118,7 @@ public class Busqueda extends AppCompatActivity {
                 usuarios.clear();
                 for (DocumentSnapshot doc : queryUsuarios) {
                     Usuario usuario = doc.toObject(Usuario.class);
-                    if (usuario != null) {
+                    if (usuario != null && !"admin".equalsIgnoreCase(usuario.getRol())) {
                         usuario.setId(doc.getId());
                         usuarios.add(usuario);
                     }
@@ -167,7 +167,10 @@ public class Busqueda extends AppCompatActivity {
 
                             @Override
                             public void onClaseClick(Clase clase) {
-                                // TODO: manejar click en clase
+                                Intent intent = new Intent(Busqueda.this, Ver_clases.class);
+                                intent.putExtra("idClase", clase.getIdClase());
+                                intent.putExtra("idCurso", clase.getIdCurso());
+                                startActivity(intent);
                             }
                         });
                         rv_resultados.setAdapter(adapter);
