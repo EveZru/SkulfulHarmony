@@ -85,6 +85,8 @@ public class Home extends AppCompatActivity {
 
         cargarCursosCluster();
         cargarCursosHistorial();
+        cargarCursosPopulares();
+
         //-------Parte de los cursos de clases originales -------
 
         listaCursos = new ArrayList<>();
@@ -154,11 +156,22 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        // para mostrar los populares  colaloca
+        // para mostrar los populares
+
         rv_populares = findViewById(R.id.rv_populares_homme);
         rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        // de omomento lo tengo asi de que vea x
 
+        //____coso de habrir lo de las preguntas incorrectas--------------------
+        SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
+        String lastDate = prefs.getString("last_open_date", "");
+
+        String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+
+        if (!today.equals(lastDate)) {
+            Intent intent = new Intent(this, PreguntasIncorrectas.class);
+            startActivity(intent);
+            prefs.edit().putString("last_open_date", today).apply();
+        }
 
 
 
@@ -191,39 +204,9 @@ public class Home extends AppCompatActivity {
         }
 
 
-        //____coso de habrir lo de las preguntas incorrectas--------------------
-        SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
-        String lastDate = prefs.getString("last_open_date", "");
 
-        String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
-
-        if (!today.equals(lastDate)) {
-            // Primera vez que abres hoy la app, lanzas PreguntasIncorrectas
-//            Intent intent = new Intent(this, PreguntasIncorrectas.class);
-//            startActivity(intent);
-
-            // Guardas la fecha para no volver a lanzar hoy
-            prefs.edit().putString("last_open_date", today).apply();
-        }
         // para populares  cargar los populares de firebase -------------
-     /*   FirebaseFirestore db = FirebaseFirestore.getInstance();
-        listaCursos = new ArrayList<>();
-       // List<Curso> listaCursos = new ArrayList<>();
 
-        db.collection("cursos")
-                .orderBy("popularidad", Query.Direction.DESCENDING)
-                .limit(10)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                        Curso curso = doc.toObject(Curso.class);
-                        listaCursos.add(curso);
-                    }
-                    mostrarCarrusel(listaCursos); // ← siguiente paso
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
-                });*/
 
 
 
@@ -321,88 +304,44 @@ public class Home extends AppCompatActivity {
         }
     }
     private void cargarCursosPopulares() {
-        double alpha = 1.0;
-        double beta = 2.0;
-        double gamma = 3.0;
-        double epsilon = 0.5;
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference cursosRef = db.collection("cursos");
+        RecyclerView rvPopulares = findViewById(R.id.rv_populares_homme);
+        rvPopulares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        cursosRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            List<Curso> listaCursosPopulares = new ArrayList<>();
-
-            for (DocumentSnapshot document : queryDocumentSnapshots) {
-                Curso curso = document.toObject(Curso.class);
-
-                // Asegúrate de que todos los campos existen y no son nulos
-                double visitas = curso.getVisitas();  // ya no marcaría error
-
-                double interacciones = 0;
-                List<Comentario> listaComentarios = curso.getComentarios();
-                if (listaComentarios != null) {
-                    interacciones = listaComentarios.size();
-                }
-
-                double calificaciones = 0;
-                List<Integer> listaCalificaciones = curso.getCalificacionCursos();
-
-                if (listaCalificaciones != null && !listaCalificaciones.isEmpty()) {
-                    int suma = 0;
-                    for (int cal : listaCalificaciones) {
-                        suma += cal;
+        db.collection("cursos")
+                .orderBy("popularidad", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Curso> cursosPopulares = new ArrayList<>();
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        Curso curso = doc.toObject(Curso.class);
+                        cursosPopulares.add(curso);
                     }
-                    calificaciones = (double) suma / listaCalificaciones.size(); // Promedio
-                }
 
-                //   double progreso = curso.getProgreso() != null ? curso.getProgreso() : 0;// olvide decirte que este elemeto no lo temaremos en cuanta
-                double descargas = curso.getCantidadDescargas() != null ? curso.getCantidadDescargas() : 0;//aqui all bien
-
-                // Calcula popularidad
-                double popularidad = alpha * visitas +
-                        beta * interacciones +
-                        gamma * calificaciones +
-                        epsilon * descargas;
-
-                curso.setPopularidad(popularidad);
-
-                listaCursosPopulares.add(curso);
-            }
-
-            // Ordenar por popularidad
-            Collections.sort(listaCursosPopulares, (c1, c2) -> Double.compare(c2.getPopularidad(), c1.getPopularidad()));
-
-            // Tomar los 10 más populares
-            List<Curso> top10 = listaCursosPopulares.subList(0, Math.min(10, listaCursosPopulares.size()));
-            rv_populares.setAdapter(adapterHomeVerCursos);
-
-           // mostrarCarrusel(top10); // lo creamos en el siguiente paso
-        }).addOnFailureListener(e -> {
-            Toast.makeText(Home.this, "Error al cargar cursos populares", Toast.LENGTH_SHORT).show();
-            Log.e("Firestore", "Error: ", e);
-        });
+                    if (!cursosPopulares.isEmpty()) {
+                        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursosPopulares, this);
+                        rvPopulares.setAdapter(adapter);
+                    } else {
+                        mostrarCursoError("No se encontraron cursos populares", "Intenta más tarde");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FIREBASE", "Error al cargar cursos populares", e);
+                    mostrarCursoError("Error al cargar populares", "Verifica tu conexión");
+                });
     }
 
-    private void mostrarCarrusel(List<Curso> listaCursos) {
-        AdapterPopulares adapterPopulares;
-        Handler handler = new Handler();
-        adapterPopulares = new AdapterPopulares(listaCursos);
-//        viewPager = findViewById(R.id.view_populares);
-//        viewPager.setAdapter(adapterPopulares);
-
-        final int[] currentIndex = {0};
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                if (adapterPopulares.getItemCount() == 0) return;
-                //viewPager.setCurrentItem(currentIndex[0], true);
-                currentIndex[0] = (currentIndex[0] + 1) % adapterPopulares.getItemCount();
-                handler.postDelayed(this, 3000);
-            }
-        };
-        handler.postDelayed(runnable, 3000);
-
+    private void mostrarCursoError(String titulo, String mensaje) {
+        RecyclerView rvPopulares = findViewById(R.id.rv_populares_homme);
+        Curso error = new Curso(titulo, mensaje, null, null, null);
+        List<Curso> listaError = new ArrayList<>();
+        listaError.add(error);
+        rvPopulares.setAdapter(new AdapterHomeVerCursos(listaError, this));
     }
+
+
+
 
 
 }

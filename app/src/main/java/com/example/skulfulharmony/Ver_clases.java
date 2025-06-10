@@ -197,7 +197,7 @@ public class Ver_clases extends AppCompatActivity {
                             } else {
                                 Toast.makeText(this, "No hay video disponible para esta clase", Toast.LENGTH_SHORT).show();
                             }
-// parte de las preguntas aqui deberia de pegar
+// parte de las preguntas aqui d
 
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -375,8 +375,8 @@ public class Ver_clases extends AppCompatActivity {
 
 
 
-// coso de estrellas _________________________________________
-        estrellas = new ImageView[5];
+// coso de estrellas _______lo quite ya que se califica por like o dislike no por estrellas jsj__________________________________
+     /*   estrellas = new ImageView[5];
         estrellas[0] = findViewById(R.id.iv_1_estrella);
         estrellas[1] = findViewById(R.id.iv_2_estrella);
         estrellas[2] = findViewById(R.id.iv_3_estrella);
@@ -425,7 +425,7 @@ public class Ver_clases extends AppCompatActivity {
             } else {
                 estrellas[i].setImageResource(R.drawable.estrella);
             }
-        }
+        }*/
     }
 
     // para la reprocuccion de video
