@@ -199,6 +199,9 @@
             android:name=".admi_denuncias"
             android:exported="false" />
         <activity android:name=".PerfilMostrar" />
+        <receiver
+            android:name=".javaobjects.notifications.RecordatorioEntradaReceiver"
+            android:exported="true" />
     </application>
 
 </manifest>

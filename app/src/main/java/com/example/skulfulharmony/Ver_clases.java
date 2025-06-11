@@ -187,6 +187,9 @@ public class Ver_clases extends AppCompatActivity {
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
 
+                            playerViewPortrait = findViewById(R.id.vv_videoclase);
+                            player = new ExoPlayer.Builder(this).build();
+
                             String videoUrl = clase.getVideoUrl();
                             if (videoUrl != null && !videoUrl.isEmpty()) {
                                 Uri videoUri = Uri.parse(videoUrl);

@@ -31,6 +31,7 @@
             android:background="@drawable/rounded_edit_text" />
 
         <ImageView
+            android:id="@+id/iv_buscar"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"

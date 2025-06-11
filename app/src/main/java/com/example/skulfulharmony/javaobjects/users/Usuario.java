@@ -23,6 +23,7 @@ public class Usuario implements Serializable {
     private String id;
     private String user;
     private String correo;
+    private String rol;
     private Map<String,String> instrumento;
 
     public ArrayList<PreguntaCuestionario> getPreguntasRepaso() {
@@ -204,6 +205,7 @@ public class Usuario implements Serializable {
     public String getDescripcion() { return descripcion; }
 
     public String getId() { return id; }
+    public String getRol(){return rol;}
 
     public void setId(String id) { this.id = id; }
 
@@ -244,6 +246,8 @@ public class Usuario implements Serializable {
     public void setHistorialCursos(List<Curso> historialCursos) {
         this.historialCursos = historialCursos;
     }
+
+    public String setRol(){return rol;}
 
 
     // Método para actualizar tiempo de notificaciones (ya lo tienes, no modificado)
