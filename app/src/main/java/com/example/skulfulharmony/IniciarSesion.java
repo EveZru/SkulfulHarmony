@@ -66,6 +66,16 @@ public class IniciarSesion extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciarsesion);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        etCorreoOUser = findViewById(R.id.Et_correoOuser);
+        etContraseña_Iniciar = findViewById(R.id.Et_contraseña_iniciar);
+        btnIniciar = findViewById(R.id.btnIniciarsecion);
+        btnGoogleIniciar = findViewById(R.id.btn_google_iniciar);
+        btnGoToCrear = findViewById(R.id.btn_gotocrearcuenta);
+        ivTogglePassword = findViewById(R.id.ivTogglePassword);
+        tvRecuperarContraseña = findViewById(R.id.tvRecuperarContraseña);
+
         DbUser dbUser1 = new DbUser(this);
         if (dbUser1.anyUser()) {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -91,17 +101,6 @@ public class IniciarSesion extends AppCompatActivity {
                         });
             }
         }
-
-
-        mAuth = FirebaseAuth.getInstance();
-
-        etCorreoOUser = findViewById(R.id.Et_correoOuser);
-        etContraseña_Iniciar = findViewById(R.id.Et_contraseña_iniciar);
-        btnIniciar = findViewById(R.id.btnIniciarsecion);
-        btnGoogleIniciar = findViewById(R.id.btn_google_iniciar);
-        btnGoToCrear = findViewById(R.id.btn_gotocrearcuenta);
-        ivTogglePassword = findViewById(R.id.ivTogglePassword);
-        tvRecuperarContraseña = findViewById(R.id.tvRecuperarContraseña);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
