@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +17,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -65,6 +64,9 @@ public class Home extends AppCompatActivity {
     private RecyclerView rv_populares,rv_homevercursos, rv_homehistorial,rv_homeclasesoriginales;
     private AdapterHomeVerCursos adapterHomeVerCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
+
+    private Handler handler = new Handler();
+    private int currentPosition = 0;
     //private ViewPager2 viewPager;
 
 
@@ -81,11 +83,13 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
 
 
-     // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
+        // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
 
         cargarCursosCluster();
         cargarCursosHistorial();
         cargarCursosPopulares();
+
+        carrucelPopulares();
 
         //-------Parte de los cursos de clases originales -------
 
@@ -113,7 +117,7 @@ public class Home extends AppCompatActivity {
         RecyclerView recyclerView2 = findViewById(R.id.rv_homeclasesoriginales);
         recyclerView2.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapterHomeVerCursosOriginales=new AdapterHomeVerCursosOriginales((Context) this, listaCursos);
-       // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
+        // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
 
 //_________________________________________________
@@ -161,7 +165,9 @@ public class Home extends AppCompatActivity {
         rv_populares = findViewById(R.id.rv_populares_homme);
         rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        //____coso de habrir lo de las preguntas incorrectas--------------------
+        LinearSnapHelper snapHelper = new LinearSnapHelper();// con esto queda centrado el card
+        snapHelper.attachToRecyclerView(rv_populares);
+        //____coso de abrir lo de las preguntas incorrectas--------------------
         SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
         String lastDate = prefs.getString("last_open_date", "");
 
@@ -197,15 +203,11 @@ public class Home extends AppCompatActivity {
                 }
                 return false;
             });
-            // Establecer el ítem seleccionado al inicio (si es necesario)
             bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         } else {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
 
-
-
-        // para populares  cargar los populares de firebase -------------
 
 
 
@@ -288,7 +290,7 @@ public class Home extends AppCompatActivity {
         });
 
     }
-    //populares
+
 
 
     @Override
@@ -321,7 +323,7 @@ public class Home extends AppCompatActivity {
                     }
 
                     if (!cursosPopulares.isEmpty()) {
-                        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursosPopulares, this);
+                        AdapterPopulares adapter = new AdapterPopulares(cursosPopulares, this);
                         rvPopulares.setAdapter(adapter);
                     } else {
                         mostrarCursoError("No se encontraron cursos populares", "Intenta más tarde");
@@ -340,7 +342,26 @@ public class Home extends AppCompatActivity {
         listaError.add(error);
         rvPopulares.setAdapter(new AdapterHomeVerCursos(listaError, this));
     }
+    //___Carrucel del populares
+    private void carrucelPopulares() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (rv_populares.getAdapter() == null || rv_populares.getAdapter().getItemCount() == 0) return;
 
+                int totalItems = rv_populares.getAdapter().getItemCount();
+                currentPosition++;
+
+                if (currentPosition >= totalItems) {
+                    currentPosition = 0; // Reinicia scroll
+                }
+
+                rv_populares.smoothScrollToPosition(currentPosition);
+
+                handler.postDelayed(this, 3000);
+            }
+        }, 8000);
+    }
 
 
 
