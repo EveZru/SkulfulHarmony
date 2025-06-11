@@ -77,29 +77,27 @@ public class IniciarSesion extends AppCompatActivity {
         tvRecuperarContraseña = findViewById(R.id.tvRecuperarContraseña);
 
         DbUser dbUser1 = new DbUser(this);
-        if (dbUser1.anyUser()) {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-            if (currentUser != null) {
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("usuarios").document(currentUser.getUid()).get()
-                        .addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                String rol = documentSnapshot.getString("rol");
-                                Intent intent;
-                                if ("admin".equals(rol)) {
-                                    intent = new Intent(IniciarSesion.this, admi_populares.class);
-                                } else {
-                                    intent = new Intent(IniciarSesion.this, Home.class);
-                                }
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
+        if (dbUser1.anyUser() && currentUser != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("usuarios").document(currentUser.getUid()).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String rol = documentSnapshot.getString("rol");
+                            Intent intent;
+                            if ("admin".equals(rol)) {
+                                intent = new Intent(IniciarSesion.this, admi_populares.class);
                             } else {
-                                Toast.makeText(this, "No se encontró el rol del usuario", Toast.LENGTH_SHORT).show();
+                                intent = new Intent(IniciarSesion.this, Home.class);
                             }
-                        });
-            }
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(this, "No se encontró el rol del usuario", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
