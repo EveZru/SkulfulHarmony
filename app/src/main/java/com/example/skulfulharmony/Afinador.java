@@ -174,11 +174,11 @@ public class Afinador extends AppCompatActivity {
 
     private String getNoteFromFrequency(double frequency) {
         if (frequency <= 0) return "---";
+        double semitonesFromA4 = 12 * Math.log(frequency / A4_FREQUENCY) / Math.log(2);
 
-        double noteNum = 12 * Math.log(frequency / A4_FREQUENCY) / Math.log(2);
-        int roundedNote = Math.round((float) noteNum);
-        int octave = 4 + (roundedNote + 9) / 12; // Ajuste para que C4 sea el centro si A4 es 440
-        int noteIndex = (roundedNote % 12 + 12) % 12; // Asegura un índice positivo (0-11)
+        int nearestNote = (int) Math.round(semitonesFromA4);
+        int noteIndex = (nearestNote % 12 + 12) % 12;
+        int octave = 4 + (nearestNote + 9) / 12;
 
         return noteNames[noteIndex] + octave;
     }
