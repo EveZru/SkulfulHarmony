@@ -46,7 +46,7 @@ public class Usuario implements Serializable {
 
     // ATRIBUTOS DINAMICOS
     private List<Comentario> comentarios;
-    private List<Curso> cursosSeguidos;
+    private List<Integer> cursosSeguidos;
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
     //private RecomendacionDeUsuario recomendacionesUsuario;
@@ -249,6 +249,12 @@ public class Usuario implements Serializable {
 
     public String setRol(){return rol;}
 
+    public List<Integer> getCursosSeguidos() {
+        return cursosSeguidos;
+    }
+    public void setCursosSeguidos(List<Integer> cursosSeguidos) {
+        this.cursosSeguidos = cursosSeguidos;
+    }
 
     // Método para actualizar tiempo de notificaciones (ya lo tienes, no modificado)
     public void actualizarTiempoNotificaciones() {

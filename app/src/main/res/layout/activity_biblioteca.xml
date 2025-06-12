@@ -1,59 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Biblioteca"
-    android:orientation="vertical"
+    android:background="@color/gray2"
     >
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mis Cursos"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            />
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:layout_marginTop="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
 
     <LinearLayout
+        android:layout_marginTop="62dp"
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-
+        android:background="@color/gray2"
        >
 
         <Button
             android:id="@+id/btn_gotoseguidos"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-          android:backgroundTint="@color/black"
-            android:padding="20dp"
+          android:backgroundTint="@color/gray2"
+            android:padding="10dp"
             android:layout_gravity="top|center_horizontal"
             android:text="Seguidos"
             android:textAllCaps="false"
-            android:textColor="@color/gray1"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray1"
+            />
 
         <Button
             android:id="@+id/btn_gotohistorial"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:padding="20dp"
+            android:backgroundTint="@color/gray2"
+            android:padding="10dp"
             android:text="Historial"
             android:textAllCaps="false"
-            android:textColor="@color/gray1"
+            android:textColor="@color/white"
             android:textSize="20sp" />
+
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/gray1"
+            />
 
         <Button
             android:id="@+id/btn_gotodescargados"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:padding="20dp"
+            android:backgroundTint="@color/gray2"
+            android:padding="10dp"
             android:text="Descargas"
             android:textAllCaps="false"
-            android:textColor="@color/gray1"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,24 +114,6 @@
         </ScrollView>
 
     </LinearLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_seguidos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-    </ScrollView>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion"
@@ -101,9 +123,9 @@
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"
         app:menu="@menu/barra_navegacionprincipal"
-
+        android:layout_gravity="bottom|end"
 
         />
 
 
-</LinearLayout>
+</FrameLayout>

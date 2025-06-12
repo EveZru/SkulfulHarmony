@@ -1,6 +1,8 @@
 package com.example.skulfulharmony.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.R;
+import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -22,66 +27,59 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class AdapterBibliotecaVerCursosActualizacion extends RecyclerView.Adapter<AdapterBibliotecaVerCursosActualizacion.CursoViewHolder> {
+public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapter<AdapterBibliotecaVerCursosActualizacion.CursoViewHolder> {
 
-    private Context context;
-    private List<Curso> seguidos = new ArrayList<>();
-    private DbUser dbUser;
-    private String correo;
+    private List<Integer> seguidos;
 
-    public AdapterBibliotecaVerCursosActualizacion(Context context) {
-        this.context = context;
-        dbUser = new DbUser(this.context);
-        correo = dbUser.getCorreoUser();
-        cargarSeguidos();
-    }
-
-    private void cargarSeguidos() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("usuario")
-                .document(correo)
-                .collection("cursosSeguidos")
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    seguidos.clear();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String idCurso = document.getId();
-                        String nombreCurso = document.getString("nombreCurso");
-                        String imagenUrl = document.getString("imagenCurso");
-
-                        Timestamp timestamp = document.getTimestamp("fechaActualizacion");
-                        Date fechaActualizacion = timestamp != null ? timestamp.toDate() : null;
-
-
-                        seguidos.add(new Curso(Integer.parseInt(idCurso), nombreCurso, imagenUrl, fechaActualizacion));
-                    }
-                    notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    // Manejar errores si es necesario
-                });
+    public AdapterBibliotecaVerCursosActualizacion(List<Integer> seguidos) {
+        this.seguidos = seguidos;
     }
 
     @NonNull
     @Override
     public CursoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.holder_curso_clase, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.holder_verlista_clase_curso, parent, false);
         return new CursoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CursoViewHolder holder, int position) {
-        Curso curso = seguidos.get(position);
+        Integer idCurso = seguidos.get(position);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(onQuerySnapshot -> {
+                    if (!onQuerySnapshot.isEmpty()) {
+                        DocumentSnapshot document = onQuerySnapshot.getDocuments().get(0);
+                        Curso curso = document.toObject(Curso.class);
+                        holder.nombreCurso.setText(curso.getTitulo());
+                        holder.fechaActualizacion.setText(curso.getFechaActualizacion().toDate().toString());
+                        Glide.with(holder.itemView.getContext())
+                                .load(curso.getImagen())
+                                .placeholder(R.drawable.loading)
+                                .error(R.drawable.img_defaultclass)
+                                .into(holder.imagenCurso);
+                    }
+                })
+                .addOnFailureListener( e -> {
+                    holder.nombreCurso.setText("Curso desconocido");
+                    holder.fechaActualizacion.setText("");
+                    Glide.with(holder.itemView.getContext())
+                            .load(R.drawable.img_defaultclass)
+                            .into(holder.imagenCurso);
+                    Log.e("AdapterBibliotecaVerCursosActualizacion", "Error al obtener el curso: " + e.getMessage());
+                });
 
-        holder.nombreCurso.setText(curso.getTitulo());
-        //holder.fechaActualizacion.setText(""+curso.getCalificacion().getPuntuacion());
-
-        // Cargar imagen con Glide
-        Glide.with(context)
-                .load(curso.getImagen())
-                .placeholder(R.drawable.loading) // Imagen de carga
-                .error(R.drawable.img_defaultclass) // Imagen en caso de error
-                .into(holder.imagenCurso);
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(holder.itemView.getContext(), Ver_cursos.class);
+            intent.putExtra("idCurso", idCurso);
+            holder.itemView.getContext().startActivity(intent);
+        });
+        if (position == seguidos.size() - 1) {
+            holder.itemView.setPadding(0, 0, 0, 100);
+        }
     }
 
     @Override
@@ -95,9 +93,10 @@ public class AdapterBibliotecaVerCursosActualizacion extends RecyclerView.Adapte
 
         public CursoViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombreCurso = itemView.findViewById(R.id.tv_textprincipal);
-            fechaActualizacion = itemView.findViewById(R.id.tv_textsegundo);
-            imagenCurso = itemView.findViewById(R.id.cardImage);
+            nombreCurso = itemView.findViewById(R.id.txt_principal_verlista_ccc);
+            fechaActualizacion = itemView.findViewById(R.id.txt_secundario_verlista_ccc);
+            imagenCurso = itemView.findViewById(R.id.img_verlista_ccc);
         }
     }
 }
+

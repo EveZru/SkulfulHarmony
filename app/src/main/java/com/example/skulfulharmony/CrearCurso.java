@@ -239,6 +239,7 @@ public class CrearCurso extends AppCompatActivity {
                                 curso.setVisitas(0);
                                 curso.setCantidadDescargas(0);
                                 curso.setPopularidad(0.0);
+                                curso.setFechaActualizacion(Timestamp.now());
 
                                 db.collection("cursos")
                                         .add(curso)

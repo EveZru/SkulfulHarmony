@@ -501,8 +501,13 @@ public class CrearClase extends AppCompatActivity {
 
                     Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
                     db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {
-                        Toast.makeText(CrearClase.this, "Clase creada exitosamente", Toast.LENGTH_SHORT).show();
-                        finish();
+                        db.collection("cursos").document(String.valueOf(idCurso)).update("fechaActualizacion", Timestamp.now())
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(CrearClase.this, "Clase creada exitosamente", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }).addOnFailureListener(e->{
+                                            Toast.makeText(CrearClase.this, "Error al actualizar la fecha de actualización", Toast.LENGTH_SHORT).show();
+                                });
                     }).addOnFailureListener(e -> {
                         Toast.makeText(CrearClase.this, "Error al subir la clase", Toast.LENGTH_SHORT).show();
                     });

@@ -28,6 +28,8 @@ public class Curso implements Serializable {
     private List<Comentario> comentarios;
     private Date fechaCreacion;
     private Timestamp fechaCreacionf;
+    private Timestamp fechaActualizacion;
+    private Timestamp fechaAcceso;
     private Map<String,Integer> instrumento;
     private Map<String,Integer> genero;
     private Map<String,Integer> dificultad;
@@ -36,9 +38,6 @@ public class Curso implements Serializable {
     private List<Integer> calificacionCursos;
     private Double popularidad;
     private String firestoreId;
-
-
-
     private Integer cluster;
 
     //Constructores
@@ -235,4 +234,21 @@ public class Curso implements Serializable {
     public void setCluster(Integer cluster) {
         this.cluster = cluster;
     }
+
+    public Timestamp getFechaActualizacion(){
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(Timestamp fechaActualizacion){
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public Timestamp getFechaAcceso() {
+        return fechaAcceso;
+    }
+
+    public void setFechaAcceso(Timestamp fechaAcceso) {
+        this.fechaAcceso = fechaAcceso;
+    }
+
 }
