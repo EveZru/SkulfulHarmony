@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray1"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Centro de notificaciones"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_horaentrada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Recordatorio de hora promedio de entrada" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_megustacomentario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Notificación de me gusta en comentario" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_comentariodenunciatuclase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Notificación de comentario/clase denunciada" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_progresodescarga"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Notificación de progreso en descarga" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_subidamaterial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Notificación de subida de material" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_errorsubidadatos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Notificación de error en subida de datos" />
+
+        <Button
+            android:id="@+id/btn_config_notificaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ir a configuración de notificaciones"
+            android:layout_marginTop="24dp" />
+    </LinearLayout>
+</ScrollView>

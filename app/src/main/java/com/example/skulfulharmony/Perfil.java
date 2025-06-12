@@ -218,7 +218,13 @@ public class Perfil extends AppCompatActivity {
             } else if (id == R.id.menuContactanos) {
                 startActivity(new Intent(Perfil.this, Contactanos.class));
                 return true;
-            }
+            }  else if (id == R.id.menuCreditos) {
+                startActivity(new Intent(Perfil.this, creditos.class));
+                return true;
+            }  else if (id == R.id.menuNotificaciones) {
+                startActivity(new Intent(Perfil.this, CentroNotificaciones.class));
+                return true;
+        }
             return false;
         });
 
