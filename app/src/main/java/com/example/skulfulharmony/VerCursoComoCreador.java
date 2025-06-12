@@ -45,7 +45,7 @@ import java.util.Locale;
 public class VerCursoComoCreador extends AppCompatActivity {
 
     ImageView imagenTitulo,menu;
-    TextView tv_tituloCurso, descripcionCurso, fechaCreacion;
+    TextView tv_tituloCurso, tv_descripcionCurso, tv_fechaCreacion;
     RecyclerView rvClases;
     FloatingActionButton bttnAgregarClase;
 
@@ -64,8 +64,8 @@ public class VerCursoComoCreador extends AppCompatActivity {
 
         imagenTitulo = findViewById(R.id.imgen_vercursocreador_imagentitulo);
         tv_tituloCurso = findViewById(R.id.text_vercursocreador_title);
-        descripcionCurso = findViewById(R.id.tv_descripciomicurso);
-        fechaCreacion = findViewById(R.id.text_vercursocreador_fecha);
+        tv_descripcionCurso = findViewById(R.id.tv_descripciomicurso);
+        tv_fechaCreacion = findViewById(R.id.tv_fechapublic);
         rvClases = findViewById(R.id.rv_verclasesencursocomocreador);
         bttnAgregarClase = findViewById(R.id.bttn_vercursocreador_agregarclase);
 
@@ -80,7 +80,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
 
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        // Obtener idCurso del intent
+        // Obtener idCurso del intent cola
         idCurso = getIntent().getIntExtra("idCurso",1);
 
         if (idCurso != -1) {
@@ -150,11 +150,23 @@ public class VerCursoComoCreador extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
                         String nombre = document.getString("titulo");
+                        String descripcion = document.getString("descripcion");
+                        String fechaCreacionStr = document.getString("fechaCreacion");
 
                         if (nombre != null) {
                             tv_tituloCurso.setText(nombre);
                         } else {
                             tv_tituloCurso.setText("Sin titulo");
+                        }
+                        if (descripcion != null) {
+                            tv_descripcionCurso.setText(descripcion);
+                        } else {
+                            tv_descripcionCurso.setText("Sin desscripcion");
+                        }
+                        if (fechaCreacionStr != null) {
+                            tv_fechaCreacion.setText(fechaCreacionStr);
+                        } else {
+                            tv_fechaCreacion.setText("Desconocemos la fecha de creacion");
                         }
                     } else {
                         Toast.makeText(VerCursoComoCreador.this, "Curso no encontrado.", Toast.LENGTH_LONG).show();

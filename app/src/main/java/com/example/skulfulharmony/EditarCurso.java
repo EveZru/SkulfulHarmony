@@ -1,14 +1,20 @@
 package com.example.skulfulharmony;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -19,25 +25,31 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+
 public class EditarCurso extends AppCompatActivity {
     private TextView tv_nombrecurso,tv_descripcioncurso;
     private Button btn_cambiar, btn_cancelar ;
     private EditText et_nueva_descripcion;
     private FirebaseFirestore firestore;
     private int idCurso;
+    private ImageView iv_fotocurso;
     private String nombreCursoActual;
-
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private Uri im = Uri.EMPTY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_editar_curso);
 
+        iv_fotocurso=findViewById(R.id.iv_fotocurso);
         btn_cambiar = findViewById(R.id.btn_updatecurso);
         btn_cancelar = findViewById(R.id.btn_cancelar);
         tv_nombrecurso = findViewById(R.id.tv_nombrecurso);
         tv_descripcioncurso = findViewById(R.id.tv_descripantreior);
         et_nueva_descripcion = findViewById(R.id.et_descripnueva);
+
 
         firestore = FirebaseFirestore.getInstance();
 
@@ -77,6 +89,22 @@ public class EditarCurso extends AppCompatActivity {
             });
 
         });
+
+        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                im = result.getData().getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), im);
+                    iv_fotocurso.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        iv_fotocurso.setOnClickListener(v -> {
+            openGalery();
+        });
     }
 
     private void cargarDatosCurso(int id) {
@@ -84,7 +112,6 @@ public class EditarCurso extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
-                        // Solo debe haber un documento con este idCurso
                         DocumentReference docRef = queryDocumentSnapshots.getDocuments().get(0).getReference();
                         String nombre = queryDocumentSnapshots.getDocuments().get(0).getString("titulo");
                         String descripcion = queryDocumentSnapshots.getDocuments().get(0).getString("descripcion");
@@ -107,6 +134,10 @@ public class EditarCurso extends AppCompatActivity {
                     Log.e("EditarCurso", "Error al cargar el curso", e);
                     finish();
                 });
+    }
+    private void openGalery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        imagePickerLauncher.launch(intent);
     }
 
 }

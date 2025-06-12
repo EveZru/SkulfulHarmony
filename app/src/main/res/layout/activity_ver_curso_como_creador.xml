@@ -74,14 +74,14 @@
                         android:id="@+id/text_vercursocreador_title" />
 
                     <TextView
+                        android:id="@+id/tv_fechapublic"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:textSize="20sp"
                         android:textColor="@color/white"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:id="@+id/text_vercursocreador_fecha"
-                        android:text="Yo mero"/>
+                        android:text="fesha"/>
 
 
 
