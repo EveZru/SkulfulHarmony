@@ -20,6 +20,12 @@ public class DropboxDownloader {
 
     public static void descargarArchivo(Context context, String url, String nombreArchivo, Callback callback) {
         new Thread(() -> {
+            // Validación temprana para evitar crash
+            if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+                callback.onError(new IllegalArgumentException("URL inválida para descarga: " + url));
+                return;
+            }
+
             OkHttpClient client = new OkHttpClient();
 
             Request request = new Request.Builder().url(url).build();

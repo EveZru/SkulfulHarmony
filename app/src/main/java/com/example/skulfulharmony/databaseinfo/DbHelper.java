@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 2; // <--- subir a 2 o más
+    private static final int DATABASE_VERSION = 3; // ⬆ Subido para que se aplique el cambio
     protected static final String DATABASE_NAME = "localdata.db";
     public static final String TABLE_USER = "usuario";
     public static final String TABLE_COURSE = "cursodescargado";
@@ -37,6 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_COURSE + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "idCurso INTEGER UNIQUE, " + // ✅ Campo agregado
                 "titulo TEXT NOT NULL, " +
                 "descripcion TEXT, " +
                 "imagen TEXT, " +
@@ -65,10 +66,11 @@ public class DbHelper extends SQLiteOpenHelper {
     public void guardarCursoDescargado(Curso curso) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put("idCurso", curso.getIdCurso()); // ✅ Guardar idCurso
         values.put("titulo", curso.getTitulo());
         values.put("descripcion", curso.getDescripcion());
         values.put("imagen", curso.getImagen());
-        db.insert(TABLE_COURSE, null, values);
+        db.insertWithOnConflict(TABLE_COURSE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     public void guardarClaseDescargada(ClaseFirebase clase, int cursoId) {

@@ -127,7 +127,7 @@
                     android:textColor="@color/cafe1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:text="Instrumento"
                     android:textSize="18sp" />
 
@@ -135,7 +135,7 @@
                     android:id="@+id/sp_Instrumento"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="2"
+                    android:layout_weight="4"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:textColor="@color/gray1"
@@ -156,7 +156,7 @@
                     android:textColor="@color/cafe1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:text="Nivel"
                     android:textSize="18sp" />
 
@@ -164,7 +164,7 @@
                     android:id="@+id/sp_Nivel"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="2"
+                    android:layout_weight="4"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:backgroundTint="@color/rojo_oscuro"
@@ -184,7 +184,7 @@
                     android:textColor="@color/cafe1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:text="Género"
                     android:textSize="18sp" />
 
@@ -192,7 +192,7 @@
                     android:id="@+id/sp_Genero"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="2"
+                    android:layout_weight="4"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:textColor="@color/black"

@@ -8,20 +8,7 @@
     android:background="@color/gray2">
 
     <!-- Toolbar superior -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_ver_cursos"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black">
-        <ImageView
-            android:id="@+id/iv_despegarmenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:padding="8dp"
-            android:src="@drawable/mas_logo"
-            android:contentDescription="Toolbar Icon" />
-    </androidx.appcompat.widget.Toolbar>
+
 
     <!-- Contenido scrollable -->
     <ScrollView
@@ -36,11 +23,12 @@
             android:padding="5dp"
             android:background="@color/gray2">
 
+
             <!-- Imagen destacada con degradado, título, autor y descripción -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
+                app:cardCornerRadius="20dp"
                 android:elevation="6dp"
                 app:cardElevation="6dp"
                 android:layout_marginBottom="16dp"
@@ -50,12 +38,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="300dp">
 
+
+
                     <ImageView
                         android:id="@+id/imgen_vercurso_imagentitulo"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:src="@drawable/logo_sh" />
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar_ver_cursos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top|start"
+                        android:layout_marginRight="15dp"
+                        android:layout_alignParentTop="true"
+                        android:background="#00000000">
+
+                        <ImageView
+                            android:clickable="true"
+                            android:id="@+id/iv_despegarmenu"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="end"
+                            android:padding="8dp"
+                            android:layout_marginLeft="0dp"
+                            android:src="@drawable/menutrespuntos"
+                            android:contentDescription="Toolbar Icon" />
+
+                        <ImageView
+                            android:clickable="true"
+                            android:id="@+id/img_vercurso_seguircurso"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="end"
+                            android:src="@drawable/cursonoseguido"
+                            android:contentDescription="Toolbar Icon" />
+                    </androidx.appcompat.widget.Toolbar>
 
                     <!-- Degradado inferior -->
                     <LinearLayout
@@ -64,6 +84,7 @@
                         android:layout_alignParentBottom="true"
                         android:orientation="vertical"
                         android:background="@drawable/degradado_holder_texts"
+
                         android:padding="10dp">
 
                         <TextView
@@ -108,6 +129,8 @@
                     android:textColor="@color/white"
                     android:background="@color/gray1"/>
             </androidx.cardview.widget.CardView>
+
+
 
             <!-- Lista de clases (RecyclerView) -->
             <TextView

@@ -77,11 +77,16 @@ public class VerCursoDescargado extends AppCompatActivity {
             descripcion.setText(curso.getDescripcion());
             autor.setText("Guardado localmente");
 
-            Glide.with(this)
-                    .load(curso.getImagen())
-                    .placeholder(R.drawable.loading)
-                    .error(R.drawable.img_defaultclass)
-                    .into(imagen);
+            File imagenFile = new File(curso.getImagen());
+            if (imagenFile.exists()) {
+                Glide.with(this)
+                        .load(imagenFile)
+                        .placeholder(R.drawable.loading)
+                        .error(R.drawable.img_defaultclass)
+                        .into(imagen);
+            } else {
+                imagen.setImageResource(R.drawable.img_defaultclass);
+            }
         }
 
         adapter = new AdapterClasesLocales(clases, clase -> {

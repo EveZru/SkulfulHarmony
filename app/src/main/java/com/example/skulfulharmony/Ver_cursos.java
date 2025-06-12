@@ -43,7 +43,9 @@ import com.example.skulfulharmony.javaobjects.courses.Clase;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
+import com.example.skulfulharmony.modooffline.DescargaManager;
 import com.example.skulfulharmony.modooffline.DropboxDownloader;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -88,6 +90,7 @@ public class Ver_cursos extends AppCompatActivity {
     private FirebaseFirestore firestore;
     private int idCurso;
     private ImageView desplegarmenu;
+    private ImageView seguirCurso;
 
     private ImageView[] estrellas;
     private TextView tvPuntuacion;
@@ -111,6 +114,11 @@ public class Ver_cursos extends AppCompatActivity {
         autorCurso = findViewById(R.id.text_vercurso_autor);
         rvClases = findViewById(R.id.rv_verclasesencurso);
         rvComentarios = findViewById(R.id.rv_comentarios_vercurso);
+
+        seguirCurso = findViewById(R.id.img_vercurso_seguircurso);
+        crear_comentario=findViewById(R.id.btn_subir_comentario_curso);
+        etcomentario=findViewById(R.id.et_comentario_vercurso);
+        desplegarmenu = findViewById(R.id.iv_despegarmenu);
         desplegarmenu = findViewById(R.id.iv_despegarmenu);
         desplegarmenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,20 +130,23 @@ public class Ver_cursos extends AppCompatActivity {
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         firestore = FirebaseFirestore.getInstance();
+
         // Obtener idCurso del intent
         idCurso = getIntent().getIntExtra("idCurso", 1);
-
         if (idCurso != -1) {
             obtenerCurso(idCurso);
+
         } else {
             Toast.makeText(this, "ID del curso no válido", Toast.LENGTH_SHORT).show();
             finish();
         }
-        //___coso de estrella____________________
 
+
+        rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        //___coso de estrella____________________
         tvPuntuacion = findViewById(R.id.tv_puntuacion);
         estrellas = new ImageView[5];
-
         estrellas[0] = findViewById(R.id.iv_1_estrella);
         estrellas[1] = findViewById(R.id.iv_2_estrella);
         estrellas[2] = findViewById(R.id.iv_3_estrella);
@@ -156,8 +167,67 @@ public class Ver_cursos extends AppCompatActivity {
         actualizarTextoPuntuacion();
 
         //---- comentarios ------
-        crear_comentario=findViewById(R.id.btn_subir_comentario_curso);
-        etcomentario=findViewById(R.id.et_comentario_vercurso);
+
+        seguirCurso.setOnClickListener(view -> {
+            Toast.makeText(this, "SIGUIENDO", Toast.LENGTH_SHORT).show();
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("usuarios")
+                    .whereEqualTo("correo", user.getEmail())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(onSuccessListener -> {
+                        Toast.makeText(this, "Entro a la coloeccion", Toast.LENGTH_SHORT).show();
+                        if (!onSuccessListener.isEmpty()) {
+                            DocumentSnapshot doc = onSuccessListener.getDocuments().get(0);
+                            String docId = doc.getId();
+                            Usuario usuario = doc.toObject(Usuario.class);
+                            if (usuario != null) {
+                                Toast.makeText(this, "Entro a el usuario", Toast.LENGTH_SHORT).show();
+
+                                List<Integer> cursosSeguidos = usuario.getCursosSeguidos();
+                                if (cursosSeguidos == null) {
+                                    cursosSeguidos = new ArrayList<>();
+                                }
+
+                                if (cursosSeguidos.contains(idCurso)) {
+                                    // El usuario ya sigue el curso, lo elimina
+                                    cursosSeguidos.remove(Integer.valueOf(idCurso));
+                                    seguirCurso.setImageResource(R.drawable.cursonoseguido); // ícono de no seguido
+                                } else {
+                                    // El usuario no sigue el curso, lo agrega
+                                    cursosSeguidos.add(idCurso);
+                                    seguirCurso.setImageResource(R.drawable.cursoseguido); // ícono de seguido
+                                }
+
+                                db.collection("usuarios")
+                                        .document(docId)
+                                        .update("cursosSeguidos", cursosSeguidos)
+                                        .addOnSuccessListener(unused -> {
+                                            Toast.makeText(this, "Subio correctamente", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(this, "Error al actualizar cursos seguidos", Toast.LENGTH_SHORT).show();
+                                        });
+                            }
+                            else {
+                                Toast.makeText(this, "No se encontró el usuario", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            Toast.makeText(this, "No se encontró el documento", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
+                    });
+        });
 
         crear_comentario.setOnClickListener(v -> {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -224,6 +294,12 @@ public class Ver_cursos extends AppCompatActivity {
                         Toast.makeText(this, "Error al buscar el curso", Toast.LENGTH_SHORT).show();
                     });
         });
+        desplegarmenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
 
        // SharedPreferences sharedPreferences=getsa
 
@@ -285,6 +361,67 @@ public class Ver_cursos extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                             Curso curso = doc.toObject(Curso.class);
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if (user != null) {
+                                firestore.collection("usuarios")
+                                        .whereEqualTo("correo", user.getEmail())
+                                        .limit(1)
+                                        .get()
+                                        .addOnSuccessListener(querySnapshot -> {
+                                            if (!querySnapshot.isEmpty()) {
+                                                DocumentSnapshot docs = querySnapshot.getDocuments().get(0);
+                                                String docId = docs.getId();
+                                                Usuario usuario = docs.toObject(Usuario.class);
+
+                                                if (usuario != null) {
+                                                    List<Curso> historial = usuario.getHistorialCursos();
+                                                    if (historial == null) historial = new ArrayList<>();
+
+                                                    // Verificamos si ya existe un curso con el mismo idCurso
+                                                    Curso cursoExistente = null;
+                                                    for (Curso c : historial) {
+                                                        if (c.getIdCurso() == curso.getIdCurso()) {
+                                                            cursoExistente = c;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    // Si existe, lo removemos
+                                                    if (cursoExistente != null) {
+                                                        historial.remove(cursoExistente);
+                                                    }
+
+                                                    curso.setFechaAcceso(Timestamp.now());
+
+                                                    // Agregamos al final
+                                                    historial.add(curso);
+
+                                                    // Si hay más de 250, eliminamos los más antiguos
+                                                    while (historial.size() > 250) {
+                                                        historial.remove(0);
+                                                    }
+
+                                                    // Actualizamos en Firestore
+                                                    firestore.collection("usuarios")
+                                                            .document(docId)
+                                                            .update("historialCursos", historial)
+                                                            .addOnSuccessListener(unused -> {
+                                                                Toast.makeText(this, "Historial de cursos actualizado correctamente", Toast.LENGTH_SHORT).show();
+                                                            })
+                                                            .addOnFailureListener(e -> {
+                                                                Toast.makeText(this, "Error al actualizar historial de cursos", Toast.LENGTH_SHORT).show();
+                                                            });
+                                                }
+                                            } else {
+                                                Toast.makeText(this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(this, "Error al consultar Firestore", Toast.LENGTH_SHORT).show();
+                                        });
+                            }
+
 
                             if (curso.getComentarios() == null){
                                 curso.setComentarios(new ArrayList<>());
@@ -364,6 +501,53 @@ public class Ver_cursos extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al obtener el curso", Toast.LENGTH_SHORT).show();
                 });
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("usuarios")
+                .whereEqualTo("correo", user.getEmail())
+                .limit(1)
+                .get()
+                .addOnSuccessListener(onSuccessListener -> {
+                    if (!onSuccessListener.isEmpty()) {
+                        DocumentSnapshot doc = onSuccessListener.getDocuments().get(0);
+                        String docId = doc.getId();
+                        Usuario usuario = doc.toObject(Usuario.class);
+                        if (usuario != null) {
+                            if (usuario.getCursosSeguidos() == null) {
+                                usuario.setCursosSeguidos(new ArrayList<>());
+                            }
+                            if(usuario.getCursosSeguidos().contains(idCurso)){
+                                seguirCurso.setImageResource(R.drawable.cursoseguido);
+                            }else{
+                                seguirCurso.setImageResource(R.drawable.cursonoseguido);
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(e->{
+                    Toast.makeText(this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
+                    seguirCurso.setImageResource(R.drawable.cursonoseguido);
+                });
+
+        db.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                        String docId = doc.getId();
+
+                        db.collection("cursos").document(docId)
+                                .update("visitas", com.google.firebase.firestore.FieldValue.increment(1))
+                                .addOnSuccessListener(aVoid -> Log.d("VISITAS", "Visita incrementada"))
+                                .addOnFailureListener(e -> Log.w("VISITAS", "Error al incrementar visitas", e));
+                    } else {
+                        Log.w("VISITAS", "Curso no encontrado para incrementar visitas");
+                    }
+                })
+                .addOnFailureListener(e -> Log.w("VISITAS", "Error buscando el curso", e));
     }
 
     //_____parte del menu _____
@@ -426,6 +610,7 @@ public class Ver_cursos extends AppCompatActivity {
             actualizarImagenesEstrellas();
         }
     }
+
     private void actualizarTextoPuntuacion() {
         tvPuntuacion.setText(puntuacionActual + " / 5");
     }
@@ -501,6 +686,7 @@ public class Ver_cursos extends AppCompatActivity {
                     if (!cursoQuery.isEmpty()) {
                         DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
                         Curso curso = cursoDoc.toObject(Curso.class);
+
                         if (curso == null) {
                             Toast.makeText(this, "Error al leer el curso", Toast.LENGTH_SHORT).show();
                             return;
@@ -527,66 +713,19 @@ public class Ver_cursos extends AppCompatActivity {
                                 .whereEqualTo("idCurso", idCurso)
                                 .get()
                                 .addOnSuccessListener(clasesQuery -> {
-                                    List<DocumentSnapshot> documentos = clasesQuery.getDocuments();
-                                    int total = documentos.size();
-                                    if (total == 0) {
-                                        mostrarFinalizadoCurso(curso.getTitulo());
-                                        return;
-                                    }
-
-                                    int[] contador = {0};
-
-                                    for (DocumentSnapshot claseDoc : documentos) {
+                                    List<Clase> clasesFirestore = new ArrayList<>();
+                                    for (DocumentSnapshot claseDoc : clasesQuery.getDocuments()) {
                                         Clase clase = claseDoc.toObject(Clase.class);
-                                        ClaseFirebase claseFirebase = new ClaseFirebase(
-                                                clase.getTitulo(),
-                                                clase.getContenido(),
-                                                clase.getImagen(),
-                                                clase.getVideoUrl()
-                                        );
-
-                                        String titulo = clase.getTitulo().replace(" ", "_");
-
-                                        DropboxDownloader.descargarArchivo(this, clase.getImagen(), "img_" + titulo + ".jpg", new DropboxDownloader.Callback() {
-                                            @Override
-                                            public void onSuccess(File imagenLocal) {
-                                                claseFirebase.setImagenUrl(imagenLocal.getAbsolutePath());
-
-                                                DropboxDownloader.descargarArchivo(Ver_cursos.this, clase.getVideoUrl(), "video_" + titulo + ".mp4", new DropboxDownloader.Callback() {
-                                                    @Override
-                                                    public void onSuccess(File videoLocal) {
-                                                        claseFirebase.setVideoUrl(videoLocal.getAbsolutePath());
-
-                                                        dbHelper.guardarClaseDescargada(claseFirebase, (int) cursoLocalId);
-
-                                                        contador[0]++;
-                                                        mostrarProgresoCurso(curso.getTitulo(), (int) ((contador[0] / (float) total) * 100));
-
-                                                        if (contador[0] == total) {
-                                                            mostrarFinalizadoCurso(curso.getTitulo());
-                                                            Toast.makeText(Ver_cursos.this, "Curso descargado correctamente", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onError(Exception e) {
-                                                        Toast.makeText(Ver_cursos.this, "Error al descargar video de clase", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onError(Exception e) {
-                                                Toast.makeText(Ver_cursos.this, "Error al descargar imagen de clase", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                        if (clase != null) clasesFirestore.add(clase);
                                     }
 
+                                    Toast.makeText(this, "Iniciando descarga...", Toast.LENGTH_SHORT).show();
+                                    DescargaManager.descargarCursoYClases(curso, clasesFirestore, Ver_cursos.this);
+                                    mostrarFinalizadoCurso(curso.getTitulo());
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error al obtener clases", Toast.LENGTH_SHORT).show();
                                 });
-
                     } else {
                         Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                     }
