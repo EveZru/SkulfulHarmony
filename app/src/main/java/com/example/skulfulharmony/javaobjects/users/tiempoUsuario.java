@@ -1,21 +1,29 @@
 package com.example.skulfulharmony.javaobjects.users;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import com.example.skulfulharmony.Descanso;
+import com.example.skulfulharmony.javaobjects.notifications.RecordatorioEntradaReceiver;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,13 +50,15 @@ public class tiempoUsuario {
         this.handler = new Handler(Looper.getMainLooper());
         this.fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-        cargarTiempoDeHoy(); // Cargar el tiempo acumulado de hoy
-        cargarTiempoDeDescanso(); // Cargar el tiempo de descanso desde Firestore
+        Log.d("TiempoUsuario", "🎬 Constructor llamado para usuario: " + userId);
+        cargarTiempoDeHoy();
+        cargarTiempoDeDescanso();
     }
 
     public void iniciarConteo() {
         Log.d("TiempoUsuario", "🚀 iniciarConteo() llamado");
         lastActivityTime = System.currentTimeMillis();
+        Log.d("TiempoUsuario", "📡 Empezando conteo para UID: " + userId);
 
         handler.post(new Runnable() {
             @Override
@@ -136,52 +146,115 @@ public class tiempoUsuario {
 
     // **Registrar la hora de entrada en Firestore**
     public void registrarHoraEntrada() {
-        Calendar calendar = Calendar.getInstance();
-        int horaActual = calendar.get(Calendar.HOUR_OF_DAY);
-        int minutosActuales = calendar.get(Calendar.MINUTE);
-        int entradaMinutos = horaActual * 60 + minutosActuales;
-
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Log.d("TiempoUsuario", "📥 Iniciando registrarHoraEntrada()");
 
         DocumentReference userRef = db.collection("usuarios").document(userId);
+        userRef.get().addOnSuccessListener(doc -> {
+            List<Map<String, Object>> entradas = (List<Map<String, Object>>) doc.get("entradasUsuario");
+            int semanaActual = obtenerSemanaActual();
+            Timestamp ahora = Timestamp.now();
+            boolean actualizo = false;
 
-        userRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                Long totalMinutos = documentSnapshot.getLong("totalMinutosAcumuladosEntrada");
-                Long vecesEntrada = documentSnapshot.getLong("vecesEntrada");
-                String ultimaFecha = documentSnapshot.getString("ultimaFechaEntrada");
+            if (entradas == null) entradas = new ArrayList<>();
 
-                totalMinutos = (totalMinutos != null) ? totalMinutos : 0L;
-                vecesEntrada = (vecesEntrada != null) ? vecesEntrada : 0L;
-
-                // Ya se registró hoy, no volvemos a registrar
-                if (hoy.equals(ultimaFecha)) {
-                    Log.d("TiempoUsuario", "⏱️ Ya se registró la entrada hoy: " + hoy);
-                    return;
+            for (Map<String, Object> semana : entradas) {
+                Long id = ((Number) semana.get("idSemana")).longValue();
+                if (id == semanaActual) {
+                    List<Timestamp> veces = (List<Timestamp>) semana.get("vecesEntrada");
+                    veces.add(ahora);
+                    actualizo = true;
+                    Log.d("TiempoUsuario", "🟢 Entrada añadida a semana existente");
+                    break;
                 }
-
-                totalMinutos += entradaMinutos;
-                vecesEntrada++;
-
-                long promedio = totalMinutos / vecesEntrada;
-                int horaPromedio = (int) (promedio / 60);
-                int minutosPromedio = (int) (promedio % 60);
-
-                Map<String, Object> data = new HashMap<>();
-                data.put("horaEntrada", horaPromedio);
-                data.put("minutosEntrada", minutosPromedio);
-                data.put("totalMinutosAcumuladosEntrada", totalMinutos);
-                data.put("vecesEntrada", vecesEntrada);
-                data.put("ultimaFechaEntrada", hoy);
-
-                userRef.set(data, SetOptions.merge())
-                        .addOnSuccessListener(aVoid ->
-                                Log.d("TiempoUsuario", "✅ Hora promedio registrada: " + horaPromedio + ":" + minutosPromedio)
-                        ).addOnFailureListener(e ->
-                                Log.e("TiempoUsuario", "❌ Error al guardar hora promedio", e)
-                        );
             }
-        }).addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al obtener documento", e));
+
+            if (!actualizo) {
+                Map<String, Object> nuevaSemana = new HashMap<>();
+                nuevaSemana.put("idSemana", semanaActual);
+                nuevaSemana.put("vecesEntrada", Arrays.asList(ahora));
+                entradas.add(nuevaSemana);
+                Log.d("TiempoUsuario", "🆕 Entrada registrada en nueva semana");
+            }
+
+            Map<String, Object> datos = new HashMap<>();
+            datos.put("entradasUsuario", entradas);
+            userRef.set(datos, SetOptions.merge());
+
+            for (Map<String, Object> semana : entradas) {
+                Long id = ((Number) semana.get("idSemana")).longValue();
+                if (id == semanaActual) {
+                    List<Timestamp> veces = (List<Timestamp>) semana.get("vecesEntrada");
+                    Log.d("TiempoUsuario", "📊 Entradas semana actual: " + veces.size());
+                    calcularYProgramarRecordatorio(veces);
+                    break;
+                }
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("registrarHoraEntrada", "❌ Error al obtener documento del usuario: " + e.getMessage());
+        });
+    }
+
+    // 🚨 Prueba manual: llama esto desde cualquier botón o evento
+    public void probarNotificacionManual() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 5); // ⏰ Notificación en 5 segundos
+
+        Log.d("Alarma", "🔔 Prueba programada para: " + cal.getTime());
+
+        Intent intent = new Intent(context, RecordatorioEntradaReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 999, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Log.e("Alarma", "🚫 Sin permiso para alarmas exactas en prueba");
+                return;
+            }
+
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+            Log.d("Alarma", "✅ Alarma de prueba programada");
+        }
+    }
+
+
+    private void calcularYProgramarRecordatorio(List<Timestamp> entradasSemana) {
+        if (entradasSemana == null || entradasSemana.isEmpty()) return;
+
+        long totalMillis = 0;
+        for (Timestamp ts : entradasSemana) {
+            totalMillis += ts.toDate().getTime();
+        }
+
+        long promedioMillis = totalMillis / entradasSemana.size();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 15); // Solo para probar
+        cal.setTimeInMillis(promedioMillis);
+        cal.add(Calendar.MINUTE, 20); // ⏰ +20 min
+
+        programarAlarma(cal);
+    }
+
+    private void programarAlarma(Calendar cal) {
+        Intent intent = new Intent(context, RecordatorioEntradaReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 101, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+                Log.e("Alarma", "🚫 Sin permiso para alarmas exactas");
+                return;
+            }
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private int obtenerSemanaActual() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
     private void subirTiempoAFirebase() {

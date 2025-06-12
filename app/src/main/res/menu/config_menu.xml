@@ -3,6 +3,7 @@
     <item android:id="@+id/menuEditarCuenta" android:title="Editar cuenta"/>
     <item android:id="@+id/menuCerrarSesion" android:title="Cerrar sesión"/>
     <item android:id="@+id/menuEliminarCuenta" android:title="Eliminar cuenta"/>
+    <item android:id="@+id/menuNotificaciones" android:title="Centro de notificaciones"/>
     <item android:id="@+id/menuTerminos" android:title="Términos y condiciones"/>
     <item android:id="@+id/menuContactanos" android:title="Contáctanos"/>
     <item android:id="@+id/menuCreditos" android:title="Creditos"/>

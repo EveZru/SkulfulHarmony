@@ -11,8 +11,10 @@ import com.dropbox.core.v2.files.UploadErrorException; // Excepción al subir ar
 import com.dropbox.core.v2.sharing.SharedLinkMetadata; // Metadatos del enlace compartido
 
 // 📱 Android básico
+import android.Manifest;
 import android.content.Intent; // Navegación entre actividades
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor; // Lectura de bases de datos
 import android.net.Uri; // Referencia a recursos (como imágenes)
 import android.os.Bundle; // Datos entre actividades
@@ -58,6 +60,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView; // Bar
 
 // 🎨 Compatibilidad
 import androidx.appcompat.app.AppCompatActivity; // Actividad compatible
+import androidx.core.content.ContextCompat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -94,8 +97,7 @@ public class Perfil extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_perfil); // Asegúrate de que el layout esté correctamente configurado
-
+        setContentView(R.layout.activity_perfil);
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -133,7 +135,15 @@ public class Perfil extends AppCompatActivity {
 
         // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
-        btnVerVideoPrueba.setOnClickListener(v -> startActivity(new Intent(Perfil.this, videos.class)));
+        btnVerVideoPrueba = findViewById(R.id.btnVerVideoPrueba);
+        btnVerVideoPrueba.setOnClickListener(v -> {
+            if (MyApp.getContadorTiempo() != null) {
+                MyApp.getContadorTiempo().probarNotificacionManual();
+                Toast.makeText(this, "🔔 Notificación de prueba programada", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "⛔ Contador no disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
@@ -161,6 +171,25 @@ public class Perfil extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 123) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "✅ Permiso de notificación concedido", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "❌ Permiso de notificación DENEGADO", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void verificarPermisoNotificacion() {
+        boolean tienePermiso = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED;
+        Toast.makeText(this, "Permiso notificación: " + (tienePermiso ? "✅ SÍ" : "❌ NO"), Toast.LENGTH_SHORT).show();
+    }
+
 
     // Método para mostrar el menú flotante
     private void showPopupMenu(View view) {
@@ -417,9 +446,6 @@ public class Perfil extends AppCompatActivity {
             tvResumen.setTextColor(Color.GREEN); // buen resultado
         }
     }
-
-
-
 
     // Método para seleccionar una imagen
     private void seleccionarImagen() {
