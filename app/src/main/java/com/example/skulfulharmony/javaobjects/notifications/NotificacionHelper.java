@@ -1,11 +1,15 @@
 package com.example.skulfulharmony.javaobjects.notifications;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -34,13 +38,20 @@ public class NotificacionHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        // ✅ Verifica permiso en Android 13+ (API 33)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.e("NotificacionHelper", "❌ Permiso POST_NOTIFICATIONS no concedido.");
-                return;
-            }
+        // Aquí es donde lo vas a poner cuacua 🦆👇
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            Toast.makeText(context, "Activa las notificaciones en configuración", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+
+            Log.e("NotificacionHelper", "❌ Permiso POST_NOTIFICATIONS no concedido.");
+            return;
         }
 
         try {
@@ -49,4 +60,5 @@ public class NotificacionHelper {
             Log.e("NotificacionHelper", "❌ Error al mostrar notificación: permiso denegado", e);
         }
     }
+
 }

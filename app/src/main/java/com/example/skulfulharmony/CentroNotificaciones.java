@@ -29,22 +29,22 @@ public class CentroNotificaciones extends AppCompatActivity {
         switch_errorsubidadatos = findViewById(R.id.switch_errorsubidadatos);
 
         Button btnConfig = findViewById(R.id.btn_config_notificaciones);
-        btnConfig.setOnClickListener(v -> abrirConfiguracionNotificaciones());
+        //btnConfig.setOnClickListener(v -> abrirConfiguracionNotificaciones());
 
         // Aquí podrías cargar o guardar los valores de cada switch con SharedPreferences o Firestore si quieres
     }
 
-    private void abrirConfiguracionNotificaciones() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
-            try {
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(this, "No se pudo abrir configuración", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "Tu Android no soporta esta función", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void abrirConfiguracionNotificaciones() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+//                    .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+//            try {
+//                startActivity(intent);
+//            } catch (Exception e) {
+//                Toast.makeText(this, "No se pudo abrir configuración", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Toast.makeText(this, "Tu Android no soporta esta función", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }
