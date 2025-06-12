@@ -85,7 +85,6 @@ public class CrearClase extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crearclase);
 
-        // -------------------- INICIALIZAR CONTENIDOS ------------------------//
 
         btn_subirclase=findViewById(R.id.btn_subir_clase);
         btn_subirarchivo=findViewById(R.id.btn_cargar_archivos);

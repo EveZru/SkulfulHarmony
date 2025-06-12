@@ -17,8 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textColorHint="@color/gray1"
-        android:textColor="@color/black"
-        android:backgroundTint="@color/black"
+        android:textColor="@color/grayrojo"
+        android:backgroundTint="@color/cafe2"
         android:hint="Ingresa una opción de respuesta"
         android:padding="9dp" />
 </LinearLayout>

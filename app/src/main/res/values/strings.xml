@@ -69,5 +69,6 @@
     <string name="instruccionesescribirpartituras">coloca la imagen \\n donde corresponda</string>
     <string name="calificacion">"Nos importa tu opinion, califica esta clase "</string>
     <string name="comentario">Comentario</string>
+    <string name="pregunta_ejemplo">Pregunta---</string>
 
 </resources>

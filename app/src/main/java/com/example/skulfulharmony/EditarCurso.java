@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
@@ -20,12 +22,22 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.sharing.SharedLinkMetadata;
+import com.example.skulfulharmony.server.config.DropboxConfig;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EditarCurso extends AppCompatActivity {
     private TextView tv_nombrecurso,tv_descripcioncurso;
@@ -36,6 +48,7 @@ public class EditarCurso extends AppCompatActivity {
     private ImageView iv_fotocurso;
     private String nombreCursoActual;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private Uri im = Uri.EMPTY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,33 +82,36 @@ public class EditarCurso extends AppCompatActivity {
         }
 
         btn_cancelar.setOnClickListener(v -> {
-            Intent intentregresar=new Intent(EditarCurso.this,VerCursoComoCreador.class);
+         /*   Intent intentregresar=new Intent(EditarCurso.this,VerCursoComoCreador.class);
             intentregresar.putExtra("idCurso",idCurso);
-            startActivity(intentregresar);
+            startActivity(intentregresar);*/
             finish();
         });
 
         btn_cambiar.setOnClickListener(v -> {
-
-
             String nuevaDescripcion = et_nueva_descripcion.getText().toString();
-
+            if(im!=Uri.EMPTY){
+                subirNuevaImagen();
+            }else{
+                Toast.makeText(EditarCurso.this,"No se realizaron cambios en la imagen del curso ",Toast.LENGTH_SHORT).show();
+            }
             firestore.collection("cursos").whereEqualTo("idCurso", idCurso)
             .get().addOnSuccessListener(queryDocumentSnapshots -> {
                 if(!queryDocumentSnapshots.isEmpty()){
                     DocumentReference docRef=queryDocumentSnapshots.getDocuments().get(0).getReference();
                    // proseso para editar la descrpcion
-                    if(nuevaDescripcion!=null&& nuevaDescripcion!="") {
-                        Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT);
+                    if(nuevaDescripcion!=null ||!nuevaDescripcion.isBlank()) {
+                        Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT).show();
                         docRef.update("descripcion", nuevaDescripcion);
                     }else{
-                        Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT);
+                        Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT).show();
                     }
 
 
                 }
 
             });
+            finish();
 
         });
 
@@ -147,5 +163,86 @@ public class EditarCurso extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         imagePickerLauncher.launch(intent);
     }
+    private File copiarUriAArchivoTemporal(Uri uri) {
+        try {
+            File tempFile = File.createTempFile("temp_image", ".jpg", getCacheDir());
+            try (InputStream in = getContentResolver().openInputStream(uri);
+                 FileOutputStream out = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = in.read(buffer)) != -1) out.write(buffer, 0, read);
+            }
+            return tempFile;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+    private String convertirLinkADirecto(String url) {
+        return url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
+    }
+    private void subirNuevaImagen() {
+        if (im == Uri.EMPTY) {
+            Toast.makeText(this, "No se seleccionó nueva imagen", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File archivo = copiarUriAArchivoTemporal(im);
+        if (archivo == null) {
+            Toast.makeText(this, "Error al procesar imagen", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            try {
+                DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+                FileInputStream fis = new FileInputStream(archivo);
+
+                // Subir con nombre único basado en timestamp
+                String nombreArchivo = "curso_" + idCurso + "_" + System.currentTimeMillis() + ".jpg";
+                FileMetadata metadata = client.files()
+                        .uploadBuilder("/Aplicaciones/SkillfulHarmonyCursos/" + nombreArchivo)
+                        .uploadAndFinish(fis);
+
+                SharedLinkMetadata linkMetadata = client.sharing()
+                        .createSharedLinkWithSettings(metadata.getPathLower());
+
+                String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
+
+                // Actualizar en Firestore
+                handler.post(() -> actualizarImagenEnFirestore(urlImagen));
+            } catch (Exception e) {
+                handler.post(() -> Toast.makeText(this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void actualizarImagenEnFirestore(String nuevaUrlImagen) {
+        firestore.collection("cursos").whereEqualTo("idCurso", idCurso)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentReference docRef = queryDocumentSnapshots.getDocuments().get(0).getReference();
+                        docRef.update("imagen", nuevaUrlImagen)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(EditarCurso.this, "Imagen actualizada correctamente", Toast.LENGTH_SHORT).show();
+                                    // Opcional: Actualizar la imagen en la interfaz
+                                    try {
+                                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), im);
+                                        iv_fotocurso.setImageBitmap(bitmap);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(EditarCurso.this, "Error al actualizar imagen", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+    }
+
+
 
 }
