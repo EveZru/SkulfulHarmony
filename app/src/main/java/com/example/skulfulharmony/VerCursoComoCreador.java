@@ -131,7 +131,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }else if(id==R.id.it_eliminar){
-                Toast.makeText(this, "se supone que elimina el curso ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Cambio a vista para eliminar curso ", Toast.LENGTH_SHORT).show();
                 return true;
             }else {
                 Toast.makeText(VerCursoComoCreador.this, "No se selecciono ninguna opcion", Toast.LENGTH_SHORT).show();

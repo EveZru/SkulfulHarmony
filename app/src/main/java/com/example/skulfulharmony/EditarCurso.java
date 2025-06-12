@@ -76,14 +76,23 @@ public class EditarCurso extends AppCompatActivity {
         });
 
         btn_cambiar.setOnClickListener(v -> {
-            Toast.makeText(this, "se supone que actualiza la info", Toast.LENGTH_SHORT).show();
+
+
             String nuevaDescripcion = et_nueva_descripcion.getText().toString();
 
             firestore.collection("cursos").whereEqualTo("idCurso", idCurso)
             .get().addOnSuccessListener(queryDocumentSnapshots -> {
                 if(!queryDocumentSnapshots.isEmpty()){
                     DocumentReference docRef=queryDocumentSnapshots.getDocuments().get(0).getReference();
-                    docRef.update("descripcion",nuevaDescripcion);
+                   // proseso para editar la descrpcion
+                    if(nuevaDescripcion!=null&& nuevaDescripcion!="") {
+                        Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT);
+                        docRef.update("descripcion", nuevaDescripcion);
+                    }else{
+                        Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT);
+                    }
+
+
                 }
 
             });
@@ -122,7 +131,6 @@ public class EditarCurso extends AppCompatActivity {
                         }
                         if (descripcion != null) {
                             tv_descripcioncurso.setText("Descripción anterior: " + descripcion);
-                            et_nueva_descripcion.setText(descripcion); // Sugerir la descripción actual para editar
                         }
                     } else {
                         Toast.makeText(EditarCurso.this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
