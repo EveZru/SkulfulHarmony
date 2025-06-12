@@ -1,17 +1,14 @@
 package com.example.skulfulharmony;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
+
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -20,114 +17,67 @@ import java.io.File;
 
 public class VerClaseOffline extends AppCompatActivity {
 
-    private ExoPlayer exoPlayer;
+    private ExoPlayer player;
     private PlayerView playerView;
-    private ImageView imagenClase;
-    private Button btnVerDocumento;
+    private ImageView imgClase;
+    private TextView tvTitulo, tvTexto, tvSinArchivo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_clase_offline);
 
-        TextView tituloClase = findViewById(R.id.verclase_vertitulo);
-        TextView textoClase = findViewById(R.id.tv_info_verclase);
-        imagenClase = findViewById(R.id.imagenClaseOffline);
-        playerView = findViewById(R.id.vv_videoclase);
-        btnVerDocumento = findViewById(R.id.btn_ver_documento); // 🆕
+        playerView = findViewById(R.id.exoplayer_clase_offline);
+        imgClase = findViewById(R.id.img_clase_offline);
+        tvTitulo = findViewById(R.id.tv_titulo_clase_offline);
+        tvTexto = findViewById(R.id.tv_texto_clase_offline);
+        tvSinArchivo = findViewById(R.id.tv_no_disponible);
 
-        ocultarComponentesOnline();
-
+        // Obtener datos desde Intent
         String titulo = getIntent().getStringExtra("titulo");
-        String video = getIntent().getStringExtra("video");
-        String imagen = getIntent().getStringExtra("imagen");
-        String documento = getIntent().getStringExtra("documento");
+        String imagenUrl = getIntent().getStringExtra("imagen");
+        String videoUrl = getIntent().getStringExtra("video");
+        String documentoUrl = getIntent().getStringExtra("documento");
 
-        tituloClase.setText(titulo);
-        textoClase.setText(""); // por si luego usas algo de texto
+        tvTitulo.setText(titulo != null ? titulo : "Clase sin título");
 
-        // 🎬 Video
-        if (video != null && !video.isEmpty()) {
-            File videoFile = new File(video);
+        // Cargar imagen
+        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+            File imgFile = new File(imagenUrl);
+            if (imgFile.exists()) {
+                Glide.with(this).load(imgFile).into(imgClase);
+            }
+        }
+
+        // Reproducir video
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            File videoFile = new File(videoUrl);
             if (videoFile.exists()) {
-                exoPlayer = new ExoPlayer.Builder(this).build();
-                playerView.setPlayer(exoPlayer);
+                player = new ExoPlayer.Builder(this).build();
+                playerView.setPlayer(player);
                 MediaItem mediaItem = MediaItem.fromUri(Uri.fromFile(videoFile));
-                exoPlayer.setMediaItem(mediaItem);
-                exoPlayer.prepare();
-                exoPlayer.play();
-            } else {
-                playerView.setVisibility(View.GONE);
+                player.setMediaItem(mediaItem);
+                player.prepare();
+                player.play();
             }
-        } else {
-            playerView.setVisibility(View.GONE);
         }
 
-        // 🖼 Imagen
-        if (imagen != null && !imagen.isEmpty()) {
-            File imagenFile = new File(imagen);
-            if (imagenFile.exists()) {
-                Glide.with(this).load(imagenFile).into(imagenClase);
+        // Mostrar archivo
+        if (documentoUrl != null && !documentoUrl.isEmpty()) {
+            File doc = new File(documentoUrl);
+            if (doc.exists()) {
+                tvTexto.setText("Archivo disponible: " + doc.getName());
             } else {
-                imagenClase.setVisibility(View.GONE);
+                tvSinArchivo.setText("Documento no disponible offline.");
             }
-        } else {
-            imagenClase.setVisibility(View.GONE);
-        }
-
-        // 📄 Documento (con botón)
-        if (documento != null && !documento.isEmpty()) {
-            File archivo = new File(documento);
-            if (archivo.exists()) {
-                btnVerDocumento.setVisibility(View.VISIBLE);
-                btnVerDocumento.setOnClickListener(v -> abrirDocumento(archivo));
-            } else {
-                btnVerDocumento.setVisibility(View.GONE);
-            }
-        } else {
-            btnVerDocumento.setVisibility(View.GONE);
-        }
-    }
-
-    private void abrirDocumento(File archivo) {
-        Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".provider", archivo);
-        String mimeType = getContentResolver().getType(uri);
-        if (mimeType == null) mimeType = "*/*";
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, mimeType);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        try {
-            startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void ocultarComponentesOnline() {
-        int[] ids = {
-                R.id.rv_comentarios_verclase,
-                R.id.et_comentario_verclase,
-                R.id.btn_subir_comentario_clase,
-                R.id.ll_estrellas,
-                R.id.tv_puntuacion,
-                R.id.btt_revisar_respuestas_verclase,
-                R.id.rv_preguntasporclase_verclase
-        };
-
-        for (int id : ids) {
-            View view = findViewById(id);
-            if (view != null) view.setVisibility(View.GONE);
         }
     }
 
     @Override
-    protected void onDestroy() {
-        if (exoPlayer != null) {
-            exoPlayer.release();
-            exoPlayer = null;
+    protected void onStop() {
+        super.onStop();
+        if (player != null) {
+            player.release();
         }
-        super.onDestroy();
     }
 }

@@ -44,6 +44,7 @@ import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
+import com.example.skulfulharmony.modooffline.DescargaManager;
 import com.example.skulfulharmony.modooffline.DropboxDownloader;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -501,25 +502,9 @@ public class Ver_cursos extends AppCompatActivity {
                     if (!cursoQuery.isEmpty()) {
                         DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
                         Curso curso = cursoDoc.toObject(Curso.class);
+
                         if (curso == null) {
                             Toast.makeText(this, "Error al leer el curso", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        mostrarProgresoCurso(curso.getTitulo(), 0);
-
-                        DbHelper dbHelper = new DbHelper(this);
-
-                        // Guardamos el curso y recuperamos el ID insertado
-                        SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
-                        ContentValues cursoValues = new ContentValues();
-                        cursoValues.put("titulo", curso.getTitulo());
-                        cursoValues.put("descripcion", curso.getDescripcion());
-                        cursoValues.put("imagen", curso.getImagen());
-                        long cursoLocalId = sqlDB.insert("cursodescargado", null, cursoValues);
-
-                        if (cursoLocalId == -1) {
-                            Toast.makeText(this, "Error guardando curso local", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -527,66 +512,19 @@ public class Ver_cursos extends AppCompatActivity {
                                 .whereEqualTo("idCurso", idCurso)
                                 .get()
                                 .addOnSuccessListener(clasesQuery -> {
-                                    List<DocumentSnapshot> documentos = clasesQuery.getDocuments();
-                                    int total = documentos.size();
-                                    if (total == 0) {
-                                        mostrarFinalizadoCurso(curso.getTitulo());
-                                        return;
-                                    }
-
-                                    int[] contador = {0};
-
-                                    for (DocumentSnapshot claseDoc : documentos) {
+                                    List<Clase> clasesFirestore = new ArrayList<>();
+                                    for (DocumentSnapshot claseDoc : clasesQuery.getDocuments()) {
                                         Clase clase = claseDoc.toObject(Clase.class);
-                                        ClaseFirebase claseFirebase = new ClaseFirebase(
-                                                clase.getTitulo(),
-                                                clase.getContenido(),
-                                                clase.getImagen(),
-                                                clase.getVideoUrl()
-                                        );
-
-                                        String titulo = clase.getTitulo().replace(" ", "_");
-
-                                        DropboxDownloader.descargarArchivo(this, clase.getImagen(), "img_" + titulo + ".jpg", new DropboxDownloader.Callback() {
-                                            @Override
-                                            public void onSuccess(File imagenLocal) {
-                                                claseFirebase.setImagenUrl(imagenLocal.getAbsolutePath());
-
-                                                DropboxDownloader.descargarArchivo(Ver_cursos.this, clase.getVideoUrl(), "video_" + titulo + ".mp4", new DropboxDownloader.Callback() {
-                                                    @Override
-                                                    public void onSuccess(File videoLocal) {
-                                                        claseFirebase.setVideoUrl(videoLocal.getAbsolutePath());
-
-                                                        dbHelper.guardarClaseDescargada(claseFirebase, (int) cursoLocalId);
-
-                                                        contador[0]++;
-                                                        mostrarProgresoCurso(curso.getTitulo(), (int) ((contador[0] / (float) total) * 100));
-
-                                                        if (contador[0] == total) {
-                                                            mostrarFinalizadoCurso(curso.getTitulo());
-                                                            Toast.makeText(Ver_cursos.this, "Curso descargado correctamente", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onError(Exception e) {
-                                                        Toast.makeText(Ver_cursos.this, "Error al descargar video de clase", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onError(Exception e) {
-                                                Toast.makeText(Ver_cursos.this, "Error al descargar imagen de clase", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                        if (clase != null) clasesFirestore.add(clase);
                                     }
 
+                                    Toast.makeText(this, "Iniciando descarga...", Toast.LENGTH_SHORT).show();
+                                    DescargaManager.descargarCursoYClases(curso, clasesFirestore, Ver_cursos.this);
+                                    mostrarFinalizadoCurso(curso.getTitulo());
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error al obtener clases", Toast.LENGTH_SHORT).show();
                                 });
-
                     } else {
                         Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                     }

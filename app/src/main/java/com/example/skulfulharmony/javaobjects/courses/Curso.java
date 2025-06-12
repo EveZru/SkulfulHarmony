@@ -95,9 +95,6 @@ public class Curso implements Serializable {
         this.fechaCreacionf = fechaCreacionf;
     }
 
-
-
-
     //Setters
     public void setPopularidad(Double popularidad) {this.popularidad = popularidad;}
 
