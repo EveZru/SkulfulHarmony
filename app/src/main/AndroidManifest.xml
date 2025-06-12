@@ -25,6 +25,9 @@
         android:theme="@style/Theme.SkulfulHarmony"
         tools:targetApi="31">
         <activity
+            android:name=".EditarCurso"
+            android:exported="false" />
+        <activity
             android:name=".VerCursoDescargado"
             android:exported="false" />
         <activity
@@ -199,6 +202,7 @@
             android:name=".admi_denuncias"
             android:exported="false" />
         <activity android:name=".PerfilMostrar" />
+
         <receiver
             android:name=".javaobjects.notifications.RecordatorioEntradaReceiver"
             android:exported="true" />

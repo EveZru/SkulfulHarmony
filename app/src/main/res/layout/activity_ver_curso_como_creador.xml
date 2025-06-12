@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VerCursoComoCreador">
+    tools:context=".VerCursoComoCreador"
+    android:background="@color/black1"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_cursocreador"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black">
 
-    <!-- Tu ScrollView con el contenido -->
+        <ImageView
+            android:id="@+id/iv_despegarmenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:src="@drawable/mas_logo"
+            android:contentDescription="Toolbar Icon" />
+    </androidx.appcompat.widget.Toolbar>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -70,10 +89,10 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
+                android:id="@+id/tv_descripciomicurso"
                 android:inputType="textMultiLine"
                 android:padding="10dp"
-                android:id="@+id/text_vercursocreador_descripcion"
-                android:layout_width="match_parent"
+               android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textColor="@color/gray1"
@@ -93,7 +112,8 @@
 
     </ScrollView>
 
-    <!-- Aquí el botón flotante -->
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bttn_vercursocreador_agregarclase"
         android:layout_width="wrap_content"
@@ -107,6 +127,6 @@
         android:layout_marginBottom="60dp"
 
     />
-
 </FrameLayout>
+    </LinearLayout>
 

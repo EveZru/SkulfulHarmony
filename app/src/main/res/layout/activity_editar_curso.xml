@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditarCurso"
+    android:background="@color/black1"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_nombrecurso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Actualizar clase ..."
+        android:layout_marginVertical="20dp"
+        android:textColor="@color/grayverde"
+        android:gravity="center"
+        android:textSize="22dp"/>
+    <androidx.cardview.widget.CardView
+        android:layout_marginVertical="10dp"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="@color/grayverde1"
+        >
+
+    <ImageView
+        android:layout_gravity="center"
+        android:id="@+id/iv_fotocurso"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/subir_ico"
+        android:contentDescription="Seleccionar imagen"
+        android:clickable="true"
+        android:focusable="true"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:gravity="center"
+            android:padding="50dp"
+            android:textColor="@color/grayverde"
+            android:text="Presiona para cambiar de imagen"
+            />
+    </androidx.cardview.widget.CardView>
+   <TextView
+       android:id="@+id/tv_descripantreior"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:padding="10dp"
+       android:text="Antigua descripción"
+       />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        app:cardBackgroundColor="@color/rojo_oscuro"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp">
+    <EditText
+        android:id="@+id/et_descripnueva"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:textColorHint="@color/grayrojo"
+        android:textColor="@color/cafe2"
+        android:backgroundTint="@color/grayverde2"
+        android:hint="Nueva descripción"/>
+    </androidx.cardview.widget.CardView>
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <android.widget.Button
+        android:id="@+id/btn_updatecurso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+
+        android:background="@drawable/third_rounder_button"
+        android:text="Cambiar"
+        android:textColor="@color/grayverde1"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        />
+
+    <android.widget.Button
+        android:id="@+id/btn_cancelar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:background="@drawable/error_button"
+        android:text="Cancelar"
+        android:textColor="@color/white"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        />
+
+</LinearLayout>

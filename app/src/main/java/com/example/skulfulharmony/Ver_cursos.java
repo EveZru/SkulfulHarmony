@@ -111,7 +111,7 @@ public class Ver_cursos extends AppCompatActivity {
         autorCurso = findViewById(R.id.text_vercurso_autor);
         rvClases = findViewById(R.id.rv_verclasesencurso);
         rvComentarios = findViewById(R.id.rv_comentarios_vercurso);
-        desplegarmenu = findViewById(R.id.iv_despegarmenu); // Asegúrate de que la 'D' esté en mayúscula
+        desplegarmenu = findViewById(R.id.iv_despegarmenu);
         desplegarmenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -416,6 +416,8 @@ public class Ver_cursos extends AppCompatActivity {
         // Mostrar el menú
         popupMenu.show();
     }
+
+
     //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {
         if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {
