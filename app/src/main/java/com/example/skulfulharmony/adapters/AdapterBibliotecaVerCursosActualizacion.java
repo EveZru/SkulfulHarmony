@@ -55,7 +55,11 @@ public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapt
                         DocumentSnapshot document = onQuerySnapshot.getDocuments().get(0);
                         Curso curso = document.toObject(Curso.class);
                         holder.nombreCurso.setText(curso.getTitulo());
-                        holder.fechaActualizacion.setText(curso.getFechaActualizacion().toDate().toString());
+                        if (curso.getFechaActualizacion() == null) {
+                            holder.fechaActualizacion.setText("");
+                        } else {
+                            holder.fechaActualizacion.setText(curso.getFechaActualizacion().toDate().toString());
+                        }
                         Glide.with(holder.itemView.getContext())
                                 .load(curso.getImagen())
                                 .placeholder(R.drawable.loading)

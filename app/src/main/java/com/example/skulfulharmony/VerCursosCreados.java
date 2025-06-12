@@ -47,7 +47,7 @@ public class VerCursosCreados extends AppCompatActivity {
 //        window.setDecorFitsSystemWindows(false);
 
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.barra_navegacion1);
         floatingActionButton = findViewById(R.id.bttn_vercursocreador_agregarclase);
         recyclerView = findViewById(R.id.rv_cursos_creados);
 
@@ -62,7 +62,7 @@ public class VerCursosCreados extends AppCompatActivity {
         });
 
 
-        BottomNavigationView bottomNavigationView1 = findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
 
 

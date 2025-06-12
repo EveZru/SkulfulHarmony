@@ -15,13 +15,18 @@ import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterBibliotecaVerCursosHistorial extends RecyclerView.Adapter<AdapterBibliotecaVerCursosHistorial.CursoViewHolder> {
     List<Curso> cursos;
 
     public AdapterBibliotecaVerCursosHistorial(List<Curso> cursos) {
-        this.cursos = cursos;
+        if (cursos != null) {
+            this.cursos = cursos;
+        } else {
+            this.cursos = new ArrayList<>();
+        }
     }
 
     @NonNull
@@ -35,7 +40,11 @@ public class AdapterBibliotecaVerCursosHistorial extends RecyclerView.Adapter<Ad
     public void onBindViewHolder(@NonNull AdapterBibliotecaVerCursosHistorial.CursoViewHolder holder, int position) {
         Curso curso = cursos.get(position);
         holder.nombreCurso.setText(curso.getTitulo());
-        holder.fechaAcceso.setText(curso.getFechaAcceso().toDate().toString());
+        if (curso.getFechaAcceso() == null) {
+            holder.fechaAcceso.setText("");
+        }else {
+            holder.fechaAcceso.setText(curso.getFechaAcceso().toDate().toString());
+        }
         Glide.with(holder.imagenCurso.getContext())
                 .load(curso.getImagen())
                 .placeholder(R.drawable.loading)
@@ -48,6 +57,9 @@ public class AdapterBibliotecaVerCursosHistorial extends RecyclerView.Adapter<Ad
         });
         if (position == cursos.size() - 1) {
             holder.itemView.setPadding(0, 0, 0, 100);
+        }
+        if (position == 0) {
+            holder.itemView.setPadding(0, 100, 0, 0);
         }
     }
 
