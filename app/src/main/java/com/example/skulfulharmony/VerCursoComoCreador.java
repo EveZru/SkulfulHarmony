@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -131,7 +133,12 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }else if(id==R.id.it_eliminar){
-                Toast.makeText(this, "Cambio a vista para eliminar curso ", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(VerCursoComoCreador.this)// cambie el context
+                        .setTitle("Eliminar curso")
+                        .setMessage("¿Estás seguro de que quieres eliminar este curso junto con todas sus clases y archivos?")
+                        .setPositiveButton("Sí", (dialog, which) -> eliminarCurso(idCurso))
+                        .setNegativeButton("Cancelar", null)
+                        .show();
                 return true;
             }else {
                 Toast.makeText(VerCursoComoCreador.this, "No se selecciono ninguna opcion", Toast.LENGTH_SHORT).show();
@@ -180,8 +187,55 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 });
     }
 
+    private void eliminarCurso(int cursoId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // 1. Eliminar clases asociadas
+        db.collection("clases")
+                .whereEqualTo("idCurso", cursoId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        String claseId = doc.getId();
+
+                        db.collection("clases").document(claseId).delete();
+                    }
+
+                    // 2. Eliminar el curso
+                    String IdCursos = String.valueOf(cursoId);
+                    db.collection("cursos").document(IdCursos)
+                            .delete()
+                            .addOnSuccessListener(unused -> {
+                                Toast.makeText(VerCursoComoCreador.this, "Curso eliminado", Toast.LENGTH_SHORT).show();
+                                finish(); // salir de la pantalla
+                            });
+                });
+
+        String IdCursos = String.valueOf(cursoId);
+        File claseFolder = new File(getFilesDir(), "clases/" + IdCursos);
+        if (claseFolder.exists()) {
+            for (File archivo : claseFolder.listFiles()) {
+                archivo.delete();
+            }
+            claseFolder.delete();
+        }
+    }
 }
+
+
+
+
+
+
+/*    private void eliminarArchivosDeClase(String claseId) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference().child("clases/" + claseId);
+        storageRef.listAll().addOnSuccessListener(listResult -> {
+            for (StorageReference item : listResult.getItems()) {
+                item.delete();
+            }
+        });*/
+
 
 
 
