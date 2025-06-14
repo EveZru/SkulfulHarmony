@@ -66,5 +66,14 @@
             android:layout_height="wrap_content"
             android:text="Ir a configuración de notificaciones"
             android:layout_marginTop="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📢 En caso de dar problemas con las notificaciones (no se muestran), entra a configuración en 'Permisos especiales' y activa 'Alarmas y recordatorios'. Suele estar bloqueado por el dispositivo. ¡Estamos trabajando en arreglar eso! :D"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
     </LinearLayout>
 </ScrollView>

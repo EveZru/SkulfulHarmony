@@ -3,6 +3,7 @@ package com.example.skulfulharmony.javaobjects.notifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.skulfulharmony.javaobjects.notifications.NotificacionHelper;
@@ -24,12 +25,27 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("RecordatorioReceiver", "📢 Alarma recibida, revisando entrada desde Firestore...");
 
-        // 🔥 NOTIFICACIÓN DE PRUEBA MANUAL SIN LÓGICA
-        NotificacionHelper.mostrarNotificacion(
-                context,
-                "🧪 Notificación de prueba directa",
-                "Solo es una prueba cuacua, ignora esto 🎶"
-        );
+        // Obtener preferencias
+        SharedPreferences prefs = context.getSharedPreferences("notificaciones_prefs", Context.MODE_PRIVATE);
+        boolean notiEntradaActiva = prefs.getBoolean("horaentrada", true);
+        boolean notiMeGustaActiva = prefs.getBoolean("megustacomentario", true);
+
+        // 🔥 NOTIFICACIÓN DE PRUEBA para "me gusta en comentario"
+        if (notiMeGustaActiva) {
+            NotificacionHelper.mostrarNotificacion(
+                    context,
+                    "👍 ¡Esto es una preuba manito!",
+                    "Wasaaaaaaaaaa!"
+            );
+        } else {
+            Log.d("RecordatorioReceiver", "🔕 Notificación de me gusta en comentario desactivada.");
+        }
+
+        // Si no está activa la de hora promedio, cancelamos el resto
+        if (!notiEntradaActiva) {
+            Log.d("RecordatorioReceiver", "🔕 Notificación de hora de entrada desactivada.");
+            return;
+        }
 
         String userId = FirebaseAuth.getInstance().getCurrentUser() != null ?
                 FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
@@ -93,9 +109,5 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
                 "🎵 ¡Hora de practicar!",
                 "Parece que no has entrado hoy. ¡Vamos a tocar algo!"
         );
-
-
     }
-
-
 }

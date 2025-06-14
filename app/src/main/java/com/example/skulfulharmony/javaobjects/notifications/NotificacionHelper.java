@@ -40,7 +40,7 @@ public class NotificacionHelper {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
-                .setSmallIcon(R.drawable.logo_confondo_sh)
+                .setSmallIcon(R.drawable.logo_confondo_notificaciones_sh)
                 .setContentTitle(titulo)
                 .setContentText(mensaje)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

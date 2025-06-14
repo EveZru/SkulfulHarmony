@@ -203,7 +203,6 @@
             android:exported="false" />
         <activity android:name=".PerfilMostrar" />
         <activity android:name=".CentroNotificaciones" />
-
         <receiver
             android:name=".javaobjects.notifications.RecordatorioEntradaReceiver"
             android:exported="true" />
