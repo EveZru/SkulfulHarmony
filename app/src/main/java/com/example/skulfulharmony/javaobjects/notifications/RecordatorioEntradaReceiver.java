@@ -24,6 +24,13 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("RecordatorioReceiver", "📢 Alarma recibida, revisando entrada desde Firestore...");
 
+        // 🔥 NOTIFICACIÓN DE PRUEBA MANUAL SIN LÓGICA
+        NotificacionHelper.mostrarNotificacion(
+                context,
+                "🧪 Notificación de prueba directa",
+                "Solo es una prueba cuacua, ignora esto 🎶"
+        );
+
         String userId = FirebaseAuth.getInstance().getCurrentUser() != null ?
                 FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
@@ -86,5 +93,9 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
                 "🎵 ¡Hora de practicar!",
                 "Parece que no has entrado hoy. ¡Vamos a tocar algo!"
         );
+
+
     }
+
+
 }

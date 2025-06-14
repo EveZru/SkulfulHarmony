@@ -31,33 +31,26 @@ public class NotificacionHelper {
             if (manager != null) manager.createNotificationChannel(canal);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            int permiso = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
+            if (permiso != PackageManager.PERMISSION_GRANTED) {
+                Log.e("NotificacionHelper", "❌ No se puede mostrar: POST_NOTIFICATIONS no concedido");
+                return;
+            }
+        }
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.logo_sh)
                 .setContentTitle(titulo)
                 .setContentText(mensaje)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        // Aquí es donde lo vas a poner cuacua 🦆👇
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-            Toast.makeText(context, "Activa las notificaciones en configuración", Toast.LENGTH_LONG).show();
-
-            Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
-
-            Log.e("NotificacionHelper", "❌ Permiso POST_NOTIFICATIONS no concedido.");
-            return;
-        }
-
         try {
             NotificationManagerCompat.from(context).notify(1001, builder.build());
-        } catch (SecurityException e) {
-            Log.e("NotificacionHelper", "❌ Error al mostrar notificación: permiso denegado", e);
+            Log.d("NotificacionHelper", "✅ Notificación mostrada con éxito");
+        } catch (Exception e) {
+            Log.e("NotificacionHelper", "❌ Error inesperado al mostrar notificación", e);
         }
     }
 
