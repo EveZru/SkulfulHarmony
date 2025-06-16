@@ -7,12 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +59,8 @@ public class Ver_clases extends AppCompatActivity {
     private Button btnCalificar;
     private EditText etcomentario;
     private PlayerView playerViewPortrait;
-    private ImageView[] estrellas;
+    private ImageView iv_menupop,iv_like,iv_dislike;
+  //  private ImageView[] estrellas;
     //private  ImageView btnPlayPause,btnRewind,btnForward;
     private ExoPlayer player;
     private Button crear_comentario;
@@ -105,11 +108,11 @@ public class Ver_clases extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_verclases);
-        tvPuntuacion = findViewById(R.id.tv_puntuacion);
+      //  tvPuntuacion = findViewById(R.id.tv_puntuacion);
         tvInfo = findViewById(R.id.tv_info_verclase);
         tvTitulo = findViewById(R.id.verclase_vertitulo);
         etcomentario = findViewById(R.id.et_comentario_verclase);
-        LinearLayout layoutEstrellas = findViewById(R.id.ll_estrellas);
+       // LinearLayout layoutEstrellas = findViewById(R.id.ll_estrellas);
         verPreguntas = findViewById(R.id.rv_preguntasporclase_verclase);
         btnCalificar = findViewById(R.id.btt_revisar_respuestas_verclase);
         //-----------------------------------------
@@ -119,6 +122,11 @@ public class Ver_clases extends AppCompatActivity {
         Intent intent = getIntent();
         idClase = intent.getIntExtra("idClase", 1);
         idCurso = intent.getIntExtra("idCurso", 1);
+
+        //_____________-
+        iv_menupop = findViewById(R.id.iv_menupop);
+        iv_like = findViewById(R.id.iv_like);
+        iv_dislike = findViewById(R.id.iv_dislike);
 
         //----guardar preguntas incorrectas-------------------------------------
         Gson gson = new Gson();
@@ -200,7 +208,6 @@ public class Ver_clases extends AppCompatActivity {
                             } else {
                                 Toast.makeText(this, "No hay video disponible para esta clase", Toast.LENGTH_SHORT).show();
                             }
-// parte de las preguntas aqui d
 
 
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -287,7 +294,15 @@ public class Ver_clases extends AppCompatActivity {
                     Toast.makeText(this, "Error al obtener la clase", Toast.LENGTH_SHORT).show();
                     finish();
                 });
-        toolbar.setOnClickListener(new View.OnClickListener() {
+
+        iv_menupop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
+
+       /* toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent1 = new Intent(Ver_clases.this, CrearDenuncia.class);
@@ -295,7 +310,7 @@ public class Ver_clases extends AppCompatActivity {
                 intent1.putExtra("idClase", idClase);
                 startActivity(intent1);
             }
-        });
+        });*/
 
         etcomentario.setMovementMethod(new ScrollingMovementMethod());
 
@@ -448,4 +463,29 @@ public class Ver_clases extends AppCompatActivity {
         }
     }
 
+
+    private void showPopupMenu(View view) {
+        // Crear el PopupMenu y asociarlo con la vista 'view' (la ImageView desplegarmenu)
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.menu_cursos, popupMenu.getMenu()); // Usamos el mismo menú que para la ActionBar
+
+        popupMenu.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.it_denunciar) {
+                Intent denuncia = new Intent(Ver_clases.this, CrearDenuncia.class);
+                denuncia.putExtra("idClase", idCurso);
+                startActivity(denuncia);
+                return true;
+            } else if (id == R.id.it_descargar) {
+                // descargar clase individual
+                return true;
+            } else if (id == R.id.it_compartir) {
+                Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            return false; // Importante devolver false si no se manejó el clic
+        });
+        popupMenu.show();
+    }
 }

@@ -21,23 +21,20 @@ public class VerClaseComoCreador extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        idClase = getIntent().getIntExtra("idClase",1);
-
-        menupop=findViewById(R.id.iv_menu);
-
-        menupop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {showMenu(view);}
-        });
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ver_clase_como_creador);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        idClase = getIntent().getIntExtra("idClase",1);
+
+        menupop=findViewById(R.id.iv_menu);
+        menupop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {showMenu(view);}
         });
     }
 
@@ -63,5 +60,8 @@ public class VerClaseComoCreador extends AppCompatActivity {
 
         });
         popupMenu.show();
+    }
+    void cargarMenu(){
+
     }
 }

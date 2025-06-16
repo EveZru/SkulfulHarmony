@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
@@ -21,7 +20,7 @@
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:padding="8dp"
-            android:src="@drawable/mas_logo"
+            android:src="@drawable/menutrespuntos"
             android:contentDescription="Toolbar Icon" />
     </androidx.appcompat.widget.Toolbar>
     <FrameLayout

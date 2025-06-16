@@ -337,6 +337,7 @@ public class Ver_cursos extends AppCompatActivity {
                         Curso curso = doc.toObject(Curso.class);
 
                         double nuevaPopularidad = calcularPopularidad(curso);
+                     //   double calificacinActual=
 
                         firestore.collection("cursos").document(docId)
                                 .update("popularidad", nuevaPopularidad)
@@ -608,11 +609,15 @@ public class Ver_cursos extends AppCompatActivity {
             puntuacionActual = nuevaPuntuacion;
             actualizarTextoPuntuacion();
             actualizarImagenesEstrellas();
+
         }
     }
 
     private void actualizarTextoPuntuacion() {
+
+
         tvPuntuacion.setText(puntuacionActual + " / 5");
+
     }
 
     private void actualizarImagenesEstrellas() {
