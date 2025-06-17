@@ -31,9 +31,6 @@ import android.widget.CheckBox;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.Rect;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
@@ -47,15 +44,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import org.apache.commons.net.ntp.TimeStamp;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,19 +97,26 @@ public class CrearClase extends AppCompatActivity {
         EdgeToEdge.enable(this);
 
         // Asegurar que el primer campo tenga el listener
-        if (containerOpciones.getChildCount() > 0) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View initialOption = inflater.inflate(R.layout.holder_opciones, containerOpciones, false);
+        EditText initialEditText = initialOption.findViewById(R.id.et_opcrespuesta);
+        if (initialEditText != null) {
+            addTextWatcher(initialEditText);
+        }
+        containerOpciones.addView(initialOption);
+        opcionesList.add(initialOption);
+       /* if (containerOpciones.getChildCount() > 0) {
             LinearLayout primeraOpcion = (LinearLayout) containerOpciones.getChildAt(0);
             EditText primerEditText = primeraOpcion.findViewById(R.id.et_ingresar_respuesta);
             if (primerEditText != null) {
                 addTextWatcher(primerEditText);
             }
-        }
+        }*/
 
 
         btn_subirvideo.setOnClickListener(v-> Subirvideo());
         btn_subirarchivo.setOnClickListener(v->SubirArchivo());
         btn_subirpregunta.setOnClickListener(v->SubirPregunta());
-      //  btn_subirpregunta.setOnClickListener(v -> addNewOptionIfNeeded());
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -146,7 +147,7 @@ public class CrearClase extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
-                    addNewOptionIfNeeded();
+                    agregarOpSiFalta();
                 }
             }
 
@@ -161,7 +162,7 @@ public class CrearClase extends AppCompatActivity {
     }
 
     // Agregar una nueva opción de respuesta si es necesario
-    private void addNewOptionIfNeeded() {
+    private void agregarOpSiFalta() {
         if (opcionesList.size() >= MAX_OPCIONES) return; // No más de 5 opciones
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -337,116 +338,134 @@ public class CrearClase extends AppCompatActivity {
 //__________________coso de subir la pregunta
     private void SubirPregunta() {
 
-        String preguntaTexto = et_pregunta.getText().toString().trim();
-        List<String> respuestas = new ArrayList<>();
-        Integer respuestaCorrectaIndex = null;
-        int respuestasCorrectasCount = 0;
+        if (preguntasClase.size() >= 5) {
+            Toast.makeText(this, "Solo puedes subir un máximo de 5 preguntas", Toast.LENGTH_SHORT).show();
+            return;
+        }else {
+            String preguntaTexto = et_pregunta.getText().toString().trim();
+            List<String> respuestas = new ArrayList<>();
+            Integer respuestaCorrectaIndex = null;
+            int respuestasCorrectasCount = 0;
 
-        Log.d("SubirPregunta", "Pregunta ingresada: " + preguntaTexto);
+            Log.d("SubirPregunta", "Pregunta ingresada: " + preguntaTexto);
 
-        // Recorrer las opciones de respuesta
-        for (int i = 0; i < containerOpciones.getChildCount(); i++) {
-            View opcionView = containerOpciones.getChildAt(i);
-            EditText etRespuesta = opcionView.findViewById(R.id.et_opcrespuesta);
-            CheckBox cbCorrecta = opcionView.findViewById(R.id.cb_correcta);
+            // Recorrer las opciones de respuesta
+            for (int i = 0; i < containerOpciones.getChildCount(); i++) {
+                View opcionView = containerOpciones.getChildAt(i);
+                EditText etRespuesta = opcionView.findViewById(R.id.et_opcrespuesta);
+                CheckBox cbCorrecta = opcionView.findViewById(R.id.cb_correcta);
 
-            if (etRespuesta != null) {
-                String respuestaTexto = etRespuesta.getText().toString().trim();
-                Log.d("SubirPregunta", "Opción " + i + ": " + respuestaTexto);
-                if (!respuestaTexto.isEmpty()) {
-                    respuestas.add(respuestaTexto);
-                    if (cbCorrecta != null) {
-                        Log.d("SubirPregunta", "Checkbox " + i + " isChecked: " + cbCorrecta.isChecked());
+                if (etRespuesta != null && cbCorrecta != null) {
+                    String respuestaTexto = etRespuesta.getText().toString().trim();
+                    if (!respuestaTexto.isEmpty()) {
+                        respuestas.add(respuestaTexto);
                         if (cbCorrecta.isChecked()) {
-                            respuestaCorrectaIndex = i;
+                            respuestaCorrectaIndex = respuestas.size() - 1; // Usar el índice de la lista de respuestas no vacías
                             respuestasCorrectasCount++;
                         }
                     }
                 }
-            }
-        }
 
-        Log.d("SubirPregunta", "Respuestas correctas encontradas: " + respuestasCorrectasCount);
 
-        // Validar si se seleccionó una única respuesta correcta
-        if (respuestasCorrectasCount == 0) {
-            Toast.makeText(this, "No marcaste ninguna respuesta como correcta.", Toast.LENGTH_SHORT).show();
-            return; // Salir si no hay respuesta correcta
-        } else if (respuestasCorrectasCount > 1) {
-            Toast.makeText(this, "Marcaste más de una respuesta como correcta.", Toast.LENGTH_SHORT).show();
-            return; // Salir si hay más de una respuesta correcta
-        }
-
-        // Crear el objeto PreguntaCuestionario
-        if (!respuestas.isEmpty() && respuestaCorrectaIndex != null) {
-            PreguntaCuestionario preguntaCuestionario = new PreguntaCuestionario(preguntaTexto, respuestas, respuestaCorrectaIndex);
-            preguntasClase.add(preguntaCuestionario);
-            // Inflar el CardView
-            LayoutInflater inflater = LayoutInflater.from(CrearClase.this);
-            View cardView = inflater.inflate(R.layout.holder_preguntasinicio, null);
-
-            // Obtener referencias a las vistas dentro del CardView
-            TextView tvPreguntaTextoCard = cardView.findViewById(R.id.tv_preguntatexto);
-            TextView tvRespuestasCard = cardView.findViewById(R.id.tv_respuestas);
-            TextView tvRespuestaCorrectaCard = cardView.findViewById(R.id.tv_respuesta_correcta);
-            ImageView btnEliminarPreguntaCard = cardView.findViewById(R.id.btn_eliminar_pregunta);
-
-            // Mostrar la pregunta
-            tvPreguntaTextoCard.setText(preguntaCuestionario.getPregunta());
-
-            // Mostrar las respuestas con un enter entre cada una
-            StringBuilder respuestasTexto = new StringBuilder();
-            for (String respuesta : preguntaCuestionario.getRespuestas()) {
-                respuestasTexto.append("- ").append(respuesta).append("\n");
-            }
-            tvRespuestasCard.setText(respuestasTexto.toString().trim());
-
-            // Mostrar la respuesta correcta (basándonos en el índice)
-            if (preguntaCuestionario.getRespuestaCorrecta() != null &&
-                    preguntaCuestionario.getRespuestaCorrecta() >= 0 &&
-                    preguntaCuestionario.getRespuestaCorrecta() < preguntaCuestionario.getRespuestas().size()) {
-                tvRespuestaCorrectaCard.setText(preguntaCuestionario.getRespuestas().get(preguntaCuestionario.getRespuestaCorrecta()));
-            } else {
-                tvRespuestaCorrectaCard.setText("Error al obtener la respuesta correcta");
+                /*
+                if (etRespuesta != null) {
+                    String respuestaTexto = etRespuesta.getText().toString().trim();
+                    Log.d("SubirPregunta", "Opción " + i + ": " + respuestaTexto);
+                    if (!respuestaTexto.isEmpty()) {
+                        respuestas.add(respuestaTexto);
+                        if (cbCorrecta != null) {
+                            Log.d("SubirPregunta", "Checkbox " + i + " isChecked: " + cbCorrecta.isChecked());
+                            if (cbCorrecta.isChecked()) {
+                                respuestaCorrectaIndex = i;
+                                respuestasCorrectasCount++;
+                            }
+                        }
+                    }
+                }*/
             }
 
-            // Configurar OnClickListener para el botón de eliminar
-            btnEliminarPreguntaCard.setOnClickListener(v -> {
+            Log.d("SubirPregunta", "Respuestas correctas encontradas: " + respuestasCorrectasCount);
+
+            // Validar si se seleccionó una única respuesta correcta
+            if (respuestasCorrectasCount == 0) {
+                Toast.makeText(this, "No marcaste ninguna respuesta como correcta.", Toast.LENGTH_SHORT).show();
+                return; // Salir si no hay respuesta correcta
+            } else if (respuestasCorrectasCount > 1) {
+                Toast.makeText(this, "Marcaste más de una respuesta como correcta.", Toast.LENGTH_SHORT).show();
+                return; // Salir si hay más de una respuesta correcta
+            }
+
+            // Crear el objeto PreguntaCuestionario
+            if (!respuestas.isEmpty() && respuestaCorrectaIndex != null) {
+                PreguntaCuestionario preguntaCuestionario = new PreguntaCuestionario(preguntaTexto, respuestas, respuestaCorrectaIndex);
+                preguntasClase.add(preguntaCuestionario);
+                // Inflar el CardView
+                LayoutInflater inflater = LayoutInflater.from(CrearClase.this);
+                View cardView = inflater.inflate(R.layout.holder_preguntasinicio, null);
+
+                // Obtener referencias a las vistas dentro del CardView
+                TextView tvPreguntaTextoCard = cardView.findViewById(R.id.tv_preguntatexto);
+                TextView tvRespuestasCard = cardView.findViewById(R.id.tv_respuestas);
+                TextView tvRespuestaCorrectaCard = cardView.findViewById(R.id.tv_respuesta_correcta);
+                ImageView btnEliminarPreguntaCard = cardView.findViewById(R.id.btn_eliminar_pregunta);
+
+                // Mostrar la pregunta
+                tvPreguntaTextoCard.setText(preguntaCuestionario.getPregunta());
+
+                // Mostrar las respuestas con un enter entre cada una
+                StringBuilder respuestasTexto = new StringBuilder();
+                for (String respuesta : preguntaCuestionario.getRespuestas()) {
+                    respuestasTexto.append("- ").append(respuesta).append("\n");
+                }
+                tvRespuestasCard.setText(respuestasTexto.toString().trim());
+
+                // Mostrar la respuesta correcta (basándonos en el índice)
+                if (preguntaCuestionario.getRespuestaCorrecta() != null &&
+                        preguntaCuestionario.getRespuestaCorrecta() >= 0 &&
+                        preguntaCuestionario.getRespuestaCorrecta() < preguntaCuestionario.getRespuestas().size()) {
+                    tvRespuestaCorrectaCard.setText(preguntaCuestionario.getRespuestas().get(preguntaCuestionario.getRespuestaCorrecta()));
+                } else {
+                    tvRespuestaCorrectaCard.setText("Error al obtener la respuesta correcta");
+                }
+
+                // Configurar OnClickListener para el botón de eliminar
+                btnEliminarPreguntaCard.setOnClickListener(v -> {
+                    LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
+                    if (containerPreguntasCreadas != null) {
+                        containerPreguntasCreadas.removeView(cardView);
+                        preguntasClase.remove(preguntaCuestionario);
+                        Toast.makeText(CrearClase.this, "Pregunta eliminada.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                // Agregar el CardView al contenedor
                 LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
                 if (containerPreguntasCreadas != null) {
-                    containerPreguntasCreadas.removeView(cardView);
-                    preguntasClase.remove(preguntaCuestionario);
-                    Toast.makeText(CrearClase.this, "Pregunta eliminada.", Toast.LENGTH_SHORT).show();
+                    containerPreguntasCreadas.addView(cardView);
+                } else {
+                    Toast.makeText(this, "No se encontró el contenedor para la pregunta creada.", Toast.LENGTH_SHORT).show();
                 }
-            });
 
-            // Agregar el CardView al contenedor
-            LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
-            if (containerPreguntasCreadas != null) {
-                containerPreguntasCreadas.addView(cardView);
+                // Mostrar mensaje de éxito
+                Toast.makeText(this, "Se cargó bien la pregunta.", Toast.LENGTH_SHORT).show();
+
+                // Opcional: Limpiar los campos
+                et_pregunta.setText("");
+                containerOpciones.removeAllViews();
+                LayoutInflater inflaterOpciones = LayoutInflater.from(CrearClase.this);
+                View newOption = inflaterOpciones.inflate(R.layout.holder_opciones, containerOpciones, false);
+                EditText newEditText = newOption.findViewById(R.id.et_opcrespuesta);
+                if (newEditText != null) {
+                    addTextWatcher(newEditText);
+                }
+
+                containerOpciones.addView(newOption);
+                opcionesList.clear();
+                opcionesList.add(newOption);
+
             } else {
-                Toast.makeText(this, "No se encontró el contenedor para la pregunta creada.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error al crear la pregunta.", Toast.LENGTH_SHORT).show();
             }
-
-            // Mostrar mensaje de éxito
-            Toast.makeText(this, "Se cargó bien la pregunta.", Toast.LENGTH_SHORT).show();
-
-            // Opcional: Limpiar los campos
-            et_pregunta.setText("");
-            containerOpciones.removeAllViews();
-            LayoutInflater inflaterOpciones = LayoutInflater.from(CrearClase.this);
-            View newOption = inflaterOpciones.inflate(R.layout.holder_opciones, containerOpciones, false);
-            EditText newEditText = newOption.findViewById(R.id.et_opcrespuesta);
-            if (newEditText != null) {
-                addTextWatcher(newEditText);
-            }
-
-            containerOpciones.addView(newOption);
-            opcionesList.clear();
-            opcionesList.add(newOption);
-
-        } else {
-            Toast.makeText(this, "Error al crear la pregunta.", Toast.LENGTH_SHORT).show();
         }
     }
 

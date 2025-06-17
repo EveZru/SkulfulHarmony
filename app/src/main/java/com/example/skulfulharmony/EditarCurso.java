@@ -100,7 +100,7 @@ public class EditarCurso extends AppCompatActivity {
                 if(!queryDocumentSnapshots.isEmpty()){
                     DocumentReference docRef=queryDocumentSnapshots.getDocuments().get(0).getReference();
                    // proseso para editar la descrpcion
-                    if(nuevaDescripcion!=null ||!nuevaDescripcion.isBlank()) {
+                    if(nuevaDescripcion!=null  && !nuevaDescripcion.isBlank()) {
                         Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT).show();
                         docRef.update("descripcion", nuevaDescripcion);
                     }else{

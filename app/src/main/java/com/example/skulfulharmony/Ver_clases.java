@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -108,7 +109,7 @@ public class Ver_clases extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_verclases);
-      //  tvPuntuacion = findViewById(R.id.tv_puntuacion);
+        //  tvPuntuacion = findViewById(R.id.tv_puntuacion);
         tvInfo = findViewById(R.id.tv_info_verclase);
         tvTitulo = findViewById(R.id.verclase_vertitulo);
         etcomentario = findViewById(R.id.et_comentario_verclase);
@@ -444,6 +445,18 @@ public class Ver_clases extends AppCompatActivity {
                 estrellas[i].setImageResource(R.drawable.estrella);
             }
         }*/
+
+        iv_like.setOnClickListener(v-> {
+            iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
+            modificarcalificacion();
+
+        });
+
+        iv_dislike.setOnClickListener(v-> {
+            iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
+            modificarcalificacion();
+        });
+
     }
 
     // para la reprocuccion de video
@@ -487,5 +500,9 @@ public class Ver_clases extends AppCompatActivity {
             return false; // Importante devolver false si no se manejó el clic
         });
         popupMenu.show();
+    }
+    private void modificarcalificacion() {
+        // que le reste a la cosa , .10 o sumar
+        
     }
 }

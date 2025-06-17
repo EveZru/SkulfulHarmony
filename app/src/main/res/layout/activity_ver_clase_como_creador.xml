@@ -54,8 +54,8 @@
         android:textStyle="bold"
         />
     <TextView
-        android:padding="5dp"
         android:id="@+id/tv_info_verclase"
+        android:padding="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Texto de información super hiper mega importante de vital importancia"

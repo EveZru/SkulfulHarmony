@@ -196,7 +196,7 @@ public class Clase_Fundamentos extends AppCompatActivity {
             case "Curso 6":
                  Preguntas.add(new PreguntaCuestionario("¿Qué símbolo representa un sostenido?", Arrays.asList(" ♭ ", " ♮ ", " ♯ "), 2));
                  Preguntas.add(new PreguntaCuestionario("¿Qué hace un becuadro?", Arrays.asList("Sube medio tono", "Cancela una alteración previa", "Baja medio tono"), 1));
-
+                break;
             default:
                Preguntas.add(new PreguntaCuestionario("error al cargar preguntas", Arrays.asList(".", "."), 1));
                 break;
