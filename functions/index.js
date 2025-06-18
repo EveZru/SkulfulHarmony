@@ -103,16 +103,40 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
   const data = event.data.data();
   const autorId = data.autorContenido;
 
-  const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
-  const token = doc.data().fcmToken;
-  await admin.messaging().sendToDevice(token, {
-    notification: {
-      title: "Contenido denunciado ⚠️",
-      body: "Revisa las políticas para evitar sanciones.",
-    },
-  });
-});
+  if (!autorId) {
+    console.log("❌ No se especificó autorContenido en la denuncia.");
+    return;
+  }
 
+  const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
+  const token = doc.data()?.fcmToken;
+
+  if (!token) {
+    console.log("⚠️ Usuario sin token FCM:", autorId);
+    return;
+  }
+
+  // 📌 Determinar tipo de contenido denunciado
+  let tipo = "contenido";
+  if (data.idComentario !== -1) tipo = "comentario";
+  else if (data.idClase !== -1) tipo = "clase";
+  else if (data.idCurso !== -1) tipo = "curso";
+
+  const message = {
+    token: token,
+    notification: {
+      title: "⚠️ Uno de tus contenidos ha sido denunciado",
+      body: `Tu ${tipo} fue reportado por otro usuario. Revísalo para evitar sanciones.`,
+    }
+  };
+
+  try {
+    const res = await admin.messaging().send(message);
+    console.log("✅ Notificación de denuncia enviada a:", autorId, res);
+  } catch (error) {
+    console.error("❌ Error al enviar notificación de denuncia:", error);
+  }
+});
 
 //🛡️ Ocultar contenido automáticamente por denuncias acumuladas
 exports.ocultarContenidoDenunciado = onDocumentCreated("denuncias/{id}", async (event) => {

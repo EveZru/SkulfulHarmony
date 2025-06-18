@@ -152,23 +152,65 @@ public class CrearDenuncia extends AppCompatActivity {
 
                 btn_cancelar.setOnClickListener(v2 -> alertDialog.dismiss());
                 btn_enviar.setOnClickListener(v2 -> {
-                    firestore.collection("denuncias").add(denuncia);
-                    Toast.makeText(CrearDenuncia.this, "Denuncia creada:\n" +
-                            "Usuario: " + denuncia.getUsuario() + "\n" +
-                            "Tipo: " + denuncia.getTipo_denuncia() + "\n" +
-                            "Denuncia: " + denuncia.getDenuncia(), Toast.LENGTH_LONG).show();
-                    alertDialog.dismiss();
+                    if (idComentario != -1) {
+                        firestore.collection("comentarios")
+                                .document(String.valueOf(idComentario))
+                                .get()
+                                .addOnSuccessListener(document -> {
+                                    if (document.exists()) {
+                                        String uidAutor = document.getString("autorId");
+                                        if (uidAutor != null) {
+                                            denuncia.setAutorContenido(uidAutor);
+                                        }
+                                    }
+
+                                    firestore.collection("denuncias").add(denuncia)
+                                            .addOnSuccessListener(ref -> {
+                                                Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
+                                                alertDialog.dismiss();
+                                            });
+                                });
+
+                    } else if (idClase != -1 || idCurso != -1) {
+                        // 🔍 Buscar el curso para obtener el correo del creador
+                        firestore.collection("cursos")
+                                .whereEqualTo("idCurso", idCurso)
+                                .get()
+                                .addOnSuccessListener(snapshot -> {
+                                    if (!snapshot.isEmpty()) {
+                                        String correoCreador = snapshot.getDocuments().get(0).getString("creador");
+                                        if (correoCreador != null) {
+                                            // 🔄 Buscar UID en usuarios
+                                            firestore.collection("usuarios")
+                                                    .whereEqualTo("correo", correoCreador)
+                                                    .get()
+                                                    .addOnSuccessListener(usuarioSnap -> {
+                                                        if (!usuarioSnap.isEmpty()) {
+                                                            String uidAutor = usuarioSnap.getDocuments().get(0).getId();
+                                                            denuncia.setAutorContenido(uidAutor);
+                                                        }
+
+                                                        firestore.collection("denuncias").add(denuncia)
+                                                                .addOnSuccessListener(ref -> {
+                                                                    Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
+                                                                    alertDialog.dismiss();
+                                                                });
+                                                    });
+                                        }
+                                    }
+                                });
+
+                    } else {
+                        firestore.collection("denuncias").add(denuncia)
+                                .addOnSuccessListener(ref -> {
+                                    Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
+                                    alertDialog.dismiss();
+                                });
+                    }
                 });
-
                 alertDialog.show();
-
-
-            }//
+            }
         });
-
-
-
-
 
     }
 

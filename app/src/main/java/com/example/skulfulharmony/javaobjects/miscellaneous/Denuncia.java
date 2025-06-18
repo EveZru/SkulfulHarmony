@@ -13,6 +13,7 @@ public class Denuncia {
     private Integer idCurso;
     private Integer idClase;
     private Integer idComentario;
+    private String autorContenido;
 
     // Constructor sin argumentos
     public Denuncia() {
@@ -84,8 +85,13 @@ public class Denuncia {
     public Integer getIdComentario() {
         return idComentario;
     }
-
     public void setIdComentario(Integer idComentario) {
         this.idComentario = idComentario;
+    }
+    public String getAutorContenido() {
+        return autorContenido;
+    }
+    public void setAutorContenido(String autorContenido) {
+        this.autorContenido = autorContenido;
     }
 }
