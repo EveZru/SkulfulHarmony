@@ -262,9 +262,14 @@ public class Ver_cursos extends AppCompatActivity {
 
                             // Obtener lista actual de comentarios
                             Curso curso = doc.toObject(Curso.class);
+                            if (curso == null) {
+                                Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             List<Comentario> comentarios = curso.getComentarios();
-                            if (comentarios == null)
+                            if (comentarios == null) {
                                 comentarios = new ArrayList<>();
+                            }
                             Integer nuevaId = comentarios.size() + 1;
                             comentario.setIdComentario(nuevaId);
                             comentarios.add(comentario);

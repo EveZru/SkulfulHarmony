@@ -216,10 +216,7 @@ public class Ver_clases extends AppCompatActivity {
                             verPreguntas.setLayoutManager(layoutManager);
                             verPreguntas.setAdapter(adapterPreguntasEnVerClase);
 
-                            AdapterVerClaseVerComentarios adapterVerClaseVerComentarios = new AdapterVerClaseVerComentarios(clase.getComentarios(), clase.getIdCurso(), clase.getIdClase());
-                            verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                            verComentarios.setAdapter(adapterVerClaseVerComentarios);
-
+                            cargarComentarios(idCurso,idClase);
 
                             //Calificar preguntas
 
@@ -374,13 +371,11 @@ public class Ver_clases extends AppCompatActivity {
                                     .addOnSuccessListener(unused -> {
                                         Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
                                         etcomentario.setText(""); // limpiar campo
+                                        cargarComentarios(idCurso, idClase);
                                     })
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
                                     });
-
-                            AdapterVerClaseVerComentarios adapter = new AdapterVerClaseVerComentarios(comentarios, idCurso, idClase);
-                            verComentarios.setAdapter(adapter);
 
                         } else {
                             Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
@@ -456,6 +451,36 @@ public class Ver_clases extends AppCompatActivity {
             iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
             modificarcalificacion();
         });
+
+    }
+
+    private void cargarComentarios(int idCurso, int idClase) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("clases")
+                .whereEqualTo("idCurso",idCurso)
+                .whereEqualTo("idClase", idClase)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(onSuccessListener -> {
+                    if (!onSuccessListener.isEmpty()) {
+                        DocumentSnapshot doc = onSuccessListener.getDocuments().get(0);
+                        String docId = doc.getId();
+                        Clase clase = doc.toObject(Clase.class);
+                        if (clase != null) {
+                            if(clase.getComentarios()==null){
+                                clase.setComentarios(new ArrayList<>());
+                            }
+                            verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                            AdapterVerClaseVerComentarios adapter = new AdapterVerClaseVerComentarios(clase.getComentarios(), idCurso, idClase);
+                            verComentarios.setAdapter(adapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar comentarios", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                });
 
     }
 
