@@ -70,13 +70,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.io.File;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Ver_cursos extends AppCompatActivity {
 
     private ImageView imagenTitulo;
     private TextView tituloCurso, descripcionCurso, autorCurso;
-    private RecyclerView rvClases; // Puedes llenar esto después con clases del curso
+    private RecyclerView rvClases;
     private RecyclerView rvComentarios;
     private Button crear_comentario;
     private EditText etcomentario;
@@ -89,6 +91,8 @@ public class Ver_cursos extends AppCompatActivity {
 
     private FirebaseFirestore firestore;
     private int idCurso;
+    private String currentCourseDocId; // ID del documento del curso en Firestore
+    private Curso currentCurso;
     private ImageView desplegarmenu;
     private ImageView seguirCurso;
 
@@ -176,6 +180,9 @@ public class Ver_cursos extends AppCompatActivity {
                 Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            FirebaseAuth mAuth;
+            FirebaseUser currentUser;
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("usuarios")
@@ -313,7 +320,7 @@ public class Ver_cursos extends AppCompatActivity {
             }
         });
 
-       // SharedPreferences sharedPreferences=getsa
+        // SharedPreferences sharedPreferences=getsa
 
         //---- contador de visitas-----
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -337,7 +344,7 @@ public class Ver_cursos extends AppCompatActivity {
                 .addOnFailureListener(e -> Log.w("VISITAS", "Error buscando el curso", e));
 
 // subir / actualizar  la popularidad a firebase
-     //
+        //
         firestore.collection("cursos")
                 .whereEqualTo("idCurso", idCurso)
                 .limit(1)
@@ -349,7 +356,7 @@ public class Ver_cursos extends AppCompatActivity {
                         Curso curso = doc.toObject(Curso.class);
 
                         double nuevaPopularidad = calcularPopularidad(curso);
-                     //   double calificacinActual=
+                        //   double calificacinActual=
 
                         firestore.collection("cursos").document(docId)
                                 .update("popularidad", nuevaPopularidad)
@@ -438,7 +445,7 @@ public class Ver_cursos extends AppCompatActivity {
                             cargarComentarios(idCurso);
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
-//cola
+
                             if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 CollectionReference usersRef = db.collection("usuarios");
@@ -475,6 +482,7 @@ public class Ver_cursos extends AppCompatActivity {
 
                             // Aquí puedes luego cargar clases del curso si quieres
 
+
                             ArrayList<Clase> listaClases = new ArrayList<>();
 
                             CollectionReference clasesRef = firestore.collection("clases");
@@ -496,6 +504,15 @@ public class Ver_cursos extends AppCompatActivity {
                                 Toast.makeText(this, "Error al cargar clases", Toast.LENGTH_SHORT).show();
                                 onFailureListener.printStackTrace();
                             });
+
+                            Map<String, Long> calificaciones = new HashMap<>();
+                            Map<String, Integer> mapaOriginal = curso.getCalificacionesPorUsuario();
+
+                            if (mapaOriginal != null) {
+                                for (Map.Entry<String, Integer> entry : mapaOriginal.entrySet()) {
+                                    calificaciones.put(entry.getKey(), entry.getValue().longValue());
+                                }
+                            }
 
 
 
@@ -554,6 +571,9 @@ public class Ver_cursos extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Log.w("VISITAS", "Error buscando el curso", e));
+
+
+
     }
 
     //_____parte del menu _____
@@ -616,6 +636,49 @@ public class Ver_cursos extends AppCompatActivity {
             actualizarImagenesEstrellas();
 
         }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        String correo = user.getEmail();
+        int calificacion = puntuacionActual;
+
+        firestore.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(query -> {
+                    if (!query.isEmpty()) {
+                        DocumentSnapshot doc = query.getDocuments().get(0);
+                        String docId = doc.getId();
+
+                        Curso curso = doc.toObject(Curso.class);
+                        if (curso == null) return;
+
+                        Map<String, Long> calificaciones = (Map<String, Long>) doc.get("calificacionesPorUsuario");
+                        if (calificaciones == null) calificaciones = new HashMap<>();
+
+                        // Actualizar calificación del usuario
+                        calificaciones.put(correo, (long) calificacion);
+
+                        // Recalcular promedio
+                        double suma = 0;
+                        for (Long val : calificaciones.values()) {
+                            suma += val;
+                        }
+                        double nuevoPromedio = suma / calificaciones.size();
+
+                        Map<String, Object> update = new HashMap<>();
+                        update.put("calificacionesPorUsuario", calificaciones);
+                        update.put("promedioCalificacion", nuevoPromedio);
+
+                        firestore.collection("cursos").document(docId).update(update)
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "¡Calificación guardada!", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+
     }
 
     private void actualizarTextoPuntuacion() {

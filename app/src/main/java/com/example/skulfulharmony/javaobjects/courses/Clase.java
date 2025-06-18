@@ -28,6 +28,20 @@ public class Clase implements Serializable {
     private List<PreguntaCuestionario> preguntas;
     private List<Comentario> comentarios;
     private Integer meGusta;
+
+    public Integer getNoGusta() {
+        return noGusta;
+    }
+
+    public void setNoGusta(Integer noGusta) {
+        this.noGusta = noGusta;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
+
+    private Integer noGusta;
     private Timestamp fechaCreacionf;
     private Timestamp fechaAcceso;
     private String contenido;

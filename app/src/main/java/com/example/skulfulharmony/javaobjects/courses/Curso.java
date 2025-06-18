@@ -36,6 +36,11 @@ public class Curso implements Serializable {
     private Integer visitas;
     private Integer cantidadDescargas;
     private List<Integer> calificacionCursos;
+
+    private Map<String, Integer> calificacionesPorUsuario; // Nuevo: Usuario UID/Correo -> Calificación
+    private Double promedioCalificacion;
+
+
     private Double popularidad;
     private String firestoreId;
     private Integer cluster;
@@ -129,6 +134,13 @@ public class Curso implements Serializable {
     public void setFirestoreId(String firestoreId) {
         this.firestoreId = firestoreId;
     }
+    public void setCalificacionesPorUsuario(Map<String, Integer> calificacionesPorUsuario) {
+        this.calificacionesPorUsuario = calificacionesPorUsuario;
+    }
+    public void setPromedioCalificacion(Double promedioCalificacion) {
+        this.promedioCalificacion = promedioCalificacion;
+    }
+
 
     //Getters
 
@@ -202,8 +214,14 @@ public class Curso implements Serializable {
     public void setCantidadDescargas(Integer cantidadDescargas) {
         this.cantidadDescargas = cantidadDescargas;
     }
+    public Map<String, Integer> getCalificacionesPorUsuario() {
+        return calificacionesPorUsuario;
+    }
+    public Double getPromedioCalificacion() {
+        return promedioCalificacion;
+    }
 
-    public List<Integer> getCalificacionCursos() {
+   public List<Integer> getCalificacionCursos() {
         return calificacionCursos;
     }
 
@@ -214,6 +232,7 @@ public class Curso implements Serializable {
     public String getFirestoreId() {
         return firestoreId;
     }
+
 
     // Método nuevo para obtener el nivel de dificultad en número
     public int getNivelDificultad() {

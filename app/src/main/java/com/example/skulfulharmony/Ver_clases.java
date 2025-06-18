@@ -64,8 +64,6 @@ public class Ver_clases extends AppCompatActivity {
     private EditText etcomentario;
     private PlayerView playerViewPortrait;
     private ImageView iv_menupop,iv_like,iv_dislike;
-  //  private ImageView[] estrellas;
-    //private  ImageView btnPlayPause,btnRewind,btnForward;
     private ExoPlayer player;
     private Button crear_comentario;
     private int puntuacionActual = 0;
@@ -77,6 +75,9 @@ public class Ver_clases extends AppCompatActivity {
     private RecyclerView verComentarios;
     private AdapterPreguntasEnVerClase adapterPreguntasEnVerClase;
     private int cantidadRespuestasCorrectas;
+
+    private boolean like=false, dislike=false;
+
 
     private static final String TAG = "Ver_clases";
 
@@ -303,15 +304,6 @@ public class Ver_clases extends AppCompatActivity {
             }
         });
 
-       /* toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(Ver_clases.this, CrearDenuncia.class);
-                intent1.putExtra("idCurso", idCurso);
-                intent1.putExtra("idClase", idClase);
-                startActivity(intent1);
-            }
-        });*/
 
         etcomentario.setMovementMethod(new ScrollingMovementMethod());
 
@@ -452,14 +444,33 @@ public class Ver_clases extends AppCompatActivity {
         }*/
 
         iv_like.setOnClickListener(v-> {
-            iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
-            modificarcalificacion();
+
+            if(like==false) {
+                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
+                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
+                modificarcalificacionmas();
+                like = true;
+                dislike = false;
+            }else if (like==true){
+                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
+                modificarcalificacionmenos();//para quitar el que estaba jsjs
+            }
 
         });
 
         iv_dislike.setOnClickListener(v-> {
-            iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
-            modificarcalificacion();
+            if(dislike==false) {
+                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
+                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
+                modificarcalificacionmenos();
+                dislike = true;
+                like = false;
+            }else if (dislike==true){
+                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
+                modificarcalificacionmas();//para quitar el que estaba jsjs
+            }
+
+
         });
 
     }
@@ -536,8 +547,13 @@ public class Ver_clases extends AppCompatActivity {
         });
         popupMenu.show();
     }
-    private void modificarcalificacion() {
+    private void modificarcalificacionmas() {
         // que le reste a la cosa , .10 o sumar
+
         
+    }
+    private void modificarcalificacionmenos() {
+        // que le reste a la cosa , .10 o sumar
+
     }
 }

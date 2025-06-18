@@ -82,9 +82,7 @@ public class EditarCurso extends AppCompatActivity {
         }
 
         btn_cancelar.setOnClickListener(v -> {
-         /*   Intent intentregresar=new Intent(EditarCurso.this,VerCursoComoCreador.class);
-            intentregresar.putExtra("idCurso",idCurso);
-            startActivity(intentregresar);*/
+
             finish();
         });
 
