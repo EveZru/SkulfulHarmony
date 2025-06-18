@@ -28,7 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterVerClaseVerComentarios.ViewHolder> {
     List<Comentario> listaComentarios;
@@ -166,19 +168,20 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                 }
                             });
 
-                    // 🔥 Update de likes en la raíz para el trigger
                     db.collection("comentarios")
                             .document(String.valueOf(comentario.getIdComentario()))
                             .get()
                             .addOnSuccessListener(doc -> {
                                 if (doc.exists()) {
+                                    Map<String, Object> actualizacion = new HashMap<>();
+                                    actualizacion.put("likes", reacciones.size());
+                                    actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
+
                                     db.collection("comentarios")
                                             .document(String.valueOf(comentario.getIdComentario()))
-                                            .update("likes", reacciones.size())
+                                            .update(actualizacion)
                                             .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
-                                            .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
-                                } else {
-                                    Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                            .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));
                                 }
                             });
                 }
@@ -299,13 +302,15 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                 .get()
                                 .addOnSuccessListener(doc -> {
                                     if (doc.exists()) {
+                                        Map<String, Object> actualizacion = new HashMap<>();
+                                        actualizacion.put("likes", reacciones.size());
+                                        actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
+
                                         db.collection("comentarios")
                                                 .document(String.valueOf(comentario.getIdComentario()))
-                                                .update("likes", reacciones.size())
+                                                .update(actualizacion)
                                                 .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
-                                                .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
-                                    } else {
-                                        Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                                .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));
                                     }
                                 });
                     }

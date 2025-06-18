@@ -7,7 +7,7 @@ const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// 🕒 Notificación por hora promedio (RQF31)
+// 🕒 Notificación por hora promedio
 exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event) => {
   const snapshot = await admin.firestore().collection("usuarios").get();
   const ahora = new Date();
@@ -50,54 +50,55 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
   });
 });
 
-// ❤️ Notificación por like en comentario (RQF32)
+// ❤️ Notificación por like en comentario
 exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioId}", async (event) => {
   const antes = event.data.before.data();
   const despues = event.data.after.data();
 
-  if ((antes.likes || 0) < (despues.likes || 0)) {
-    const autorId = despues.autorId;
+  if ((antes.likes || 0) >= (despues.likes || 0)) return;
 
-    const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
-    const userData = doc.data();
+  const autorId = despues.autorId;
+  const quienDioLikeUid = despues.ultimoLikeUid;
 
-    if (!userData) {
-      console.error("❌ No se encontró el usuario:", autorId);
-      return;
+  if (!autorId || !quienDioLikeUid || autorId === quienDioLikeUid) return;
+
+  const [autorDoc, quienDoc] = await Promise.all([
+    admin.firestore().collection("usuarios").doc(autorId).get(),
+    admin.firestore().collection("usuarios").doc(quienDioLikeUid).get()
+  ]);
+
+  if (!autorDoc.exists || !quienDoc.exists) return;
+
+  const autorData = autorDoc.data();
+  const quienData = quienDoc.data();
+
+  if (!autorData?.notificaciones?.likeComentario) {
+    console.log("🔕 Notificación de like desactivada por el usuario:", autorId);
+    return;
+  }
+
+  const token = autorData.fcmToken;
+  const nombreQuien = quienData?.nombre || "Alguien";
+
+  if (!token) return;
+
+  const message = {
+    token: token,
+    notification: {
+      title: `¡${nombreQuien} le dio like a tu comentario!`,
+      body: "Sigue compartiendo 🤘"
     }
+  };
 
-    // Verificamos si tiene desactivada la notificación de "me gusta en comentarios"
-    const notificaciones = userData.notificaciones || {};
-    if (notificaciones.likeComentario === false) {
-      console.log("🔕 Notificación de like desactivada por el usuario:", autorId);
-      return;
-    }
-
-    const token = userData.fcmToken;
-    if (!token) {
-      console.error("⚠️ Token FCM no encontrado para el usuario:", autorId);
-      return;
-    }
-
-    const message = {
-      token: token,
-      notification: {
-        title: "¡Le dieron like a tu comentario!",
-        body: "Sigue compartiendo 🤘"
-      }
-    };
-
-    try {
-      const response = await admin.messaging().send(message);
-      console.log("✅ Notificación enviada:", response);
-    } catch (error) {
-      console.error("❌ Error al enviar notificación:", error);
-    }
+  try {
+    const response = await admin.messaging().send(message);
+    console.log("✅ Notificación enviada:", response);
+  } catch (error) {
+    console.error("❌ Error al enviar notificación:", error);
   }
 });
 
-
-// 🚨 Notificación por denuncia (RQF33)
+// 🚨 Notificación por denuncia
 exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event) => {
   const data = event.data.data();
   const autorId = data.autorContenido;
@@ -112,19 +113,6 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
   });
 });
 
-//🧠 Recalcular vector del usuario cuando califica una clase
-
-exports.recalcularVectorUsuario = onDocumentWritten("clases/{claseId}/calificaciones/{userId}", async (event) => {
-  const calificacion = event.data?.after?.data()?.valor;
-  const userId = event.params.userId;
-
-  if (!calificacion) return;
-
-  await admin.firestore().collection("usuarios").doc(userId).update({
-    vectorAfinidad: admin.firestore.FieldValue.increment(calificacion),
-    ultimaActualizacion: admin.firestore.Timestamp.now(),
-  });
-});
 
 //🛡️ Ocultar contenido automáticamente por denuncias acumuladas
 exports.ocultarContenidoDenunciado = onDocumentCreated("denuncias/{id}", async (event) => {
