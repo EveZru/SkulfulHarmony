@@ -11,7 +11,7 @@
 
 
     <!-- Contenido scrollable -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -59,8 +59,8 @@
                         <ImageView
                             android:clickable="true"
                             android:id="@+id/iv_despegarmenu"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_gravity="end"
                             android:padding="8dp"
                             android:layout_marginLeft="0dp"
@@ -70,8 +70,8 @@
                         <ImageView
                             android:clickable="true"
                             android:id="@+id/img_vercurso_seguircurso"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:layout_gravity="end"
                             android:src="@drawable/cursonoseguido"
                             android:contentDescription="Toolbar Icon" />
@@ -251,5 +251,5 @@
         </LinearLayout>
 
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

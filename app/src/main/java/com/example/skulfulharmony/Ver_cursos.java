@@ -676,6 +676,7 @@ public class Ver_cursos extends AppCompatActivity {
 
         NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
     }
+
     private void cargarComentarios(Integer idCurso){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -691,6 +692,8 @@ public class Ver_cursos extends AppCompatActivity {
                             if (curso.getComentarios() == null) {
                                 curso.setComentarios(new ArrayList<>());
                             }
+                            Toast.makeText(Ver_cursos.this, "Tiene" + curso.getComentarios().size() + "comentarios", Toast.LENGTH_SHORT).show();
+                            rvComentarios.setNestedScrollingEnabled(false);
                             AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(curso.getComentarios(), idCurso);
                             rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
                             rvComentarios.setAdapter(adapter);
