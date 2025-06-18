@@ -16,7 +16,8 @@ public class Comentario {
     private Integer idCurso;
     private Integer idClase;
     private Integer idComentario;
-
+    private String uidAutor;
+    private int likes;
 
     public Comentario() {
     }
@@ -76,5 +77,21 @@ public class Comentario {
 
     public void setIdClase(Integer idClase) {
         this.idClase = idClase;
+    }
+
+    public String getUidAutor() {
+        return uidAutor;
+    }
+
+    public void setUidAutor(String uidAutor) {
+        this.uidAutor = uidAutor;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public int getLikes() {
+        return likes;
     }
 }

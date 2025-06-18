@@ -1,5 +1,7 @@
 package com.example.skulfulharmony;
 
+import static com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.RequestBuilder.put;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,6 +53,7 @@ import com.google.protobuf.Empty;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -323,15 +326,13 @@ public class Ver_clases extends AppCompatActivity {
             return false;
         });
 
-        crear_comentario.setOnClickListener(v->
-        {
-
+        crear_comentario.setOnClickListener(v -> {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            String coment = etcomentario.getText().toString().trim(); // CORREGIDO
+            String coment = etcomentario.getText().toString().trim();
             Timestamp fecha = Timestamp.now();
 
-            if (user == null ) {
+            if (user == null) {
                 Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -345,7 +346,8 @@ public class Ver_clases extends AppCompatActivity {
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
-            comentario.setIdClase(null);
+            comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
+            comentario.setUidAutor(user.getUid());
 
             db.collection("clases")
                     .whereEqualTo("idCurso", idCurso)
@@ -355,23 +357,34 @@ public class Ver_clases extends AppCompatActivity {
                         if (!queryDocumentSnapshots.isEmpty()) {
                             DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                             String docId = doc.getId();
-                            // Obtener lista actual de comentarios
                             Clase clase = doc.toObject(Clase.class);
                             List<Comentario> comentarios = clase.getComentarios();
-                            if (comentarios == null)
-                                comentarios = new ArrayList<>();
+                            if (comentarios == null) comentarios = new ArrayList<>();
                             Integer nuevaId = comentarios.size() + 1;
                             comentario.setIdComentario(nuevaId);
                             comentarios.add(comentario);
 
-                            // Subir la nueva lista de comentarios
                             db.collection("clases")
                                     .document(docId)
                                     .update("comentarios", comentarios)
                                     .addOnSuccessListener(unused -> {
                                         Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                        etcomentario.setText(""); // limpiar campo
+                                        etcomentario.setText("");
                                         cargarComentarios(idCurso, idClase);
+
+                                        // ✅ También subimos el doc a la colección 'comentarios' para activar notificaciones después
+                                        db.collection("comentarios")
+                                                .document(String.valueOf(nuevaId))
+                                                .set(new HashMap<String, Object>() {{
+                                                    put("autorId", user.getUid());
+                                                    put("texto", coment);
+                                                    put("likes", 0); // desde el inicio
+                                                    put("idClase", idClase);
+                                                    put("idCurso", idCurso);
+                                                    put("timestamp", fecha);
+                                                }})
+                                                .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
+                                                .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
                                     })
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
@@ -385,9 +398,6 @@ public class Ver_clases extends AppCompatActivity {
                         Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
                     });
         });
-
-
-
 
 // coso de estrellas _______lo quite ya que se califica por like o dislike no por estrellas jsj__________________________________
      /*   estrellas = new ImageView[5];

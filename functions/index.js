@@ -33,13 +33,27 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
   if ((antes.likes || 0) < (despues.likes || 0)) {
     const autorId = despues.autorId;
     const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
-    const token = doc.data().fcmToken;
-    await admin.messaging().sendToDevice(token, {
+    const token = doc.data()?.fcmToken;
+
+    if (!token) {
+      console.error("⚠️ Token FCM no encontrado para el usuario:", autorId);
+      return;
+    }
+
+    const message = {
+      token: token,
       notification: {
         title: "¡Le dieron like a tu comentario!",
-        body: "Sigue compartiendo 🤘",
-      },
-    });
+        body: "Sigue compartiendo 🤘"
+      }
+    };
+
+    try {
+      const response = await admin.messaging().send(message);
+      console.log("✅ Notificación enviada:", response);
+    } catch (error) {
+      console.error("❌ Error al enviar notificación:", error);
+    }
   }
 });
 

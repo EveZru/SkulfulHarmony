@@ -129,12 +129,14 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                             ? new ArrayList<>()
                             : new ArrayList<>(comentario.getReacciones());
 
+                    boolean dioLike = false;
                     if (reacciones.contains(correoUsuario)) {
                         reacciones.remove(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_corner);
                     } else {
                         reacciones.add(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                        dioLike = true;
                     }
 
                     comentario.setReacciones(reacciones);
@@ -152,8 +154,20 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                                             .update("comentarios", listaComentarios);
                                 }
                             });
+
+                    // 🔥 Subida a colección raíz "comentarios"
+                    db.collection("comentarios")
+                            .document(String.valueOf(comentario.getIdComentario()))
+                            .set(new java.util.HashMap<String, Object>() {{
+                                put("autorId", comentario.getUidAutor()); // Asegúrate que lo tengas
+                                put("texto", comentario.getTexto());
+                                put("likes", reacciones.size());
+                                put("idCurso", idCurso);
+                                put("timestamp", comentario.getFecha());
+                            }}, com.google.firebase.firestore.SetOptions.merge());
                 }
             });
+
             // GESTURES: simple tap = editar, double tap = me gusta
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
 
@@ -213,12 +227,14 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                                 ? new ArrayList<>()
                                 : new ArrayList<>(comentario.getReacciones());
 
+                        boolean dioLike = false;
                         if (reacciones.contains(correoUsuario)) {
                             reacciones.remove(correoUsuario);
                             img_comentario_megusta.setImageResource(R.drawable.heart_corner);
                         } else {
                             reacciones.add(correoUsuario);
                             img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                            dioLike = true;
                         }
 
                         comentario.setReacciones(reacciones);
@@ -236,6 +252,16 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                                                 .update("comentarios", listaComentarios);
                                     }
                                 });
+
+                        db.collection("comentarios")
+                                .document(String.valueOf(comentario.getIdComentario()))
+                                .set(new java.util.HashMap<String, Object>() {{
+                                    put("autorId", comentario.getUidAutor()); // ⚠️ Asegúrate de tenerlo en el modelo
+                                    put("texto", comentario.getTexto());
+                                    put("likes", reacciones.size());
+                                    put("idCurso", idCurso);
+                                    put("timestamp", comentario.getFecha());
+                                }}, com.google.firebase.firestore.SetOptions.merge());
                     }
                     return true;
                 }

@@ -54,22 +54,16 @@ public class Home extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
-
     private Handler backPressHandler = new Handler();
     private AppCompatButton et_buscarhome;
-
     private SQLiteDatabase localDatabase;
-
     private List<Curso> listaCursos;
     private RecyclerView rv_populares,rv_homevercursos, rv_homehistorial,rv_homeclasesoriginales;
     private AdapterHomeVerCursos adapterHomeVerCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
-
     private Handler handler = new Handler();
     private int currentPosition = 0;
     //private ViewPager2 viewPager;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,21 +75,13 @@ public class Home extends AppCompatActivity {
         rv_homehistorial.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         et_buscarhome=findViewById(R.id.et_buscarhome);
-
-
         // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
-
         cargarCursosCluster();
         cargarCursosHistorial();
         cargarCursosPopulares();
-
         carrucelPopulares();
-
         //-------Parte de los cursos de clases originales -------
-
         listaCursos = new ArrayList<>();
-
-
         // Cursos originale creados de forma estatica
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);
         Curso curso2 = new Curso("Partituras", null, null, null, null);
@@ -113,14 +99,11 @@ public class Home extends AppCompatActivity {
         /*// Ahora actualiza el adaptador
             adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
             rv_homevercursos.setAdapter(adapterHomeVerCursos);*/
-
         RecyclerView recyclerView2 = findViewById(R.id.rv_homeclasesoriginales);
         recyclerView2.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapterHomeVerCursosOriginales=new AdapterHomeVerCursosOriginales((Context) this, listaCursos);
         // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
-
-//_________________________________________________
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
@@ -135,7 +118,6 @@ public class Home extends AppCompatActivity {
             startActivity(intent);
             finish(); // Evita que el usuario vuelva a Home si no está logueado
         }
-
         //  Listener para abrir la actividad de búsqueda
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,8 +126,6 @@ public class Home extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
         // Manejo del botón de retroceso con 3 clics
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -159,9 +139,6 @@ public class Home extends AppCompatActivity {
                 }
             }
         });
-
-        // para mostrar los populares
-
         rv_populares = findViewById(R.id.rv_populares_homme);
         rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
@@ -178,9 +155,6 @@ public class Home extends AppCompatActivity {
             startActivity(intent);
             prefs.edit().putString("last_open_date", today).apply();
         }
-
-
-
         if (bottomNavigationView1 != null) {
             // Configurar el listener para los ítems seleccionados
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -207,13 +181,7 @@ public class Home extends AppCompatActivity {
         } else {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
-
-
-
-
-
     }
-
     private void cargarCursosHistorial() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -265,10 +233,6 @@ public class Home extends AppCompatActivity {
                     Toast.makeText(this, "Error al cargar historial", Toast.LENGTH_SHORT).show();
                 });
     }
-
-
-
-
     private void cargarCursosCluster() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference cursosRef = db.collection("cursos");
@@ -290,9 +254,6 @@ public class Home extends AppCompatActivity {
         });
 
     }
-
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -334,7 +295,6 @@ public class Home extends AppCompatActivity {
                     mostrarCursoError("Error al cargar populares", "Verifica tu conexión");
                 });
     }
-
     private void mostrarCursoError(String titulo, String mensaje) {
         RecyclerView rvPopulares = findViewById(R.id.rv_populares_homme);
         Curso error = new Curso(titulo, mensaje, null, null, null);
@@ -342,7 +302,6 @@ public class Home extends AppCompatActivity {
         listaError.add(error);
         rvPopulares.setAdapter(new AdapterHomeVerCursos(listaError, this));
     }
-    //___Carrucel del populares
     private void carrucelPopulares() {
         handler.postDelayed(new Runnable() {
             @Override
@@ -362,8 +321,4 @@ public class Home extends AppCompatActivity {
             }
         }, 8000);
     }
-
-
-
-
 }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -116,7 +117,7 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                     .placeholder(R.drawable.loading)
                                     .error(R.drawable.default_profile)
                                     .into(img_comentario_perfil);
-                            } else {
+                        } else {
                             txt_comentario_usuario.setText("Usuario desconocido");
                         }
                     }).addOnFailureListener(e -> {
@@ -142,15 +143,16 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                     if (reacciones.contains(correoUsuario)) {
                         reacciones.remove(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_corner);
-                    }else {
+                    } else {
                         reacciones.add(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_red);
                     }
 
-                    comentario.setReacciones(reacciones);
+                    comentario.setReacciones(reacciones); // ya está
                     listaComentarios.set(position, comentario);
                     notifyItemChanged(position);
 
+                    // 🔁 Actualiza en la clase embebida
                     db.collection("clases")
                             .whereEqualTo("idCurso", idCurso)
                             .whereEqualTo("idClase", idClase)
@@ -160,11 +162,24 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                     String id = snapshot.getDocuments().get(0).getId();
                                     db.collection("clases")
                                             .document(id)
-                                            .update("comentarios", listaComentarios);
-
+                                            .update("comentarios", listaComentarios); // 🔄 actualiza embebido también
                                 }
-                            }).addOnFailureListener(e -> {
-                                txt_comentario_usuario.setText("Usuario desconocido");
+                            });
+
+                    // 🔥 Update de likes en la raíz para el trigger
+                    db.collection("comentarios")
+                            .document(String.valueOf(comentario.getIdComentario()))
+                            .get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    db.collection("comentarios")
+                                            .document(String.valueOf(comentario.getIdComentario()))
+                                            .update("likes", reacciones.size())
+                                            .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
+                                            .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
+                                } else {
+                                    Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                }
                             });
                 }
             });
@@ -276,14 +291,26 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                                 .document(id)
                                                 .update("comentarios", listaComentarios);
                                     }
-                                    })
-                                .addOnFailureListener(ex -> {
-                                    txt_comentario_usuario.setText("Usuario desconocido");
+                                });
+
+                        // ✅ Solo update al campo de likes (ya existe el doc)
+                        db.collection("comentarios")
+                                .document(String.valueOf(comentario.getIdComentario()))
+                                .get()
+                                .addOnSuccessListener(doc -> {
+                                    if (doc.exists()) {
+                                        db.collection("comentarios")
+                                                .document(String.valueOf(comentario.getIdComentario()))
+                                                .update("likes", reacciones.size())
+                                                .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
+                                                .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
+                                    } else {
+                                        Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                    }
                                 });
                     }
                     return true;
                 }
-
             });
 
             itemView.setClickable(true);

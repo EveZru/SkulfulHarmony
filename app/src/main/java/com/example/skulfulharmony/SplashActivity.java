@@ -16,6 +16,7 @@ import com.example.skulfulharmony.javaobjects.users.tiempoUsuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -78,5 +79,18 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(this, IniciarSesion.class));
             finish();
         }
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String token = task.getResult();
+                FirebaseFirestore.getInstance()
+                        .collection("usuarios")
+                        .document(user.getUid())
+                        .update("fcmToken", token)
+                        .addOnSuccessListener(aVoid -> Log.d("SplashActivity", "🔁 Token actualizado en Splash"))
+                        .addOnFailureListener(e -> Log.e("SplashActivity", "❌ Error al guardar token en Splash", e));
+            }
+        });
+
     }
 }

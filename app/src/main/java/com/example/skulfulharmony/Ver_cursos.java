@@ -249,6 +249,7 @@ public class Ver_cursos extends AppCompatActivity {
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
             comentario.setIdClase(null);
+            comentario.setUidAutor(user.getUid());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
