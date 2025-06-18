@@ -440,6 +440,14 @@ public class Ver_cursos extends AppCompatActivity {
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(this, "Error al consultar Firestore", Toast.LENGTH_SHORT).show();
                                         });
+
+
+
+
+
+
+
+
                             }
 
                             cargarComentarios(idCurso);
@@ -514,6 +522,14 @@ public class Ver_cursos extends AppCompatActivity {
                                 }
                             }
 
+                            if (calificaciones != null && user != null) {
+                                Long miCalificacion = calificaciones.get(user.getEmail());
+                                if (miCalificacion != null) {
+                                    puntuacionActual = miCalificacion.intValue(); // ACTUALIZA variable global
+                                    actualizarTextoPuntuacion();
+                                    actualizarImagenesEstrellas(); // 👈 Esto es lo que se te olvidó probablemente
+                                }
+                            }
 
 
                         }
@@ -843,13 +859,13 @@ public class Ver_cursos extends AppCompatActivity {
         List<Comentario> comentarios = curso.getComentarios();
         if (comentarios != null) interacciones = comentarios.size();
 
-        double calificaciones = 0;
-        List<Integer> califs = curso.getCalificacionCursos();
+        double calificaciones = curso.getPromedioCalificacion();
+        /* List<Integer> califs = curso.getCalificacionCursos();
         if (califs != null && !califs.isEmpty()) {
             int suma = 0;
             for (int c : califs) suma += c;
             calificaciones = (double) suma / califs.size();
-        }
+        }*/
 
 
         double descargas = curso.getCantidadDescargas() != null ? curso.getCantidadDescargas() : 0;
