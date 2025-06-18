@@ -32,9 +32,23 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
 
   if ((antes.likes || 0) < (despues.likes || 0)) {
     const autorId = despues.autorId;
-    const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
-    const token = doc.data()?.fcmToken;
 
+    const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
+    const userData = doc.data();
+
+    if (!userData) {
+      console.error("❌ No se encontró el usuario:", autorId);
+      return;
+    }
+
+    // Verificamos si tiene desactivada la notificación de "me gusta en comentarios"
+    const notificaciones = userData.notificaciones || {};
+    if (notificaciones.likeComentario === false) {
+      console.log("🔕 Notificación de like desactivada por el usuario:", autorId);
+      return;
+    }
+
+    const token = userData.fcmToken;
     if (!token) {
       console.error("⚠️ Token FCM no encontrado para el usuario:", autorId);
       return;
@@ -56,6 +70,7 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
     }
   }
 });
+
 
 // 🚨 Notificación por denuncia (RQF33)
 exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event) => {
