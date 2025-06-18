@@ -155,16 +155,21 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                                 }
                             });
 
-                    // 🔥 Subida a colección raíz "comentarios"
+                    // 🔥 Update de likes en la raíz para el trigger
                     db.collection("comentarios")
                             .document(String.valueOf(comentario.getIdComentario()))
-                            .set(new java.util.HashMap<String, Object>() {{
-                                put("autorId", comentario.getUidAutor()); // Asegúrate que lo tengas
-                                put("texto", comentario.getTexto());
-                                put("likes", reacciones.size());
-                                put("idCurso", idCurso);
-                                put("timestamp", comentario.getFecha());
-                            }}, com.google.firebase.firestore.SetOptions.merge());
+                            .get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    db.collection("comentarios")
+                                            .document(String.valueOf(comentario.getIdComentario()))
+                                            .update("likes", reacciones.size())
+                                            .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
+                                            .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
+                                } else {
+                                    Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                }
+                            });
                 }
             });
 
@@ -253,15 +258,21 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                                     }
                                 });
 
+                        // 🔥 Update de likes en la raíz para el trigger
                         db.collection("comentarios")
                                 .document(String.valueOf(comentario.getIdComentario()))
-                                .set(new java.util.HashMap<String, Object>() {{
-                                    put("autorId", comentario.getUidAutor()); // ⚠️ Asegúrate de tenerlo en el modelo
-                                    put("texto", comentario.getTexto());
-                                    put("likes", reacciones.size());
-                                    put("idCurso", idCurso);
-                                    put("timestamp", comentario.getFecha());
-                                }}, com.google.firebase.firestore.SetOptions.merge());
+                                .get()
+                                .addOnSuccessListener(doc -> {
+                                    if (doc.exists()) {
+                                        db.collection("comentarios")
+                                                .document(String.valueOf(comentario.getIdComentario()))
+                                                .update("likes", reacciones.size())
+                                                .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
+                                                .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error)); // 🔄 aquí se cambió 'e' por 'error'
+                                    } else {
+                                        Log.e("LIKE", "❌ Documento no encontrado para actualizar likes");
+                                    }
+                                });
                     }
                     return true;
                 }

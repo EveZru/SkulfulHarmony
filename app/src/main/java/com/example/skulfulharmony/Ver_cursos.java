@@ -231,10 +231,10 @@ public class Ver_cursos extends AppCompatActivity {
 
         crear_comentario.setOnClickListener(v -> {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            String coment = etcomentario.getText().toString().trim(); // CORREGIDO
+            String coment = etcomentario.getText().toString().trim();
             Timestamp fecha = Timestamp.now();
 
-            if (user == null ) {
+            if (user == null) {
                 Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -248,7 +248,7 @@ public class Ver_cursos extends AppCompatActivity {
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
-            comentario.setIdClase(null);
+            comentario.setIdClase(null); // Curso, no clase
             comentario.setUidAutor(user.getUid());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -261,27 +261,25 @@ public class Ver_cursos extends AppCompatActivity {
                             DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
                             String docId = doc.getId();
 
-                            // Obtener lista actual de comentarios
                             Curso curso = doc.toObject(Curso.class);
                             if (curso == null) {
                                 Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+
                             List<Comentario> comentarios = curso.getComentarios();
-                            if (comentarios == null) {
-                                comentarios = new ArrayList<>();
-                            }
+                            if (comentarios == null) comentarios = new ArrayList<>();
+
                             Integer nuevaId = comentarios.size() + 1;
                             comentario.setIdComentario(nuevaId);
                             comentarios.add(comentario);
 
-                            // Subir la nueva lista de comentarios
                             db.collection("cursos")
                                     .document(docId)
                                     .update("comentarios", comentarios)
                                     .addOnSuccessListener(unused -> {
                                         Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                        etcomentario.setText(""); // limpiar campo
+                                        etcomentario.setText("");
                                         cargarComentarios(idCurso);
                                     })
                                     .addOnFailureListener(e -> {
@@ -289,8 +287,16 @@ public class Ver_cursos extends AppCompatActivity {
                                         e.printStackTrace();
                                     });
 
-                            etcomentario.setText(""); // limpiar campo
-                            cargarComentarios(idCurso);
+                            // 🔥 También guardar en colección raíz "comentarios"
+                            db.collection("comentarios")
+                                    .document(String.valueOf(nuevaId))
+                                    .set(new java.util.HashMap<String, Object>() {{
+                                        put("autorId", user.getUid());
+                                        put("texto", coment);
+                                        put("likes", 0); // Empieza en 0
+                                        put("idCurso", idCurso);
+                                        put("timestamp", fecha);
+                                    }});
                         } else {
                             Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                         }
@@ -299,6 +305,7 @@ public class Ver_cursos extends AppCompatActivity {
                         Toast.makeText(this, "Error al buscar el curso", Toast.LENGTH_SHORT).show();
                     });
         });
+
         desplegarmenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
