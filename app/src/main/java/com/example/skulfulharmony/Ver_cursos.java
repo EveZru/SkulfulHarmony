@@ -276,16 +276,15 @@ public class Ver_cursos extends AppCompatActivity {
                                     .addOnSuccessListener(unused -> {
                                         Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
                                         etcomentario.setText(""); // limpiar campo
+                                        cargarComentarios(idCurso);
                                     })
                                     .addOnFailureListener(e -> {
                                         Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                        e.printStackTrace();
                                     });
-                            Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+
                             etcomentario.setText(""); // limpiar campo
-
-                            AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(comentarios, idCurso);
-                            rvComentarios.setAdapter(adapter);
-
+                            cargarComentarios(idCurso);
                         } else {
                             Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
                         }
@@ -423,14 +422,7 @@ public class Ver_cursos extends AppCompatActivity {
                                         });
                             }
 
-
-                            if (curso.getComentarios() == null){
-                                curso.setComentarios(new ArrayList<>());
-                            }
-                            AdapterVerCursoVerComentarios adapterVerCursoVerComentarios = new AdapterVerCursoVerComentarios(curso.getComentarios(),idCurso);
-                            rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                            rvComentarios.setAdapter(adapterVerCursoVerComentarios);
-
+                            cargarComentarios(idCurso);
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
 //cola
@@ -678,6 +670,31 @@ public class Ver_cursos extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
+    }
+    private void cargarComentarios(Integer idCurso){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(cursoQuery -> {
+                    if (!cursoQuery.isEmpty()) {
+                        DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
+                        Curso curso = cursoDoc.toObject(Curso.class);
+                        if (curso != null) {
+                            if (curso.getComentarios() == null) {
+                                curso.setComentarios(new ArrayList<>());
+                            }
+                            AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(curso.getComentarios(), idCurso);
+                            rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                            rvComentarios.setAdapter(adapter);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error al cargar comentarios", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void descargarCursoCompletoFirestore() {
