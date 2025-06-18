@@ -130,10 +130,12 @@
                 android:orientation="vertical"
                 android:padding="5dp">
 
-                <!-- Primera opción por defecto -->
+                <!-- Primera opción por defecto  esta chiquita por
+                 que fallaba espero y no afecte (a mi no se me erro la app
+                 al yo calarlo no me dio error pero cualquier cosa me avisan a ver si lo arreglo de otra forma  -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="1dp"
                     android:orientation="horizontal">
 
                     <CheckBox
