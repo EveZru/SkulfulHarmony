@@ -8,19 +8,44 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 // 🕒 Notificación por hora promedio (RQF31)
-exports.notificacionInactividadV2 = onSchedule("every 60 minutes", async (event) => {
+exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event) => {
   const snapshot = await admin.firestore().collection("usuarios").get();
-  const horaActual = new Date().getHours();
+  const ahora = new Date();
+  const horaActual = ahora.getHours();
+  const minutoActual = ahora.getMinutes();
 
   snapshot.forEach(async (doc) => {
     const data = doc.data();
-    if (data.horaPromedio === horaActual - 1) {
-      await admin.messaging().sendToDevice(data.fcmToken, {
+    const horaPromedio = data.horaPromedio;
+    const token = data.fcmToken;
+    const notis = data.notificaciones || {};
+
+    // 🔒 Validaciones mínimas
+    if (horaPromedio === undefined || token === undefined) return;
+    if (notis.horaEntrada === false) return;
+
+    // 🎯 Diferencia total en minutos
+    const minutosActuales = horaActual * 60 + minutoActual;
+    const minutosPromedio = horaPromedio * 60; // horaPromedio es int
+
+    const diferenciaMin = minutosActuales - minutosPromedio;
+
+    // ⏰ Si han pasado entre 20 y 30 minutos desde la hora promedio
+    if (diferenciaMin >= 20 && diferenciaMin <= 30) {
+      const message = {
+        token,
         notification: {
-          title: "¡Hora de practicar!",
-          body: "Hace rato que no te conectas 🎶",
+          title: "🎶 ¡Hora de practicar!",
+          body: "Parece que no entraste a tu hora habitual, ¡te esperamos en Skilful Harmony!",
         },
-      });
+      };
+
+      try {
+        const res = await admin.messaging().send(message);
+        console.log("✅ Notificación enviada a:", doc.id, res);
+      } catch (error) {
+        console.error("❌ Error al enviar notificación a:", doc.id, error);
+      }
     }
   });
 });

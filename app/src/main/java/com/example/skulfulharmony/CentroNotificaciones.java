@@ -35,62 +35,48 @@ public class CentroNotificaciones extends AppCompatActivity {
         switch_subidamaterial = findViewById(R.id.switch_subidamaterial);
         switch_errorsubidadatos = findViewById(R.id.switch_errorsubidadatos);
 
-        if (!prefs.contains("megustacomentario")) {
-            guardarEstado("megustacomentario", true);
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseFirestore.getInstance()
-                        .collection("usuarios")
-                        .document(user.getUid())
-                        .update("notificaciones.likeComentario", true)
-                        .addOnSuccessListener(aVoid -> Log.d("CENTRO_NOTIS", "📤 Sync inicial Firestore (default true)"))
-                        .addOnFailureListener(e -> Log.e("CENTRO_NOTIS", "❌ Error en sync inicial", e));
-            }
-        }
-
-        // 📦 Cargar estados de preferencias locales
-        switch_horaentrada.setChecked(prefs.getBoolean("horaentrada", true));
-        switch_megustacomentario.setChecked(prefs.getBoolean("megustacomentario", true));
-        switch_comentariodenunciatuclase.setChecked(prefs.getBoolean("comentariodenuncia", true));
-        switch_progresodescarga.setChecked(prefs.getBoolean("progresodescarga", true));
-        switch_subidamaterial.setChecked(prefs.getBoolean("subidamaterial", true));
-        switch_errorsubidadatos.setChecked(prefs.getBoolean("errorsubida", true));
-
-        // 🔄 Listeners
-        switch_horaentrada.setOnCheckedChangeListener((buttonView, isChecked) ->
-                guardarEstado("horaentrada", isChecked));
-
-        switch_megustacomentario.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            guardarEstado("megustacomentario", isChecked);
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user != null) {
-                FirebaseFirestore.getInstance()
-                        .collection("usuarios")
-                        .document(user.getUid())
-                        .update("notificaciones.likeComentario", isChecked)
-                        .addOnSuccessListener(aVoid -> Log.d("CENTRO_NOTIS", "🔔 Notificación de like actualizada en Firestore"))
-                        .addOnFailureListener(e -> Log.e("CENTRO_NOTIS", "❌ Error al actualizar Firestore", e));
-            }
-        });
-
-        switch_comentariodenunciatuclase.setOnCheckedChangeListener((buttonView, isChecked) ->
-                guardarEstado("comentariodenuncia", isChecked));
-
-        switch_progresodescarga.setOnCheckedChangeListener((buttonView, isChecked) ->
-                guardarEstado("progresodescarga", isChecked));
-
-        switch_subidamaterial.setOnCheckedChangeListener((buttonView, isChecked) ->
-                guardarEstado("subidamaterial", isChecked));
-
-        switch_errorsubidadatos.setOnCheckedChangeListener((buttonView, isChecked) ->
-                guardarEstado("errorsubida", isChecked));
+        // 🔁 Mapear llaves → campos Firestore
+        setupSwitch(switch_horaentrada, "horaentrada", "notificaciones.horaEntrada");
+        setupSwitch(switch_megustacomentario, "megustacomentario", "notificaciones.likeComentario");
+        setupSwitch(switch_comentariodenunciatuclase, "comentariodenuncia", "notificaciones.denunciaComentario");
+        setupSwitch(switch_progresodescarga, "progresodescarga", "notificaciones.progresoDescarga");
+        setupSwitch(switch_subidamaterial, "subidamaterial", "notificaciones.subidaMaterial");
+        setupSwitch(switch_errorsubidadatos, "errorsubida", "notificaciones.errorSubida");
 
         Button btnConfig = findViewById(R.id.btn_config_notificaciones);
         btnConfig.setOnClickListener(v -> abrirConfiguracionNotificaciones());
     }
 
+    private void setupSwitch(SwitchCompat sw, String prefKey, String firestorePath) {
+        boolean estadoInicial = prefs.getBoolean(prefKey, true);
+        sw.setChecked(estadoInicial);
+
+        // Si nunca se ha guardado este switch en prefs, sincroniza en Firestore también
+        if (!prefs.contains(prefKey)) {
+            guardarEstado(prefKey, true);
+            actualizarFirestore(firestorePath, true);
+        }
+
+        sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            guardarEstado(prefKey, isChecked);
+            actualizarFirestore(firestorePath, isChecked);
+        });
+    }
+
     private void guardarEstado(String key, boolean estado) {
         prefs.edit().putBoolean(key, estado).apply();
+    }
+
+    private void actualizarFirestore(String path, boolean estado) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(user.getUid())
+                .update(path, estado)
+                .addOnSuccessListener(aVoid -> Log.d("CENTRO_NOTIS", "✅ Firestore actualizado: " + path + " = " + estado))
+                .addOnFailureListener(e -> Log.e("CENTRO_NOTIS", "❌ Error al actualizar: " + path, e));
     }
 
     private void abrirConfiguracionNotificaciones() {

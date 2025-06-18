@@ -324,8 +324,17 @@ public class tiempoUsuario {
     }
 
     public void calcularPromediosEntradaPorSemana() {
-        DocumentReference userRef = db.collection("usuarios").document(userId);
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        SharedPreferences prefs = context.getSharedPreferences("promedios_prefs", Context.MODE_PRIVATE);
 
+        String ultimaFecha = prefs.getString("ultimaFechaPromedio", "");
+
+        if (hoy.equals(ultimaFecha)) {
+            Log.d("PromedioEntrada", "⏳ Promedio ya calculado hoy: " + hoy);
+            return;
+        }
+
+        DocumentReference userRef = db.collection("usuarios").document(userId);
         userRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 Long totalMinutos = documentSnapshot.getLong("totalMinutosAcumuladosEntrada");
@@ -334,15 +343,22 @@ public class tiempoUsuario {
                 if (totalMinutos != null && vecesEntrada != null && vecesEntrada > 0) {
                     long promedio = totalMinutos / vecesEntrada;
                     int hora = (int) (promedio / 60);
-                    int minuto = (int) (promedio % 60);
 
-                    Log.d("PromedioEntrada", "📊 Promedio general de entrada: " + hora + "h " + minuto + "m en " + vecesEntrada + " días");
+                    Map<String, Object> update = new HashMap<>();
+                    update.put("horaPromedio", hora);
+
+                    userRef.set(update, SetOptions.merge())
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d("PromedioEntrada", "✅ horaPromedio guardada: " + hora);
+                                prefs.edit().putString("ultimaFechaPromedio", hoy).apply(); // ⏳ Guardamos la fecha
+                            })
+                            .addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al guardar horaPromedio", e));
                 } else {
-                    Log.d("PromedioEntrada", "⛔ No hay suficientes datos para calcular el promedio.");
+                    Log.d("PromedioEntrada", "⛔ Datos insuficientes para calcular promedio.");
                 }
             }
-        }).addOnFailureListener(e -> {
-            Log.e("PromedioEntrada", "❌ Error al obtener promedio de entrada", e);
-        });
+        }).addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al obtener promedio", e));
     }
+
+
 }
