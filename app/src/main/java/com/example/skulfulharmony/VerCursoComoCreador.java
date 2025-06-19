@@ -34,6 +34,8 @@ import java.util.Locale;
 
 public class VerCursoComoCreador extends AppCompatActivity {
 
+    private String documentIdCurso;
+
     ImageView imagenTitulo,menu;
     TextView tv_tituloCurso, tv_descripcionCurso, tv_fechaCreacion;
     RecyclerView rvClases;
@@ -74,8 +76,8 @@ public class VerCursoComoCreador extends AppCompatActivity {
         idCurso = getIntent().getIntExtra("idCurso",1);
 
         if (idCurso != -1) {
-            cargarClases();
             cargarInfo(idCurso);
+            cargarClases();
         } else {
             Toast.makeText(this, "Error al obtener la informacion del curso", Toast.LENGTH_SHORT).show();
         }
@@ -95,6 +97,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
         ArrayList<Clase> listaClases = new ArrayList<>();
         CollectionReference clasesRef = firestore.collection("clases");
         Query query = clasesRef.whereEqualTo("idCurso", idCurso).orderBy("fechaCreacionf", Query.Direction.ASCENDING);
+
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot document : queryDocumentSnapshots) {
@@ -121,6 +124,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             }else if(id==R.id.it_eliminar){
+
                 new AlertDialog.Builder(VerCursoComoCreador.this)// cambie el context
                         .setTitle("Eliminar curso")
                         .setMessage("¿Estás seguro de que quieres eliminar este curso junto con todas sus clases y archivos?")
@@ -128,6 +132,8 @@ public class VerCursoComoCreador extends AppCompatActivity {
                         .setNegativeButton("Cancelar", null)
                         .show();
                 return true;
+
+
             }else {
                 Toast.makeText(VerCursoComoCreador.this, "No se selecciono ninguna opcion", Toast.LENGTH_SHORT).show();
 
@@ -144,6 +150,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
+                        documentIdCurso = document.getId();
                         String nombre = document.getString("titulo");
                         String descripcion = document.getString("descripcion");
                         String fechaCreacionStr = document.getString("fechaCreacion");
@@ -175,7 +182,53 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 });
     }
 
+
     private void eliminarCurso(int cursoId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // 1. Eliminar clases asociadas
+        db.collection("clases")
+                .whereEqualTo("idCurso", cursoId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        String claseId = doc.getId();
+                        db.collection("clases").document(claseId).delete();
+                    }
+
+                    // 2. Eliminar el curso por su verdadero documentId
+                    if (documentIdCurso != null && !documentIdCurso.isEmpty()) {
+                        db.collection("cursos").document(documentIdCurso)
+                                .delete()
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(VerCursoComoCreador.this, "Curso eliminado", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(VerCursoComoCreador.this, "Error al eliminar el curso", Toast.LENGTH_SHORT).show();
+                                });
+                    } else {
+                        Toast.makeText(VerCursoComoCreador.this, "ID del curso no encontrado", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(VerCursoComoCreador.this, "Error al buscar clases del curso", Toast.LENGTH_SHORT).show();
+                });
+
+        // 3. Eliminar archivos locales
+        File claseFolder = new File(getFilesDir(), "clases/" + cursoId);
+        if (claseFolder.exists()) {
+            for (File archivo : claseFolder.listFiles()) {
+                archivo.delete();
+            }
+            claseFolder.delete();
+        }
+    }
+
+
+
+
+   /* private void eliminarCurso(int cursoId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // 1. Eliminar clases asociadas
@@ -207,23 +260,5 @@ public class VerCursoComoCreador extends AppCompatActivity {
             }
             claseFolder.delete();
         }
-    }
+    }*/
 }
-
-
-
-
-
-
-/*    private void eliminarArchivosDeClase(String claseId) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference().child("clases/" + claseId);
-        storageRef.listAll().addOnSuccessListener(listResult -> {
-            for (StorageReference item : listResult.getItems()) {
-                item.delete();
-            }
-        });*/
-
-
-
-

@@ -38,7 +38,7 @@ public class Curso implements Serializable {
     private List<Integer> calificacionCursos;
 
     private Map<String, Integer> calificacionesPorUsuario; // Nuevo: Usuario UID/Correo -> Calificación
-    private Double promedioCalificacion;
+    private Double promedioCalificacion = 0.0;
 
 
     private Double popularidad;

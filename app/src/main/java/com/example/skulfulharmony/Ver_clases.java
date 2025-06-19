@@ -30,6 +30,10 @@ import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+
+import com.google.firebase.firestore.DocumentReference;
+
 import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnVerClase;
 import com.example.skulfulharmony.adapters.AdapterVerClaseVerComentarios;
@@ -75,6 +79,7 @@ public class Ver_clases extends AppCompatActivity {
     private RecyclerView verComentarios;
     private AdapterPreguntasEnVerClase adapterPreguntasEnVerClase;
     private int cantidadRespuestasCorrectas;
+    private FirebaseFirestore firestore;
 
     private boolean like=false, dislike=false;
 
@@ -132,6 +137,8 @@ public class Ver_clases extends AppCompatActivity {
         iv_menupop = findViewById(R.id.iv_menupop);
         iv_like = findViewById(R.id.iv_like);
         iv_dislike = findViewById(R.id.iv_dislike);
+
+        firestore = FirebaseFirestore.getInstance();
 
         //----guardar preguntas incorrectas-------------------------------------
         Gson gson = new Gson();
@@ -297,6 +304,8 @@ public class Ver_clases extends AppCompatActivity {
                     finish();
                 });
 
+
+
         iv_menupop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,7 +328,6 @@ public class Ver_clases extends AppCompatActivity {
         });
 
         crear_comentario.setOnClickListener(v -> {
-
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String coment = etcomentario.getText().toString().trim();
             Timestamp fecha = Timestamp.now();
@@ -391,87 +399,41 @@ public class Ver_clases extends AppCompatActivity {
                     });
         });
 
-// coso de estrellas _______lo quite ya que se califica por like o dislike no por estrellas jsj__________________________________
-     /*   estrellas = new ImageView[5];
-        estrellas[0] = findViewById(R.id.iv_1_estrella);
-        estrellas[1] = findViewById(R.id.iv_2_estrella);
-        estrellas[2] = findViewById(R.id.iv_3_estrella);
-        estrellas[3] = findViewById(R.id.iv_4_estrella);
-        estrellas[4] = findViewById(R.id.iv_5_estrella);
-
-        // Establecer OnClickListener para cada estrella
-        for (int i = 0; i < estrellas.length; i++) {
-            final int estrellaIndex = i;
-            estrellas[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    actualizarPuntuacion(estrellaIndex + 1);
-                }
-            });
-        }
-
-        // Inicializar la puntuación en 0/5
-        actualizarTextoPuntuacion();
-        //-coso para el video-----------------------------------------------------------------
-        playerViewPortrait = findViewById(R.id.vv_videoclase);
-        player = new ExoPlayer.Builder(this).build();
-
-    }
 
 
 
-// calificacion met odos extra
 
-    private void actualizarPuntuacion(int nuevaPuntuacion) {
-        if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {
-            puntuacionActual = nuevaPuntuacion;
-            actualizarTextoPuntuacion();
-            actualizarImagenesEstrellas();
-        }
-    }
-
-    private void actualizarTextoPuntuacion() {
-        tvPuntuacion.setText(puntuacionActual + " / 5");
-    }
-
-    private void actualizarImagenesEstrellas() {
-        for (int i = 0; i < estrellas.length; i++) {
-            if (i < puntuacionActual) {
-                estrellas[i].setImageResource(R.drawable.estella_llena);
-            } else {
-                estrellas[i].setImageResource(R.drawable.estrella);
-            }
-        }*/
-
-        iv_like.setOnClickListener(v-> {
-
-            if(like==false) {
-                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
-                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
-                modificarcalificacionmas();
+        iv_like.setOnClickListener(v -> {
+            if (!like) {
                 like = true;
                 dislike = false;
-            }else if (like==true){
-                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
-                modificarcalificacionmenos();//para quitar el que estaba jsjs
+                iv_like.setImageResource(R.drawable.liketrue_icono);
+                iv_dislike.setImageResource(R.drawable.dislike_icono);
+                modificarcalificacionmas(); // like nuevo
+            } else {
+                like = false;
+                iv_like.setImageResource(R.drawable.like_icono);
+                modificarcalificacionmenos(); // quitando like
             }
-
         });
 
-        iv_dislike.setOnClickListener(v-> {
-            if(dislike==false) {
-                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.white));
-                iv_like.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
-                modificarcalificacionmenos();
+
+        iv_dislike.setOnClickListener(v -> {
+            if (!dislike) {
                 dislike = true;
                 like = false;
-            }else if (dislike==true){
-                iv_dislike.setBackgroundColor(ContextCompat.getColor(Ver_clases.this, R.color.black));
-                modificarcalificacionmas();//para quitar el que estaba jsjs
+                iv_dislike.setImageResource(R.drawable.disliketrue_icono);
+                iv_like.setImageResource(R.drawable.like_icono);
+
+                modificarcalificacionmenos(); // nuevo dislike
+            } else {
+                dislike = false;
+
+                iv_dislike.setImageResource(R.drawable.dislike_icono);
+                modificarcalificacionmas(); // quitando dislike
             }
-
-
         });
+
 
     }
 
@@ -548,12 +510,27 @@ public class Ver_clases extends AppCompatActivity {
         popupMenu.show();
     }
     private void modificarcalificacionmas() {
-        // que le reste a la cosa , .10 o sumar
+     /*   firestore.collection("cursos").whereEqualTo("idCurso", idCurso)
+                .get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if(!queryDocumentSnapshots.isEmpty()){
+                        DocumentReference docRef=queryDocumentSnapshots.getDocuments().get(0).getReference();
 
-        
+                        double puntuacion = cursos.getpromedioCalificacion();;
+                       /* // proseso para editar la descrpcion
+                        if(nuevaDescripcion!=null  && !nuevaDescripcion.isBlank()) {
+                            Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT).show();
+                            docRef.update("descripcion", nuevaDescripcion);
+                        }else{
+                            Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT).show();
+                        }
+
+
+                    }
+
+                });*/
+
     }
     private void modificarcalificacionmenos() {
-        // que le reste a la cosa , .10 o sumar
 
     }
 }

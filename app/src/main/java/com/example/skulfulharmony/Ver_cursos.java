@@ -439,17 +439,7 @@ public class Ver_cursos extends AppCompatActivity {
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(this, "Error al consultar Firestore", Toast.LENGTH_SHORT).show();
-                                        });
-
-
-
-
-
-
-
-
-                            }
-
+                                        });}
                             cargarComentarios(idCurso);
                             // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
@@ -516,20 +506,37 @@ public class Ver_cursos extends AppCompatActivity {
                             Map<String, Long> calificaciones = new HashMap<>();
                             Map<String, Integer> mapaOriginal = curso.getCalificacionesPorUsuario();
 
-                            if (mapaOriginal != null) {
+                            if (mapaOriginal != null && !mapaOriginal.isEmpty()) {
                                 for (Map.Entry<String, Integer> entry : mapaOriginal.entrySet()) {
-                                    calificaciones.put(entry.getKey(), entry.getValue().longValue());
+                                    if (entry.getValue() != null) {
+                                        calificaciones.put(entry.getKey(), entry.getValue().longValue());
+                                    }
+                                }
+                            }
+                            FirebaseUser usera = FirebaseAuth.getInstance().getCurrentUser();
+                            if (user != null && user.getEmail() != null) {
+                             //   Map<String, Long> calificaciones = curso.getCalificacionesPorUsuario();
+                                if (calificaciones != null) {
+                                    Long miCalificacion = calificaciones.get(user.getEmail());
+                                    if (miCalificacion != null) {
+                                        puntuacionActual = miCalificacion.intValue();
+                                        actualizarTextoPuntuacion();
+                                        actualizarImagenesEstrellas();
+                                    }
                                 }
                             }
 
-                            if (calificaciones != null && user != null) {
+
+
+
+                          /*  if (calificaciones != null && user != null) {
                                 Long miCalificacion = calificaciones.get(user.getEmail());
                                 if (miCalificacion != null) {
                                     puntuacionActual = miCalificacion.intValue(); // ACTUALIZA variable global
                                     actualizarTextoPuntuacion();
                                     actualizarImagenesEstrellas(); // 👈 Esto es lo que se te olvidó probablemente
                                 }
-                            }
+                            }*/
 
 
                         }
@@ -542,6 +549,7 @@ public class Ver_cursos extends AppCompatActivity {
                 });
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("usuarios")
                 .whereEqualTo("correo", user.getEmail())
@@ -563,8 +571,8 @@ public class Ver_cursos extends AppCompatActivity {
                             }
                         }
                     }
-                })
-                .addOnFailureListener(e->{
+
+        }).addOnFailureListener(e->{
                     Toast.makeText(this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
                     seguirCurso.setImageResource(R.drawable.cursonoseguido);
                 });
@@ -853,24 +861,22 @@ public class Ver_cursos extends AppCompatActivity {
     }
     private double calcularPopularidad(Curso curso) {
         double alpha = 1.0, beta = 2.0, gamma = 3.0, epsilon = 0.5;
-
         double visitas = curso.getVisitas();
         double interacciones = 0;
         List<Comentario> comentarios = curso.getComentarios();
         if (comentarios != null) interacciones = comentarios.size();
+       // double calificaciones = 0;
 
-        double calificaciones = curso.getPromedioCalificacion();
+
+       double calificaciones = curso.getPromedioCalificacion() != null ? curso.getPromedioCalificacion() : 0;
         /* List<Integer> califs = curso.getCalificacionCursos();
         if (califs != null && !califs.isEmpty()) {
             int suma = 0;
             for (int c : califs) suma += c;
             calificaciones = (double) suma / califs.size();
         }*/
-
-
         double descargas = curso.getCantidadDescargas() != null ? curso.getCantidadDescargas() : 0;
-
-        return alpha * visitas + beta * interacciones + gamma * calificaciones + epsilon * descargas;
+        return alpha * visitas + beta * interacciones +/* gamma * calificaciones + */epsilon * descargas;
     }
 
 

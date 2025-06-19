@@ -534,6 +534,7 @@ public class CrearClase extends AppCompatActivity {
                     e.printStackTrace();
                 });
         }
+        finish();
     }
 
     private File copiarUriAArchivoTemporal(Uri uri) {

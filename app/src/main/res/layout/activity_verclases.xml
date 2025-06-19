@@ -86,7 +86,7 @@
                                     android:layout_margin="10dp"
                                     android:clickable="true"
                                     android:focusable="true"
-                                    android:backgroundTint="@color/white"
+
                                     android:background="@drawable/like_icono"/>
                                 <ImageView
                                     android:id="@+id/iv_dislike"
@@ -95,7 +95,6 @@
                                     android:layout_margin="10dp"
                                     android:clickable="true"
                                     android:focusable="true"
-                                    android:backgroundTint="@color/white"
                                     android:background="@drawable/dislike_icono"/>
 
                             </LinearLayout>

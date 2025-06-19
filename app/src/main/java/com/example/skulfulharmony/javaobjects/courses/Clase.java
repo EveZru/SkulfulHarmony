@@ -13,7 +13,9 @@ import java.io.Serializable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Clase implements Serializable {
 
@@ -28,20 +30,12 @@ public class Clase implements Serializable {
     private List<PreguntaCuestionario> preguntas;
     private List<Comentario> comentarios;
     private Integer meGusta;
-
-    public Integer getNoGusta() {
-        return noGusta;
-    }
-
-    public void setNoGusta(Integer noGusta) {
-        this.noGusta = noGusta;
-    }
-
-    public void setContenido(String contenido) {
-        this.contenido = contenido;
-    }
-
     private Integer noGusta;
+
+
+
+    private Map<String, Boolean> calificacionPorUsuario = new HashMap<>(); // true = like, false = dislike
+
     private Timestamp fechaCreacionf;
     private Timestamp fechaAcceso;
     private String contenido;
@@ -65,6 +59,27 @@ public class Clase implements Serializable {
         this.nombreCurso = nombreCurso;
         this.imagen = imagen;
         preguntas = preguntaCuestionarios;
+    }
+
+
+
+    public Map<String, Boolean> getCalificacionPorUsuario() {
+        return calificacionPorUsuario;
+    }
+
+    public void setCalificacionPorUsuario(Map<String, Boolean> calificacionPorUsuario) {
+        this.calificacionPorUsuario = calificacionPorUsuario;
+    }
+    public Integer getNoGusta() {
+        return noGusta;
+    }
+
+    public void setNoGusta(Integer noGusta) {
+        this.noGusta = noGusta;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
     }
 
     public List<Comentario> getComentarios() {
