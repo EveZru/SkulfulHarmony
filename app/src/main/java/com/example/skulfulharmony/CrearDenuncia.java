@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -175,16 +176,9 @@ public class CrearDenuncia extends AppCompatActivity {
                                                                         String uidAutor = usuarios.getDocuments().get(0).getId();
                                                                         denuncia.setAutorContenido(uidAutor);
                                                                     }
-
-                                                                    // 🧼 Limpiar idCurso y idClase porque es comentario
                                                                     denuncia.setIdCurso(-1);
                                                                     denuncia.setIdClase(-1);
-
-                                                                    firestore.collection("denuncias").add(denuncia)
-                                                                            .addOnSuccessListener(ref -> {
-                                                                                Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
-                                                                                alertDialog.dismiss();
-                                                                            });
+                                                                    subirDenuncia(denuncia, alertDialog);
                                                                 });
                                                     }
                                                     return;
@@ -193,7 +187,7 @@ public class CrearDenuncia extends AppCompatActivity {
                                         }
                                     }
 
-                                    // Si no lo encontró en clases, buscar en cursos
+                                    // Si no está en clases, buscar en cursos
                                     firestore.collection("cursos")
                                             .get()
                                             .addOnSuccessListener(snapshotCursos -> {
@@ -213,16 +207,9 @@ public class CrearDenuncia extends AppCompatActivity {
                                                                                     String uidAutor = usuarios.getDocuments().get(0).getId();
                                                                                     denuncia.setAutorContenido(uidAutor);
                                                                                 }
-
-                                                                                // 🧼 Limpiar idCurso y idClase porque es comentario
                                                                                 denuncia.setIdCurso(-1);
                                                                                 denuncia.setIdClase(-1);
-
-                                                                                firestore.collection("denuncias").add(denuncia)
-                                                                                        .addOnSuccessListener(ref -> {
-                                                                                            Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
-                                                                                            alertDialog.dismiss();
-                                                                                        });
+                                                                                subirDenuncia(denuncia, alertDialog);
                                                                             });
                                                                 }
                                                                 return;
@@ -233,7 +220,48 @@ public class CrearDenuncia extends AppCompatActivity {
                                             });
                                 });
 
-                    } else if (idClase != -1 || idCurso != -1) {
+                    } else if (idClase != -1) {
+                        firestore.collection("clases")
+                                .get()
+                                .addOnSuccessListener(snapshot -> {
+                                    for (var doc : snapshot.getDocuments()) {
+                                        Long id = doc.getLong("idClase");
+                                        if (id != null && id.equals((long) idClase)) {
+                                            Long idCurso = doc.getLong("idCurso");
+                                            if (idCurso != null) {
+                                                firestore.collection("cursos")
+                                                        .whereEqualTo("idCurso", idCurso)
+                                                        .get()
+                                                        .addOnSuccessListener(snapshotCurso -> {
+                                                            if (!snapshotCurso.isEmpty()) {
+                                                                String correoCreador = snapshotCurso.getDocuments().get(0).getString("creador");
+                                                                if (correoCreador != null) {
+                                                                    firestore.collection("usuarios")
+                                                                            .whereEqualTo("correo", correoCreador)
+                                                                            .get()
+                                                                            .addOnSuccessListener(usuarioSnap -> {
+                                                                                if (!usuarioSnap.isEmpty()) {
+                                                                                    String uidAutor = usuarioSnap.getDocuments().get(0).getId();
+                                                                                    denuncia.setAutorContenido(uidAutor);
+                                                                                }
+                                                                                subirDenuncia(denuncia, alertDialog);
+                                                                            });
+                                                                } else {
+                                                                    subirDenuncia(denuncia, alertDialog);
+                                                                }
+                                                            } else {
+                                                                subirDenuncia(denuncia, alertDialog);
+                                                            }
+                                                        });
+                                            } else {
+                                                subirDenuncia(denuncia, alertDialog);
+                                            }
+                                            return;
+                                        }
+                                    }
+                                    subirDenuncia(denuncia, alertDialog);
+                                });
+                    } else if (idCurso != -1) {
                         firestore.collection("cursos")
                                 .whereEqualTo("idCurso", idCurso)
                                 .get()
@@ -242,30 +270,33 @@ public class CrearDenuncia extends AppCompatActivity {
                                         String correoCreador = snapshot.getDocuments().get(0).getString("creador");
                                         if (correoCreador != null) {
                                             firestore.collection("usuarios")
-                                                    .whereEqualTo("correo", correoCreador)
+                                                    .whereEqualTo("correo", correoCreador.trim().toLowerCase())
                                                     .get()
                                                     .addOnSuccessListener(usuarioSnap -> {
                                                         if (!usuarioSnap.isEmpty()) {
                                                             String uidAutor = usuarioSnap.getDocuments().get(0).getId();
+                                                            Log.d("DENUNCIA_DEBUG", "UID encontrado: " + uidAutor);
                                                             denuncia.setAutorContenido(uidAutor);
+                                                        } else {
+                                                            Log.w("DENUNCIA_DEBUG", "No se encontró usuario con correo: " + correoCreador);
                                                         }
-
-                                                        firestore.collection("denuncias").add(denuncia)
-                                                                .addOnSuccessListener(ref -> {
-                                                                    Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
-                                                                    alertDialog.dismiss();
-                                                                });
+                                                        subirDenuncia(denuncia, alertDialog);
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.e("DENUNCIA_DEBUG", "Error al buscar UID", e);
+                                                        subirDenuncia(denuncia, alertDialog);
                                                     });
+
+                                        } else {
+                                            subirDenuncia(denuncia, alertDialog);
                                         }
+                                    } else {
+                                        subirDenuncia(denuncia, alertDialog);
                                     }
                                 });
 
                     } else {
-                        firestore.collection("denuncias").add(denuncia)
-                                .addOnSuccessListener(ref -> {
-                                    Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
-                                    alertDialog.dismiss();
-                                });
+                        subirDenuncia(denuncia, alertDialog);
                     }
                 });
                 alertDialog.show();
@@ -273,5 +304,12 @@ public class CrearDenuncia extends AppCompatActivity {
         });
 
     }
-
+    private void subirDenuncia(Denuncia denuncia, AlertDialog dialog) {
+        FirebaseFirestore.getInstance().collection("denuncias")
+                .add(denuncia)
+                .addOnSuccessListener(ref -> {
+                    Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                });
+    }
 }

@@ -516,6 +516,8 @@ public class CrearClase extends AppCompatActivity {
                     clase.setVideoUrl(urlVideoSubido); // 🔥 Guarda el enlace de Dropbox del video
                     Timestamp  timestamp = Timestamp.now();
                     clase.setFechaCreacionf(timestamp);
+                    clase.setCreadorUid(currentUser.getUid());
+                    clase.setCreadorCorreo(currentUser.getEmail());
 
                     Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
                     db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {

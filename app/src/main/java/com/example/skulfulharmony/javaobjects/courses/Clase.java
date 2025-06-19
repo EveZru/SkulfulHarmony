@@ -31,8 +31,8 @@ public class Clase implements Serializable {
     private List<Comentario> comentarios;
     private Integer meGusta;
     private Integer noGusta;
-
-
+    private String creadorUid;
+    private String creadorCorreo;
 
     private Map<String, Boolean> calificacionPorUsuario = new HashMap<>(); // true = like, false = dislike
 
@@ -214,6 +214,17 @@ public class Clase implements Serializable {
 
     public Context getContext() {
         return context;
+    }
+
+
+    public void setCreadorUid(String creadorUid) { this.creadorUid = creadorUid; }
+    public void setCreadorCorreo(String creadorCorreo) { this.creadorCorreo = creadorCorreo; }
+    public String getCreadorUid() {
+        return creadorUid;
+    }
+
+    public String getCreadorCorreo() {
+        return creadorCorreo;
     }
 
 }
