@@ -116,12 +116,15 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
     return;
   }
 
-  // 📌 Determinar tipo de contenido denunciado
   let tipo = "contenido";
-  if (data.idComentario !== -1) tipo = "comentario";
-  else if (data.idClase !== -1) tipo = "clase";
-  else if (data.idCurso !== -1) tipo = "curso";
 
+  if (typeof data.idComentario === "number" && data.idComentario !== -1) {
+    tipo = "comentario";
+  } else if (typeof data.idClase === "number" && data.idClase !== -1) {
+    tipo = "clase";
+  } else if (typeof data.idCurso === "number" && data.idClase === -1 && data.idComentario === -1) {
+    tipo = "curso";
+  }
   const message = {
     token: token,
     notification: {
