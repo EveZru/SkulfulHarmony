@@ -222,43 +222,19 @@ public class CrearDenuncia extends AppCompatActivity {
 
                     } else if (idClase != -1) {
                         firestore.collection("clases")
+                                .whereEqualTo("idClase", idClase)
                                 .get()
                                 .addOnSuccessListener(snapshot -> {
-                                    for (var doc : snapshot.getDocuments()) {
-                                        Long id = doc.getLong("idClase");
-                                        if (id != null && id.equals((long) idClase)) {
-                                            Long idCurso = doc.getLong("idCurso");
-                                            if (idCurso != null) {
-                                                firestore.collection("cursos")
-                                                        .whereEqualTo("idCurso", idCurso)
-                                                        .get()
-                                                        .addOnSuccessListener(snapshotCurso -> {
-                                                            if (!snapshotCurso.isEmpty()) {
-                                                                String correoCreador = snapshotCurso.getDocuments().get(0).getString("creador");
-                                                                if (correoCreador != null) {
-                                                                    firestore.collection("usuarios")
-                                                                            .whereEqualTo("correo", correoCreador)
-                                                                            .get()
-                                                                            .addOnSuccessListener(usuarioSnap -> {
-                                                                                if (!usuarioSnap.isEmpty()) {
-                                                                                    String uidAutor = usuarioSnap.getDocuments().get(0).getId();
-                                                                                    denuncia.setAutorContenido(uidAutor);
-                                                                                }
-                                                                                subirDenuncia(denuncia, alertDialog);
-                                                                            });
-                                                                } else {
-                                                                    subirDenuncia(denuncia, alertDialog);
-                                                                }
-                                                            } else {
-                                                                subirDenuncia(denuncia, alertDialog);
-                                                            }
-                                                        });
-                                            } else {
-                                                subirDenuncia(denuncia, alertDialog);
-                                            }
-                                            return;
+                                    if (!snapshot.isEmpty()) {
+                                        String uidAutor = snapshot.getDocuments().get(0).getString("creadorUid");
+                                        if (uidAutor != null) {
+                                            denuncia.setAutorContenido(uidAutor);
                                         }
                                     }
+                                    subirDenuncia(denuncia, alertDialog);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(CrearDenuncia.this, "Error al obtener clase", Toast.LENGTH_SHORT).show();
                                     subirDenuncia(denuncia, alertDialog);
                                 });
                     } else if (idCurso != -1) {
