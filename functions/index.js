@@ -7,7 +7,6 @@ const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// 🕒 Notificación por hora promedio
 exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event) => {
   const snapshot = await admin.firestore().collection("usuarios").get();
   const ahora = new Date();
@@ -20,17 +19,15 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
     const token = data.fcmToken;
     const notis = data.notificaciones || {};
 
-    // 🔒 Validaciones mínimas
     if (horaPromedio === undefined || token === undefined) return;
     if (notis.horaEntrada === false) return;
 
-    // 🎯 Diferencia total en minutos
+
     const minutosActuales = horaActual * 60 + minutoActual;
-    const minutosPromedio = horaPromedio * 60; // horaPromedio es int
+    const minutosPromedio = horaPromedio * 60;
 
     const diferenciaMin = minutosActuales - minutosPromedio;
 
-    // ⏰ Si han pasado entre 20 y 30 minutos desde la hora promedio
     if (diferenciaMin >= 20 && diferenciaMin <= 30) {
       const message = {
         token,
@@ -50,7 +47,6 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
   });
 });
 
-// ❤️ Notificación por like en comentario
 exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioId}", async (event) => {
   const antes = event.data.before.data();
   const despues = event.data.after.data();
@@ -98,7 +94,6 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
   }
 });
 
-// 🚨 Notificación por denuncia
 exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event) => {
   const data = event.data.data();
   const autorId = data.autorContenido;
@@ -109,15 +104,23 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
   }
 
   const doc = await admin.firestore().collection("usuarios").doc(autorId).get();
-  const token = doc.data()?.fcmToken;
+  const userData = doc.data();
+  const token = userData?.fcmToken;
 
   if (!token) {
     console.log("⚠️ Usuario sin token FCM:", autorId);
     return;
   }
 
-  let tipo = "contenido";
+  const notificaciones = userData?.notificaciones || {};
+  const tieneActiva = notificaciones.denunciaComentario ?? true; // true por default si no existe
 
+  if (!tieneActiva) {
+    console.log("🔕 Usuario tiene desactivadas las notificaciones de denuncia:", autorId);
+    return;
+  }
+
+  let tipo = "contenido";
   if (typeof data.idComentario === "number" && data.idComentario !== -1) {
     tipo = "comentario";
   } else if (typeof data.idClase === "number" && data.idClase !== -1) {
@@ -125,6 +128,7 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
   } else if (typeof data.idCurso === "number" && data.idClase === -1 && data.idComentario === -1) {
     tipo = "curso";
   }
+
   const message = {
     token: token,
     notification: {
@@ -140,6 +144,7 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
     console.error("❌ Error al enviar notificación de denuncia:", error);
   }
 });
+
 
 //🛡️ Ocultar contenido automáticamente por denuncias acumuladas
 exports.ocultarContenidoDenunciado = onDocumentCreated("denuncias/{id}", async (event) => {
