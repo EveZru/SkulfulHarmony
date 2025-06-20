@@ -37,6 +37,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
+import com.example.skulfulharmony.javaobjects.notifications.NotificacionHelper;
 import com.example.skulfulharmony.server.config.DropboxConfig;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -216,10 +217,10 @@ public class CrearClase extends AppCompatActivity {
         }
 
         long fileSize = archivo.length(); // Tamaño en bytes
-        long maxFileSize = 100 * 1024 * 1024; // 100 MB
+        long maxFileSize = 500 * 1024 * 1024; // 500 MB
 
         if (fileSize > maxFileSize) {
-            Toast.makeText(this, "El video es demasiado grande (máx 100MB)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "El video es demasiado grande (máx 500MB)", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -230,9 +231,22 @@ public class CrearClase extends AppCompatActivity {
             DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
 
             try (FileInputStream fis = new FileInputStream(archivo)) {
+                final long totalBytes = archivo.length();  // Hacemos esta variable final
+                final long[] bytesTransferidos = {0};  // Hacemos esto un arreglo para modificar dentro de la lambda
+
+                // Notificación inicial de progreso
+                handler.post(() -> NotificacionHelper.mostrarProgreso(
+                        CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", 0));
+
                 FileMetadata metadata = client.files()
                         .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
-                        .uploadAndFinish(fis);
+                        .uploadAndFinish(fis, bytes -> {
+                            bytesTransferidos[0] += bytes;
+                            // Actualizar el progreso
+                            int progreso = (int) ((bytesTransferidos[0] * 100) / totalBytes);
+                            handler.post(() -> NotificacionHelper.mostrarProgreso(
+                                    CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", progreso));
+                        });
 
                 SharedLinkMetadata linkMetadata = client.sharing()
                         .createSharedLinkWithSettings(metadata.getPathLower());
@@ -243,15 +257,22 @@ public class CrearClase extends AppCompatActivity {
 
                 handler.post(() -> {
                     Toast.makeText(this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
-                    guardarVideoTemporal(urlVideo); // ← guarda el link para usarlo al crear la clase
+                    guardarVideoTemporal(urlVideo); // Guardamos el enlace para usarlo al crear la clase
+                    // Completa la notificación de progreso
+                    NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");
                 });
 
             } catch (Exception e) {
                 Log.e("Dropbox", "Error al subir video", e);
-                handler.post(() -> Toast.makeText(this, "Error al subir video", Toast.LENGTH_SHORT).show());
+                handler.post(() -> {
+                    Toast.makeText(this, "Error al subir video", Toast.LENGTH_SHORT).show();
+                    // Notificación de error
+                    NotificacionHelper.mostrarError(CrearClase.this, 36, "Error de subida", "Hubo un problema al subir el video.");
+                });
             }
         });
     }
+
 
     private void guardarVideoTemporal(String url) {
         urlVideoSubido = url;
@@ -263,18 +284,16 @@ public class CrearClase extends AppCompatActivity {
         videoPickerLauncher.launch(intent);
     }
 
-    private final ActivityResultLauncher<Intent> videoPickerLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    Uri videoUri = result.getData().getData();
-                    im = videoUri;
+    private final ActivityResultLauncher<Intent> videoPickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+            Uri videoUri = result.getData().getData();
+            im = videoUri;
 
-                    long videoSizeInBytes = getFileSizeFromUri(videoUri);
-                    long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
+            long videoSizeInBytes = getFileSizeFromUri(videoUri);
+            long maxSizeInBytes = 500 * 1024 * 1024; // 500MB
 
-                    if (videoSizeInBytes <= maxSizeInBytes) {
-                        Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
-
+                if (videoSizeInBytes <= maxSizeInBytes) {
+                    Toast.makeText(this, "Video válido", Toast.LENGTH_SHORT).show();
                         try {
                             // Mostrar imagen previa del video (opcional)
                             Bitmap bitmap = MediaStore.Video.Thumbnails.getThumbnail(
@@ -287,14 +306,13 @@ public class CrearClase extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e("VideoPreview", "Error al generar miniatura", e);
                         }
-
                         File archivoTemporal = copiarUriAArchivoTemporal(videoUri);
                         subirVideoADropbox(archivoTemporal);
-                    } else {
-                        Toast.makeText(this, "El video supera los 200MB", Toast.LENGTH_LONG).show();
-                    }
+                } else {
+                    Toast.makeText(this, "El video supera los 500MB", Toast.LENGTH_LONG).show();
                 }
-            });
+        }
+    });
 
 
     private  long getFileSizeFromUri(Uri uri) {

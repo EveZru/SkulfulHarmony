@@ -4,13 +4,11 @@ import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -19,25 +17,39 @@ import com.example.skulfulharmony.R;
 
 public class NotificacionHelper {
 
-    private static final String CANAL_ID = "canal_recordatorio";
+    private static final String CANAL_ID = "notificaciones_skilful";
+    private static boolean canalCreado = false;
 
-    public static void mostrarNotificacion(Context context, String titulo, String mensaje) {
+    private static void crearCanal(Context context) {
+        if (canalCreado) return;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel canal = new NotificationChannel(
-                    CANAL_ID, "Recordatorios de entrada",
-                    NotificationManager.IMPORTANCE_HIGH
+                    CANAL_ID,
+                    "Notificaciones de actividad",
+                    NotificationManager.IMPORTANCE_LOW
             );
+            canal.setDescription("Canal para notificaciones de descarga, subida y errores");
             NotificationManager manager = context.getSystemService(NotificationManager.class);
             if (manager != null) manager.createNotificationChannel(canal);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            int permiso = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS);
-            if (permiso != PackageManager.PERMISSION_GRANTED) {
-                Log.e("NotificacionHelper", "❌ No se puede mostrar: POST_NOTIFICATIONS no concedido");
-                return;
-            }
+        canalCreado = true;
+    }
+
+    private static boolean permisosOK(Context context) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static void mostrarSimple(Context context, String titulo, String mensaje) {
+        if (!permisosOK(context)) {
+            Log.e("NotificacionHelper", "❌ Sin permisos para mostrar notificación");
+            return;
         }
+
+        crearCanal(context);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
                 .setSmallIcon(R.drawable.logo_confondo_notificaciones_sh)
@@ -46,12 +58,60 @@ public class NotificacionHelper {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        try {
-            NotificationManagerCompat.from(context).notify(1001, builder.build());
-            Log.d("NotificacionHelper", "✅ Notificación mostrada con éxito");
-        } catch (Exception e) {
-            Log.e("NotificacionHelper", "❌ Error inesperado al mostrar notificación", e);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
+        NotificationManagerCompat.from(context).notify(1001, builder.build());
     }
 
+    public static void mostrarProgreso(Context context, int id, String titulo, String mensaje, int progreso) {
+        if (!permisosOK(context)) return;
+        crearCanal(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_download)
+                .setContentTitle(titulo)
+                .setContentText(mensaje)
+                .setOnlyAlertOnce(true)
+                .setProgress(100, progreso, false)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        NotificationManagerCompat.from(context).notify(id, builder.build());
+    }
+
+    public static void completarProgreso(Context context, int id, String titulo, String mensajeFinal) {
+        if (!permisosOK(context)) return;
+        crearCanal(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
+                .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                .setContentTitle(titulo)
+                .setContentText(mensajeFinal)
+                .setProgress(0, 0, false)
+                .setPriority(NotificationCompat.PRIORITY_LOW);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        NotificationManagerCompat.from(context).notify(id, builder.build());
+    }
+
+    public static void mostrarError(Context context, int id, String titulo, String mensajeError) {
+        if (!permisosOK(context)) return;
+        crearCanal(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CANAL_ID)
+                .setSmallIcon(android.R.drawable.stat_notify_error)
+                .setContentTitle(titulo)
+                .setContentText(mensajeError)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        NotificationManagerCompat.from(context).notify(id, builder.build());
+    }
 }

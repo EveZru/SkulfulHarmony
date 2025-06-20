@@ -32,7 +32,7 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
 
         // 🔥 NOTIFICACIÓN DE PRUEBA para "me gusta en comentario"
         if (notiMeGustaActiva) {
-            NotificacionHelper.mostrarNotificacion(
+            NotificacionHelper.mostrarSimple(
                     context,
                     "👍 ¡Esto es una preuba manito!",
                     "Wasaaaaaaaaaa!"
@@ -104,7 +104,7 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
     }
 
     private void mostrarNoti(Context context) {
-        NotificacionHelper.mostrarNotificacion(
+        NotificacionHelper.mostrarSimple(
                 context,
                 "🎵 ¡Hora de practicar!",
                 "Parece que no has entrado hoy. ¡Vamos a tocar algo!"
