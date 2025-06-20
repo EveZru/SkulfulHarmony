@@ -215,14 +215,11 @@ public class Clase implements Serializable {
     public Context getContext() {
         return context;
     }
-
-
     public void setCreadorUid(String creadorUid) { this.creadorUid = creadorUid; }
     public void setCreadorCorreo(String creadorCorreo) { this.creadorCorreo = creadorCorreo; }
     public String getCreadorUid() {
         return creadorUid;
     }
-
     public String getCreadorCorreo() {
         return creadorCorreo;
     }
