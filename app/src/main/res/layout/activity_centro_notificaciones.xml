@@ -39,27 +39,6 @@
             android:textColor="@color/black"
             android:text="Notificación de comentario/clase denunciada" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_progresodescarga"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Notificación de progreso en descarga" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_subidamaterial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Notificación de subida de material" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_errorsubidadatos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Notificación de error en subida de datos" />
-
         <Button
             android:id="@+id/btn_config_notificaciones"
             android:layout_width="match_parent"

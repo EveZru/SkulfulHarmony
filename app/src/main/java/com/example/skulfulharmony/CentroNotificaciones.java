@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CentroNotificaciones extends AppCompatActivity {
 
-    private SwitchCompat switch_horaentrada, switch_megustacomentario, switch_comentariodenunciatuclase, switch_progresodescarga, switch_subidamaterial, switch_errorsubidadatos;
+    private SwitchCompat switch_horaentrada, switch_megustacomentario, switch_comentariodenunciatuclase;
     private SharedPreferences prefs;
 
     @Override
@@ -31,17 +31,12 @@ public class CentroNotificaciones extends AppCompatActivity {
         switch_horaentrada = findViewById(R.id.switch_horaentrada);
         switch_megustacomentario = findViewById(R.id.switch_megustacomentario);
         switch_comentariodenunciatuclase = findViewById(R.id.switch_comentariodenunciatuclase);
-        switch_progresodescarga = findViewById(R.id.switch_progresodescarga);
-        switch_subidamaterial = findViewById(R.id.switch_subidamaterial);
-        switch_errorsubidadatos = findViewById(R.id.switch_errorsubidadatos);
+
 
         // 🔁 Mapear llaves → campos Firestore
         setupSwitch(switch_horaentrada, "horaentrada", "notificaciones.horaEntrada");
         setupSwitch(switch_megustacomentario, "megustacomentario", "notificaciones.likeComentario");
         setupSwitch(switch_comentariodenunciatuclase, "comentariodenuncia", "notificaciones.denunciaComentario");
-        setupSwitch(switch_progresodescarga, "progresodescarga", "notificaciones.progresoDescarga");
-        setupSwitch(switch_subidamaterial, "subidamaterial", "notificaciones.subidaMaterial");
-        setupSwitch(switch_errorsubidadatos, "errorsubida", "notificaciones.errorSubida");
 
         Button btnConfig = findViewById(R.id.btn_config_notificaciones);
         btnConfig.setOnClickListener(v -> abrirConfiguracionNotificaciones());

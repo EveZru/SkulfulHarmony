@@ -273,7 +273,6 @@ public class CrearClase extends AppCompatActivity {
         });
     }
 
-
     private void guardarVideoTemporal(String url) {
         urlVideoSubido = url;
     }
@@ -383,7 +382,6 @@ public class CrearClase extends AppCompatActivity {
                         }
                     }
                 }
-
 
                 /*
                 if (etRespuesta != null) {
