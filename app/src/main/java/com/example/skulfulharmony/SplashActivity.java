@@ -73,6 +73,20 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(new Intent(this, IniciarSesion.class));
                         finish();
                     });
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser(); // ✅
+                if (task.isSuccessful() && currentUser != null) {
+                    String token = task.getResult();
+                    FirebaseFirestore.getInstance()
+                            .collection("usuarios")
+                            .document(currentUser.getUid()) // ✅ Ya no truena
+                            .update("fcmToken", token)
+                            .addOnSuccessListener(aVoid -> Log.d("SplashActivity", " Token actualizado en Splash"))
+                            .addOnFailureListener(e -> Log.e("SplashActivity", " Error al guardar token en Splash", e));
+                } else {
+                    Log.e("SplashActivity", " Token fallido o usuario null al intentar guardar token");
+                }
+            });
 
         } else {
             Log.e("SplashActivity", "⚠️ No hay usuario logueado");
@@ -80,17 +94,7 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         }
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String token = task.getResult();
-                FirebaseFirestore.getInstance()
-                        .collection("usuarios")
-                        .document(user.getUid())
-                        .update("fcmToken", token)
-                        .addOnSuccessListener(aVoid -> Log.d("SplashActivity", "🔁 Token actualizado en Splash"))
-                        .addOnFailureListener(e -> Log.e("SplashActivity", "❌ Error al guardar token en Splash", e));
-            }
-        });
+
 
     }
 }
