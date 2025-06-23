@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -31,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-
+import com.example.skulfulharmony.adapters.AdapterArchivosClase;
 import com.google.firebase.firestore.DocumentReference;
 
 import com.dropbox.core.v2.clouddocs.UserInfo;
@@ -206,6 +207,16 @@ public class Ver_clases extends AppCompatActivity {
 
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
+
+                            // Mostrar archivos si existen
+                            RecyclerView rvArchivos = findViewById(R.id.rv_archivos);
+                            rvArchivos.setLayoutManager(new LinearLayoutManager(this));
+
+                            List<String> archivos = clase.getArchivos(); // Asegúrate que este campo exista en tu modelo Clase
+                            if (archivos != null && !archivos.isEmpty()) {
+                                AdapterArchivosClase adapterArchivos = new AdapterArchivosClase(archivos, this);
+                                rvArchivos.setAdapter(adapterArchivos);
+                            }
 
                             playerViewPortrait = findViewById(R.id.vv_videoclase);
                             player = new ExoPlayer.Builder(this).build();
@@ -399,10 +410,6 @@ public class Ver_clases extends AppCompatActivity {
                     });
         });
 
-
-
-
-
         iv_like.setOnClickListener(v -> {
             if (!like) {
                 like = true;
@@ -484,6 +491,26 @@ public class Ver_clases extends AppCompatActivity {
         }
     }
 
+    public void abrirArchivoEnWebView(String url) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.archivo_webview);
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        WebView webView = dialog.findViewById(R.id.webview_archivo);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+
+        // Asegúrate que el link es tipo raw directo (no dropbox.com sino dl.dropboxusercontent.com)
+        String viewer = "https://docs.google.com/gview?embedded=true&url=" +
+                url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
+
+        webView.loadUrl(viewer);
+
+        Button btnCerrar = dialog.findViewById(R.id.btn_cerrar_archivo);
+        btnCerrar.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
 
     private void showPopupMenu(View view) {
         // Crear el PopupMenu y asociarlo con la vista 'view' (la ImageView desplegarmenu)

@@ -67,6 +67,9 @@ public class CrearClase extends AppCompatActivity {
     private Uri im = Uri.EMPTY;
     private String urlVideoSubido = null;
 
+    private List<String> archivosAdjuntosUrls = new ArrayList<>();
+
+
     //Elementos visibles
     private EditText et_pregunta,
             et_titulo,
@@ -326,6 +329,44 @@ public class CrearClase extends AppCompatActivity {
     }
 //---parte de subir los archivos
 
+    private void subirArchivoADropbox(File archivo) {
+        if (archivo == null) {
+            Toast.makeText(this, "Archivo inválido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+
+            try (FileInputStream fis = new FileInputStream(archivo)) {
+                FileMetadata metadata = client.files()
+                        .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesArchivos/" + archivo.getName())
+                        .uploadAndFinish(fis);
+
+                SharedLinkMetadata linkMetadata = client.sharing()
+                        .createSharedLinkWithSettings(metadata.getPathLower());
+
+                String urlArchivo = linkMetadata.getUrl()
+                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                        .replace("?dl=0", "");
+
+                handler.post(() -> {
+                    archivosAdjuntosUrls.add(urlArchivo);
+                    Toast.makeText(this, "Archivo subido correctamente", Toast.LENGTH_SHORT).show();
+                });
+
+            } catch (Exception e) {
+                Log.e("Dropbox", "Error al subir archivo", e);
+                handler.post(() -> {
+                    Toast.makeText(this, "Error al subir archivo", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
     private void SubirArchivo(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
@@ -335,24 +376,42 @@ public class CrearClase extends AppCompatActivity {
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
         };
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.addCategory(Intent.CATEGORY_OPENABLE); // Para que no elija cosas que no se pueden abrir
         filePickerLauncher.launch(intent);
     }
-    private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-            Uri fileUri = result.getData().getData();
-            long fileSizeInBytes = getFileSizeFromUri(fileUri);
-            long maxSizeInBytes = 20 * 124 * 124; //
-            if (fileSizeInBytes <= maxSizeInBytes) {
-                Toast.makeText(this, "Archivo válido", Toast.LENGTH_SHORT).show();
-                // Aquí puedes hacer lo que necesites con el archivo
-            } else {
-                Toast.makeText(this, "El archivo supera los 200MB", Toast.LENGTH_LONG).show();
-            }
-        }
-    });
+    private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    if (result.getData().getClipData() != null) {
+                        // 🎯 Múltiples archivos seleccionados
+                        int total = result.getData().getClipData().getItemCount();
+                        for (int i = 0; i < total; i++) {
+                            Uri fileUri = result.getData().getClipData().getItemAt(i).getUri();
+                            manejarArchivoSeleccionado(fileUri);
+                        }
+                    } else if (result.getData().getData() != null) {
+                        // ✅ Solo un archivo seleccionado
+                        Uri fileUri = result.getData().getData();
+                        manejarArchivoSeleccionado(fileUri);
+                    }
+                }
+            });
 
-//__________________coso de subir la pregunta
+
+    private void manejarArchivoSeleccionado(Uri fileUri) {
+        long fileSizeInBytes = getFileSizeFromUri(fileUri);
+        long maxSizeInBytes = 200 * 1024 * 1024; // ✅ 200MB
+
+        if (fileSizeInBytes <= maxSizeInBytes) {
+            File archivoTemporal = copiarUriAArchivoTemporal(fileUri);
+            subirArchivoADropbox(archivoTemporal);
+        } else {
+            Toast.makeText(this, "El archivo supera los 200MB", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //__________________coso de subir la pregunta
     private void SubirPregunta() {
 
         if (preguntasClase.size() >= 5) {
@@ -534,6 +593,7 @@ public class CrearClase extends AppCompatActivity {
                     clase.setFechaCreacionf(timestamp);
                     clase.setCreadorUid(currentUser.getUid());
                     clase.setCreadorCorreo(currentUser.getEmail());
+                    clase.setArchivos(archivosAdjuntosUrls);
 
                     Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
                     db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {
@@ -557,7 +617,11 @@ public class CrearClase extends AppCompatActivity {
 
     private File copiarUriAArchivoTemporal(Uri uri) {
         try {
-            File tempFile = File.createTempFile("temp_video", ".mp4", getCacheDir());
+            String nombreArchivo = obtenerNombreArchivoDesdeUri(uri);
+            String extension = obtenerExtension(nombreArchivo);
+
+            File tempFile = File.createTempFile("temp_archivo", "." + extension, getCacheDir());
+
             try (InputStream inputStream = getContentResolver().openInputStream(uri);
                  FileOutputStream outputStream = new FileOutputStream(tempFile)) {
 
@@ -567,11 +631,46 @@ public class CrearClase extends AppCompatActivity {
                     outputStream.write(buffer, 0, bytesRead);
                 }
             }
-            return tempFile;
+
+            // Cambia el nombre final para Dropbox
+            File renamedFile = new File(getCacheDir(), nombreArchivo);
+            if (tempFile.renameTo(renamedFile)) {
+                return renamedFile;
+            } else {
+                return tempFile; // fallback
+            }
+
         } catch (IOException e) {
             Log.e("Archivo", "Error al copiar URI a archivo temporal", e);
             return null;
         }
     }
+
+    private String obtenerNombreArchivoDesdeUri(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(nameIndex);
+                }
+            }
+        }
+
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+
+        return result;
+    }
+
+    private String obtenerExtension(String nombreArchivo) {
+        if (nombreArchivo != null && nombreArchivo.contains(".")) {
+            return nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1);
+        } else {
+            return "tmp";
+        }
+    }
+
 
 }
