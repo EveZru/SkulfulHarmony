@@ -32,6 +32,7 @@ import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.server.config.DropboxConfig;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -244,6 +245,14 @@ public class CrearCurso extends AppCompatActivity {
                                 db.collection("cursos")
                                         .add(curso)
                                         .addOnSuccessListener(docRef -> {
+                                            FirebaseAuth auth = FirebaseAuth.getInstance();
+                                            String uid = auth.getCurrentUser().getUid();
+
+                                            db.collection("usuarios").document(uid)
+                                                    .update("cursos", FieldValue.increment(1))
+                                                    .addOnSuccessListener(aVoid -> Log.d("Usuario", "Contador de cursos incrementado"))
+                                                    .addOnFailureListener(e -> Log.e("Usuario", "Error al actualizar el contador de cursos", e));
+
                                             Toast.makeText(this, "Curso creado correctamente", Toast.LENGTH_SHORT).show();
                                             finish();
                                         })
