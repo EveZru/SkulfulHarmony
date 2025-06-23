@@ -537,24 +537,7 @@ public class Ver_clases extends AppCompatActivity {
         popupMenu.show();
     }
     private void modificarcalificacionmas() {
-     /*   firestore.collection("cursos").whereEqualTo("idCurso", idCurso)
-                .get().addOnSuccessListener(queryDocumentSnapshots -> {
-                    if(!queryDocumentSnapshots.isEmpty()){
-                        DocumentReference docRef=queryDocumentSnapshots.getDocuments().get(0).getReference();
 
-                        double puntuacion = cursos.getpromedioCalificacion();;
-                       /* // proseso para editar la descrpcion
-                        if(nuevaDescripcion!=null  && !nuevaDescripcion.isBlank()) {
-                            Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT).show();
-                            docRef.update("descripcion", nuevaDescripcion);
-                        }else{
-                            Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }
-
-                });*/
 
     }
     private void modificarcalificacionmenos() {

@@ -122,6 +122,42 @@ public class VerClaseComoCreador extends AppCompatActivity {
 
 
                 }
+    private void eliminarClase() {
+        if (clase != null && clase.getIdClase() != 0) { // Asegúrate de tener el ID de la clase
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // Primero, busca el documento por 'idClase'
+            db.collection("clases")
+                    .whereEqualTo("idClase", clase.getIdClase())
+                    .limit(1)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (!task.getResult().isEmpty()) {
+                                // Se encontró el documento, ahora elimínalo
+                                DocumentReference documentRef = task.getResult().getDocuments().get(0).getReference();
+                                documentRef.delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(VerClaseComoCreador.this, "Clase eliminada exitosamente", Toast.LENGTH_SHORT).show();
+                                            // Opcional: Redirigir al usuario a una actividad anterior o principal
+                                            finish(); // Cierra la actividad actual
+                                        })
+                                        .addOnFailureListener(e -> {
+                                           // Log.e(TAG, "Error al eliminar la clase", e);
+                                            Toast.makeText(VerClaseComoCreador.this, "Error al eliminar la clase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        });
+                            } else {
+                                Toast.makeText(VerClaseComoCreador.this, "Clase no encontrada para eliminar", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            //Log.e(TAG, "Error al buscar la clase para eliminar", task.getException());
+                            Toast.makeText(VerClaseComoCreador.this, "Error al buscar la clase para eliminar: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(this, "No se pudo obtener la información de la clase para eliminar", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void showMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
@@ -129,15 +165,13 @@ public class VerClaseComoCreador extends AppCompatActivity {
         popupMenu.setOnMenuItemClickListener(item->{
             int id = item.getItemId();
             if(id==R.id.it_editar){
-              /*  Intent intent = new Intent(VerClaseComoCreador.this, EditarCurso.class);// cambiar por la de editar calse ya que este
+               Intent intent = new Intent(VerClaseComoCreador.this, EditarClase.class);
                 intent.putExtra("idClase", idClase);
                 startActivity(intent);
-                return true;*/
-                Toast.makeText(this, "Cambio a vista para eliminar curso ", Toast.LENGTH_SHORT).show();
-                return true;
+               return true;
             }else if(id==R.id.it_eliminar){
-                Toast.makeText(this, "Cambio a vista para eliminar curso ", Toast.LENGTH_SHORT).show();
-                return true;
+                eliminarClase();
+               return true;
             }else {
                 Toast.makeText(VerClaseComoCreador.this, "No se selecciono ninguna opcion", Toast.LENGTH_SHORT).show();
             }
