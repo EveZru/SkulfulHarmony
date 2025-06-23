@@ -49,6 +49,17 @@
                 android:layout_height="wrap_content"
                 />
 
+            <TextView
+                android:id="@+id/tv_estado_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="🎥 Video no subido aún"
+                android:textColor="@color/gray1"
+                android:textStyle="italic"
+                android:textSize="14sp" />
+
             <android.widget.Button
                 android:id="@+id/btn_cargar_archivos"
                 android:layout_width="match_parent"
@@ -59,6 +70,17 @@
                 android:textColor="@color/whiterojo"
                 android:textAllCaps="false"
                 />
+
+            <TextView
+                android:id="@+id/tv_estado_archivos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="📎 Archivos adjuntos: 0"
+                android:textColor="@color/gray1"
+                android:textStyle="italic"
+                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/et_descripcion_crear_clase"

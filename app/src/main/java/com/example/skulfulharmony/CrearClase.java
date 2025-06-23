@@ -66,7 +66,7 @@ public class CrearClase extends AppCompatActivity {
     private final ArrayList<View> opcionesList = new ArrayList<>();
     private Uri im = Uri.EMPTY;
     private String urlVideoSubido = null;
-
+    private TextView tvEstadoVideo, tvEstadoArchivos;
     private List<String> archivosAdjuntosUrls = new ArrayList<>();
 
 
@@ -93,6 +93,8 @@ public class CrearClase extends AppCompatActivity {
         et_pregunta = findViewById(R.id.et_ingresar_pregunta);
         btn_subirpregunta = findViewById(R.id.btn_subir_pregunta);
         containerOpciones = findViewById(R.id.container_opciones);
+        tvEstadoVideo = findViewById(R.id.tv_estado_video);
+        tvEstadoArchivos = findViewById(R.id.tv_estado_archivos);
 
         idCurso = getIntent().getIntExtra("idCurso", -1);
 
@@ -261,6 +263,7 @@ public class CrearClase extends AppCompatActivity {
                 handler.post(() -> {
                     Toast.makeText(this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
                     guardarVideoTemporal(urlVideo); // Guardamos el enlace para usarlo al crear la clase
+                    tvEstadoVideo.setText("🎥 Video subido");
                     // Completa la notificación de progreso
                     NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");
                 });
@@ -355,6 +358,7 @@ public class CrearClase extends AppCompatActivity {
 
                 handler.post(() -> {
                     archivosAdjuntosUrls.add(urlArchivo);
+                    tvEstadoArchivos.setText("📎 Archivos adjuntos: " + archivosAdjuntosUrls.size());
                     Toast.makeText(this, "Archivo subido correctamente", Toast.LENGTH_SHORT).show();
                 });
 
