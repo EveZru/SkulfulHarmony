@@ -527,18 +527,6 @@ public class Ver_cursos extends AppCompatActivity {
                             }
 
 
-
-
-                          /*  if (calificaciones != null && user != null) {
-                                Long miCalificacion = calificaciones.get(user.getEmail());
-                                if (miCalificacion != null) {
-                                    puntuacionActual = miCalificacion.intValue(); // ACTUALIZA variable global
-                                    actualizarTextoPuntuacion();
-                                    actualizarImagenesEstrellas(); // 👈 Esto es lo que se te olvidó probablemente
-                                }
-                            }*/
-
-
                         }
                     } else {
                         Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
@@ -569,6 +557,9 @@ public class Ver_cursos extends AppCompatActivity {
                             }else{
                                 seguirCurso.setImageResource(R.drawable.cursonoseguido);
                             }
+                            usuario.calcularClusterUsuario(db, usuario, usuarioConCluster -> {
+                                Log.d("Cluster", "Cluster calculado: " + usuarioConCluster.getCluster());
+                            });
                         }
                     }
 

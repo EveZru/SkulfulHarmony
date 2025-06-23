@@ -37,32 +37,35 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class Home extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private int backPressCount = 0; // Contador de veces que se presiona atrás
     private Handler backPressHandler = new Handler();
     private AppCompatButton et_buscarhome;
-    private SQLiteDatabase localDatabase;
     private List<Curso> listaCursos;
     private RecyclerView rv_populares,rv_homevercursos, rv_homehistorial,rv_homeclasesoriginales;
-    private AdapterHomeVerCursos adapterHomeVerCursos;
+    RecyclerView recyclerView2;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
     private Handler handler = new Handler();
     private int currentPosition = 0;
+    private SQLiteDatabase localDatabase;
     //private ViewPager2 viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +75,15 @@ public class Home extends AppCompatActivity {
         bottomNavigationView1.setSelectedItemId(R.id.it_homme);
         rv_homevercursos = findViewById(R.id.rv_homevercursos);
         rv_homehistorial = findViewById(R.id.rv_historial_home);
+        et_buscarhome=findViewById(R.id.et_buscarhome);
+        recyclerView2 = findViewById(R.id.rv_homeclasesoriginales);
+        rv_populares = findViewById(R.id.rv_populares_homme);
+        rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_homehistorial.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         et_buscarhome=findViewById(R.id.et_buscarhome);
-        // startActivity(new Intent(Home.this, EscribirPartiturasAct.class));
-        cargarCursosCluster();
-        cargarCursosHistorial();
-        cargarCursosPopulares();
-        carrucelPopulares();
+
         //-------Parte de los cursos de clases originales -------
         listaCursos = new ArrayList<>();
         // Cursos originale creados de forma estatica
@@ -104,20 +108,24 @@ public class Home extends AppCompatActivity {
         adapterHomeVerCursosOriginales=new AdapterHomeVerCursosOriginales((Context) this, listaCursos);
         // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
+//_________________________________________________
         DbHelper dbHelper = new DbHelper(Home.this);
         localDatabase = dbHelper.getReadableDatabase();
 
-        // Inicializar Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-
-        // Verificar si el usuario está autenticado
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             // Si no hay usuario, redirigir a Login
             Intent intent = new Intent(Home.this, IniciarSesion.class);
             startActivity(intent);
             finish(); // Evita que el usuario vuelva a Home si no está logueado
         }
+
+
+        cargarCursosCluster();
+        cargarCursosHistorial();
+        cargarCursosPopulares();
+        carrucelPopulares();
+
         //  Listener para abrir la actividad de búsqueda
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +163,7 @@ public class Home extends AppCompatActivity {
             startActivity(intent);
             prefs.edit().putString("last_open_date", today).apply();
         }
+
         if (bottomNavigationView1 != null) {
             // Configurar el listener para los ítems seleccionados
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -182,6 +191,64 @@ public class Home extends AppCompatActivity {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
     }
+
+    private void cargarCursosCluster() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("usuarios")
+                .whereEqualTo("correo", user.getEmail())
+                .limit(1)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                        Usuario usuario = doc.toObject(Usuario.class);
+                        usuario.setId(doc.getId());
+
+                        // 🔁 Calcular cluster y luego continuar
+                        usuario.calcularClusterUsuario(db, usuario, usuarioConCluster -> {
+                            String instrumentoClave = usuarioConCluster.getInstrumento().keySet().iterator().next();
+                            Integer instrumentoValor = usuarioConCluster.getInstrumento().get(instrumentoClave);
+                            Integer cluster = usuarioConCluster.getCluster();
+
+                            if (instrumentoClave == null || instrumentoValor == null || cluster == null) {
+                                Log.e("Cluster", "Datos incompletos para buscar cursos");
+                                return;
+                            }
+
+                            db.collection("cursos")
+                                    .whereEqualTo("instrumento." + instrumentoClave, instrumentoValor)
+                                    .whereEqualTo("cluster", cluster)
+                                    .get()
+                                    .addOnSuccessListener(snapshot -> {
+                                        List<Curso> cursos = new ArrayList<>();
+                                        for (DocumentSnapshot c : snapshot) {
+                                            cursos.add(c.toObject(Curso.class));
+                                        }
+
+                                        AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursos, Home.this);
+                                        rv_homevercursos.setAdapter(adapter);
+                                    })
+                                    .addOnFailureListener(e -> Log.e("Firestore", "Error al cargar cursos", e));
+                        });
+
+                    } else {
+                        Log.e("Firestore", "Usuario no encontrado");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Error al buscar usuario", e);
+                    Toast.makeText(this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
     private void cargarCursosHistorial() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -233,27 +300,7 @@ public class Home extends AppCompatActivity {
                     Toast.makeText(this, "Error al cargar historial", Toast.LENGTH_SHORT).show();
                 });
     }
-    private void cargarCursosCluster() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference cursosRef = db.collection("cursos");
 
-        cursosRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            List<Curso> listaCursost = new ArrayList<>();
-            for (DocumentSnapshot document : queryDocumentSnapshots) {
-                Curso curso = document.toObject(Curso.class);
-                listaCursost.add(curso);
-            }
-
-            // Ahora actualiza el adaptador
-            adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
-            rv_homevercursos.setAdapter(adapterHomeVerCursos);
-            Log.d("Home", "Cursos cluster cargados: " + listaCursost.size()); // Log para depurar
-        }).addOnFailureListener(e -> {
-            Toast.makeText(Home.this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
-            Log.e("Firestore", "Error: ", e);
-        });
-
-    }
     @Override
     protected void onResume() {
         super.onResume();
