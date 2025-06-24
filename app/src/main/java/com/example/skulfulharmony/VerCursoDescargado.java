@@ -92,9 +92,16 @@ public class VerCursoDescargado extends AppCompatActivity {
         adapter = new AdapterClasesLocales(clases, clase -> {
             Intent intent = new Intent(VerCursoDescargado.this, VerClaseOffline.class);
             intent.putExtra("titulo", clase.getTitulo());
-            intent.putExtra("documento", clase.getDocumentoUrl());
             intent.putExtra("imagen", clase.getImagenUrl());
             intent.putExtra("video", clase.getVideoUrl());
+
+            // ✅ Blindaje completo para archivos
+            List<String> archivos = clase.getArchivosUrl() != null ? clase.getArchivosUrl() : new ArrayList<>();
+            String documento = (!archivos.isEmpty() && archivos.get(0) != null) ? archivos.get(0) : "";
+
+            intent.putExtra("documento", documento);
+            intent.putStringArrayListExtra("archivos", new ArrayList<>(archivos));
+
             startActivity(intent);
         });
 
@@ -108,7 +115,11 @@ public class VerCursoDescargado extends AppCompatActivity {
         for (ClaseFirebase clase : clases) {
             eliminarArchivo(clase.getImagenUrl());
             eliminarArchivo(clase.getVideoUrl());
-            eliminarArchivo(clase.getDocumentoUrl());
+            if (clase.getArchivosUrl() != null) {
+                for (String archivo : clase.getArchivosUrl()) {
+                    eliminarArchivo(archivo);
+                }
+            }
         }
 
         // Elimina de la base de datos local

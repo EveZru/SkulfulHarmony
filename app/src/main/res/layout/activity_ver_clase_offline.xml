@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray2"
-    android:padding="10dp">
+    android:padding="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,38 +16,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Título de la clase"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="10dp" />
 
-        <androidx.media3.ui.PlayerView
-            android:id="@+id/exoplayer_clase_offline"
+        <!-- PlayerView para el video -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="10dp">
 
-        <ImageView
-            android:id="@+id/img_clase_offline"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="12dp" />
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/exoplayer_clase_offline"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
+        <!-- Archivo principal -->
         <TextView
             android:id="@+id/tv_texto_clase_offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Aquí se mostraría un PDF o texto relacionado"
             android:textColor="@color/white"
+            android:text="Aquí iría el archivo principal"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Lista de archivos -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_archivos_offline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="12dp" />
 
+        <!-- Mensaje si no hay archivos -->
         <TextView
             android:id="@+id/tv_no_disponible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
             android:textColor="@color/rojo"
-            android:layout_marginTop="8dp" />
+            android:text=""
+            android:textStyle="italic" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

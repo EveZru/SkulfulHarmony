@@ -1,8 +1,10 @@
 package com.example.skulfulharmony;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,6 +48,7 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
 import com.example.skulfulharmony.modooffline.DescargaManager;
+import com.example.skulfulharmony.modooffline.DescargarCursoCompleto;
 import com.example.skulfulharmony.modooffline.DropboxDownloader;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -628,8 +631,49 @@ public class Ver_cursos extends AppCompatActivity {
                 denuncia.putExtra("idCurso",idCurso);
                 startActivity(denuncia);
                 return true;
-            } else if (id == R.id.it_descargar) {
-                descargarCursoCompletoFirestore();
+            }  else if (id == R.id.it_descargar) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("¿Qué deseas descargar?");
+                builder.setItems(new CharSequence[]{"Curso completo", "Solo curso sin clases"}, (dialog, which) -> {
+                    if (which == 0) {
+                        ProgressDialog progressDialog = new ProgressDialog(this);
+                        progressDialog.setMessage("Descargando curso completo...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+                        DescargarCursoCompleto.descargarCursoYClasesFirestore(
+                                this,
+                                idCurso,
+                                new DescargarCursoCompleto.Callback() {
+                                    @Override
+                                    public void onFinalizado(String titulo) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(Ver_cursos.this, "Curso descargado: " + titulo, Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    @Override
+                                    public void onError(String mensaje) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(Ver_cursos.this, "Error: " + mensaje, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                        );
+
+                    } else if (which == 1) {
+                        // Solo curso sin clases
+                        DescargarCursoCompleto.descargar(this, idCurso, new DescargarCursoCompleto.Callback() {
+                            @Override
+                            public void onFinalizado(String titulo) {
+                                // Ya lanza VerCursoDescargado automáticamente
+                            }
+                            @Override
+                            public void onError(String mensaje) {
+                                // Puedes loguear si quieres
+                            }
+                        });
+                    }
+                });
+                builder.show();
                 return true;
             } else if (id == R.id.it_compartir) {
                 Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
