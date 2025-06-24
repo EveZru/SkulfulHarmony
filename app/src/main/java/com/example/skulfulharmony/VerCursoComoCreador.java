@@ -15,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.adapters.AdapterCrearVerClasesCreadas;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
+import com.example.skulfulharmony.modooffline.ClaseFirebase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -40,11 +42,8 @@ public class VerCursoComoCreador extends AppCompatActivity {
     TextView tv_tituloCurso, tv_descripcionCurso, tv_fechaCreacion;
     RecyclerView rvClases;
     FloatingActionButton bttnAgregarClase;
-
     FirebaseFirestore firestore;
     int idCurso;
-
-
     FirebaseAuth mAuth;
 
 
@@ -72,7 +71,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
 
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        // Obtener idCurso del intent cola
+        // Obtener idCurso del intent
         idCurso = getIntent().getIntExtra("idCurso",1);
 
         if (idCurso != -1) {
@@ -154,7 +153,7 @@ public class VerCursoComoCreador extends AppCompatActivity {
                         String nombre = document.getString("titulo");
                         String descripcion = document.getString("descripcion");
                         String fechaCreacionStr = document.getString("fechaCreacion");
-
+                        String urlImagen = document.getString("imagen");
                         if (nombre != null) {
                             tv_tituloCurso.setText(nombre);
                         } else {
@@ -170,6 +169,15 @@ public class VerCursoComoCreador extends AppCompatActivity {
                         } else {
                             tv_fechaCreacion.setText("Desconocemos la fecha de creacion");
                         }
+                        if(urlImagen!=null){
+                            Glide.with(this)
+                                    .load(urlImagen)
+                                    .placeholder(R.drawable.img_encabezado) // opcional
+                                    .error(R.drawable.error_button)         // opcional
+                                    .into(imagenTitulo);
+                        }
+
+
                     } else {
                         Toast.makeText(VerCursoComoCreador.this, "Curso no encontrado.", Toast.LENGTH_LONG).show();
                          finish();
@@ -228,37 +236,5 @@ public class VerCursoComoCreador extends AppCompatActivity {
 
 
 
-   /* private void eliminarCurso(int cursoId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // 1. Eliminar clases asociadas
-        db.collection("clases")
-                .whereEqualTo("idCurso", cursoId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                        String claseId = doc.getId();
-
-                        db.collection("clases").document(claseId).delete();
-                    }
-
-                    // 2. Eliminar el curso
-                    String IdCursos = String.valueOf(cursoId);
-                    db.collection("cursos").document(IdCursos)
-                            .delete()
-                            .addOnSuccessListener(unused -> {
-                                Toast.makeText(VerCursoComoCreador.this, "Curso eliminado", Toast.LENGTH_SHORT).show();
-                                finish(); // salir de la pantalla
-                            });
-                });
-
-        String IdCursos = String.valueOf(cursoId);
-        File claseFolder = new File(getFilesDir(), "clases/" + IdCursos);
-        if (claseFolder.exists()) {
-            for (File archivo : claseFolder.listFiles()) {
-                archivo.delete();
-            }
-            claseFolder.delete();
-        }
-    }*/
+   /* */
 }

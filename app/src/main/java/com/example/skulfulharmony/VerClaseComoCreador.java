@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -166,12 +167,20 @@ public class VerClaseComoCreador extends AppCompatActivity {
             int id = item.getItemId();
             if(id==R.id.it_editar){
                Intent intent = new Intent(VerClaseComoCreador.this, EditarClase.class);
-                intent.putExtra("idClase", idClase);
+               intent.putExtra("idClase", idClase);
+                intent.putExtra("idCurso", clase.getIdCurso());
+ // Pasa el ID del curso como String
                 startActivity(intent);
                return true;
             }else if(id==R.id.it_eliminar){
-                eliminarClase();
-               return true;
+                new AlertDialog.Builder(VerClaseComoCreador.this)
+                        .setTitle("Eliminar clase")
+                        .setMessage("¿Estás seguro de que quieres eliminar esta clase?")
+                        .setPositiveButton("Sí", (dialog, which) ->   eliminarClase())
+                        .setNegativeButton("Cancelar", null)
+                        .show();
+                return true;
+
             }else {
                 Toast.makeText(VerClaseComoCreador.this, "No se selecciono ninguna opcion", Toast.LENGTH_SHORT).show();
             }

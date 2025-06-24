@@ -6,7 +6,18 @@
     android:layout_margin="16dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="6dp"
-    android:background="@color/white">
+    android:backgroundTint="@color/black1"
+    >
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/cafe2"
+        app:cardCornerRadius="12dp">
+
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,7 +26,8 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
         android:padding="16dp"
-        android:background="@drawable/rounded_button">
+
+    >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,6 +37,7 @@
                 android:id="@+id/btn_eliminar_pregunta"
                 android:layout_width="27dp"
                 android:layout_height="30dp"
+                android:backgroundTint="@color/rojo_oscuro"
                 android:background="@drawable/img_botedebasura"/>
 
         </LinearLayout>
@@ -72,5 +85,6 @@
             android:text="....:"/>
 
     </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.cardview.widget.CardView>

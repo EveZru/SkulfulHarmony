@@ -62,7 +62,7 @@ public class CrearClase extends AppCompatActivity {
     private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private int idCurso;
     private List<PreguntaCuestionario> preguntasClase = new ArrayList<>();
-    private final int MAX_OPCIONES = 4;
+    private final int MAX_OPCIONES = 5;
     private final ArrayList<View> opcionesList = new ArrayList<>();
     private Uri im = Uri.EMPTY;
     private String urlVideoSubido = null;
@@ -70,10 +70,7 @@ public class CrearClase extends AppCompatActivity {
     private List<String> archivosAdjuntosUrls = new ArrayList<>();
 
 
-    //Elementos visibles
-    private EditText et_pregunta,
-            et_titulo,
-            et_texto;
+    private EditText et_pregunta, et_titulo, et_texto;
     private Button btn_subirpregunta,btn_subirarchivo, btn_subirclase;
     private LinearLayout containerOpciones;
     private ImageView vid,btn_subirvideo;
@@ -91,7 +88,6 @@ public class CrearClase extends AppCompatActivity {
         et_titulo=findViewById(R.id.et_titulo_nueva_clase);
         et_texto=findViewById(R.id.et_descripcion_crear_clase);
         et_pregunta = findViewById(R.id.et_ingresar_pregunta);
-        btn_subirpregunta = findViewById(R.id.btn_subir_pregunta);
         containerOpciones = findViewById(R.id.container_opciones);
         tvEstadoVideo = findViewById(R.id.tv_estado_video);
         tvEstadoArchivos = findViewById(R.id.tv_estado_archivos);
@@ -111,13 +107,7 @@ public class CrearClase extends AppCompatActivity {
         }
         containerOpciones.addView(initialOption);
         opcionesList.add(initialOption);
-       /* if (containerOpciones.getChildCount() > 0) {
-            LinearLayout primeraOpcion = (LinearLayout) containerOpciones.getChildAt(0);
-            EditText primerEditText = primeraOpcion.findViewById(R.id.et_ingresar_respuesta);
-            if (primerEditText != null) {
-                addTextWatcher(primerEditText);
-            }
-        }*/
+
 
 
         btn_subirvideo.setOnClickListener(v-> Subirvideo());
@@ -143,8 +133,6 @@ public class CrearClase extends AppCompatActivity {
 
     }
 
-//______parte del las casillas de las preguntas------------------------
-    // detectar cambios en los EditText
     private void addTextWatcher(EditText editText) {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -167,7 +155,7 @@ public class CrearClase extends AppCompatActivity {
         });
     }
 
-    // Agregar una nueva opción de respuesta si es necesario
+
     private void agregarOpSiFalta() {
         if (opcionesList.size() >= MAX_OPCIONES) return; // No más de 5 opciones
 
@@ -446,21 +434,7 @@ public class CrearClase extends AppCompatActivity {
                     }
                 }
 
-                /*
-                if (etRespuesta != null) {
-                    String respuestaTexto = etRespuesta.getText().toString().trim();
-                    Log.d("SubirPregunta", "Opción " + i + ": " + respuestaTexto);
-                    if (!respuestaTexto.isEmpty()) {
-                        respuestas.add(respuestaTexto);
-                        if (cbCorrecta != null) {
-                            Log.d("SubirPregunta", "Checkbox " + i + " isChecked: " + cbCorrecta.isChecked());
-                            if (cbCorrecta.isChecked()) {
-                                respuestaCorrectaIndex = i;
-                                respuestasCorrectasCount++;
-                            }
-                        }
-                    }
-                }*/
+
             }
 
             Log.d("SubirPregunta", "Respuestas correctas encontradas: " + respuestasCorrectasCount);
