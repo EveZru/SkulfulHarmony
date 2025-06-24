@@ -9,9 +9,13 @@ import android.widget.Toast;
 
 import com.example.skulfulharmony.VerCursoDescargado;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DescargarCursoCompleto {
 
@@ -55,33 +59,35 @@ public class DescargarCursoCompleto {
                                 null
                         );
 
+                        int cursoLocalId;
                         if (cursor.moveToFirst()) {
+                            cursoLocalId = cursor.getInt(0); // ya existe
                             cursor.close();
-                            mostrarToast(context, "Este curso ya ha sido descargado anteriormente.");
-                            callback.onError("Curso ya descargado");
+                            mostrarToast(context, "Curso ya estaba descargado.");
+                            callback.onFinalizado(curso.getTitulo());
+                            lanzarVerCursoDescargado(context, cursoLocalId);
                             return;
                         }
                         cursor.close();
 
-                        // Guardar curso sin clases
+                        // Descargar imagen si no estaba descargado
+                        String imagenLocal = DescargaManager.descargarArchivo(context, curso.getImagen(), "curso_" + curso.getIdCurso() + "_img.jpg");
+                        curso.setImagen(imagenLocal);
+
+                        // Guardar curso
                         ContentValues values = new ContentValues();
                         values.put("idCurso", curso.getIdCurso());
                         values.put("titulo", curso.getTitulo());
                         values.put("descripcion", curso.getDescripcion());
                         values.put("imagen", curso.getImagen());
 
-                        long cursoLocalId = sqlDB.insertWithOnConflict(
+                        cursoLocalId = (int) sqlDB.insertWithOnConflict(
                                 "cursodescargado", null, values, SQLiteDatabase.CONFLICT_IGNORE
                         );
 
-                        if (cursoLocalId == -1) {
-                            mostrarToast(context, "Este curso ya está en la base local.");
-                            callback.onError("Curso ya descargado (conflicto SQL)");
-                        } else {
-                            mostrarToast(context, "Curso descargado correctamente.");
-                            callback.onFinalizado(curso.getTitulo());
-                            lanzarVerCursoDescargado(context, (int) cursoLocalId);
-                        }
+                        mostrarToast(context, "Curso descargado correctamente.");
+                        callback.onFinalizado(curso.getTitulo());
+                        lanzarVerCursoDescargado(context, cursoLocalId);
 
                     } else {
                         mostrarToast(context, "Curso no encontrado.");
@@ -106,4 +112,47 @@ public class DescargarCursoCompleto {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
+    public static void descargarCursoYClasesFirestore(Context context, int idCurso, Callback callback) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        firestore.collection("cursos")
+                .whereEqualTo("idCurso", idCurso)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (!snapshot.isEmpty()) {
+                        Curso curso = snapshot.getDocuments().get(0).toObject(Curso.class);
+                        if (curso == null) {
+                            callback.onError("Curso inválido");
+                            return;
+                        }
+
+                        firestore.collection("clases")
+                                .whereEqualTo("idCurso", idCurso)
+                                .get()
+                                .addOnSuccessListener(clasesSnapshot -> {
+                                    List<Clase> clases = new ArrayList<>();
+                                    for (DocumentSnapshot doc : clasesSnapshot) {
+                                        Clase clase = doc.toObject(Clase.class);
+                                        if (clase != null) clases.add(clase);
+                                    }
+
+                                    DescargaManager.descargarCursoYClases(curso, clases, context);
+
+                                    callback.onFinalizado(curso.getTitulo());
+                                })
+                                .addOnFailureListener(e -> {
+                                    callback.onError("Error al obtener clases: " + e.getMessage());
+                                });
+
+                    } else {
+                        callback.onError("Curso no encontrado");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onError("Error al consultar curso: " + e.getMessage());
+                });
+    }
+
 }

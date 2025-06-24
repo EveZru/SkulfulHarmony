@@ -33,9 +33,7 @@ public class Clase implements Serializable {
     private Integer noGusta;
     private String creadorUid;
     private String creadorCorreo;
-
     private Map<String, Boolean> calificacionPorUsuario = new HashMap<>(); // true = like, false = dislike
-
     private Timestamp fechaCreacionf;
     private Timestamp fechaAcceso;
     private String contenido;

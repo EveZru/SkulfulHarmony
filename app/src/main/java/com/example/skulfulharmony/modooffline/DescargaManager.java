@@ -9,11 +9,9 @@ import com.example.skulfulharmony.databaseinfo.DbCourse;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class DescargaManager {
         });
 
         try {
-            latch.await(); // Espera hasta que la descarga finalice
+            latch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -70,8 +68,12 @@ public class DescargaManager {
         Log.d("DESCARGA", "⏬ Iniciando descarga COMPLETA de: " + curso.getTitulo());
 
         if (cursoYaDescargado(curso.getIdCurso(), context)) {
-            Log.d("DESCARGA", "⛔ Curso ya descargado. No se repite.");
-            return;
+            Log.d("DESCARGA", "⛔ Curso ya descargado. Se usará el ID existente.");
+        } else {
+            String imagenLocal = descargarArchivo(context, curso.getImagen(), "curso_" + curso.getIdCurso() + "_img.jpg");
+            curso.setImagen(imagenLocal);
+            DbCourse dbCourse = new DbCourse(context);
+            dbCourse.insertCurso(curso);
         }
 
         String imagenLocal = descargarArchivo(context, curso.getImagen(), "curso_" + curso.getIdCurso() + "_img.jpg");
@@ -109,30 +111,29 @@ public class DescargaManager {
 
             ClaseFirebase claseFirebase = new ClaseFirebase(
                     clase.getTitulo(),
-                    clase.getContenido(), // o clase.getTextos() si tu campo PDF es ese
+                    clase.getArchivos(),
                     clase.getImagen(),
                     clase.getVideoUrl()
             );
-            clases.add(claseFirebase);
-        }
 
-        Log.d("DESCARGA", "🎯 Clases convertidas listas para descarga: " + clases.size());
-
-        for (ClaseFirebase clase : clases) {
             String titulo = clase.getTitulo().replaceAll("[^a-zA-Z0-9]", "_");
             Log.d("DESCARGA", "🔽 Descargando clase: " + clase.getTitulo());
 
             String videoLocal = descargarArchivo(context, clase.getVideoUrl(), "video_" + titulo + ".mp4");
-            String docLocal = descargarArchivo(context, clase.getDocumentoUrl(), "doc_" + titulo + ".pdf");
-            String imgLocal = descargarArchivo(context, clase.getImagenUrl(), "img_" + titulo + ".jpg");
+            String imgLocal = descargarArchivo(context, clase.getImagen(), "img_" + titulo + ".jpg");
 
-            Log.d("DESCARGA", "📦 Clase descargada:\n - Video: " + videoLocal + "\n - Doc: " + docLocal + "\n - Img: " + imgLocal);
+            List<String> archivosLocales = new ArrayList<>();
+            for (String url : clase.getArchivos()) {
+                String nombreArchivo = "archivo_" + titulo + "_" + archivosLocales.size() + ".pdf";
+                String archivoLocal = descargarArchivo(context, url, nombreArchivo);
+                if (archivoLocal != null) archivosLocales.add(archivoLocal);
+            }
 
-            clase.setVideoUrl(videoLocal);
-            clase.setDocumentoUrl(docLocal);
-            clase.setImagenUrl(imgLocal);
+            claseFirebase.setVideoUrl(videoLocal);
+            claseFirebase.setImagenUrl(imgLocal);
+            claseFirebase.setArchivosUrl(archivosLocales);
 
-            dbHelper.guardarClaseDescargada(clase, cursoLocalId);
+            dbHelper.guardarClaseDescargada(claseFirebase, cursoLocalId);
             Log.d("DESCARGA", "💾 Clase guardada en BD local.");
         }
 

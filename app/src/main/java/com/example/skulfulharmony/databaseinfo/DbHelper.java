@@ -5,17 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import androidx.annotation.Nullable;
+import android.util.Log;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 3; // ⬆ Subido para que se aplique el cambio
+    private static final int DATABASE_VERSION = 3;
     protected static final String DATABASE_NAME = "localdata.db";
     public static final String TABLE_USER = "usuario";
     public static final String TABLE_COURSE = "cursodescargado";
@@ -32,17 +35,15 @@ public class DbHelper extends SQLiteOpenHelper {
                 "nombre TEXT NOT NULL, " +
                 "imagen TEXT, " +
                 "ultimo_acceso DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                "instrumento_principal TEXT" +
-                ");");
+                "instrumento_principal TEXT);");
 
         db.execSQL("CREATE TABLE " + TABLE_COURSE + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "idCurso INTEGER UNIQUE, " + // ✅ Campo agregado
+                "idCurso INTEGER UNIQUE, " +
                 "titulo TEXT NOT NULL, " +
                 "descripcion TEXT, " +
                 "imagen TEXT, " +
-                "fecha_descarga DATETIME DEFAULT CURRENT_TIMESTAMP" +
-                ");");
+                "fecha_descarga DATETIME DEFAULT CURRENT_TIMESTAMP);");
 
         db.execSQL("CREATE TABLE " + TABLE_CLASS + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -51,8 +52,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 "documento TEXT, " +
                 "imagen TEXT, " +
                 "video TEXT, " +
-                "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE" +
-                ");");
+                "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE);");
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void guardarCursoDescargado(Curso curso) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("idCurso", curso.getIdCurso()); // ✅ Guardar idCurso
+        values.put("idCurso", curso.getIdCurso());
         values.put("titulo", curso.getTitulo());
         values.put("descripcion", curso.getDescripcion());
         values.put("imagen", curso.getImagen());
@@ -78,9 +78,16 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("curso_id", cursoId);
         values.put("titulo", clase.getTitulo());
-        values.put("documento", clase.getDocumentoUrl());
+
+        // Evitar null en lista
+        List<String> archivos = clase.getArchivosUrl();
+        if (archivos == null) archivos = new ArrayList<>();
+        String archivosJson = new Gson().toJson(archivos);
+
+        values.put("documento", archivosJson);
         values.put("imagen", clase.getImagenUrl());
         values.put("video", clase.getVideoUrl());
+
         db.insert(TABLE_CLASS, null, values);
     }
 
@@ -129,12 +136,33 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                ClaseFirebase clase = new ClaseFirebase(
-                        cursor.getString(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3)
-                );
+                String titulo = cursor.getString(0);
+                String documentos = cursor.getString(1);
+                String imagen = cursor.getString(2);
+                String video = cursor.getString(3);
+
+                List<String> archivos;
+
+                try {
+                    if (documentos != null && documentos.trim().startsWith("[")) {
+                        archivos = new Gson().fromJson(documentos, new TypeToken<List<String>>() {}.getType());
+                        if (archivos == null) archivos = new ArrayList<>();
+                    } else {
+                        archivos = new ArrayList<>();
+                        if (documentos != null && !documentos.trim().isEmpty()) {
+                            archivos.add(documentos.trim());
+                            ContentValues update = new ContentValues();
+                            update.put("documento", new Gson().toJson(archivos));
+                            db.update(TABLE_CLASS, update, "curso_id = ? AND titulo = ?", new String[]{String.valueOf(cursoId), titulo});
+                            Log.w("DBHelper", "📦 Reparado documento plano: " + titulo);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("DBHelper", "❌ Error parseando JSON documento en clase: " + titulo, e);
+                    archivos = new ArrayList<>();
+                }
+
+                ClaseFirebase clase = new ClaseFirebase(titulo, archivos, imagen, video);
                 clases.add(clase);
             } while (cursor.moveToNext());
         }
@@ -146,8 +174,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void eliminarCursoYClasesPorId(int cursoId) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete("clasedescargada", "curso_id = ?", new String[]{String.valueOf(cursoId)});
-        db.delete("cursodescargado", "id = ?", new String[]{String.valueOf(cursoId)});
+        db.delete(TABLE_CLASS, "curso_id = ?", new String[]{String.valueOf(cursoId)});
+        db.delete(TABLE_COURSE, "id = ?", new String[]{String.valueOf(cursoId)});
         db.close();
     }
 }

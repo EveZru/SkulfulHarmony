@@ -5,6 +5,8 @@ import static com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.c
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -33,12 +35,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.skulfulharmony.adapters.AdapterArchivosClase;
+import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.google.firebase.firestore.DocumentReference;
 
 import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterPreguntasEnVerClase;
 import com.example.skulfulharmony.adapters.AdapterVerClaseVerComentarios;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
+import com.example.skulfulharmony.modooffline.DescargaManager;
+import com.example.skulfulharmony.modooffline.ClaseFirebase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
@@ -526,7 +531,70 @@ public class Ver_clases extends AppCompatActivity {
                 startActivity(denuncia);
                 return true;
             } else if (id == R.id.it_descargar) {
-                // descargar clase individual
+                if (clase == null) {
+                    Toast.makeText(this, "Clase no cargada aún", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                // Convertir a ClaseFirebase
+                ClaseFirebase claseOffline = new ClaseFirebase(
+                        clase.getTitulo(),
+                        clase.getArchivos(), // Asegúrate que es List<String>
+                        clase.getImagen(),
+                        clase.getVideoUrl()
+                );
+
+                int idCursoActual = idCurso;
+
+                if (!DescargaManager.cursoYaDescargado(idCursoActual, Ver_clases.this)) {
+                    Toast.makeText(this, "Primero descarga el curso desde el menú del curso", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                // Obtener ID interno del curso
+                DbHelper dbHelper = new DbHelper(this);
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                int idCursoLocal = -1;
+                try (Cursor cursor = db.rawQuery("SELECT id FROM cursodescargado WHERE idCurso = ?", new String[]{String.valueOf(idCursoActual)})) {
+                    if (cursor.moveToFirst()) {
+                        idCursoLocal = cursor.getInt(0);
+                    }
+                }
+                db.close();
+
+                if (idCursoLocal == -1) {
+                    Toast.makeText(this, "Error: Curso no está en base local", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                final int finalIdCursoLocal = idCursoLocal;
+
+                new Thread(() -> {
+                    DbHelper dbHelperLocal = new DbHelper(Ver_clases.this);
+
+                    List<String> archivosDescargados = new ArrayList<>();
+                    int i = 1;
+                    for (String url : claseOffline.getArchivosUrl()) {
+                        if (url != null && !url.isEmpty()) {
+                            String nombre = "archivo_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + "_" + i + ".pdf";
+                            String ruta = DescargaManager.descargarArchivo(Ver_clases.this, url, nombre);
+                            if (ruta != null) archivosDescargados.add(ruta);
+                            i++;
+                        }
+                    }
+
+                    String videoLocal = DescargaManager.descargarArchivo(Ver_clases.this, claseOffline.getVideoUrl(), "video_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".mp4");
+                    String imgLocal = DescargaManager.descargarArchivo(Ver_clases.this, claseOffline.getImagenUrl(), "img_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".jpg");
+
+                    claseOffline.setVideoUrl(videoLocal);
+                    claseOffline.setImagenUrl(imgLocal);
+                    claseOffline.setArchivosUrl(archivosDescargados);
+
+                    dbHelperLocal.guardarClaseDescargada(claseOffline, finalIdCursoLocal);
+
+                    runOnUiThread(() -> Toast.makeText(Ver_clases.this, "Clase descargada correctamente", Toast.LENGTH_SHORT).show());
+                }).start();
+
                 return true;
             } else if (id == R.id.it_compartir) {
                 Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
