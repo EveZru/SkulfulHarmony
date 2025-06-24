@@ -165,7 +165,9 @@ public class Busqueda extends AppCompatActivity {
                         AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(resultadosCombinados, new AdapterBusquedaGeneral.OnItemClickListener() {
                             @Override
                             public void onCursoClick(Curso curso) {
-                                // TODO: manejar click en curso
+                                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+                                intent.putExtra("idCurso", curso.getIdCurso());
+                                startActivity(intent);
                             }
 
                             @Override
