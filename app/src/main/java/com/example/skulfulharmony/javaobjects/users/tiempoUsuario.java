@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -144,34 +145,45 @@ public class tiempoUsuario {
         Log.d("TiempoUsuario", "🔥 Terminando descanso...");
     }
 
-    // **Registrar la hora de entrada en Firestore**
     public void registrarHoraEntrada() {
         Log.d("TiempoUsuario", "📥 Iniciando registrarHoraEntrada()");
 
         DocumentReference userRef = db.collection("usuarios").document(userId);
         userRef.get().addOnSuccessListener(doc -> {
-            List<Map<String, Object>> entradas = (List<Map<String, Object>>) doc.get("entradasUsuario");
+            Object rawEntradas = doc.get("entradasUsuario");
+            List<Object> entradasRaw = rawEntradas instanceof List ? (List<Object>) rawEntradas : new ArrayList<>();
+            List<Map<String, Object>> entradas = new ArrayList<>();
             int semanaActual = obtenerSemanaActual();
             Timestamp ahora = Timestamp.now();
             boolean actualizo = false;
 
-            if (entradas == null) entradas = new ArrayList<>();
+            for (Object entrada : entradasRaw) {
+                if (entrada instanceof Map) {
+                    entradas.add((Map<String, Object>) entrada);
+                } else {
+                    Log.w("TiempoUsuario", "⚠️ Entrada inválida ignorada: " + entrada);
+                }
+            }
 
             for (Map<String, Object> semana : entradas) {
-                Long id = ((Number) semana.get("idSemana")).longValue();
-                if (id == semanaActual) {
-                    List<Timestamp> veces = (List<Timestamp>) semana.get("vecesEntrada");
-                    veces.add(ahora);
-                    actualizo = true;
-                    Log.d("TiempoUsuario", "🟢 Entrada añadida a semana existente");
-                    break;
+                Object idRaw = semana.get("idSemana");
+                if (idRaw instanceof Number && semana.get("vecesEntrada") instanceof List) {
+                    Long id = ((Number) idRaw).longValue();
+                    if (id == semanaActual) {
+                        List<Object> vecesRaw = (List<Object>) semana.get("vecesEntrada");
+                        vecesRaw.add(ahora);
+                        semana.put("vecesEntrada", vecesRaw);
+                        actualizo = true;
+                        Log.d("TiempoUsuario", "🟢 Entrada añadida a semana existente");
+                        break;
+                    }
                 }
             }
 
             if (!actualizo) {
                 Map<String, Object> nuevaSemana = new HashMap<>();
                 nuevaSemana.put("idSemana", semanaActual);
-                nuevaSemana.put("vecesEntrada", Arrays.asList(ahora));
+                nuevaSemana.put("vecesEntrada", new ArrayList<>(Arrays.asList(ahora)));
                 entradas.add(nuevaSemana);
                 Log.d("TiempoUsuario", "🆕 Entrada registrada en nueva semana");
             }
@@ -181,12 +193,31 @@ public class tiempoUsuario {
             userRef.set(datos, SetOptions.merge());
 
             for (Map<String, Object> semana : entradas) {
-                Long id = ((Number) semana.get("idSemana")).longValue();
-                if (id == semanaActual) {
-                    List<Timestamp> veces = (List<Timestamp>) semana.get("vecesEntrada");
-                    Log.d("TiempoUsuario", "📊 Entradas semana actual: " + veces.size());
-                    calcularYProgramarRecordatorio(veces);
-                    break;
+                Object idRaw = semana.get("idSemana");
+                if (idRaw instanceof Number && semana.get("vecesEntrada") instanceof List) {
+                    Long id = ((Number) idRaw).longValue();
+                    if (id == semanaActual) {
+                        List<Timestamp> veces = new ArrayList<>();
+                        for (Object obj : (List<?>) semana.get("vecesEntrada")) {
+                            if (obj instanceof Timestamp) {
+                                veces.add((Timestamp) obj);
+                            } else if (obj instanceof Map) {
+                                try {
+                                    Map<?, ?> map = (Map<?, ?>) obj;
+                                    Object seconds = map.get("seconds");
+                                    Object nanos = map.get("nanoseconds");
+                                    if (seconds instanceof Number && nanos instanceof Number) {
+                                        veces.add(new Timestamp(((Number) seconds).longValue(), ((Number) nanos).intValue()));
+                                    }
+                                } catch (Exception e) {
+                                    Log.e("TiempoUsuario", "❌ Error casteando entrada", e);
+                                }
+                            }
+                        }
+                        Log.d("TiempoUsuario", "📊 Entradas semana actual: " + veces.size());
+                        calcularYProgramarRecordatorio(veces);
+                        break;
+                    }
                 }
             }
         }).addOnFailureListener(e -> {
@@ -218,18 +249,28 @@ public class tiempoUsuario {
         }
     }
 
-
     private void calcularYProgramarRecordatorio(List<Timestamp> entradasSemana) {
         if (entradasSemana == null || entradasSemana.isEmpty()) return;
 
         long totalMillis = 0;
+        int count = 0;
+
         for (Timestamp ts : entradasSemana) {
-            totalMillis += ts.toDate().getTime();
+            if (ts != null) {
+                totalMillis += ts.toDate().getTime();
+                count++;
+            } else {
+                Log.w("Recordatorio", "⚠️ Timestamp null en entradasSemana");
+            }
         }
 
-        long promedioMillis = totalMillis / entradasSemana.size();
+        if (count == 0) {
+            Log.w("Recordatorio", "⛔ No hay timestamps válidos para calcular promedio");
+            return;
+        }
+
+        long promedioMillis = totalMillis / count;
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, 15); // Solo para probar
         cal.setTimeInMillis(promedioMillis);
         cal.add(Calendar.MINUTE, 20); // ⏰ +20 min
 
@@ -289,7 +330,6 @@ public class tiempoUsuario {
         });
     }
 
-
     private void cargarTiempoDeHoy() {
         // Primero, intentamos recuperar el tiempo desde SharedPreferences
         SharedPreferences prefs = context.getSharedPreferences("TiempoAcumulado", Context.MODE_PRIVATE);
@@ -342,7 +382,6 @@ public class tiempoUsuario {
     public void calcularPromediosEntradaPorSemana() {
         String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         SharedPreferences prefs = context.getSharedPreferences("promedios_prefs", Context.MODE_PRIVATE);
-
         String ultimaFecha = prefs.getString("ultimaFechaPromedio", "");
 
         if (hoy.equals(ultimaFecha)) {
@@ -352,29 +391,97 @@ public class tiempoUsuario {
 
         DocumentReference userRef = db.collection("usuarios").document(userId);
         userRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                Long totalMinutos = documentSnapshot.getLong("totalMinutosAcumuladosEntrada");
-                Long vecesEntrada = documentSnapshot.getLong("vecesEntrada");
+            if (!documentSnapshot.exists()) {
+                Log.d("PromedioEntrada", "⛔ Documento de usuario no existe");
+                return;
+            }
 
-                if (totalMinutos != null && vecesEntrada != null && vecesEntrada > 0) {
-                    long promedio = totalMinutos / vecesEntrada;
-                    int hora = (int) (promedio / 60);
+            Object rawEntradas = documentSnapshot.get("entradasUsuario");
+            List<Object> entradasRaw = rawEntradas instanceof List ? (List<Object>) rawEntradas : new ArrayList<>();
+            List<Map<String, Object>> entradasUsuario = new ArrayList<>();
 
-                    Map<String, Object> update = new HashMap<>();
-                    update.put("horaPromedio", hora);
-
-                    userRef.set(update, SetOptions.merge())
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d("PromedioEntrada", "✅ horaPromedio guardada: " + hora);
-                                prefs.edit().putString("ultimaFechaPromedio", hoy).apply(); // ⏳ Guardamos la fecha
-                            })
-                            .addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al guardar horaPromedio", e));
+            for (Object entrada : entradasRaw) {
+                if (entrada instanceof Map) {
+                    entradasUsuario.add((Map<String, Object>) entrada);
                 } else {
-                    Log.d("PromedioEntrada", "⛔ Datos insuficientes para calcular promedio.");
+                    Log.w("PromedioEntrada", "⚠️ Entrada ignorada: no es Map");
                 }
             }
-        }).addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al obtener promedio", e));
-    }
 
+            if (entradasUsuario.isEmpty()) {
+                Log.d("PromedioEntrada", "⛔ Lista entradasUsuario vacía");
+                return;
+            }
+
+            List<Timestamp> todosLosTiempos = new ArrayList<>();
+            for (Map<String, Object> semana : entradasUsuario) {
+                Object raw = semana.get("vecesEntrada");
+                if (raw instanceof List) {
+                    List<?> rawList = (List<?>) raw;
+                    for (Object obj : rawList) {
+                        if (obj instanceof Timestamp) {
+                            todosLosTiempos.add((Timestamp) obj);
+                        } else if (obj instanceof Map) {
+                            try {
+                                Map<?, ?> mapObj = (Map<?, ?>) obj;
+                                Object seconds = mapObj.get("seconds");
+                                Object nanos = mapObj.get("nanoseconds");
+                                if (seconds instanceof Number && nanos instanceof Number) {
+                                    Timestamp ts = new Timestamp(((Number) seconds).longValue(), ((Number) nanos).intValue());
+                                    todosLosTiempos.add(ts);
+                                }
+                            } catch (Exception e) {
+                                Log.e("PromedioEntrada", "❌ Error casteando timestamp desde mapa", e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (todosLosTiempos.isEmpty()) {
+                Log.d("PromedioEntrada", "⛔ No hay tiempos válidos para calcular promedio");
+                return;
+            }
+
+            long totalMillis = 0;
+            for (Timestamp ts : todosLosTiempos) {
+                if (ts != null) {
+                    totalMillis += ts.toDate().getTime();
+                }
+            }
+
+            long promedioMillis = totalMillis / todosLosTiempos.size();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(promedioMillis);
+
+            int hora = cal.get(Calendar.HOUR_OF_DAY);
+            int minuto = cal.get(Calendar.MINUTE);
+
+            try {
+                if (hora < 0 || hora > 23 || minuto < 0 || minuto > 59) {
+                    Log.e("PromedioEntrada", "❌ Hora o minuto fuera de rango: " + hora + ":" + minuto);
+                    return;
+                }
+
+                LocalTime horaNoti = LocalTime.of(hora, minuto).plusMinutes(20);
+                String notificacionStr = horaNoti.toString();
+                String horaFormateada = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(cal.getTime());
+
+                Map<String, Object> update = new HashMap<>();
+                update.put("horaPromedio", hora);
+                update.put("tiempoDeNotificacion", notificacionStr);
+
+                userRef.set(update, SetOptions.merge())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("PromedioEntrada", "✅ horaPromedio: " + hora + ", notificación: " + notificacionStr + " (" + horaFormateada + ")");
+                            prefs.edit().putString("ultimaFechaPromedio", hoy).apply();
+                        })
+                        .addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al guardar promedio", e));
+            } catch (Exception e) {
+                Log.e("PromedioEntrada", "❌ Error al calcular horaNoti o guardar promedio", e);
+            }
+
+        }).addOnFailureListener(e -> Log.e("PromedioEntrada", "❌ Error al obtener documento", e));
+    }
 
 }

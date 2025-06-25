@@ -42,6 +42,9 @@ public class SplashActivity extends AppCompatActivity {
                             tiempoUsuario tiempo = new tiempoUsuario(userId, getApplicationContext());
                             tiempo.iniciarConteo();
 
+                            // ✅ Calcular promedio de entrada correctamente
+                            tiempo.calcularPromediosEntradaPorSemana();
+
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                                         != PackageManager.PERMISSION_GRANTED) {
@@ -73,13 +76,14 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(new Intent(this, IniciarSesion.class));
                         finish();
                     });
+
             FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser(); // ✅
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (task.isSuccessful() && currentUser != null) {
                     String token = task.getResult();
                     FirebaseFirestore.getInstance()
                             .collection("usuarios")
-                            .document(currentUser.getUid()) // ✅ Ya no truena
+                            .document(currentUser.getUid())
                             .update("fcmToken", token)
                             .addOnSuccessListener(aVoid -> Log.d("SplashActivity", " Token actualizado en Splash"))
                             .addOnFailureListener(e -> Log.e("SplashActivity", " Error al guardar token en Splash", e));
@@ -93,8 +97,5 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(this, IniciarSesion.class));
             finish();
         }
-
-
-
     }
 }

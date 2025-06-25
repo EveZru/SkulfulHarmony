@@ -65,7 +65,7 @@ public class Usuario implements Serializable {
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
     private List<Date> horasEntrada;
-    private LocalTime tiempoDeNotificacion;
+    private String tiempoDeNotificacion;
     private Date ultimoAcceso;
     private Integer cluster;
 
@@ -301,11 +301,11 @@ public class Usuario implements Serializable {
         this.horasEntrada = horasEntrada;
     }
 
-    public LocalTime getTiempoDeNotificacion() {
+    public String getTiempoDeNotificacion() {
         return tiempoDeNotificacion;
     }
 
-    public void setTiempoDeNotificacion(LocalTime tiempoDeNotificacion) {
+    public void setTiempoDeNotificacion(String tiempoDeNotificacion) {
         this.tiempoDeNotificacion = tiempoDeNotificacion;
     }
 
@@ -343,7 +343,7 @@ public class Usuario implements Serializable {
         if (!temp.isEmpty()) {
             int promedioHora = (int) (sumaHoras / temp.size());
             int promedioMinuto = (int) (sumaMinutos / temp.size());
-            this.tiempoDeNotificacion = LocalTime.of(promedioHora, promedioMinuto).plusMinutes(20);
+            this.tiempoDeNotificacion = LocalTime.of(promedioHora, promedioMinuto).plusMinutes(20).toString();
         } else {
             this.tiempoDeNotificacion = null; // No hay datos recientes
         }
