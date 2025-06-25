@@ -225,29 +225,18 @@ public class tiempoUsuario {
         });
     }
 
-    // 🚨 Prueba manual: llama esto desde cualquier botón o evento
-    public void probarNotificacionManual() {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, 5); // ⏰ Notificación en 5 segundos
+    public void registrarFechaUltimaEntrada() {
+        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("usuarios").document(userId);
 
-        Log.d("Alarma", "🔔 Prueba programada para: " + cal.getTime());
+        Map<String, Object> data = new HashMap<>();
+        data.put("fechaUltimaEntrada", fechaHoy);
 
-        Intent intent = new Intent(context, RecordatorioEntradaReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context, 999, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-                Log.e("Alarma", "🚫 Sin permiso para alarmas exactas en prueba");
-                return;
-            }
-
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
-            Log.d("Alarma", "✅ Alarma de prueba programada");
-        }
+        userRef.set(data, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.d("FechaEntrada", "✅ Fecha registrada: " + fechaHoy))
+                .addOnFailureListener(e -> Log.e("FechaEntrada", "❌ Error al guardar fecha de entrada", e));
     }
+
 
     private void calcularYProgramarRecordatorio(List<Timestamp> entradasSemana) {
         if (entradasSemana == null || entradasSemana.isEmpty()) return;

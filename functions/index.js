@@ -7,25 +7,43 @@ const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+function convertirHoraStringAMinutos(horaStr) {
+  try {
+    const [hora, minuto] = horaStr.split(":").map(Number);
+    return hora * 60 + minuto;
+  } catch (e) {
+    console.error("❌ Error al parsear tiempoDeNotificacion:", horaStr);
+    return null;
+  }
+}
+
 exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event) => {
   const snapshot = await admin.firestore().collection("usuarios").get();
   const ahora = new Date();
   const horaActual = ahora.getHours();
   const minutoActual = ahora.getMinutes();
+  const hoyStr = ahora.toISOString().split("T")[0]; // "yyyy-MM-dd"
 
   snapshot.forEach(async (doc) => {
     const data = doc.data();
-    const horaPromedio = data.horaPromedio;
+    const tiempoStr = data.tiempoDeNotificacion;
     const token = data.fcmToken;
     const notis = data.notificaciones || {};
+    const fechaUltimaEntrada = data.fechaUltimaEntrada;
 
-    if (horaPromedio === undefined || token === undefined) return;
+    // 🛑 Filtros
+    if (!tiempoStr || typeof tiempoStr !== "string" || !token) return;
     if (notis.horaEntrada === false) return;
+    if (fechaUltimaEntrada === hoyStr) {
+      console.log("🟢 Usuario ya entró hoy, se omite notificación:", doc.id);
+      return;
+    }
 
+    // ⏱️ Calcular diferencia en minutos
+    const minutosPromedio = convertirHoraStringAMinutos(tiempoStr);
+    if (minutosPromedio === null) return;
 
     const minutosActuales = horaActual * 60 + minutoActual;
-    const minutosPromedio = horaPromedio * 60;
-
     const diferenciaMin = minutosActuales - minutosPromedio;
 
     if (diferenciaMin >= 20 && diferenciaMin <= 30) {

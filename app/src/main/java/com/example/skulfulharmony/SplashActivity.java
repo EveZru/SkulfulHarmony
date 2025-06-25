@@ -55,6 +55,7 @@ public class SplashActivity extends AppCompatActivity {
                             }
 
                             tiempo.registrarHoraEntrada();
+                            tiempo.registrarFechaUltimaEntrada();
                             MyApp.setContadorTiempo(tiempo);
 
                             if ("admin".equals(rol)) {
