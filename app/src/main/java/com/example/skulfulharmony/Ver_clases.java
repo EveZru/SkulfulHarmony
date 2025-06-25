@@ -201,8 +201,14 @@ public class Ver_clases extends AppCompatActivity {
                                                 historial.remove(0);
                                             }
 
+                                            usuario.setId(userSnapshot.getId());
                                             userRef.update("historialClases", historial)
-                                                    .addOnSuccessListener(aVoid -> Log.d("Historial", "Historial de clases actualizado"))
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        Log.d("Historial", "Historial de clases actualizado");
+                                                        usuario.calcularClusterUsuario(db1,usuario,call->{
+                                                            Toast.makeText(this, "Cluster actualizado", Toast.LENGTH_SHORT).show();
+                                                        });
+                                                    })
                                                     .addOnFailureListener(e -> Log.e("Historial", "Error al actualizar historial", e));
                                         }
                                     }

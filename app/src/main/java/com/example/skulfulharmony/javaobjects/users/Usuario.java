@@ -9,6 +9,8 @@ import com.example.skulfulharmony.javaobjects.clustering.DificultadCallback;
 import com.example.skulfulharmony.javaobjects.clustering.GeneroCallback;
 import com.example.skulfulharmony.javaobjects.clustering.InstrumentoCallback;
 import com.example.skulfulharmony.javaobjects.clustering.KMeans;
+import com.example.skulfulharmony.javaobjects.clustering.PreferenciasUsuario;
+import com.example.skulfulharmony.javaobjects.clustering.RespuestasCuestionario;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
@@ -26,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.Serializable;
+import java.util.ResourceBundle;
 
 public class Usuario implements Serializable {
 
@@ -68,6 +71,8 @@ public class Usuario implements Serializable {
     private String tiempoDeNotificacion;
     private Date ultimoAcceso;
     private Integer cluster;
+    private PreferenciasUsuario preferenciasUsuario;
+    private RespuestasCuestionario respuestasCuestionario;
 
 
     private List<PreguntaRecomendacion> preguntaRecomendacionList;
@@ -249,6 +254,42 @@ public class Usuario implements Serializable {
 
     public void setSeguidores(int seguidores) { this.seguidores = seguidores; }
 
+    public List<Date> getHorasEntrada() {
+        return horasEntrada;
+    }
+
+    public void setHorasEntrada(List<Date> horasEntrada) {
+        this.horasEntrada = horasEntrada;
+    }
+
+    public Date getUltimoAcceso() {
+        return ultimoAcceso;
+    }
+
+    public void setUltimoAcceso(Date ultimoAcceso) {
+        this.ultimoAcceso = ultimoAcceso;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public RespuestasCuestionario getRespuestasCuestionario() {
+        return respuestasCuestionario;
+    }
+
+    public void setRespuestasCuestionario(RespuestasCuestionario respuestasCuestionario) {
+        this.respuestasCuestionario = respuestasCuestionario;
+    }
+
     public String getFotoPerfil() { return fotoPerfil; }
 
     public void setFotoPerfil(String fotoPerfil) { this.fotoPerfil = fotoPerfil; }
@@ -264,6 +305,14 @@ public class Usuario implements Serializable {
 
     public List<Curso> getHistorialCursos() {
         return historialCursos;
+    }
+
+    public PreferenciasUsuario getPreferenciasUsuario() {
+        return preferenciasUsuario;
+    }
+
+    public void setPreferenciasUsuario(PreferenciasUsuario preferenciasUsuario) {
+        this.preferenciasUsuario = preferenciasUsuario;
     }
 
     public List<Clase> getHistorialClases() {
@@ -285,37 +334,10 @@ public class Usuario implements Serializable {
     public void setPreguntaRecomendacionList(List<PreguntaRecomendacion> preguntaRecomendacionList) {
         this.preguntaRecomendacionList = preguntaRecomendacionList;
     }
-    public List<Comentario> getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(List<Comentario> comentarios) {
-        this.comentarios = comentarios;
-    }
-
-    public List<Date> getHorasEntrada() {
-        return horasEntrada;
-    }
-
-    public void setHorasEntrada(List<Date> horasEntrada) {
-        this.horasEntrada = horasEntrada;
-    }
-
-    public String getTiempoDeNotificacion() {
-        return tiempoDeNotificacion;
-    }
-
     public void setTiempoDeNotificacion(String tiempoDeNotificacion) {
         this.tiempoDeNotificacion = tiempoDeNotificacion;
     }
 
-    public Date getUltimoAcceso() {
-        return ultimoAcceso;
-    }
-
-    public void setUltimoAcceso(Date ultimoAcceso) {
-        this.ultimoAcceso = ultimoAcceso;
-    }
 
     public String setRol(){return rol;}
     public List<Integer> getCursosSeguidos() {
@@ -350,299 +372,418 @@ public class Usuario implements Serializable {
     }
 
     public void obtenerInstrumentoMasVisto(FirebaseFirestore firestore, InstrumentoCallback callback) {
-        Map<String, Integer> contadorInstrumentos = new HashMap<>();
+        Map<String, Double> instrumentosPuntaje = new HashMap<>();
 
-        // 1. Historial de cursos
-        if (historialCursos != null) {
-            for (Curso curso : historialCursos) {
-                if (curso.getInstrumento() != null) {
-                    for (String instrumento : curso.getInstrumento().keySet()) {
-                        contadorInstrumentos.put(instrumento, contadorInstrumentos.getOrDefault(instrumento, 0) + 1);
-                    }
+        // 1. Preferencias del usuario (20%)
+        if (preferenciasUsuario != null && preferenciasUsuario.getInstrumentos() != null) {
+            int maxPref = preferenciasUsuario.getInstrumentos().values().stream().max(Integer::compare).orElse(1);
+            for (Map.Entry<String, Integer> entry : preferenciasUsuario.getInstrumentos().entrySet()) {
+                String nombreInstrumento = getNombreInstrumentoPorId(entry.getKey());
+                if (nombreInstrumento != null) {
+                    double valor = (entry.getValue() * 1.0 / maxPref) * 20.0;
+                    instrumentosPuntaje.merge(nombreInstrumento, valor, Double::sum);
                 }
             }
         }
 
-        // 2. Cursos seguidos (IDs)
+        // 2. Historial de cursos (10%)
+        if (historialCursos != null) {
+            Map<String, Integer> conteo = new HashMap<>();
+            for (Curso curso : historialCursos) {
+                if (curso.getInstrumento() != null) {
+                    for (String instrumento : curso.getInstrumento().keySet()) {
+                        String nombreInstrumento = getNombreInstrumentoPorId(instrumento);
+                        if (nombreInstrumento != null) {
+                            conteo.put(nombreInstrumento, conteo.getOrDefault(nombreInstrumento, 0) + 1);
+                        }
+                    }
+                }
+            }
+            int max = conteo.values().stream().max(Integer::compare).orElse(1);
+            for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                double valor = (entry.getValue() * 1.0 / max) * 10.0;
+                instrumentosPuntaje.merge(entry.getKey(), valor, Double::sum);
+            }
+        }
+
+        // 3. Respuestas del cuestionario (15%)
+        if (respuestasCuestionario != null && respuestasCuestionario.getInstrumento() != null) {
+            String instrumento = getNombreInstrumentoPorId(respuestasCuestionario.getInstrumento());
+            if (instrumento != null) {
+                instrumentosPuntaje.merge(instrumento, 15.0, Double::sum);
+            }
+        }
+
+        // 4. Cursos seguidos (25%)
         if (cursosSeguidos != null && !cursosSeguidos.isEmpty()) {
             firestore.collection("cursos")
                     .whereIn("idCurso", cursosSeguidos)
                     .get()
                     .addOnSuccessListener(snapshot -> {
+                        Map<String, Integer> conteo = new HashMap<>();
                         for (QueryDocumentSnapshot doc : snapshot) {
                             Curso curso = doc.toObject(Curso.class);
                             if (curso.getInstrumento() != null) {
                                 for (String instrumento : curso.getInstrumento().keySet()) {
-                                    contadorInstrumentos.put(instrumento, contadorInstrumentos.getOrDefault(instrumento, 0) + 1);
+                                    String nombreInstrumento = getNombreInstrumentoPorId(instrumento);
+                                    if (nombreInstrumento != null) {
+                                        conteo.put(nombreInstrumento, conteo.getOrDefault(nombreInstrumento, 0) + 1);
+                                    }
                                 }
                             }
                         }
-
-                        // 3. Historial de clases → buscar curso por ID
-                        procesarInstrumentosDesdeClases(firestore, contadorInstrumentos, callback);
+                        int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                        for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                            double valor = (entry.getValue() * 1.0 / max) * 25.0;
+                            instrumentosPuntaje.merge(entry.getKey(), valor, Double::sum);
+                        }
+                        procesarInstrumentosDesdeClases(firestore, instrumentosPuntaje, callback);
                     })
                     .addOnFailureListener(e -> {
                         Log.e("InstrumentoUsuario", "Error al obtener cursos seguidos", e);
                         callback.onResult(new HashMap<>());
                     });
         } else {
-            // Si no hay cursos seguidos, ir directamente a clases
-            procesarInstrumentosDesdeClases(firestore, contadorInstrumentos, callback);
+            procesarInstrumentosDesdeClases(firestore, instrumentosPuntaje, callback);
         }
     }
-    private void procesarInstrumentosDesdeClases(FirebaseFirestore firestore, Map<String, Integer> contador, InstrumentoCallback callback) {
+    private void procesarInstrumentosDesdeClases(FirebaseFirestore firestore, Map<String, Double> instrumentosPuntaje, InstrumentoCallback callback) {
         if (historialClases == null || historialClases.isEmpty()) {
-            finalizarConteo(contador, callback);
+            finalizarConteo(instrumentosPuntaje, callback);
             return;
         }
-
         List<Integer> idsCursos = new ArrayList<>();
         for (Clase clase : historialClases) {
             if (clase.getIdCurso() != null && !idsCursos.contains(clase.getIdCurso())) {
                 idsCursos.add(clase.getIdCurso());
             }
         }
-
         if (idsCursos.isEmpty()) {
-            finalizarConteo(contador, callback);
+            finalizarConteo(instrumentosPuntaje, callback);
             return;
         }
-
         firestore.collection("cursos")
                 .whereIn("idCurso", idsCursos)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    Map<String, Integer> conteo = new HashMap<>();
                     for (QueryDocumentSnapshot doc : snapshot) {
                         Curso curso = doc.toObject(Curso.class);
                         if (curso.getInstrumento() != null) {
                             for (String instrumento : curso.getInstrumento().keySet()) {
-                                contador.put(instrumento, contador.getOrDefault(instrumento, 0) + 1);
+                                String nombreInstrumento = getNombreInstrumentoPorId(instrumento);
+                                if (nombreInstrumento != null) {
+                                    conteo.put(nombreInstrumento, conteo.getOrDefault(nombreInstrumento, 0) + 1);
+                                }
                             }
                         }
                     }
-                    finalizarConteo(contador, callback);
+                    int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                    for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                        double valor = (entry.getValue() * 1.0 / max) * 30.0;
+                        instrumentosPuntaje.merge(entry.getKey(), valor, Double::sum);
+                    }
+                    finalizarConteo(instrumentosPuntaje, callback);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("InstrumentoUsuario", "Error al obtener cursos desde clases", e);
                     callback.onResult(new HashMap<>());
                 });
     }
-    private void finalizarConteo(Map<String, Integer> contador, InstrumentoCallback callback) {
-        Map<String, Integer> resultado = new HashMap<>();
-
-        if (contador.isEmpty()) {
-            // Si no hay datos, devolver Guitarra: 0 como predeterminado
+    private void finalizarConteo(Map<String, Double> instrumentosPuntaje, InstrumentoCallback callback) {
+        if (instrumentosPuntaje.isEmpty()) {
+            Map<String, Integer> resultado = new HashMap<>();
             resultado.put("Guitarra", 0);
             callback.onResult(resultado);
             return;
         }
-
-        // Si sí hay conteos, calcular el más frecuente
-        String instrumentoMasVisto = null;
-        int max = 0;
-
-        for (Map.Entry<String, Integer> entry : contador.entrySet()) {
+        String instrumentoMasFuerte = null;
+        double max = -1;
+        for (Map.Entry<String, Double> entry : instrumentosPuntaje.entrySet()) {
             if (entry.getValue() > max) {
                 max = entry.getValue();
-                instrumentoMasVisto = entry.getKey();
+                instrumentoMasFuerte = entry.getKey();
             }
         }
-
-        if (instrumentoMasVisto != null) {
+        Map<String, Integer> resultado = new HashMap<>();
+        if (instrumentoMasFuerte != null) {
             for (Map<String, Integer> instrumentoMap : DataClusterList.listaInstrumentos) {
-                if (instrumentoMap.containsKey(instrumentoMasVisto)) {
-                    resultado.put(instrumentoMasVisto, instrumentoMap.get(instrumentoMasVisto));
+                if (instrumentoMap.containsKey(instrumentoMasFuerte)) {
+                    resultado.put(instrumentoMasFuerte, instrumentoMap.get(instrumentoMasFuerte));
                     break;
                 }
             }
         }
-
         callback.onResult(resultado);
     }
-    public void obtenerGeneroMasVisto(FirebaseFirestore firestore, GeneroCallback callback) {
-        Map<String, Integer> contadorGeneros = new HashMap<>();
-
-        // 1. Historial de cursos
-        if (historialCursos != null) {
-            for (Curso curso : historialCursos) {
-                if (curso.getGenero() != null) {
-                    for (String genero : curso.getGenero().keySet()) {
-                        contadorGeneros.put(genero, contadorGeneros.getOrDefault(genero, 0) + 1);
+    private String getNombreInstrumentoPorId(String idStr) {
+        try {
+            int id = Integer.parseInt(idStr);
+            for (Map<String, Integer> map : DataClusterList.listaInstrumentos) {
+                for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                    if (entry.getValue() == id) {
+                        return entry.getKey();
                     }
                 }
             }
+        } catch (NumberFormatException e) {
+            return idStr;
         }
-
-        // 2. Cursos seguidos
+        return null;
+    }
+    public void obtenerGeneroMasVisto(FirebaseFirestore firestore, GeneroCallback callback) {
+        Map<String, Double> generosPuntaje = new HashMap<>();
+        // 1. Preferencias del usuario (20%)
+        if (preferenciasUsuario != null && preferenciasUsuario.getGeneros() != null) {
+            int maxPref = preferenciasUsuario.getGeneros().values().stream().max(Integer::compare).orElse(1);
+            for (Map.Entry<String, Integer> entry : preferenciasUsuario.getGeneros().entrySet()) {
+                String nombreGenero = getNombreGeneroPorId(entry.getKey());
+                if (nombreGenero != null) {
+                    double valor = (entry.getValue() * 1.0 / maxPref) * 20.0;
+                    generosPuntaje.merge(nombreGenero, valor, Double::sum);
+                }
+            }
+        }
+        // 2. Historial de cursos (10%)
+        if (historialCursos != null) {
+            Map<String, Integer> conteo = new HashMap<>();
+            for (Curso curso : historialCursos) {
+                if (curso.getGenero() != null) {
+                    for (String genero : curso.getGenero().keySet()) {
+                        String nombreGenero = getNombreGeneroPorId(genero);
+                        if (nombreGenero != null) {
+                            conteo.put(nombreGenero, conteo.getOrDefault(nombreGenero, 0) + 1);
+                        }
+                    }
+                }
+            }
+            int max = conteo.values().stream().max(Integer::compare).orElse(1);
+            for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                double valor = (entry.getValue() * 1.0 / max) * 10.0;
+                generosPuntaje.merge(entry.getKey(), valor, Double::sum);
+            }
+        }
+        // 3. Respuestas del cuestionario (15%)
+        if (respuestasCuestionario != null && respuestasCuestionario.getGenero() != null) {
+            String genero = getNombreGeneroPorId(respuestasCuestionario.getGenero());
+            if (genero != null) {
+                generosPuntaje.merge(genero, 15.0, Double::sum);
+            }
+        }
+        // 4. Cursos seguidos (25%)
         if (cursosSeguidos != null && !cursosSeguidos.isEmpty()) {
             firestore.collection("cursos")
                     .whereIn("idCurso", cursosSeguidos)
                     .get()
                     .addOnSuccessListener(snapshot -> {
+                        Map<String, Integer> conteo = new HashMap<>();
                         for (QueryDocumentSnapshot doc : snapshot) {
                             Curso curso = doc.toObject(Curso.class);
                             if (curso.getGenero() != null) {
                                 for (String genero : curso.getGenero().keySet()) {
-                                    contadorGeneros.put(genero, contadorGeneros.getOrDefault(genero, 0) + 1);
+                                    String nombreGenero = getNombreGeneroPorId(genero);
+                                    if (nombreGenero != null) {
+                                        conteo.put(nombreGenero, conteo.getOrDefault(nombreGenero, 0) + 1);
+                                    }
                                 }
                             }
                         }
-
-                        // 3. Clases → buscar los cursos por ID
-                        procesarGenerosDesdeClases(firestore, contadorGeneros, callback);
+                        int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                        for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                            double valor = (entry.getValue() * 1.0 / max) * 25.0;
+                            generosPuntaje.merge(entry.getKey(), valor, Double::sum);
+                        }
+                        procesarGenerosDesdeClases(firestore, generosPuntaje, callback);
                     })
                     .addOnFailureListener(e -> {
                         Log.e("GeneroUsuario", "Error al obtener cursos seguidos", e);
-                        callback.onResult(new HashMap<>()); // error, vacío
+                        callback.onResult(new HashMap<>());
                     });
         } else {
-            procesarGenerosDesdeClases(firestore, contadorGeneros, callback);
+            procesarGenerosDesdeClases(firestore, generosPuntaje, callback);
         }
     }
-    private void procesarGenerosDesdeClases(FirebaseFirestore firestore, Map<String, Integer> contador, GeneroCallback callback) {
+    private void procesarGenerosDesdeClases(FirebaseFirestore firestore, Map<String, Double> generosPuntaje, GeneroCallback callback) {
         if (historialClases == null || historialClases.isEmpty()) {
-            finalizarConteoGenero(contador, callback);
+            finalizarConteoGenero(generosPuntaje, callback);
             return;
         }
-
         List<Integer> idsCursos = new ArrayList<>();
         for (Clase clase : historialClases) {
             if (clase.getIdCurso() != null && !idsCursos.contains(clase.getIdCurso())) {
                 idsCursos.add(clase.getIdCurso());
             }
         }
-
         if (idsCursos.isEmpty()) {
-            finalizarConteoGenero(contador, callback);
+            finalizarConteoGenero(generosPuntaje, callback);
             return;
         }
-
         firestore.collection("cursos")
                 .whereIn("idCurso", idsCursos)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    Map<String, Integer> conteo = new HashMap<>();
                     for (QueryDocumentSnapshot doc : snapshot) {
                         Curso curso = doc.toObject(Curso.class);
                         if (curso.getGenero() != null) {
                             for (String genero : curso.getGenero().keySet()) {
-                                contador.put(genero, contador.getOrDefault(genero, 0) + 1);
+                                String nombreGenero = getNombreGeneroPorId(genero);
+                                if (nombreGenero != null) {
+                                    conteo.put(nombreGenero, conteo.getOrDefault(nombreGenero, 0) + 1);
+                                }
                             }
                         }
                     }
-                    finalizarConteoGenero(contador, callback);
+                    int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                    for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                        double valor = (entry.getValue() * 1.0 / max) * 30.0;
+                        generosPuntaje.merge(entry.getKey(), valor, Double::sum);
+                    }
+                    finalizarConteoGenero(generosPuntaje, callback);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("GeneroUsuario", "Error al obtener cursos desde clases", e);
                     callback.onResult(new HashMap<>());
                 });
     }
-    private void finalizarConteoGenero(Map<String, Integer> contador, GeneroCallback callback) {
-        Map<String, Integer> resultado = new HashMap<>();
-
-        if (contador.isEmpty()) {
-            // Por defecto: Pop = 0
+    private void finalizarConteoGenero(Map<String, Double> generosPuntaje, GeneroCallback callback) {
+        if (generosPuntaje.isEmpty()) {
+            Map<String, Integer> resultado = new HashMap<>();
             resultado.put("Pop", 0);
             callback.onResult(resultado);
             return;
         }
-
-        String generoMasVisto = null;
-        int max = 0;
-
-        for (Map.Entry<String, Integer> entry : contador.entrySet()) {
+        String generoMasFuerte = null;
+        double max = -1;
+        for (Map.Entry<String, Double> entry : generosPuntaje.entrySet()) {
             if (entry.getValue() > max) {
                 max = entry.getValue();
-                generoMasVisto = entry.getKey();
+                generoMasFuerte = entry.getKey();
             }
         }
-
-        if (generoMasVisto != null) {
+        Map<String, Integer> resultado = new HashMap<>();
+        if (generoMasFuerte != null) {
             for (Map<String, Integer> generoMap : DataClusterList.listaGenero) {
-                if (generoMap.containsKey(generoMasVisto)) {
-                    resultado.put(generoMasVisto, generoMap.get(generoMasVisto));
+                if (generoMap.containsKey(generoMasFuerte)) {
+                    resultado.put(generoMasFuerte, generoMap.get(generoMasFuerte));
                     break;
                 }
             }
         }
-
         callback.onResult(resultado);
+    }
+    private String getNombreGeneroPorId(String idStr) {
+        try {
+            int id = Integer.parseInt(idStr);
+            for (Map<String, Integer> map : DataClusterList.listaGenero) {
+                for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                    if (entry.getValue() == id) {
+                        return entry.getKey();
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            return idStr; // ya es nombre
+        }
+        return null;
     }
     public void obtenerDificultadMasVistaPorInstrumento(FirebaseFirestore firestore, DificultadCallback callback) {
         obtenerInstrumentoMasVisto(firestore, instrumentoMap -> {
             if (instrumentoMap.isEmpty()) {
-                // Si no hay instrumento, devolver Principiante por default
                 Map<String, Integer> resultado = new HashMap<>();
                 resultado.put("Principiante", 0);
                 callback.onResult(resultado);
                 return;
             }
-
-            String instrumentoClave = instrumentoMap.keySet().iterator().next(); // ej. "Guitarra"
-            Map<String, Integer> contadorDificultades = new HashMap<>();
-
-            // 1. Recorre historialCursos
-            if (historialCursos != null) {
-                for (Curso curso : historialCursos) {
-                    if (curso.getInstrumento() != null && curso.getInstrumento().containsKey(instrumentoClave)) {
-                        agregarDificultad(contadorDificultades, curso);
-                    }
+            String instrumentoClave = instrumentoMap.keySet().iterator().next();
+            Map<String, Double> dificultadPuntaje = new HashMap<>();
+            // 1. Preferencias del usuario (20%)
+            if (preferenciasUsuario != null && preferenciasUsuario.getDificultades() != null) {
+                int maxPref = preferenciasUsuario.getDificultades().values().stream().max(Integer::compare).orElse(1);
+                for (Map.Entry<String, Integer> entry : preferenciasUsuario.getDificultades().entrySet()) {
+                    double valor = (entry.getValue() * 1.0 / maxPref) * 20.0;
+                    dificultadPuntaje.merge(entry.getKey(), valor, Double::sum);
                 }
             }
-
-            // 2. Cursos seguidos (de Firestore)
+            // 2. Historial de cursos (10%)
+            if (historialCursos != null) {
+                Map<String, Integer> conteo = new HashMap<>();
+                for (Curso curso : historialCursos) {
+                    if (curso.getInstrumento() != null && curso.getInstrumento().containsKey(instrumentoClave)) {
+                        agregarDificultad(conteo, curso);
+                    }
+                }
+                int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                    double valor = (entry.getValue() * 1.0 / max) * 10.0;
+                    dificultadPuntaje.merge(entry.getKey(), valor, Double::sum);
+                }
+            }
+            // 3. Respuesta del cuestionario (15%)
+            if (respuestasCuestionario != null && respuestasCuestionario.getDificultad() != null) {
+                dificultadPuntaje.merge(respuestasCuestionario.getDificultad(), 15.0, Double::sum);
+            }
+            // 4. Cursos seguidos (25%)
             if (cursosSeguidos != null && !cursosSeguidos.isEmpty()) {
                 firestore.collection("cursos")
                         .whereIn("idCurso", cursosSeguidos)
                         .get()
                         .addOnSuccessListener(snapshot -> {
+                            Map<String, Integer> conteo = new HashMap<>();
                             for (QueryDocumentSnapshot doc : snapshot) {
                                 Curso curso = doc.toObject(Curso.class);
                                 if (curso.getInstrumento() != null && curso.getInstrumento().containsKey(instrumentoClave)) {
-                                    agregarDificultad(contadorDificultades, curso);
+                                    agregarDificultad(conteo, curso);
                                 }
                             }
-
-                            // 3. Cursos de historialClases
-                            procesarDificultadesDesdeClases(firestore, instrumentoClave, contadorDificultades, callback);
+                            int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                            for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                                double valor = (entry.getValue() * 1.0 / max) * 25.0;
+                                dificultadPuntaje.merge(entry.getKey(), valor, Double::sum);
+                            }
+                            procesarDificultadesDesdeClases(firestore, instrumentoClave, dificultadPuntaje, callback);
                         })
                         .addOnFailureListener(e -> {
                             Log.e("DificultadUsuario", "Error en cursos seguidos", e);
                             callback.onResult(Map.of("Principiante", 0));
                         });
             } else {
-                procesarDificultadesDesdeClases(firestore, instrumentoClave, contadorDificultades, callback);
+                procesarDificultadesDesdeClases(firestore, instrumentoClave, dificultadPuntaje, callback);
             }
         });
     }
-    private void procesarDificultadesDesdeClases(FirebaseFirestore firestore, String instrumentoClave, Map<String, Integer> contador, DificultadCallback callback) {
+    private void procesarDificultadesDesdeClases(FirebaseFirestore firestore, String instrumentoClave, Map<String, Double> dificultadPuntaje, DificultadCallback callback) {
         if (historialClases == null || historialClases.isEmpty()) {
-            finalizarConteoDificultad(contador, callback);
+            finalizarConteoDificultad(dificultadPuntaje, callback);
             return;
         }
-
         List<Integer> idsCursos = new ArrayList<>();
         for (Clase clase : historialClases) {
             if (clase.getIdCurso() != null && !idsCursos.contains(clase.getIdCurso())) {
                 idsCursos.add(clase.getIdCurso());
             }
         }
-
         if (idsCursos.isEmpty()) {
-            finalizarConteoDificultad(contador, callback);
+            finalizarConteoDificultad(dificultadPuntaje, callback);
             return;
         }
-
         firestore.collection("cursos")
                 .whereIn("idCurso", idsCursos)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    Map<String, Integer> conteo = new HashMap<>();
                     for (QueryDocumentSnapshot doc : snapshot) {
                         Curso curso = doc.toObject(Curso.class);
                         if (curso.getInstrumento() != null && curso.getInstrumento().containsKey(instrumentoClave)) {
-                            agregarDificultad(contador, curso);
+                            agregarDificultad(conteo, curso);
                         }
                     }
-                    finalizarConteoDificultad(contador, callback);
+                    int max = conteo.values().stream().max(Integer::compare).orElse(1);
+                    for (Map.Entry<String, Integer> entry : conteo.entrySet()) {
+                        double valor = (entry.getValue() * 1.0 / max) * 30.0;
+                        dificultadPuntaje.merge(entry.getKey(), valor, Double::sum);
+                    }
+                    finalizarConteoDificultad(dificultadPuntaje, callback);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("DificultadUsuario", "Error al obtener cursos desde clases", e);
@@ -656,25 +797,23 @@ public class Usuario implements Serializable {
             }
         }
     }
-    private void finalizarConteoDificultad(Map<String, Integer> contador, DificultadCallback callback) {
+
+    private void finalizarConteoDificultad(Map<String, Double> dificultadPuntaje, DificultadCallback callback) {
         Map<String, Integer> resultado = new HashMap<>();
 
-        if (contador.isEmpty()) {
+        if (dificultadPuntaje.isEmpty()) {
             resultado.put("Principiante", 0);
             callback.onResult(resultado);
             return;
         }
-
         String dificultadMasVista = null;
-        int max = 0;
-
-        for (Map.Entry<String, Integer> entry : contador.entrySet()) {
+        double max = -1;
+        for (Map.Entry<String, Double> entry : dificultadPuntaje.entrySet()) {
             if (entry.getValue() > max) {
                 max = entry.getValue();
                 dificultadMasVista = entry.getKey();
             }
         }
-
         if (dificultadMasVista != null) {
             for (Map<String, Integer> dificultadMap : DataClusterList.listaDificultad) {
                 if (dificultadMap.containsKey(dificultadMasVista)) {
@@ -683,9 +822,9 @@ public class Usuario implements Serializable {
                 }
             }
         }
-
         callback.onResult(resultado);
     }
+
     public void calcularClusterUsuario(FirebaseFirestore firestore, Usuario usuario, ClusterCallback callback) {
         obtenerInstrumentoMasVisto(firestore, instrumentoMap -> {
             // Si no se encontró instrumento, asignar "Guitarra" por defecto
@@ -817,6 +956,7 @@ public class Usuario implements Serializable {
         }
         return 0;
     }
+
     private int obtenerIndiceDificultad(String dificultad) {
         for (Map<String, Integer> map : DataClusterList.listaDificultad) {
             if (map.containsKey(dificultad)) return map.get(dificultad);
