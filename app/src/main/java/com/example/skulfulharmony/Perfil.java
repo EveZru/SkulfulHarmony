@@ -28,6 +28,7 @@ import android.widget.Toast; // Mensajes emergentes
 import android.view.View;
 
 // 🔄 Concurrencia y ejecución en segundo plano
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService; // Ejecutor de hilos
 import java.util.concurrent.Executors; // Utilidad para crear ejecutores
 
@@ -76,13 +77,20 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import android.graphics.Color;
 
 public class Perfil extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
     private Button btnVerVideoPrueba,btn_preguntas_incorrectas;
@@ -92,7 +100,8 @@ public class Perfil extends AppCompatActivity {
     private String userId;
     private static final String ACCESS_TOKEN =  DropboxConfig.ACCESS_TOKEN;
     private LineChart chartPracticaSemanal;
-    private  LineChart chartProgresoCuestionarios;
+    private LineChart chartProgresoCuestionarios;
+    private BarChart chartProgresoCursos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,22 +144,45 @@ public class Perfil extends AppCompatActivity {
 
         // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
-        btnVerVideoPrueba = findViewById(R.id.btnVerVideoPrueba);
         btnVerVideoPrueba.setOnClickListener(v -> {
-            if (MyApp.getContadorTiempo() != null) {
-                MyApp.getContadorTiempo().probarNotificacionManual();
-                Toast.makeText(this, "🔔 Notificación de prueba programada", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "⛔ Contador no disponible", Toast.LENGTH_SHORT).show();
+            try {
+                File dbFile = getDatabasePath("localdata.db");
+                File exportFile = new File(android.os.Environment.getExternalStoragePublicDirectory(
+                        android.os.Environment.DIRECTORY_DOWNLOADS), "localdata_exportada.db");
+
+                try (FileInputStream fis = new FileInputStream(dbFile);
+                     FileOutputStream fos = new FileOutputStream(exportFile)) {
+                    byte[] buffer = new byte[4096];
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, length);
+                    }
+                }
+
+                Toast.makeText(this, "✅ BD exportada a Descargas", Toast.LENGTH_LONG).show();
+                Log.d("EXPORT_BD", "📂 Archivo exportado: " + exportFile.getAbsolutePath());
+            } catch (Exception e) {
+                Log.e("EXPORT_BD", "❌ Error al exportar BD", e);
+                Toast.makeText(this, "❌ Error al exportar la BD", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
+
+// Gráfica de práctica semanal (LineChart)
         chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
+
+// Gráfica de errores por intento (LineChart)
         chartProgresoCuestionarios = findViewById(R.id.chartProgresoCuestionarios);
         cargarGraficaErroresCuestionarios(chartProgresoCuestionarios);
+
+// Gráfica de progreso por curso (BarChart)
+        chartProgresoCursos = findViewById(R.id.chartProgresoCursos);
+        cargarGraficaProgresoCursosDesdeFirestore();
+
 
         if (bottomNavigationView1 != null) {
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -452,6 +484,98 @@ public class Perfil extends AppCompatActivity {
             tvResumen.setTextColor(Color.GREEN); // buen resultado
         }
     }
+
+    private void cargarGraficaProgresoCursosDesdeFirestore() {
+        db.collection("usuarios").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    List<Map<String, Object>> historialClasesMap = (List<Map<String, Object>>) documentSnapshot.get("historialClases");
+                    if (historialClasesMap == null || historialClasesMap.isEmpty()) return;
+
+                    // Obtener IDs de cursos únicos que el usuario ha tomado
+                    Map<Integer, List<Integer>> clasesVistasPorCurso = new HashMap<>();
+                    for (Map<String, Object> clase : historialClasesMap) {
+                        Long idCurso = (Long) clase.get("idCurso");
+                        Long idClase = (Long) clase.get("idClase");
+                        if (idCurso != null && idClase != null) {
+                            clasesVistasPorCurso
+                                    .computeIfAbsent(idCurso.intValue(), k -> new ArrayList<>())
+                                    .add(idClase.intValue());
+                        }
+                    }
+
+                    if (clasesVistasPorCurso.isEmpty()) return;
+
+                    List<Integer> idsCursos = new ArrayList<>(clasesVistasPorCurso.keySet());
+
+                    db.collection("cursos")
+                            .whereIn("idCurso", idsCursos)
+                            .get()
+                            .addOnSuccessListener(snapshot -> {
+                                List<String> nombresCursos = new ArrayList<>();
+                                List<Float> progresos = new ArrayList<>();
+
+                                for (var doc : snapshot) {
+                                    String nombreCurso = doc.getString("titulo");
+                                    List<Map<String, Object>> clases = (List<Map<String, Object>>) doc.get("clases");
+
+                                    int idCurso = doc.getLong("idCurso").intValue();
+                                    int totalClases = (clases != null) ? clases.size() : 0;
+
+                                    if (totalClases == 0) continue; // ⛔ saltar cursos sin clases reales
+
+                                    int vistas = clasesVistasPorCurso.get(idCurso).size();
+
+                                    float porcentaje = (vistas * 100f) / totalClases;
+                                    nombresCursos.add(nombreCurso != null ? nombreCurso : "Curso");
+                                    progresos.add(porcentaje);
+                                }
+
+
+                                mostrarGraficaProgreso(nombresCursos, progresos);
+                            });
+                });
+    }
+
+    private void mostrarGraficaProgreso(List<String> nombresCursos, List<Float> progresos) {
+        List<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < progresos.size(); i++) {
+            entries.add(new BarEntry(i, progresos.get(i)));
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Progreso por curso");
+        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataSet.setValueTextSize(12f);
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getBarLabel(BarEntry barEntry) {
+                return String.format("%.0f%%", barEntry.getY());
+            }
+        });
+
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.9f);
+
+        chartProgresoCursos.setData(barData);
+        chartProgresoCursos.setFitBars(true);
+        chartProgresoCursos.getDescription().setEnabled(false);
+
+        // Eje X con los nombres de cursos
+        XAxis xAxis = chartProgresoCursos.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(nombresCursos));
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+
+        // Eje Y en porcentaje (0% - 100%)
+        chartProgresoCursos.getAxisLeft().setAxisMinimum(0f);
+        chartProgresoCursos.getAxisLeft().setAxisMaximum(100f);
+        chartProgresoCursos.getAxisRight().setEnabled(false);
+
+        chartProgresoCursos.animateY(1000);
+        chartProgresoCursos.invalidate(); // refrescar
+    }
+
 
     // Método para seleccionar una imagen
     private void seleccionarImagen() {

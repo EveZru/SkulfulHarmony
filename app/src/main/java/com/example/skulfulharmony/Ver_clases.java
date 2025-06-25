@@ -315,6 +315,8 @@ public class Ver_clases extends AppCompatActivity {
                                     verPreguntas.getAdapter().notifyDataSetChanged();
                                 });
 
+
+
                                 dialog.show();
                             });
 
@@ -601,9 +603,6 @@ public class Ver_clases extends AppCompatActivity {
                     runOnUiThread(() -> Toast.makeText(Ver_clases.this, "Clase descargada correctamente", Toast.LENGTH_SHORT).show());
                 }).start();
 
-                return true;
-            } else if (id == R.id.it_compartir) {
-                Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
                 return true;
             }
             return false; // Importante devolver false si no se manejó el clic

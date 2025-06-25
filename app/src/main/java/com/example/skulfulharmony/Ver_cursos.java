@@ -612,9 +612,6 @@ public class Ver_cursos extends AppCompatActivity {
         } else if (id == R.id.it_descargar) {
             Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
             return true;
-        } else if (id == R.id.it_compartir) {
-            Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -674,9 +671,6 @@ public class Ver_cursos extends AppCompatActivity {
                     }
                 });
                 builder.show();
-                return true;
-            } else if (id == R.id.it_compartir) {
-                Toast.makeText(this, "se supone que se comparte ", Toast.LENGTH_SHORT).show();
                 return true;
             }
             return false; // Importante devolver false si no se manejó el clic
