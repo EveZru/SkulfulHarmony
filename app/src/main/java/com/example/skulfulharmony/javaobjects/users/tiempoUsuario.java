@@ -262,17 +262,33 @@ public class tiempoUsuario {
         DocumentReference userDoc = db.collection("usuarios").document(userId);
 
         long minutosHoy = tiempoAcumuladoHoy / 60; // Convertimos a minutos
+        String campoDia = "tiempo_" + fechaHoy;
 
-        Log.d("TiempoUsuario", "🔥 Guardando minutosHoy = " + minutosHoy);
+        Log.d("TiempoUsuario", "⏫ Subiendo tiempo: " + minutosHoy + " minutos hoy");
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("tiempo_" + fechaHoy, minutosHoy);  // Guardamos el tiempo de hoy
-        data.put("tiempoTotal", minutosHoy);  // Guardamos el tiempo total (si quieres actualizarlo aquí)
+        // Primero obtenemos el tiempoTotal actual
+        userDoc.get().addOnSuccessListener(documentSnapshot -> {
+            Long tiempoTotalActual = documentSnapshot.getLong("tiempoTotal");
+            if (tiempoTotalActual == null) tiempoTotalActual = 0L;
 
-        userDoc.set(data, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
-                .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar: " + e.getMessage()));
+            long nuevoTotal = tiempoTotalActual + minutosHoy;
+
+            Map<String, Object> data = new HashMap<>();
+            data.put(campoDia, minutosHoy);
+            data.put("tiempoTotal", nuevoTotal);
+
+            Log.d("TiempoUsuario", "📊 tiempoTotal anterior: " + tiempoTotalActual);
+            Log.d("TiempoUsuario", "📈 tiempoTotal nuevo: " + nuevoTotal);
+
+            userDoc.set(data, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d("TiempoUsuario", "✅ Guardado exitoso en Firestore"))
+                    .addOnFailureListener(e -> Log.e("TiempoUsuario", "❌ Error al guardar tiempo: " + e.getMessage()));
+
+        }).addOnFailureListener(e -> {
+            Log.e("TiempoUsuario", "❌ No se pudo obtener tiempoTotal actual", e);
+        });
     }
+
 
     private void cargarTiempoDeHoy() {
         // Primero, intentamos recuperar el tiempo desde SharedPreferences

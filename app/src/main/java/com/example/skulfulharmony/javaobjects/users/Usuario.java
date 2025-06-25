@@ -16,6 +16,7 @@ import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCu
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaRecomendacion;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -38,6 +39,7 @@ public class Usuario implements Serializable {
     private String correo;
     private String rol;
     private Map<String,Integer> instrumento;
+
 
     public ArrayList<PreguntaCuestionario> getPreguntasRepaso() {
         return preguntasRepaso;
@@ -283,6 +285,38 @@ public class Usuario implements Serializable {
     public void setPreguntaRecomendacionList(List<PreguntaRecomendacion> preguntaRecomendacionList) {
         this.preguntaRecomendacionList = preguntaRecomendacionList;
     }
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public List<Date> getHorasEntrada() {
+        return horasEntrada;
+    }
+
+    public void setHorasEntrada(List<Date> horasEntrada) {
+        this.horasEntrada = horasEntrada;
+    }
+
+    public LocalTime getTiempoDeNotificacion() {
+        return tiempoDeNotificacion;
+    }
+
+    public void setTiempoDeNotificacion(LocalTime tiempoDeNotificacion) {
+        this.tiempoDeNotificacion = tiempoDeNotificacion;
+    }
+
+    public Date getUltimoAcceso() {
+        return ultimoAcceso;
+    }
+
+    public void setUltimoAcceso(Date ultimoAcceso) {
+        this.ultimoAcceso = ultimoAcceso;
+    }
+
     public String setRol(){return rol;}
     public List<Integer> getCursosSeguidos() {
         return cursosSeguidos;
@@ -754,7 +788,7 @@ public class Usuario implements Serializable {
                                                     // Actualizamos el documento entero (incluyendo instrumento y cluster)
                                                     firestore.collection("usuarios")
                                                             .document(usuario.getId())
-                                                            .set(usuarioActual)
+                                                            .set(usuarioActual, SetOptions.merge())
                                                             .addOnSuccessListener(aVoid -> Log.d("ClusterUsuario", "Datos actualizados correctamente"))
                                                             .addOnFailureListener(e -> Log.e("ClusterUsuario", "Error al actualizar datos del usuario", e));
 
