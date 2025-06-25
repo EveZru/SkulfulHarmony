@@ -100,7 +100,6 @@ public class Perfil extends AppCompatActivity {
     private String userId;
     private static final String ACCESS_TOKEN =  DropboxConfig.ACCESS_TOKEN;
     private LineChart chartPracticaSemanal;
-    private LineChart chartProgresoCuestionarios;
     private BarChart chartProgresoCursos;
 
     @Override
@@ -172,17 +171,9 @@ public class Perfil extends AppCompatActivity {
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
 
-// Gráfica de práctica semanal (LineChart)
+        // Gráfica de práctica semanal
         chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
-
-// Gráfica de errores por intento (LineChart)
-        chartProgresoCuestionarios = findViewById(R.id.chartProgresoCuestionarios);
-        cargarGraficaErroresCuestionarios(chartProgresoCuestionarios);
-
-// Gráfica de progreso por curso (BarChart)
         chartProgresoCursos = findViewById(R.id.chartProgresoCursos);
-        cargarGraficaProgresoCursosDesdeFirestore();
-
 
         if (bottomNavigationView1 != null) {
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -203,25 +194,6 @@ public class Perfil extends AppCompatActivity {
             });
         }
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 123) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "✅ Permiso de notificación concedido", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "❌ Permiso de notificación DENEGADO", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    private void verificarPermisoNotificacion() {
-        boolean tienePermiso = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                == PackageManager.PERMISSION_GRANTED;
-        Toast.makeText(this, "Permiso notificación: " + (tienePermiso ? "✅ SÍ" : "❌ NO"), Toast.LENGTH_SHORT).show();
-    }
-
 
     // Método para mostrar el menú flotante
     private void showPopupMenu(View view) {
@@ -288,7 +260,7 @@ public class Perfil extends AppCompatActivity {
                     Glide.with(this).load(fotoUrl).into(ivProfilePicture);
                 }
 
-                // Procesar tiempos diarios para gráfica
+                // Procesar tiempos diarios para gráfica de práctica semanal
                 Map<String, Object> datos = documentSnapshot.getData();
                 if (datos != null) {
                     Map<String, Integer> tiemposPorDia = new HashMap<>();
@@ -304,6 +276,30 @@ public class Perfil extends AppCompatActivity {
                     Map<Integer, Integer> tiemposPorSemana = agruparPorSemana(tiemposPorDia);
                     cargarGraficaPractica(tiemposPorSemana);
                 }
+
+                // 🔢 Mostrar progreso de cursos en gráfico
+                Object rawProgresoCursos = documentSnapshot.get("progresoCursos");
+                if (rawProgresoCursos instanceof Map) {
+                    Map<String, List<Long>> progresoCursos = new HashMap<>();
+                    Map<String, Object> progresoMap = (Map<String, Object>) rawProgresoCursos;
+
+                    for (Map.Entry<String, Object> entry : progresoMap.entrySet()) {
+                        String cursoId = entry.getKey();
+                        Object listaRaw = entry.getValue();
+                        List<Long> clases = new ArrayList<>();
+                        if (listaRaw instanceof List<?>) {
+                            for (Object item : (List<?>) listaRaw) {
+                                if (item instanceof Number) {
+                                    clases.add(((Number) item).longValue());
+                                }
+                            }
+                        }
+                        progresoCursos.put(cursoId, clases);
+                    }
+
+                    cargarGraficaProgresoCursos(progresoCursos);
+                }
+
             } else {
                 // Crear perfil nuevo con valores predeterminados
                 Map<String, Object> userData = new HashMap<>();
@@ -419,163 +415,91 @@ public class Perfil extends AppCompatActivity {
         }
     }
 
-    private void cargarGraficaErroresCuestionarios(LineChart chart) {
-        SharedPreferences prefs = getSharedPreferences("historial_errores_Curso 1", MODE_PRIVATE);
-
-        List<Entry> entries = new ArrayList<>();
-        List<String> etiquetas = new ArrayList<>();
-
-        int i = 0;
-        while (prefs.contains("intento_" + (i + 1))) {
-            i++;
-            int errores = prefs.getInt("intento_" + i, 0);
-            entries.add(new Entry(i - 1, errores));
-            etiquetas.add("Intento " + i);
-        }
-
-        if (entries.isEmpty()) {
-            chart.setVisibility(View.GONE);
-            TextView tvResumen = findViewById(R.id.tvResumenErrores);
-            tvResumen.setText("No hay errores registrados aún.");
-            tvResumen.setTextColor(Color.GRAY);
-            return;
-        }
-
-        LineDataSet dataSet = new LineDataSet(entries, "Errores por intento");
-        dataSet.setColor(Color.RED);
-        dataSet.setCircleColor(Color.RED);
-        dataSet.setValueTextSize(12f);
-
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(etiquetas));
-        xAxis.setGranularity(1f);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-
-        chart.getAxisLeft().setAxisMinimum(0f);
-        chart.getAxisRight().setEnabled(false);
-
-        chart.getDescription().setText("Errores en cuestionarios");
-        chart.getDescription().setTextSize(14f);
-        chart.getLegend().setEnabled(true);
-
-        chart.animateY(1000);
-        chart.invalidate();
-
-        // 🔢 Mostrar resumen debajo de la gráfica
-        TextView tvResumen = findViewById(R.id.tvResumenErrores);
-
-        int totalErrores = 0;
-        for (Entry entry : entries) {
-            totalErrores += entry.getY();
-        }
-
-        float promedio = entries.size() > 0 ? (float) totalErrores / entries.size() : 0;
-        tvResumen.setText("Promedio de errores por intento: " + String.format("%.2f", promedio));
-
-        if (promedio >= 2.0f) {
-            tvResumen.setTextColor(Color.RED); // demasiado errores
-        } else if (promedio >= 1.0f) {
-            tvResumen.setTextColor(Color.YELLOW); // promedio moderado
-        } else {
-            tvResumen.setTextColor(Color.GREEN); // buen resultado
-        }
-    }
-
-    private void cargarGraficaProgresoCursosDesdeFirestore() {
-        db.collection("usuarios").document(userId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    List<Map<String, Object>> historialClasesMap = (List<Map<String, Object>>) documentSnapshot.get("historialClases");
-                    if (historialClasesMap == null || historialClasesMap.isEmpty()) return;
-
-                    // Obtener IDs de cursos únicos que el usuario ha tomado
-                    Map<Integer, List<Integer>> clasesVistasPorCurso = new HashMap<>();
-                    for (Map<String, Object> clase : historialClasesMap) {
-                        Long idCurso = (Long) clase.get("idCurso");
-                        Long idClase = (Long) clase.get("idClase");
-                        if (idCurso != null && idClase != null) {
-                            clasesVistasPorCurso
-                                    .computeIfAbsent(idCurso.intValue(), k -> new ArrayList<>())
-                                    .add(idClase.intValue());
-                        }
-                    }
-
-                    if (clasesVistasPorCurso.isEmpty()) return;
-
-                    List<Integer> idsCursos = new ArrayList<>(clasesVistasPorCurso.keySet());
-
-                    db.collection("cursos")
-                            .whereIn("idCurso", idsCursos)
-                            .get()
-                            .addOnSuccessListener(snapshot -> {
-                                List<String> nombresCursos = new ArrayList<>();
-                                List<Float> progresos = new ArrayList<>();
-
-                                for (var doc : snapshot) {
-                                    String nombreCurso = doc.getString("titulo");
-                                    List<Map<String, Object>> clases = (List<Map<String, Object>>) doc.get("clases");
-
-                                    int idCurso = doc.getLong("idCurso").intValue();
-                                    int totalClases = (clases != null) ? clases.size() : 0;
-
-                                    if (totalClases == 0) continue; // ⛔ saltar cursos sin clases reales
-
-                                    int vistas = clasesVistasPorCurso.get(idCurso).size();
-
-                                    float porcentaje = (vistas * 100f) / totalClases;
-                                    nombresCursos.add(nombreCurso != null ? nombreCurso : "Curso");
-                                    progresos.add(porcentaje);
-                                }
-
-
-                                mostrarGraficaProgreso(nombresCursos, progresos);
-                            });
-                });
-    }
-
-    private void mostrarGraficaProgreso(List<String> nombresCursos, List<Float> progresos) {
+    private void cargarGraficaProgresoCursos(Map<String, List<Long>> progresoCursos) {
         List<BarEntry> entries = new ArrayList<>();
-        for (int i = 0; i < progresos.size(); i++) {
-            entries.add(new BarEntry(i, progresos.get(i)));
-        }
+        List<String> etiquetasCursos = new ArrayList<>();
 
-        BarDataSet dataSet = new BarDataSet(entries, "Progreso por curso");
-        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        int totalCursos = progresoCursos.size();
+        int[] index = {0};
+
+        for (Map.Entry<String, List<Long>> entry : progresoCursos.entrySet()) {
+            String cursoIdStr = entry.getKey().replace("curso_", "");
+            int cursoId = Integer.parseInt(cursoIdStr);
+            List<Long> clasesCompletadas = entry.getValue();
+            int currentIndex = index[0];
+
+            db.collection("cursos")
+                    .whereEqualTo("idCurso", cursoId)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(snapshotCurso -> {
+                        if (!snapshotCurso.isEmpty()) {
+                            String nombreCurso = snapshotCurso.getDocuments().get(0).getString("titulo");
+
+                            db.collection("clases")
+                                    .whereEqualTo("idCurso", cursoId)
+                                    .get()
+                                    .addOnSuccessListener(snapshotClases -> {
+                                        int totalClases = snapshotClases.size();
+                                        float porcentaje = totalClases > 0 ? (clasesCompletadas.size() * 100f / totalClases) : 0f;
+
+                                        entries.add(new BarEntry(currentIndex, porcentaje));
+                                        etiquetasCursos.add(nombreCurso != null ? nombreCurso : "Curso " + cursoIdStr);
+
+                                        if (entries.size() == totalCursos) {
+                                            mostrarGrafica(entries, etiquetasCursos);
+                                        }
+                                    }).addOnFailureListener(e ->
+                                            Log.e("ProgresoCursos", "❌ Error obteniendo clases de curso " + cursoId, e)
+                                    );
+                        } else {
+                            Log.w("ProgresoCursos", "⚠️ Curso no encontrado para ID " + cursoId);
+                        }
+                    });
+
+            index[0]++;
+        }
+    }
+
+    private void mostrarGrafica(List<BarEntry> entries, List<String> etiquetasCursos) {
+        BarDataSet dataSet = new BarDataSet(entries, "Progreso (%) por curso");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        dataSet.setValueTextColor(Color.BLACK);
         dataSet.setValueTextSize(12f);
+
+        // Mostrar solo el porcentaje dentro de la barra
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getBarLabel(BarEntry barEntry) {
-                return String.format("%.0f%%", barEntry.getY());
+                return Math.round(barEntry.getY()) + "%";
             }
         });
 
         BarData barData = new BarData(dataSet);
-        barData.setBarWidth(0.9f);
+        barData.setBarWidth(0.6f); // más delgado para evitar empalme
 
         chartProgresoCursos.setData(barData);
-        chartProgresoCursos.setFitBars(true);
-        chartProgresoCursos.getDescription().setEnabled(false);
 
-        // Eje X con los nombres de cursos
+        // Etiquetas en el eje X
         XAxis xAxis = chartProgresoCursos.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(nombresCursos));
-        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(etiquetasCursos));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
         xAxis.setDrawGridLines(false);
+        xAxis.setLabelRotationAngle(0); // 🔄 sin inclinación
+        xAxis.setLabelCount(etiquetasCursos.size());
 
-        // Eje Y en porcentaje (0% - 100%)
         chartProgresoCursos.getAxisLeft().setAxisMinimum(0f);
-        chartProgresoCursos.getAxisLeft().setAxisMaximum(100f);
+        chartProgresoCursos.getAxisLeft().setAxisMaximum(100f); // porque es porcentaje
         chartProgresoCursos.getAxisRight().setEnabled(false);
+        chartProgresoCursos.getDescription().setEnabled(false);
+        chartProgresoCursos.getLegend().setEnabled(false);
 
+        chartProgresoCursos.setFitBars(true);
         chartProgresoCursos.animateY(1000);
-        chartProgresoCursos.invalidate(); // refrescar
+        chartProgresoCursos.invalidate(); // 🧼 refrescar vista
     }
-
 
     // Método para seleccionar una imagen
     private void seleccionarImagen() {

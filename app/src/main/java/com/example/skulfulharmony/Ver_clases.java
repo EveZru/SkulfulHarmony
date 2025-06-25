@@ -56,6 +56,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.Empty;
@@ -255,36 +256,125 @@ public class Ver_clases extends AppCompatActivity {
 
                             btnCalificar.setOnClickListener(v -> {
                                 cantidadRespuestasCorrectas = 0;
-                               for(PreguntaCuestionario pregunta : clase.getPreguntas()){
-                                   if(pregunta.getRespuestaCorrecta().equals(adapterPreguntasEnVerClase.getRespuestas().get(clase.getPreguntas().indexOf(pregunta)))) {
 
-                                       cantidadRespuestasCorrectas++;
-                                   }
-                                   //List<PreguntaCuestionario> preguntasGuardadas;
-                                   List<PreguntaCuestionario> preguntasIncorrectasDeEstaClase = new ArrayList<>();
-                                   if (jsonGuardado != null) {
-                                       Type listType = new TypeToken<List<PreguntaCuestionario>>() {}.getType();
-                                       try{
-                                           preguntasIncorrectasDeEstaClase = gson.fromJson(jsonGuardado, listType);
-                                       }catch (Exception e) {
-                                           Log.e(TAG, "Error al cargar preguntas incorrectas: " + e.getMessage());
-                                           preguntasIncorrectasDeEstaClase = new ArrayList<>();
-                                       }
+                                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                                if (currentUser == null) {
+                                    Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 
-                                       //  preguntasGuardadas = gson.fromJson(jsonGuardado, new com.google.gson.reflect.TypeToken<List<String>>(){}.getType());
-                                   } else {
-                                       preguntasIncorrectasDeEstaClase=new ArrayList<>();
-                                   }
-                                   for (PreguntaCuestionario  preguntaIndividual : clase.getPreguntas()) {// aqui marca error en pregunta
-                                       if(!preguntasIncorrectasDeEstaClase.contains(pregunta)){
-                                           preguntasIncorrectasDeEstaClase.add(pregunta);
-                                       }
-                                   }
-                                   // Guardar la lista actualizada
-                                   String jsonNuevo = gson.toJson(preguntasIncorrectasDeEstaClase);
-                                   prefs.edit().putString("preguntas_incorrectas", jsonNuevo).apply();
-                               }
+                                // 🔁 Guardamos todas las respuestas (correctas o no)
+                                Map<String, Object> mapaRespuestas = new HashMap<>();
+                                List<Integer> respuestas = adapterPreguntasEnVerClase.getRespuestas();
 
+                                for (int i = 0; i < clase.getPreguntas().size(); i++) {
+                                    PreguntaCuestionario pregunta = clase.getPreguntas().get(i);
+                                    int respuestaCorrecta = pregunta.getRespuestaCorrecta();
+                                    int respuestaUsuario = respuestas.get(i);
+
+                                    if (respuestaCorrecta == respuestaUsuario) {
+                                        cantidadRespuestasCorrectas++;
+                                        mapaRespuestas.put("pregunta_" + i, true);
+                                    } else {
+                                        mapaRespuestas.put("pregunta_" + i, false);
+                                    }
+                                }
+
+                                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                                DocumentReference userRef = firestore.collection("usuarios").document(currentUser.getUid());
+
+                                // 🔄 Guardar respuestas completas
+                                userRef.get().addOnSuccessListener(snapshot -> {
+                                    List<Map<String, Object>> listaRespuestas = new ArrayList<>();
+
+                                    Object rawGuardado = snapshot.get("respuestasIncorrectas");
+                                    if (rawGuardado instanceof List<?>) {
+                                        for (Object entrada : (List<?>) rawGuardado) {
+                                            if (entrada instanceof Map) {
+                                                listaRespuestas.add((Map<String, Object>) entrada);
+                                            }
+                                        }
+                                    }
+
+                                    boolean actualizo = false;
+                                    for (Map<String, Object> intento : listaRespuestas) {
+                                        Long cursoId = ((Number) intento.get("idCurso")).longValue();
+                                        Long claseId = ((Number) intento.get("idClase")).longValue();
+
+                                        if (cursoId == idCurso && claseId == idClase) {
+                                            intento.put("respuestas", mapaRespuestas); // ✅ incluye correctas también
+                                            actualizo = true;
+                                            Log.d("Firebase", "🔁 Actualizando respuestas (todo)");
+                                            break;
+                                        }
+                                    }
+
+                                    if (!actualizo) {
+                                        Map<String, Object> nueva = new HashMap<>();
+                                        nueva.put("idCurso", idCurso);
+                                        nueva.put("idClase", idClase);
+                                        nueva.put("respuestas", mapaRespuestas);
+                                        listaRespuestas.add(nueva);
+                                        Log.d("Firebase", "🆕 Agregando nuevo set completo");
+                                    }
+
+                                    userRef.set(new HashMap<String, Object>() {{
+                                        put("respuestasIncorrectas", listaRespuestas);
+                                    }}, SetOptions.merge()).addOnSuccessListener(unused -> {
+                                        Toast.makeText(Ver_clases.this, "✅ Respuestas guardadas (completo)", Toast.LENGTH_SHORT).show();
+                                    }).addOnFailureListener(e -> {
+                                        Log.e("Firebase", "🔥 Error al guardar respuestas", e);
+                                        Toast.makeText(Ver_clases.this, "Error al guardar respuestas", Toast.LENGTH_SHORT).show();
+                                    });
+                                });
+
+                                // ✅ Si el usuario respondió todo bien, se cuenta la clase como completada
+                                int total = clase.getPreguntas().size();
+                                int porcentaje = (int) (((double) cantidadRespuestasCorrectas / total) * 100);
+
+                                if (porcentaje == 100) {
+                                    DocumentReference progresoRef = FirebaseFirestore.getInstance()
+                                            .collection("usuarios")
+                                            .document(currentUser.getUid());
+
+                                    progresoRef.get().addOnSuccessListener(docSnapshot -> {
+                                        Map<String, Object> progreso = new HashMap<>();
+                                        Map<String, Object> nuevosDatos = new HashMap<>();
+
+                                        Object raw = docSnapshot.get("progresoCursos");
+                                        if (raw instanceof Map) {
+                                            progreso = (Map<String, Object>) raw;
+                                        }
+
+                                        String claveCurso = "curso_" + idCurso;
+                                        List<Long> clasesCompletadas = new ArrayList<>();
+
+                                        if (progreso.containsKey(claveCurso)) {
+                                            Object listaRaw = progreso.get(claveCurso);
+                                            if (listaRaw instanceof List<?>) {
+                                                for (Object id : (List<?>) listaRaw) {
+                                                    if (id instanceof Number) {
+                                                        clasesCompletadas.add(((Number) id).longValue());
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (!clasesCompletadas.contains((long) idClase)) {
+                                            clasesCompletadas.add((long) idClase);
+                                            progreso.put(claveCurso, clasesCompletadas);
+
+                                            nuevosDatos.put("progresoCursos", progreso);
+                                            progresoRef.set(nuevosDatos, SetOptions.merge())
+                                                    .addOnSuccessListener(aVoid -> Log.d("Progreso", "🎉 Clase completada agregada al progreso"))
+                                                    .addOnFailureListener(e -> Log.e("Progreso", "❌ Error al guardar progreso", e));
+                                        } else {
+                                            Log.d("Progreso", "🟡 Clase ya estaba completada");
+                                        }
+                                    }).addOnFailureListener(e -> Log.e("Progreso", "❌ Error al obtener progreso", e));
+                                }
+
+                                // Mostrar resultado
                                 Dialog dialog = new Dialog(Ver_clases.this);
                                 dialog.setContentView(R.layout.dialog_calificacionpreguntas_verclase);
                                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -296,26 +386,13 @@ public class Ver_clases extends AppCompatActivity {
                                 Button aceptar = dialog.findViewById(R.id.btn_aceptar_dialogcalificacionpreguntas);
                                 Button reintentar = dialog.findViewById(R.id.btn_reintentar_dialogcalificacionpreguntas);
 
-                                int total = clase.getPreguntas().size();
-                                int porcentaje = (int) (((double) cantidadRespuestasCorrectas / total) * 100);
                                 String mensaje = MensajeCalificacion.obtenerMensaje(porcentaje);
-
                                 mensajeGrande.setText(mensaje);
                                 mensajePequeno.setText("Has completado la tarea con éxito.");
                                 puntuacion.setText(cantidadRespuestasCorrectas + "/" + total);
 
-                                //Aquí añadir la logica para guardar la calificacion del usuario en el algoritmo de mejora
-                                // aqui se guardan las preguntas incorrectas
-
-                                aceptar.setOnClickListener(v1 -> {
-                                    dialog.dismiss();
-                                });
-
-                                reintentar.setOnClickListener(v1 -> {
-                                    verPreguntas.getAdapter().notifyDataSetChanged();
-                                });
-
-
+                                aceptar.setOnClickListener(v1 -> dialog.dismiss());
+                                reintentar.setOnClickListener(v1 -> verPreguntas.getAdapter().notifyDataSetChanged());
 
                                 dialog.show();
                             });
