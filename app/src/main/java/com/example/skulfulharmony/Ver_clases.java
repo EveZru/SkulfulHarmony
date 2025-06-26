@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -35,6 +36,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.adapters.AdapterArchivosClase;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.clustering.DataClusterList;
+import com.example.skulfulharmony.javaobjects.clustering.PreferenciasUsuario;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.google.firebase.firestore.DocumentReference;
 
 import com.dropbox.core.v2.clouddocs.UserInfo;
@@ -452,76 +456,145 @@ public class Ver_clases extends AppCompatActivity {
         });
 
         crear_comentario.setOnClickListener(v -> {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            String coment = etcomentario.getText().toString().trim();
-            Timestamp fecha = Timestamp.now();
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String coment = etcomentario.getText().toString().trim();
+                    Timestamp fecha = Timestamp.now();
 
-            if (user == null) {
-                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (coment.isEmpty()) {
-                Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                    if (user == null) {
+                        Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (coment.isEmpty()) {
+                        Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-            Comentario comentario = new Comentario();
-            comentario.setUsuario(user.getEmail());
-            comentario.setTexto(coment);
-            comentario.setFecha(fecha);
-            comentario.setIdCurso(idCurso);
-            comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
-            comentario.setUidAutor(user.getUid());
+                    Comentario comentario = new Comentario();
+                    comentario.setUsuario(user.getEmail());
+                    comentario.setTexto(coment);
+                    comentario.setFecha(fecha);
+                    comentario.setIdCurso(idCurso);
+                    comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
+                    comentario.setUidAutor(user.getUid());
 
-            db.collection("clases")
-                    .whereEqualTo("idCurso", idCurso)
-                    .whereEqualTo("idClase", idClase)
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                            String docId = doc.getId();
-                            Clase clase = doc.toObject(Clase.class);
-                            List<Comentario> comentarios = clase.getComentarios();
-                            if (comentarios == null) comentarios = new ArrayList<>();
-                            Integer nuevaId = comentarios.size() + 1;
-                            comentario.setIdComentario(nuevaId);
-                            comentarios.add(comentario);
+                    db.collection("clases")
+                            .whereEqualTo("idCurso", idCurso)
+                            .whereEqualTo("idClase", idClase)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                                    String docId = doc.getId();
+                                    Clase clase = doc.toObject(Clase.class);
+                                    List<Comentario> comentarios = clase.getComentarios();
+                                    if (comentarios == null) comentarios = new ArrayList<>();
+                                    Integer nuevaId = comentarios.size() + 1;
+                                    comentario.setIdComentario(nuevaId);
+                                    comentarios.add(comentario);
 
-                            db.collection("clases")
-                                    .document(docId)
-                                    .update("comentarios", comentarios)
-                                    .addOnSuccessListener(unused -> {
-                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                        etcomentario.setText("");
-                                        cargarComentarios(idCurso, idClase);
+                                    db.collection("clases")
+                                            .document(docId)
+                                            .update("comentarios", comentarios)
+                                            .addOnSuccessListener(unused -> {
+                                                Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                                etcomentario.setText("");
+                                                cargarComentarios(idCurso, idClase);
 
-                                        // ✅ También subimos el doc a la colección 'comentarios' para activar notificaciones después
-                                        db.collection("comentarios")
-                                                .document(String.valueOf(nuevaId))
-                                                .set(new HashMap<String, Object>() {{
-                                                    put("autorId", user.getUid());
-                                                    put("texto", coment);
-                                                    put("likes", 0); // desde el inicio
-                                                    put("idClase", idClase);
-                                                    put("idCurso", idCurso);
-                                                    put("timestamp", fecha);
-                                                }})
-                                                .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
-                                                .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
-                                    });
+                                                // ✅ También subimos el doc a la colección 'comentarios' para activar notificaciones después
+                                                db.collection("comentarios")
+                                                        .document(String.valueOf(nuevaId))
+                                                        .set(new HashMap<String, Object>() {{
+                                                            put("autorId", user.getUid());
+                                                            put("texto", coment);
+                                                            put("likes", 0); // desde el inicio
+                                                            put("idClase", idClase);
+                                                            put("idCurso", idCurso);
+                                                            put("timestamp", fecha);
+                                                        }})
+                                                        .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
+                                                        .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                            });
 
-                        } else {
-                            Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
-                    });
-        });
+                                } else {
+                                    Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
+                            });
+                    db.collection("usuarios")
+                            .whereEqualTo("correo", user.getEmail())
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                                    String docId = doc.getId();
+                                    Usuario usuario = doc.toObject(Usuario.class);
+
+                                    if (usuario != null) {
+                                        comentario.setIdComentario(usuario.getComentarios().size() + 1);
+                                        usuario.getComentarios().add(comentario);
+
+                                        PreferenciasUsuario preferenciasUsuarioTemp = usuario.getPreferenciasUsuario();
+                                        if (preferenciasUsuarioTemp == null) {
+                                            preferenciasUsuarioTemp = new PreferenciasUsuario();
+                                        }
+                                        final PreferenciasUsuario finalPreferenciasUsuario = preferenciasUsuarioTemp;
+
+                                        db.collection("cursos")
+                                                .whereEqualTo("idCurso", idCurso)
+                                                .limit(1)
+                                                .get()
+                                                .addOnSuccessListener(cursoQuery -> {
+                                                    if (!cursoQuery.isEmpty()) {
+                                                        Curso curso = cursoQuery.getDocuments().get(0).toObject(Curso.class);
+
+                                                        if (curso != null) {
+                                                            // Asegúrate de que no sean listas vacías o null
+                                                            if (!curso.getInstrumento().isEmpty()) {
+                                                                String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, curso.getInstrumento().get(0));
+                                                                if (instrumentoStr != null) {
+                                                                    finalPreferenciasUsuario.incrementarInstrumento(instrumentoStr);
+                                                                }
+                                                            }
+                                                            if (!curso.getDificultad().isEmpty()) {
+                                                                String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, curso.getDificultad().get(0));
+                                                                if (dificultadStr != null) {
+                                                                    finalPreferenciasUsuario.incrementarDificultad(dificultadStr);
+                                                                }
+                                                            }
+                                                            if (!curso.getGenero().isEmpty()) {
+                                                                String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, curso.getGenero().get(0));
+                                                                if (generoStr != null) {
+                                                                    finalPreferenciasUsuario.decrementarGenero(generoStr);
+                                                                }
+                                                            }
+
+                                                            usuario.setPreferenciasUsuario(finalPreferenciasUsuario);
+
+                                                            // Convertimos el usuario en un Map para hacer merge
+                                                            Map<String, Object> userMap = new HashMap<>();
+                                                            userMap.put("comentarios", usuario.getComentarios());
+                                                            userMap.put("preferenciasUsuario", finalPreferenciasUsuario);
+
+                                                            db.collection("usuarios")
+                                                                    .document(docId)
+                                                                    .set(userMap, SetOptions.merge())
+                                                                    .addOnSuccessListener(aVoid ->
+                                                                            Log.d("Usuario", "Preferencias y comentario actualizados correctamente"))
+                                                                    .addOnFailureListener(e ->
+                                                                            Log.e("Usuario", "Error al actualizar usuario", e));
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                }
+                            });
+                });
 
         iv_like.setOnClickListener(v -> {
             boolean estabaLike = like;
@@ -539,6 +612,7 @@ public class Ver_clases extends AppCompatActivity {
                 modificarmegusta(false, estabaLike, estabaDislike); // Quitar like
             }
         });
+
 
         iv_dislike.setOnClickListener(v -> {
             boolean estabaLike = like;
@@ -820,7 +894,7 @@ public class Ver_clases extends AppCompatActivity {
                         if (activado) {
                             likeCount += 1;
                             if (antesDislike) dislikeCount = Math.max(0, dislikeCount - 1);
-                            actualizarPromedioCurso(antesDislike ? 0.20 : 0.10); // quitó dislike, puso like
+                            actualizarPromedioCurso(antesDislike ? 0.20 : 0.10);
                             updates.put("calificacionPorUsuario." + user.getUid(), true);
                         } else {
                             likeCount = Math.max(0, likeCount - 1);
@@ -831,14 +905,24 @@ public class Ver_clases extends AppCompatActivity {
                         updates.put("meGusta", likeCount);
                         updates.put("noGusta", dislikeCount);
 
-                        db.collection("clases").document(docId)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
+                        db.collection("clases").document(docId).update(updates);
 
+                        // Actualizar preferencias del usuario
+                        db.collection("cursos").document(String.valueOf(idCurso))
+                                .get().addOnSuccessListener(cursoDoc -> {
+                                    if (cursoDoc.exists()) {
+                                        Map<String, Integer> instrumento = (Map<String, Integer>) cursoDoc.get("instrumento");
+                                        Map<String, Integer> genero = (Map<String, Integer>) cursoDoc.get("genero");
+                                        Map<String, Integer> dificultad = (Map<String, Integer>) cursoDoc.get("dificultad");
+
+                                        modificarPreferenciasUsuario(user.getUid(), instrumento, genero, dificultad, activado);
+                                    }
                                 });
                     }
                 });
     }
+
+
     private void modificarnogusta(boolean activado, boolean antesLike, boolean antesDislike) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
@@ -866,7 +950,7 @@ public class Ver_clases extends AppCompatActivity {
                         if (activado) {
                             dislikeCount += 1;
                             if (antesLike) likeCount = Math.max(0, likeCount - 1);
-                            actualizarPromedioCurso(antesLike ? -0.20 : -0.10); // quitó like, puso dislike
+                            actualizarPromedioCurso(antesLike ? -0.20 : -0.10);
                             updates.put("calificacionPorUsuario." + user.getUid(), false);
                         } else {
                             dislikeCount = Math.max(0, dislikeCount - 1);
@@ -877,13 +961,31 @@ public class Ver_clases extends AppCompatActivity {
                         updates.put("meGusta", likeCount);
                         updates.put("noGusta", dislikeCount);
 
-                        db.collection("clases").document(docId)
-                                .update(updates)
-                                .addOnSuccessListener(aVoid -> {
+                        db.collection("clases").document(docId).update(updates);
 
+                        // Actualizar preferencias del usuario
+                        db.collection("cursos").document(String.valueOf(idCurso))
+                                .get().addOnSuccessListener(cursoDoc -> {
+                                    if (cursoDoc.exists()) {
+                                        Map<String, Integer> instrumento = (Map<String, Integer>) cursoDoc.get("instrumento");
+                                        Map<String, Integer> genero = (Map<String, Integer>) cursoDoc.get("genero");
+                                        Map<String, Integer> dificultad = (Map<String, Integer>) cursoDoc.get("dificultad");
+
+                                        modificarPreferenciasUsuario(user.getUid(), instrumento, genero, dificultad, !activado);
+                                    }
                                 });
                     }
                 });
+    }
+
+
+    public static String obtenerClavePorValor(ArrayList<Map<String, Integer>> lista, int valor) {
+        for (Map<String, Integer> map : lista) {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue() == valor) return entry.getKey();
+            }
+        }
+        return null;
     }
 
 
@@ -910,6 +1012,54 @@ public class Ver_clases extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Log.e("Curso", "Error en búsqueda de curso", e));
+    }
+
+    private void modificarPreferenciasUsuario(String userId, Map<String, Integer> instrumento, Map<String, Integer> genero, Map<String, Integer> dificultad, boolean incremento) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("usuarios").document(userId);
+
+        userRef.get().addOnSuccessListener(snapshot -> {
+            if (!snapshot.exists()) return;
+
+            // Obtener PreferenciasUsuario directamente desde el documento
+            Map<String, Object> rawPrefs = (Map<String, Object>) snapshot.get("preferenciasUsuario");
+            PreferenciasUsuario preferencias = new PreferenciasUsuario();
+
+            if (rawPrefs != null) {
+                Map<String, Long> instrumentosRaw = (Map<String, Long>) rawPrefs.get("instrumentos");
+                Map<String, Long> generosRaw = (Map<String, Long>) rawPrefs.get("generos");
+                Map<String, Long> dificultadesRaw = (Map<String, Long>) rawPrefs.get("dificultades");
+
+                if (instrumentosRaw != null) {
+                    for (String key : instrumentosRaw.keySet())
+                        preferencias.getInstrumentos().put(key, instrumentosRaw.get(key).intValue());
+                }
+                if (generosRaw != null) {
+                    for (String key : generosRaw.keySet())
+                        preferencias.getGeneros().put(key, generosRaw.get(key).intValue());
+                }
+                if (dificultadesRaw != null) {
+                    for (String key : dificultadesRaw.keySet())
+                        preferencias.getDificultades().put(key, dificultadesRaw.get(key).intValue());
+                }
+            }
+
+            // Actualizar preferencias
+            instrumento.keySet().forEach(instr -> {
+                if (incremento) preferencias.incrementarInstrumento(instr);
+                else preferencias.decrementarInstrumento(instr);
+            });
+            genero.keySet().forEach(gen -> {
+                if (incremento) preferencias.incrementarGenero(gen);
+                else preferencias.decrementarGenero(gen);
+            });
+            dificultad.keySet().forEach(diff -> {
+                if (incremento) preferencias.incrementarDificultad(diff);
+                else preferencias.decrementarDificultad(diff);
+            });
+
+            userRef.update("preferenciasUsuario", preferencias);
+        });
     }
 
 

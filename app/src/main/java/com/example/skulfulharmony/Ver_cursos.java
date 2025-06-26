@@ -41,6 +41,8 @@ import com.dropbox.core.v2.clouddocs.UserInfo;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.adapters.AdapterVerClasesCursoOtroUsuario;
 import com.example.skulfulharmony.adapters.AdapterVerCursoVerComentarios;
+import com.example.skulfulharmony.javaobjects.clustering.DataClusterList;
+import com.example.skulfulharmony.javaobjects.clustering.PreferenciasUsuario;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
@@ -65,6 +67,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 
 
@@ -313,6 +316,75 @@ public class Ver_cursos extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error al buscar el curso", Toast.LENGTH_SHORT).show();
+                    });
+            db.collection("usuarios")
+                    .whereEqualTo("correo", user.getEmail())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                            String docId = doc.getId();
+                            Usuario usuario = doc.toObject(Usuario.class);
+
+                            if (usuario != null) {
+                                comentario.setIdComentario(usuario.getComentarios().size() + 1);
+                                usuario.getComentarios().add(comentario);
+
+                                PreferenciasUsuario preferenciasUsuarioTemp = usuario.getPreferenciasUsuario();
+                                if (preferenciasUsuarioTemp == null) {
+                                    preferenciasUsuarioTemp = new PreferenciasUsuario();
+                                }
+                                final PreferenciasUsuario finalPreferenciasUsuario = preferenciasUsuarioTemp;
+
+                                db.collection("cursos")
+                                        .whereEqualTo("idCurso", idCurso)
+                                        .limit(1)
+                                        .get()
+                                        .addOnSuccessListener(cursoQuery -> {
+                                            if (!cursoQuery.isEmpty()) {
+                                                Curso curso = cursoQuery.getDocuments().get(0).toObject(Curso.class);
+
+                                                if (curso != null) {
+                                                    // Asegúrate de que no sean listas vacías o null
+                                                    if (!curso.getInstrumento().isEmpty()) {
+                                                        String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, curso.getInstrumento().get(0));
+                                                        if (instrumentoStr != null) {
+                                                            finalPreferenciasUsuario.incrementarInstrumento(instrumentoStr);
+                                                        }
+                                                    }
+                                                    if (!curso.getDificultad().isEmpty()) {
+                                                        String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, curso.getDificultad().get(0));
+                                                        if (dificultadStr != null) {
+                                                            finalPreferenciasUsuario.incrementarDificultad(dificultadStr);
+                                                        }
+                                                    }
+                                                    if (!curso.getGenero().isEmpty()) {
+                                                        String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, curso.getGenero().get(0));
+                                                        if (generoStr != null) {
+                                                            finalPreferenciasUsuario.decrementarGenero(generoStr);
+                                                        }
+                                                    }
+
+                                                    usuario.setPreferenciasUsuario(finalPreferenciasUsuario);
+
+                                                    // Convertimos el usuario en un Map para hacer merge
+                                                    Map<String, Object> userMap = new HashMap<>();
+                                                    userMap.put("comentarios", usuario.getComentarios());
+                                                    userMap.put("preferenciasUsuario", finalPreferenciasUsuario);
+
+                                                    db.collection("usuarios")
+                                                            .document(docId)
+                                                            .set(userMap, SetOptions.merge())
+                                                            .addOnSuccessListener(aVoid ->
+                                                                    Log.d("Usuario", "Preferencias y comentario actualizados correctamente"))
+                                                            .addOnFailureListener(e ->
+                                                                    Log.e("Usuario", "Error al actualizar usuario", e));
+                                                }
+                                            }
+                                        });
+                            }
+                        }
                     });
         });
 
@@ -687,7 +759,6 @@ public class Ver_cursos extends AppCompatActivity {
             puntuacionActual = nuevaPuntuacion;
             actualizarTextoPuntuacion();
             actualizarImagenesEstrellas();
-
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -716,9 +787,7 @@ public class Ver_cursos extends AppCompatActivity {
 
                         // Recalcular promedio
                         double suma = 0;
-                        for (Long val : calificaciones.values()) {
-                            suma += val;
-                        }
+                        for (Long val : calificaciones.values()) suma += val;
                         double nuevoPromedio = suma / calificaciones.size();
 
                         Map<String, Object> update = new HashMap<>();
@@ -728,11 +797,61 @@ public class Ver_cursos extends AppCompatActivity {
                         firestore.collection("cursos").document(docId).update(update)
                                 .addOnSuccessListener(unused -> {
                                     Toast.makeText(this, "¡Calificación guardada!", Toast.LENGTH_SHORT).show();
+
+                                    // ✅ Ajustar preferencias del usuario según calificación
+                                    firestore.collection("usuarios").document(user.getUid()).get()
+                                            .addOnSuccessListener(userSnap -> {
+                                                if (!userSnap.exists()) return;
+
+                                                Map<String, Object> prefsRaw = (Map<String, Object>) userSnap.get("preferenciasUsuario");
+                                                PreferenciasUsuario prefs = new PreferenciasUsuario();
+
+                                                if (prefsRaw != null) {
+                                                    Map<String, Long> instr = (Map<String, Long>) prefsRaw.get("instrumentos");
+                                                    Map<String, Long> gens = (Map<String, Long>) prefsRaw.get("generos");
+                                                    Map<String, Long> difs = (Map<String, Long>) prefsRaw.get("dificultades");
+                                                    if (instr != null) instr.forEach((k, v) -> prefs.getInstrumentos().put(k, v.intValue()));
+                                                    if (gens != null) gens.forEach((k, v) -> prefs.getGeneros().put(k, v.intValue()));
+                                                    if (difs != null) difs.forEach((k, v) -> prefs.getDificultades().put(k, v.intValue()));
+                                                }
+
+                                                Map<String, Integer> instrumento = (Map<String, Integer>) curso.getInstrumento();
+                                                Map<String, Integer> genero = (Map<String, Integer>) curso.getGenero();
+                                                Map<String, Integer> dificultad = (Map<String, Integer>) curso.getDificultad();
+
+                                                int puntos = switch (nuevaPuntuacion) {
+                                                    case 1 -> -2;
+                                                    case 2 -> -1;
+                                                    case 3 -> 0;
+                                                    case 4 -> 1;
+                                                    case 5 -> 3;
+                                                    default -> 0;
+                                                };
+
+                                                for (int i = 0; i < Math.abs(puntos); i++) {
+                                                    for (String key : instrumento.keySet()) {
+                                                        if (puntos > 0) prefs.incrementarInstrumento(key);
+                                                        else prefs.decrementarInstrumento(key);
+                                                    }
+                                                    for (String key : genero.keySet()) {
+                                                        if (puntos > 0) prefs.incrementarGenero(key);
+                                                        else prefs.decrementarGenero(key);
+                                                    }
+                                                    for (String key : dificultad.keySet()) {
+                                                        if (puntos > 0) prefs.incrementarDificultad(key);
+                                                        else prefs.decrementarDificultad(key);
+                                                    }
+                                                }
+
+                                                firestore.collection("usuarios")
+                                                        .document(user.getUid())
+                                                        .update("preferenciasUsuario", prefs);
+                                            });
                                 });
                     }
                 });
-
     }
+
 
     private void actualizarTextoPuntuacion() {
         tvPuntuacion.setText(puntuacionActual + " / 5");
@@ -904,6 +1023,15 @@ public class Ver_cursos extends AppCompatActivity {
         }*/
         double descargas = curso.getCantidadDescargas() != null ? curso.getCantidadDescargas() : 0;
         return alpha * visitas + beta * interacciones + gamma * calificaciones + epsilon * descargas;
+    }
+
+    public static String obtenerClavePorValor(ArrayList<Map<String, Integer>> lista, int valor) {
+        for (Map<String, Integer> map : lista) {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue() == valor) return entry.getKey();
+            }
+        }
+        return null;
     }
 
 

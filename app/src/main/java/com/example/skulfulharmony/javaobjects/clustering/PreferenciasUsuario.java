@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PreferenciasUsuario {
-    private Map<String, Integer> instrumentos = new HashMap<>();
+    private Map<String, Integer> instrumentos = new HashMap<>() ;
     private Map<String, Integer> generos = new HashMap<>();
     private Map<String, Integer> dificultades = new HashMap<>();
 
