@@ -14,11 +14,12 @@
         android:backgroundTint="@color/cafe1"
         app:cardCornerRadius="10dp"
         android:elevation="6dp"
+        android:layout_marginVertical="140dp"
         app:cardElevation="6dp">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:backgroundTint="@color/white"
+       android:backgroundTint="@color/black"
         app:cardCornerRadius="10dp"
         android:layout_margin="3dp"
       >
@@ -37,10 +38,15 @@
             android:text="Hoy llevas: --"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="@color/cafe2"
             android:paddingBottom="16dp"/>
 
         <!-- Gráfica manual usando ProgressBars -->
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Domingo" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Domingo"
+            android:textColor="@color/cafe"/>
         <ProgressBar
             android:id="@+id/barDomingo"
             style="?android:attr/progressBarStyleHorizontal"
@@ -49,7 +55,11 @@
             android:backgroundTint="@color/rojo"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lunes" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lunes"
+            android:textColor="@color/cafe"/>
         <ProgressBar
             android:id="@+id/barLunes"
             style="?android:attr/progressBarStyleHorizontal"
@@ -57,7 +67,7 @@
             android:layout_height="wrap_content"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Martes" />
+        <TextView android:layout_width="wrap_content" android:textColor="@color/cafe" android:layout_height="wrap_content" android:text="Martes" />
         <ProgressBar
             android:id="@+id/barMartes"
             style="?android:attr/progressBarStyleHorizontal"
@@ -65,7 +75,7 @@
             android:layout_height="wrap_content"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Miércoles" />
+        <TextView android:layout_width="wrap_content" android:textColor="@color/cafe" android:layout_height="wrap_content" android:text="Miércoles" />
         <ProgressBar
             android:id="@+id/barMiercoles"
             style="?android:attr/progressBarStyleHorizontal"
@@ -73,7 +83,7 @@
             android:layout_height="wrap_content"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jueves" />
+        <TextView android:layout_width="wrap_content" android:textColor="@color/cafe" android:layout_height="wrap_content" android:text="Jueves" />
         <ProgressBar
             android:id="@+id/barJueves"
             style="?android:attr/progressBarStyleHorizontal"
@@ -81,7 +91,7 @@
             android:layout_height="wrap_content"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Viernes" />
+        <TextView android:layout_width="wrap_content"  android:textColor="@color/cafe" android:layout_height="wrap_content" android:text="Viernes" />
         <ProgressBar
             android:id="@+id/barViernes"
             style="?android:attr/progressBarStyleHorizontal"
@@ -89,7 +99,7 @@
             android:layout_height="wrap_content"
             android:max="240" />
 
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sábado" />
+        <TextView android:layout_width="wrap_content" android:textColor="@color/cafe"  android:layout_height="wrap_content" android:text="Sábado" />
         <ProgressBar
             android:id="@+id/barSabado"
             style="?android:attr/progressBarStyleHorizontal"
@@ -107,8 +117,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Modificar tiempo de descanso"
-            android:backgroundTint="@color/white"
-            android:textColor="@color/cafe3"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/cafe2"
             android:layout_marginTop="10dp"
             android:layout_gravity="center"/>
 

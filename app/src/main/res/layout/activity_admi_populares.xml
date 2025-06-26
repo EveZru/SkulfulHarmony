@@ -42,11 +42,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/tabLayoutEstadisticas"
-        android:layout_above="@id/barra_navegacion1" />
+        android:layout_above="@id/barra_navegacionadmi" />
 
     <!-- BottomNavigation fijo abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/barra_navegacion1"
+        android:id="@+id/barra_navegacionadmi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

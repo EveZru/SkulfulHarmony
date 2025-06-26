@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.adapters.AdapterCrearVerClasesCreadas;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;

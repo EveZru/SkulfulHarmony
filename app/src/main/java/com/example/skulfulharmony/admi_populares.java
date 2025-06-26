@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class admi_populares extends AppCompatActivity {
-
+    private BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,7 @@ public class admi_populares extends AppCompatActivity {
         });
 
         // Referencia al BottomNavigationView
-        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacionadmi);
 
         // Seleccionar el ítem actual
         bottomNavigationView.setSelectedItemId(R.id.menu_estadisticas);

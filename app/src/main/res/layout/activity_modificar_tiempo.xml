@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/cafe2"
     android:padding="16dp">
     <!--mauqetado-->
     <androidx.cardview.widget.CardView
@@ -12,11 +13,12 @@
         android:backgroundTint="@color/black"
         app:cardCornerRadius="10dp"
         android:elevation="6dp"
+        android:layout_marginVertical="200dp"
         app:cardElevation="6dp">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/cafe2"
         app:cardCornerRadius="10dp"
         android:layout_margin="3dp"
         >

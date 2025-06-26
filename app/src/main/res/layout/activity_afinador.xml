@@ -18,44 +18,67 @@
         android:text="Frecuencia: --- Hz"
         android:textSize="24sp"
         android:layout_marginTop="32dp"
+        android:textStyle="bold"
         android:textColor="@color/grayrojo"
         android:layout_gravity="center_horizontal"/>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        app:cardBackgroundColor="@color/grayverde2"
-        app:cardCornerRadius="100dp"
-        app:cardElevation="20dp"
-        android:layout_marginVertical="20dp"
-        >
-        <TextView
-            android:id="@+id/noteTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="---"
-            android:textColor="@color/grayverde"
-            android:textSize="60sp"
-            android:layout_marginTop="16dp" />
 
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView1"
+            android:layout_width="300dp"
+            android:layout_height="350dp"
+            app:cardCornerRadius="50dp"
+            android:backgroundTint="@color/tinto"
+            android:layout_marginVertical="20dp"
+            >
+             <androidx.cardview.widget.CardView
+                 android:id="@+id/cardView2"
+                 android:layout_width="200dp"
+                 android:layout_height="200dp"
+                 app:cardCornerRadius="100dp"
+                 android:backgroundTint="@color/rojo"
+                   app:cardElevation="20dp"
+                 android:layout_gravity="center_horizontal"
+                  android:layout_marginVertical="20dp"
+        >
+
+                 <TextView
+                     android:id="@+id/noteTextView"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="center"
+                     android:text="---"
+                     android:textColor="@color/grayverde"
+                     android:textSize="60sp"
+                     android:layout_marginTop="16dp" />
+
+             </androidx.cardview.widget.CardView>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+
+
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="NotaBuscada"
+        android:layout_marginVertical="20dp"
         android:textColor="@color/grayrojo"
         android:textSize="18dp"
+        android:textStyle="bold"
         android:gravity="center"/>
 
     <Spinner
         android:id="@+id/targetNoteSpinner"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:textColor="@color/grayrojo"
-        android:background="@color/cafe2"
-        android:backgroundTint="@color/black1"
+        android:textColor="@color/cafe1"
+        android:background="@color/grayverde"
+        android:backgroundTint="@color/grayrojo2"
         android:layout_marginTop="32dp" />
 
 </LinearLayout>

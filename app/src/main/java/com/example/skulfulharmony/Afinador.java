@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull; // Importar para onRequestPermissionsResult
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.activity.EdgeToEdge;
@@ -38,6 +39,7 @@ public class Afinador extends AppCompatActivity {
     private TextView frequencyTextView;
     private Spinner targetNoteSpinner;
     private String selectedTargetNote;
+    private CardView cardView1, cardView2;
 
     // Constantes para la detección de tono (usadas por TarsosDSP)
     private final static int SAMPLE_RATE = 44100; // Tasa de muestreo
@@ -49,7 +51,7 @@ public class Afinador extends AppCompatActivity {
 
     private static final int REQUEST_AUDIO_PERMISSION_CODE = 200; // Código para la solicitud de permiso
 
-    private final String[] noteNames = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    private final String[] noteNames = {"Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "La#", "Si"};
     private final double A4_FREQUENCY = 440.0; // Frecuencia de A4 para cálculos de notas
 
     @Override
@@ -62,6 +64,8 @@ public class Afinador extends AppCompatActivity {
         frequencyTextView = findViewById(R.id.frequencyTextView);
         targetNoteSpinner = findViewById(R.id.targetNoteSpinner);
 
+        cardView1 = findViewById(R.id.cardView1);
+        cardView2 = findViewById(R.id.cardView2);
         // Configurar el ArrayAdapter para el Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, noteNames);
         targetNoteSpinner.setAdapter(adapter);
@@ -135,9 +139,12 @@ public class Afinador extends AppCompatActivity {
                         if (pitchInHz > 0) { // Si se detectó un tono válido
                             frequencyTextView.setText(String.format("Frecuencia: %.2f Hz", pitchInHz));
                             noteTextView.setText(getNoteFromFrequency(pitchInHz));
+
+
                         } else {
                             frequencyTextView.setText("Frecuencia: --- Hz");
                             noteTextView.setText("--");
+                            cambiarColor(000);
                         }
                     }
                 });
@@ -174,13 +181,54 @@ public class Afinador extends AppCompatActivity {
 
     private String getNoteFromFrequency(double frequency) {
         if (frequency <= 0) return "---";
-        double semitonesFromA4 = 12 * Math.log(frequency / A4_FREQUENCY) / Math.log(2);
+        final double A4 = 440.0;
+        final int SEMITONES_PER_OCTAVE = 12;
 
-        int nearestNote = (int) Math.round(semitonesFromA4);
-        int noteIndex = (nearestNote % 12 + 12) % 12;
-        int octave = 4 + (nearestNote + 9) / 12;
+        double semitonesFromA4 = SEMITONES_PER_OCTAVE * Math.log(frequency / A4) / Math.log(2);
 
-        return noteNames[noteIndex] + octave;
+        int nearestSemitone = (int) Math.round(semitonesFromA4);
+        int noteIndex = (nearestSemitone % SEMITONES_PER_OCTAVE + SEMITONES_PER_OCTAVE) % SEMITONES_PER_OCTAVE;
+        int octave = 4 + (nearestSemitone + 9) / SEMITONES_PER_OCTAVE;
+        if (noteIndex <= 1 && frequency < A4 * Math.pow(2, (noteIndex - 9) / (double)SEMITONES_PER_OCTAVE)) {
+            octave--;
+        }
+
+
+        return noteNames[(noteIndex - 3 + 12) % 12] + octave;
+    }
+
+    private String extractBaseNote(String fullNoteWithOctave) {
+        if (fullNoteWithOctave == null || fullNoteWithOctave.equals("---") || fullNoteWithOctave.equals("--")) {
+            return null;
+        }
+        // Itera sobre los nombres de las notas para encontrar la coincidencia más larga
+        // Esto es importante para distinguir "Do#" de "Do".
+        String baseNote = null;
+        for (String note : noteNames) {
+            if (fullNoteWithOctave.startsWith(note)) {
+                if (baseNote == null || note.length() > baseNote.length()) { // Prioriza "Do#" sobre "Do"
+                    baseNote = note;
+                }
+            }
+        }
+        return baseNote;
+    }
+    private void  cambiarColor(int noteIndex){
+        if (selectedTargetNote != null) {
+            // Coincidencia: cambia a un color de "coincidencia"
+            int color1nuevo = ContextCompat.getColor(this, R.color.grayverde);
+            int color2nuevo = ContextCompat.getColor(this, R.color.grayverde);
+
+
+            cardView1.setCardBackgroundColor(color1nuevo);
+            cardView2.setCardBackgroundColor(color2nuevo);
+        } else {
+            // No hay coincidencia o no se detecta tono: restablece a los colores originales
+            int innerDefaultColor = ContextCompat.getColor(this, R.color.rojo); // Usa @color/rojo o el que definiste como defaultInnerCardColor
+            int outerDefaultColor = ContextCompat.getColor(this, R.color.tinto); // Usa @color/tinto o el que definiste como defaultOuterCardColor
+            cardView1.setCardBackgroundColor(innerDefaultColor);
+            cardView2.setCardBackgroundColor(outerDefaultColor);
+        }
     }
 
     // Métodos del ciclo de vida de la Activity
@@ -206,4 +254,5 @@ public class Afinador extends AppCompatActivity {
         stopPitchDetection(); // Asegurarse de detenerlo al destruir la Activity
         Log.d("Afinador", "Activity en onDestroy. Deteniendo detección final.");
     }
+
 }

@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -44,7 +45,7 @@ public class admi_denuncias extends AppCompatActivity {
         btn_verclases_verdenuncias = findViewById(R.id.btn_verclases_verdenuncias);
         btn_vercomentarios_verdenuncias = findViewById(R.id.btn_vercomentarios_verdenuncias);
         recycler_demandas = findViewById(R.id.recycler_demandas);
-        barra_navegacion1 = findViewById(R.id.barra_navegacion1);
+        barra_navegacion1 = findViewById(R.id.barra_navegacionadmi);
 
         btn_vercursos_verdenuncias.setOnClickListener(v -> {
             List<Denuncia> denunciasCursos = new ArrayList<>();
@@ -117,6 +118,25 @@ public class admi_denuncias extends AppCompatActivity {
                         Log.e("Error", "Error al obtener denuncias de Comentarios" + e ,e);
                     });
         });
+
+        barra_navegacion1.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.menu_denuncias) {
+                return true;
+            } else if (itemId == R.id.menu_estadisticas) {
+                startActivity(new Intent(this, admi_populares.class));
+                overridePendingTransition(0, 0);
+                return true;
+            } else if (itemId == R.id.menu_perfil) {
+                startActivity(new Intent(this, perfil_admin.class));
+                overridePendingTransition(0, 0);
+                return true;
+            }
+
+            return false;
+        });
+
 
     }
 
