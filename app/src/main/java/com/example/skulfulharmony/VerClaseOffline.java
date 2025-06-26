@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.adapters.AdapterArchivosOffline;
+import com.example.skulfulharmony.adapters.AdapterPreguntasOffline;
+import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.bumptech.glide.Glide;
 
 import androidx.media3.common.MediaItem;
@@ -23,8 +26,8 @@ public class VerClaseOffline extends AppCompatActivity {
 
     private ExoPlayer player;
     private PlayerView playerView;
-    private TextView tvTitulo, tvTexto, tvSinArchivo;
-    private RecyclerView rvArchivos;
+    private TextView tvTitulo, tvTexto, tvSinArchivo, tvPreguntasTitulo;
+    private RecyclerView rvArchivos, rvPreguntas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,8 @@ public class VerClaseOffline extends AppCompatActivity {
         tvTexto = findViewById(R.id.tv_texto_clase_offline);
         tvSinArchivo = findViewById(R.id.tv_no_disponible);
         rvArchivos = findViewById(R.id.rv_archivos_offline);
+        tvPreguntasTitulo = findViewById(R.id.tv_preguntas_titulo);
+        rvPreguntas = findViewById(R.id.rv_preguntas_offline);
 
         String titulo = getIntent().getStringExtra("titulo");
         String videoUrl = getIntent().getStringExtra("video");
@@ -83,6 +88,18 @@ public class VerClaseOffline extends AppCompatActivity {
             tvSinArchivo.setText("");
         } else {
             tvSinArchivo.setText("No hay archivos disponibles offline.");
+        }
+
+        // Preguntas descargadas
+        DbHelper dbHelper = new DbHelper(this);
+        List<PreguntaCuestionario> preguntas = dbHelper.obtenerPreguntasPorClase(titulo);
+
+        if (preguntas.isEmpty()) {
+            tvPreguntasTitulo.setText("Esta clase no contiene preguntas.");
+        } else {
+            rvPreguntas.setLayoutManager(new LinearLayoutManager(this));
+            AdapterPreguntasOffline adapterPreguntas = new AdapterPreguntasOffline(preguntas);
+            rvPreguntas.setAdapter(adapterPreguntas);
         }
     }
 

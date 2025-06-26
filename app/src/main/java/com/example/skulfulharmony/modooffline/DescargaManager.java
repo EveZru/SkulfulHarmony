@@ -126,12 +126,10 @@ public class DescargaManager {
     public static void descargarCursoYClases(Curso curso, List<Clase> clasesFirestore, Context context) {
         Log.d("DESCARGA", "⏬ Iniciando descarga COMPLETA de: " + curso.getTitulo());
 
-        crearCanal(context);
+        crearCanal(context); // Canal de notificación
 
-        if (cursoYaDescargado(curso.getIdCurso(), context)) {
-            Log.d("DESCARGA", "⛔ Curso ya descargado. Se usará el ID existente.");
-        } else {
-            // Obtener nombre real desde la URL
+        // Si no está descargado, lo insertamos
+        if (!cursoYaDescargado(curso.getIdCurso(), context)) {
             String imagenCursoUrl = curso.getImagen().split("\\?")[0];
             String nombreImagenCurso = imagenCursoUrl.substring(imagenCursoUrl.lastIndexOf("/") + 1);
             String imagenLocal = descargarArchivo(context, curso.getImagen(), nombreImagenCurso);
@@ -139,14 +137,7 @@ public class DescargaManager {
             new DbCourse(context).insertCurso(curso);
         }
 
-        String imagenCursoUrl = curso.getImagen().split("\\?")[0];
-        String nombreImagenCurso = imagenCursoUrl.substring(imagenCursoUrl.lastIndexOf("/") + 1);
-        String imagenLocal = descargarArchivo(context, curso.getImagen(), nombreImagenCurso);
-        curso.setImagen(imagenLocal);
-        DbCourse dbCourse = new DbCourse(context);
-        long idInsertado = dbCourse.insertCurso(curso);
-        Log.d("DESCARGA", "📥 Curso guardado con ID SQLite: " + idInsertado);
-
+        // Recuperar el ID local del curso
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -154,6 +145,7 @@ public class DescargaManager {
         int cursoLocalId = -1;
         if (cursor.moveToFirst()) {
             cursoLocalId = cursor.getInt(0);
+            Log.d("DESCARGA", "📥 ID del curso local recuperado: " + cursoLocalId);
         } else {
             Log.e("DESCARGA", "❌ No se encontró el curso localmente.");
         }
@@ -165,6 +157,12 @@ public class DescargaManager {
         for (int i = 0; i < clasesFirestore.size(); i++) {
             Clase clase = clasesFirestore.get(i);
             if (clase == null) continue;
+
+            // ⚠️ Validar si la clase ya fue descargada
+            if (dbHelper.claseYaDescargadaConIdLocal(clase.getTitulo(), cursoLocalId)) {
+                Log.d("DESCARGA", "⏩ Clase ya descargada, se omite: " + clase.getTitulo());
+                continue;
+            }
 
             mostrarProgreso(context, clase.getTitulo(), i + 1, clasesFirestore.size());
 
@@ -179,12 +177,17 @@ public class DescargaManager {
                 claseFirebase.setPreguntas(clase.getPreguntas());
             }
 
-            // Video y imagen con nombre original
+            // Video
             String videoUrl = clase.getVideoUrl().split("\\?")[0];
             String nombreVideo = videoUrl.substring(videoUrl.lastIndexOf("/") + 1);
             String videoLocal = descargarArchivo(context, clase.getVideoUrl(), nombreVideo);
 
-            // Archivos adicionales
+            // Imagen
+            String imagenUrl = clase.getImagen().split("\\?")[0];
+            String nombreImagen = imagenUrl.substring(imagenUrl.lastIndexOf("/") + 1);
+            String imagenLocal = descargarArchivo(context, clase.getImagen(), nombreImagen);
+
+            // Archivos
             List<String> archivosLocales = new ArrayList<>();
             for (String url : clase.getArchivos()) {
                 if (url == null || url.isEmpty()) continue;
@@ -198,13 +201,15 @@ public class DescargaManager {
             }
 
             claseFirebase.setVideoUrl(videoLocal);
+            claseFirebase.setImagenUrl(imagenLocal);
             claseFirebase.setArchivosUrl(archivosLocales);
 
-            dbHelper.guardarClaseDescargada(claseFirebase, cursoLocalId);
+            dbHelper.guardarClaseDescargada(claseFirebase, cursoLocalId); // ← Guarda preguntas también
         }
 
         ocultarProgreso(context);
         mostrarFinal(context, curso.getTitulo());
         Log.d("DESCARGA", "✅ Descarga finalizada de curso + clases.");
     }
+
 }

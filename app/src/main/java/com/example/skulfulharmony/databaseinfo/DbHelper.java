@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -18,11 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5; // Incrementado de 4 a 5
     protected static final String DATABASE_NAME = "localdata.db";
     public static final String TABLE_USER = "usuario";
     public static final String TABLE_COURSE = "cursodescargado";
     public static final String TABLE_CLASS = "clasedescargada";
+    public static final String TABLE_QUESTION = "preguntas_locales";
 
     public DbHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -53,10 +55,21 @@ public class DbHelper extends SQLiteOpenHelper {
                 "imagen TEXT, " +
                 "video TEXT, " +
                 "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE);");
+
+        db.execSQL("CREATE TABLE " + TABLE_QUESTION + " (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "id_clase TEXT NOT NULL, " +
+                "pregunta TEXT NOT NULL, " +
+                "opciones TEXT NOT NULL, " +
+                "respuesta_correcta INTEGER NOT NULL);");
+
+        // Nuevo índice para mejorar búsqueda de clases
+        db.execSQL("CREATE INDEX idx_clase_titulo_curso ON " + TABLE_CLASS + " (titulo, curso_id)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COURSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
@@ -71,24 +84,63 @@ public class DbHelper extends SQLiteOpenHelper {
         values.put("descripcion", curso.getDescripcion());
         values.put("imagen", curso.getImagen());
         db.insertWithOnConflict(TABLE_COURSE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        db.close();
     }
 
     public void guardarClaseDescargada(ClaseFirebase clase, int cursoId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("curso_id", cursoId);
-        values.put("titulo", clase.getTitulo());
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put("curso_id", cursoId);
+            values.put("titulo", clase.getTitulo());
 
-        // Evitar null en lista
-        List<String> archivos = clase.getArchivosUrl();
-        if (archivos == null) archivos = new ArrayList<>();
-        String archivosJson = new Gson().toJson(archivos);
+            List<String> archivos = clase.getArchivosUrl();
+            if (archivos == null) archivos = new ArrayList<>();
+            String archivosJson = new Gson().toJson(archivos);
 
-        values.put("documento", archivosJson);
-        values.put("imagen", clase.getImagenUrl());
-        values.put("video", clase.getVideoUrl());
+            values.put("documento", archivosJson);
+            values.put("imagen", clase.getImagenUrl());
+            values.put("video", clase.getVideoUrl());
 
-        db.insert(TABLE_CLASS, null, values);
+            db.insert(TABLE_CLASS, null, values);
+
+            // Título normalizado como ID
+            String idClaseNormalizado = clase.getTitulo().trim().toLowerCase();
+
+            if (clase.getPreguntas() != null && !clase.getPreguntas().isEmpty()) {
+                Log.d("DBHELPER", "📋 Preguntas detectadas para clase '" + clase.getTitulo() + "': " + clase.getPreguntas().size());
+
+                for (PreguntaCuestionario pregunta : clase.getPreguntas()) {
+                    ContentValues preguntaValues = new ContentValues();
+                    preguntaValues.put("id_clase", idClaseNormalizado);
+                    preguntaValues.put("pregunta", pregunta.getPregunta());
+                    preguntaValues.put("opciones", new Gson().toJson(pregunta.getRespuestas()));
+                    preguntaValues.put("respuesta_correcta", pregunta.getRespuestaCorrecta() != null ? pregunta.getRespuestaCorrecta() : -1);
+                    db.insert(TABLE_QUESTION, null, preguntaValues);
+                }
+            } else {
+                Log.w("DBHELPER", "❌ No se encontraron preguntas para la clase: " + clase.getTitulo());
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    public boolean claseYaDescargadaConIdLocal(String titulo, int cursoIdLocal) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String tituloNormalizado = titulo.trim().toLowerCase();
+        Cursor cursor = db.rawQuery(
+                "SELECT id FROM " + TABLE_CLASS + " WHERE LOWER(TRIM(titulo)) = ? AND curso_id = ?",
+                new String[]{tituloNormalizado, String.valueOf(cursoIdLocal)}
+        );
+        boolean existe = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return existe;
     }
 
     public List<Curso> obtenerCursosDescargados() {
@@ -163,6 +215,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 }
 
                 ClaseFirebase clase = new ClaseFirebase(titulo, archivos, imagen, video);
+                clase.setPreguntas(obtenerPreguntasPorClase(titulo));
                 clases.add(clase);
             } while (cursor.moveToNext());
         }
@@ -172,10 +225,45 @@ public class DbHelper extends SQLiteOpenHelper {
         return clases;
     }
 
+    public List<PreguntaCuestionario> obtenerPreguntasPorClase(String idClase) {
+        List<PreguntaCuestionario> preguntas = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String idClaseNormalizado = idClase.trim().toLowerCase();
+        Log.d("DBHELPER", "🔍 Buscando preguntas con ID clase: '" + idClaseNormalizado + "'");
+
+        Cursor cursor = db.rawQuery(
+                "SELECT pregunta, opciones, respuesta_correcta FROM " + TABLE_QUESTION + " WHERE id_clase = ?",
+                new String[]{idClaseNormalizado}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                PreguntaCuestionario p = new PreguntaCuestionario();
+                p.setPregunta(cursor.getString(0));
+                p.setRespuestas(new Gson().fromJson(cursor.getString(1), new TypeToken<List<String>>(){}.getType()));
+                p.setRespuestaCorrecta(cursor.getInt(2));
+                preguntas.add(p);
+            } while (cursor.moveToNext());
+        } else {
+            Log.w("DBHELPER", "❌ No se encontraron preguntas para clase ID: " + idClaseNormalizado);
+        }
+
+        cursor.close();
+        db.close();
+        return preguntas;
+    }
+
     public void eliminarCursoYClasesPorId(int cursoId) {
         SQLiteDatabase db = getWritableDatabase();
-        db.delete(TABLE_CLASS, "curso_id = ?", new String[]{String.valueOf(cursoId)});
-        db.delete(TABLE_COURSE, "id = ?", new String[]{String.valueOf(cursoId)});
-        db.close();
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_CLASS, "curso_id = ?", new String[]{String.valueOf(cursoId)});
+            db.delete(TABLE_COURSE, "id = ?", new String[]{String.valueOf(cursoId)});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
     }
 }
