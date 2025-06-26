@@ -1,10 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VerCursoComoAdministrador">
+    android:orientation="vertical"
+    android:background="@color/gray2">
+    <!-- maquetado -->
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_curso_descargado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black">
+        <ImageView
+            android:id="@+id/iv_menucursoadmi"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:src="@drawable/menutrespuntos"
+            android:contentDescription="Icono de menú" />
+    </androidx.appcompat.widget.Toolbar>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:background="@color/gray2">
+
+            <!-- Imagen y datos del curso -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="10dp"
+                android:elevation="6dp"
+                app:cardElevation="6dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/gray1">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+
+                    <ImageView
+                        android:id="@+id/img_curso_descargado"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/logo_confondo_sh" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:orientation="vertical"
+                        android:background="@drawable/degradado_holder_texts"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/tv_titulo_curso"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Titulo"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tv_autor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="autor"
+                            android:textSize="16sp"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Descripción -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray1"
+                app:cardBackgroundColor="@color/gray1"
+                app:cardCornerRadius="8dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/tv_descripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="Descripción "
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/gray1"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Lista de clases -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clases descargadas"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:paddingBottom="8dp" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_clases_descargadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="20dp" />
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray1"
+                app:cardBackgroundColor="@color/gray1"
+                app:cardCornerRadius="8dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="Comentarios "
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/gray1"/>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comentarios_curso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="20dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

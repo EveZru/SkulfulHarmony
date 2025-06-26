@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_denuncias"
-        android:icon="@drawable/mas_logo"
+        android:icon="@drawable/icon_file"
         android:title="Denuncias" />
     <item
         android:id="@+id/menu_estadisticas"
-        android:icon="@drawable/mas_logo"
+        android:icon="@drawable/statistics_charts_increasing_increase_chart_bars_analytics_icon_147441"
         android:title="Estadisticas"/>
 
     <item

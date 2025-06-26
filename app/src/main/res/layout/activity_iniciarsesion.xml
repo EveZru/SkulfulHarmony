@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--maquetado check-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".IniciarSesion"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".IniciarSesion">
 
     <LinearLayout
+        android:id="@+id/linearLayout6"
         android:layout_width="333dp"
         android:layout_height="404dp"
         android:orientation="vertical"
@@ -45,9 +46,9 @@
                 android:id="@+id/ivTogglePassword"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:contentDescription="@string/toggle_password_visibility"
                 android:padding="10dp"
-                android:src="@drawable/ic_visibility_off"
-                android:contentDescription="@string/toggle_password_visibility" />
+                android:src="@drawable/ic_visibility_off" />
         </LinearLayout>
 
         <!-- NUEVO: Botón para recuperar contraseña -->
@@ -56,14 +57,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:clickable="true"
+            android:focusable="true"
+            android:minHeight="48dp"
+            android:padding="10dp"
             android:text="@string/recuperar_contraseña"
             android:textColor="@color/black"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:minHeight="48dp"
-            android:clickable="true"
-            android:focusable="true"/>
+            android:textStyle="bold" />
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -86,17 +87,17 @@
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="30dp"
+                android:layout_gravity="center"
                 android:text="@string/googlecuenta"
-                android:textSize="20sp"
-                android:layout_gravity="center" />
+                android:textSize="20sp" />
 
             <ImageButton
                 android:id="@+id/btn_google_iniciar"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
+                android:contentDescription="@string/google_login"
                 android:scaleType="fitCenter"
-                android:src="@drawable/logo_google"
-                android:contentDescription="@string/google_login" />
+                android:src="@drawable/logo_google" />
         </LinearLayout>
 
         <TextView
@@ -120,14 +121,15 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="438dp"
-        android:layout_height="283dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/img_encabezado" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 

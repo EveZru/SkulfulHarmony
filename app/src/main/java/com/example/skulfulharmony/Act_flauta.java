@@ -1,4 +1,28 @@
 package com.example.skulfulharmony;
+
+/*Explicacion
+La clase Act_flauta. java se ejecuta al entrar a ella por medio de home
+la clase cuenta con los elementos de interaccion de usuario  botones  btn_oatras, btn_ouno,
+ btn_odos, btn_otres, btn_ocuatro, btn_ocinco, btn_oseis, btn_oocho,
+
+En cuanto a la lógica del juego, notaActual es una cadena de texto que almacena la nota musical
+activa, sirviendo como la referencia contra la que se evalúan las acciones del usuario.
+agujerosCorrectos, una List<Integer>, contiene los índices de los agujeros que el usuario debe
+presionar para la notaActual, estableciendo así la respuesta correcta. Las acciones del usuario
+se registran en agujerosPresionados, un Set<Integer>, que permite un seguimiento eficiente de los
+agujeros ya cubiertos por el usuario sin duplicados. Para la selección aleatoria de notas, se
+utiliza un objeto Random, llamado random. Aunque declarado, el objeto mediaPlayer no se utiliza
+explícitamente en el código proporcionado para la reproducción de sonidos de notas; sin embargo, se incluye una
+gestión de recursos para él en el ciclo de vida de la actividad.
+
+Finalmente, el corazón de la lógica de digitación reside en posicionesNotas, un Map<String, List<Integer>>
+que asocia cada nota musical con su correspondiente lista de agujeros a cubrir, funcionando como
+un diccionario de digitaciones. El arreglo de cadenas notas ("Do", "Re", "Mi", etc.) es el conjunto
+ de todas las notas posibles que la aplicación puede proponer para la práctica.
+
+
+
+ */
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,13 +59,13 @@ public class Act_flauta extends AppCompatActivity {
     private ImageView perfil_logo, atras_img;
     private FrameLayout fl_flauta;
 
-    private String notaActual; // Cambiamos acordeActual a notaActual
+    private String notaActual;
     private List<Integer> agujerosCorrectos;
     private Set<Integer> agujerosPresionados = new HashSet<>();
     private Random random = new Random();
     private MediaPlayer mediaPlayer;
 
-    // Mapeo de NOTAS a los agujeros que DEBEN ESTAR CERRADOS (índices de los botones)
+
     private Map<String, List<Integer>> posicionesNotas = new HashMap<>();
     private String[] notas = {"Do ", "Re", "Mi", "Fa", "Sol", "La", "Si"}; // Cambiamos acordes a notas
 
@@ -89,19 +113,18 @@ public class Act_flauta extends AppCompatActivity {
             finish();
         });
 
-        btn_oatras.setOnClickListener(v -> onAgujeroTocado(0)); // Agujero trasero
+        btn_oatras.setOnClickListener(v -> onAgujeroTocado(0));
 
-        // Mapear las posiciones de las NOTAS a los índices de los botones
-        // Basándonos en la imagen: círculo negro = cerrado
-        posicionesNotas.put("Do ", Arrays.asList(0, 1, 2, 3, 4, 5, 6,7)); // Todos excepto el último (índice 7)
-        posicionesNotas.put("Re", Arrays.asList(0,1, 2, 3, 4, 5, 6));    // Excepto el primero (pulgar/trasero) y el sexto (índice 6)
-        posicionesNotas.put("Mi", Arrays.asList(0, 1, 2, 3, 4,5));       // Pulgar y los 4 superiores
-        posicionesNotas.put("Fa", Arrays.asList(0,1, 2, 3, 4));       // Excepto el primero (pulgar/trasero) y el quinto (índice 5)
-        posicionesNotas.put("Sol", Arrays.asList(0,1,2,3));       // Excepto los dos superiores (1, 2) y el quinto (índice 5)
-        posicionesNotas.put("La", Arrays.asList(0,1, 2));             // Solo los dos superiores
-        posicionesNotas.put("Si", Arrays.asList(0,1));                // Solo el superior
 
-        // Configurar OnClickListener para cada agujero de tono
+        posicionesNotas.put("Do ", Arrays.asList(0, 1, 2, 3, 4, 5, 6,7));
+        posicionesNotas.put("Re", Arrays.asList(0,1, 2, 3, 4, 5, 6));
+        posicionesNotas.put("Mi", Arrays.asList(0, 1, 2, 3, 4,5));
+        posicionesNotas.put("Fa", Arrays.asList(0,1, 2, 3, 4));
+        posicionesNotas.put("Sol", Arrays.asList(0,1,2,3));
+        posicionesNotas.put("La", Arrays.asList(0,1, 2));
+        posicionesNotas.put("Si", Arrays.asList(0,1));
+
+
         btn_ouno.setOnClickListener(v -> onAgujeroTocado(1));
         btn_odos.setOnClickListener(v -> onAgujeroTocado(2));
         btn_otres.setOnClickListener(v -> onAgujeroTocado(3));
@@ -111,7 +134,7 @@ public class Act_flauta extends AppCompatActivity {
         btn_oocho.setOnClickListener(v -> onAgujeroTocado(7));
     }
 
-    private void generarNuevaNota() { // Cambiamos generarNuevoAcorde a generarNuevaNota
+    private void generarNuevaNota() {
         agujerosPresionados.clear();
         restablecerColoresAgujeros();
 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
-
+<!--no se que ponerle o para que se usa-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewClases"
         android:layout_width="match_parent"

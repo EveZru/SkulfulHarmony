@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray2"
     tools:context=".admi_denuncias">
-
+    <!-- Tmaquetado -->
     <!-- Toolbar moderna -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -28,7 +28,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:background="@color/rojo_oscuro"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -38,23 +38,33 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
+          android:layout_marginVertical="5dp"
             android:backgroundTint="@color/rojo_oscuro"
             android:text="Cursos"/>
-
+<View
+    android:layout_width="1dp"
+    android:layout_height="match_parent"
+    android:background="@color/cafe"/>
         <Button
             android:id="@+id/btn_verclases_verdenuncias"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
+            android:layout_marginVertical="5dp"
             android:backgroundTint="@color/rojo_oscuro"
             android:text="Clases"/>
+        <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/cafe"/>
 
         <Button
             android:id="@+id/btn_vercomentarios_verdenuncias"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
+            android:layout_marginVertical="5dp"
             android:layout_weight="1"
             android:backgroundTint="@color/rojo_oscuro"
             android:text="Comentario"/>

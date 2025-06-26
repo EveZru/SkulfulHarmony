@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--maquetado-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -22,7 +23,7 @@
        <android.widget.Button
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:background="@color/gray1"
+           android:background="@color/grayrojo2"
            android:text="¿Cual es el problema?"
            android:textAllCaps="false"
            android:textSize="30sp"
@@ -95,7 +96,7 @@
         <android.widget.Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray1"
+            android:background="@color/grayrojo2"
             android:text="Especifica un poco mas  \n el problema"
             android:textAllCaps="false"
             android:textSize="20sp"

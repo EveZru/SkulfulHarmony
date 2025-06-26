@@ -1,13 +1,33 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/black1">
+<!--mauqetado-->
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/cafe1"
+        app:cardCornerRadius="10dp"
+        android:elevation="6dp"
+        app:cardElevation="6dp">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:backgroundTint="@color/white"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="3dp"
+      >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="5dp">
 
         <!-- Mensaje de cuanto llevas hoy -->
         <TextView
@@ -26,6 +46,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/rojo"
             android:max="240" />
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lunes" />
@@ -77,14 +98,21 @@
             android:max="240" />
 
         <!-- Agregamos el botón para modificar el tiempo -->
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="1dp"
+           android:background="@color/cafe1"/>
         <Button
             android:id="@+id/btnModificarTiempo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Modificar tiempo de descanso"
-            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/cafe3"
+            android:layout_marginTop="10dp"
             android:layout_gravity="center"/>
 
     </LinearLayout>
-
+    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </ScrollView>

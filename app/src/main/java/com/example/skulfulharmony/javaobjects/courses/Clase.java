@@ -29,8 +29,8 @@ public class Clase implements Serializable {
     private String video;
     private List<PreguntaCuestionario> preguntas;
     private List<Comentario> comentarios;
-    private Integer meGusta;
-    private Integer noGusta;
+    private Integer meGusta=0;
+    private Integer noGusta=0;
     private String creadorUid;
     private String creadorCorreo;
     private Map<String, Boolean> calificacionPorUsuario = new HashMap<>(); // true = like, false = dislike

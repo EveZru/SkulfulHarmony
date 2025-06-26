@@ -9,7 +9,7 @@
     tools:context=".PreguntasIncorrectas"
     android:background="@color/gray2"
     >
-
+<!--maquetado-->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

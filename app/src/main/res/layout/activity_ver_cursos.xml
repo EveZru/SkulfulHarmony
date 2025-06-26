@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--maquetado-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -237,7 +238,8 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginStart="10dp"
-                    android:background="@drawable/perfil_logo"
+                    android:background="@drawable/img_encabezado"
+                    android:backgroundTint="@color/rojo"
                     android:contentDescription="Subir comentario" />
             </LinearLayout>
 

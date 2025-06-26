@@ -735,8 +735,6 @@ public class Ver_cursos extends AppCompatActivity {
     }
 
     private void actualizarTextoPuntuacion() {
-
-
         tvPuntuacion.setText(puntuacionActual + " / 5");
 
     }
@@ -905,7 +903,7 @@ public class Ver_cursos extends AppCompatActivity {
             calificaciones = (double) suma / califs.size();
         }*/
         double descargas = curso.getCantidadDescargas() != null ? curso.getCantidadDescargas() : 0;
-        return alpha * visitas + beta * interacciones +/* gamma * calificaciones + */epsilon * descargas;
+        return alpha * visitas + beta * interacciones + gamma * calificaciones + epsilon * descargas;
     }
 
 

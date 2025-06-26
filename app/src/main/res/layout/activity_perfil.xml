@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- maquetado -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -47,13 +48,48 @@
                 android:layout_height="2dp"
                 android:background="@color/tinto"
                 />
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:layout_margin="16dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_margin="16dp">
+                android:layout_margin="1dp">
+            <TextView
+                android:id="@+id/tv_NombreUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre del Usuario"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+            <Button
+                android:id="@+id/btnCompartirPerfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compartir Perfil"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/verde"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_margin="1dp">
+
+
+
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="100dp"
@@ -66,7 +102,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/default_profile"
+                        android:src="@drawable/img_vacia"
                         android:contentDescription="Profile Picture" />
                 </androidx.cardview.widget.CardView>
 
@@ -77,14 +113,7 @@
                     android:orientation="vertical"
                     android:layout_marginStart="16dp">
 
-                    <TextView
-                        android:id="@+id/tv_NombreUsuario"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre del Usuario"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/white" />
+
 
                     <TextView
                         android:id="@+id/tv_correo"
@@ -132,12 +161,29 @@
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
 
             <Button
-                android:id="@+id/btn_preguntas_incorrectas"
+                android:id="@+id/btnpreguntasIncorrectas"
                 android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="preguntasIncorrectas"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/verde"/>
+
+
+
+            <TextView
+                android:id="@+id/tv_nivelDificultad"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ver preguntas incorrectas"/>
+                android:text="📚 Progreso por curso:"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/chartPracticaSemanal"
@@ -156,7 +202,17 @@
                 android:textStyle="bold"
                 android:text="Comparación semanal" />
 
+            <!-- Nueva gráfica de progreso -->
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chartProgresoCuestionarios"
+                android:layout_width="match_parent"
+                android:layout_height="270dp"
+                android:layout_margin="16dp"
+                android:visibility="visible"/>
+
+
             <TextView
+
                 android:id="@+id/tvProgresoCursosTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,8 +228,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
                 android:layout_margin="16dp" />
-
-        </LinearLayout>
+              </LinearLayout>
     </ScrollView>
 
     <!-- Barra de navegación abajo -->

@@ -133,13 +133,17 @@ public class Perfil extends AppCompatActivity {
         tv_Seguidores = findViewById(R.id.tv_Seguidores);
         tv_Seguido = findViewById(R.id.tv_Seguido);
 
-        btn_preguntas_incorrectas = findViewById(R.id.btn_preguntas_incorrectas);
-        btn_preguntas_incorrectas.setOnClickListener(v -> startActivity(new Intent(Perfil.this, PreguntasIncorrectas.class)));
 
         cargarDatosUsuario();
 
         btn_gotoconfiguracion = findViewById(R.id.iv_gotoconfiguracion);
         btn_gotoconfiguracion.setOnClickListener(v -> showPopupMenu(v));  // Se pasa la vista del botón que se ha clickeado
+btn_preguntas_incorrectas=findViewById(R.id.btnpreguntasIncorrectas);
+btn_preguntas_incorrectas.setOnClickListener(v -> {
+        Intent intent;
+    intent=new Intent(Perfil.this,PreguntasIncorrectas.class);
+    startActivity(intent);
+        });
 
         // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());

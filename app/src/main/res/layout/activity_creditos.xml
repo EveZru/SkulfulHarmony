@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cafe2"
     tools:context=".creditos">
 
     <!-- ScrollView para que el usuario pueda ver los Créditos -->
@@ -75,6 +76,7 @@ La música, imágenes y materiales creados por usuarios son responsabilidad de s
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aceptar"
+        android:backgroundTint="@color/rojo_oscuro"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -5,8 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".verterminos">
-
+    <!-- maquetado-->
     <!-- ScrollView para que el usuario pueda leer los Términos y Condiciones -->
     <ScrollView
         android:id="@+id/scrollView"
@@ -70,6 +71,7 @@ Para dudas o quejas: contacto@skillfulharmony.app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aceptar"
+        android:backgroundTint="@color/rojo_oscuro"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<!--maquetado check-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".VerCursosCreados"
     android:fitsSystemWindows="true"
+    android:background="@color/grayrojo2"
     >
 
     <!-- RecyclerView ocupa toda la pantalla pero sin tapar la BottomNavigation -->
@@ -15,8 +16,7 @@
         android:id="@+id/rv_cursos_creados"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="56dp" /> <!-- Margen para que no choque con el BottomNavigation -->
-
+        android:layout_marginBottom="56dp" />
     <!-- Botón flotante encima del RecyclerView -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bttn_vercursocreador_agregarclase"
@@ -27,7 +27,7 @@
         android:layout_marginRight="15dp"
         android:src="@drawable/mas_logo"
         app:backgroundTint="@color/rojo"
-        app:iconTint="@color/white"
+        app:iconTint="@color/cafe2"
         android:contentDescription="Agregar nueva clase" />
 
     <!-- BottomNavigation fijo abajo -->

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -9,7 +10,7 @@
     tools:context=".EliminarCuenta"
     android:background="@color/white">
 
-    <!-- Texto de confirmación de eliminación -->
+    <!-- mauqetado Texto de confirmación de eliminación -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_continuar"
         android:layout_width="251dp"
@@ -28,7 +29,7 @@
     <!-- EditText para motivo (oculto inicialmente) -->
     <EditText
         android:id="@+id/editTextMotivo"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="Escribe al menos 50 caracteres explicando el motivo"
         android:visibility="gone"

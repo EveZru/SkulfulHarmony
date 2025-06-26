@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--maquetado-->
 <LinearLayout
      xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -43,7 +44,8 @@
                 <ImageView
                     android:id="@+id/imgen_vercursocreador_imagentitulo"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:background="@drawable/img_vacia"/>
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar_ver_cursos"
@@ -65,7 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="40sp"
-                        android:text="lllll"
+                        android:text="Titulo"
                         android:textColor="@color/white"
                         android:layout_marginHorizontal="10dp"
                         android:maxLines="2"
@@ -80,7 +82,7 @@
                         android:textColor="@color/white"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="fesha"/>
+                        android:text="fecha"/>
 
 
 
@@ -99,7 +101,7 @@
                 android:scrollbars="vertical"
                 android:overScrollMode="ifContentScrolls"
                 android:background="#00000000"
-                android:text="Tu descripción larga va aquí para probar cómo se ve con múltiples líneas y que el scroll funcione bien sin romper el diseño." />
+                android:text="Descripcion del curso " />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_verclasesencursocomocreador"

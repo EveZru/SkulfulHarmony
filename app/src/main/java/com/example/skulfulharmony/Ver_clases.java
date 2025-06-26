@@ -26,7 +26,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -44,7 +43,6 @@ import com.example.skulfulharmony.adapters.AdapterVerClaseVerComentarios;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.modooffline.DescargaManager;
 import com.example.skulfulharmony.modooffline.ClaseFirebase;
-import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Comentario;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
@@ -52,18 +50,15 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.protobuf.Empty;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,7 +239,20 @@ public class Ver_clases extends AppCompatActivity {
                                 Toast.makeText(this, "No hay video disponible para esta clase", Toast.LENGTH_SHORT).show();
                             }
 
+                            // Después de obtener la clase del Firestore
+                            if (clase != null && clase.getCalificacionPorUsuario() != null) {
+                                Boolean calificacionUsuario = clase.getCalificacionPorUsuario().get(user.getUid());
+                                if (calificacionUsuario != null) {
+                                    like = calificacionUsuario;
+                                    dislike = !calificacionUsuario;
 
+                                    // Actualizar iconos según el estado guardado
+                                    iv_like.setImageResource(like ? R.drawable.liketrue_icono : R.drawable.like_icono);
+                                    iv_dislike.setImageResource(dislike ? R.drawable.disliketrue_icono : R.drawable.dislike_icono);
+                                }
+                            }
+
+//parte de las preguntas
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                             adapterPreguntasEnVerClase = new AdapterPreguntasEnVerClase(clase.getPreguntas(),Ver_clases.this);
                             verPreguntas.setLayoutManager(layoutManager);
@@ -516,35 +524,40 @@ public class Ver_clases extends AppCompatActivity {
         });
 
         iv_like.setOnClickListener(v -> {
-            if (!like) {
+            boolean estabaLike = like;
+            boolean estabaDislike = dislike;
+
+            if (!estabaLike) {
                 like = true;
                 dislike = false;
                 iv_like.setImageResource(R.drawable.liketrue_icono);
                 iv_dislike.setImageResource(R.drawable.dislike_icono);
-                modificarcalificacionmas(); // like nuevo
+                modificarmegusta(true, estabaLike, estabaDislike);  // Activar like
             } else {
                 like = false;
                 iv_like.setImageResource(R.drawable.like_icono);
-                modificarcalificacionmenos(); // quitando like
+                modificarmegusta(false, estabaLike, estabaDislike); // Quitar like
             }
         });
 
-
         iv_dislike.setOnClickListener(v -> {
-            if (!dislike) {
+            boolean estabaLike = like;
+            boolean estabaDislike = dislike;
+
+            if (!estabaDislike) {
                 dislike = true;
                 like = false;
                 iv_dislike.setImageResource(R.drawable.disliketrue_icono);
                 iv_like.setImageResource(R.drawable.like_icono);
-
-                modificarcalificacionmenos(); // nuevo dislike
+                modificarnogusta(true, estabaLike, estabaDislike);  // Activar dislike
             } else {
                 dislike = false;
-
                 iv_dislike.setImageResource(R.drawable.dislike_icono);
-                modificarcalificacionmas(); // quitando dislike
+                modificarnogusta(false, estabaLike, estabaDislike); // Quitar dislike
             }
         });
+
+
 
 
     }
@@ -780,11 +793,124 @@ public class Ver_clases extends AppCompatActivity {
         });
         popupMenu.show();
     }
-    private void modificarcalificacionmas() {
+    private void modificarmegusta(boolean activado, boolean antesLike, boolean antesDislike) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Debes iniciar sesión para calificar", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("clases")
+                .whereEqualTo("idCurso", idCurso)
+                .whereEqualTo("idClase", idClase)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+                        String docId = doc.getId();
+                        Long meGusta = doc.getLong("meGusta");
+                        Long noGusta = doc.getLong("noGusta");
 
+                        int likeCount = (meGusta != null ? meGusta.intValue() : 0);
+                        int dislikeCount = (noGusta != null ? noGusta.intValue() : 0);
+
+                        Map<String, Object> updates = new HashMap<>();
+
+                        if (activado) {
+                            likeCount += 1;
+                            if (antesDislike) dislikeCount = Math.max(0, dislikeCount - 1);
+                            actualizarPromedioCurso(antesDislike ? 0.20 : 0.10); // quitó dislike, puso like
+                            updates.put("calificacionPorUsuario." + user.getUid(), true);
+                        } else {
+                            likeCount = Math.max(0, likeCount - 1);
+                            actualizarPromedioCurso(-0.10);
+                            updates.put("calificacionPorUsuario." + user.getUid(), null);
+                        }
+
+                        updates.put("meGusta", likeCount);
+                        updates.put("noGusta", dislikeCount);
+
+                        db.collection("clases").document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> {
+
+                                });
+                    }
+                });
     }
-    private void modificarcalificacionmenos() {
+    private void modificarnogusta(boolean activado, boolean antesLike, boolean antesDislike) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Debes iniciar sesión para calificar", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("clases")
+                .whereEqualTo("idCurso", idCurso)
+                .whereEqualTo("idClase", idClase)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+                        String docId = doc.getId();
+                        Long meGusta = doc.getLong("meGusta");
+                        Long noGusta = doc.getLong("noGusta");
+
+                        int likeCount = (meGusta != null ? meGusta.intValue() : 0);
+                        int dislikeCount = (noGusta != null ? noGusta.intValue() : 0);
+
+                        Map<String, Object> updates = new HashMap<>();
+
+                        if (activado) {
+                            dislikeCount += 1;
+                            if (antesLike) likeCount = Math.max(0, likeCount - 1);
+                            actualizarPromedioCurso(antesLike ? -0.20 : -0.10); // quitó like, puso dislike
+                            updates.put("calificacionPorUsuario." + user.getUid(), false);
+                        } else {
+                            dislikeCount = Math.max(0, dislikeCount - 1);
+                            actualizarPromedioCurso(0.10);
+                            updates.put("calificacionPorUsuario." + user.getUid(), null);
+                        }
+
+                        updates.put("meGusta", likeCount);
+                        updates.put("noGusta", dislikeCount);
+
+                        db.collection("clases").document(docId)
+                                .update(updates)
+                                .addOnSuccessListener(aVoid -> {
+
+                                });
+                    }
+                });
     }
+
+
+    private void actualizarPromedioCurso(double cambio) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("cursos")
+                .whereEqualTo("idCurso", clase.getIdCurso())
+                .limit(1)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
+
+                        Double actual = doc.getDouble("popularidad");
+                        double nuevo = (actual != null ? actual : 0.0) + cambio;
+
+                        doc.getReference().update("popularidad", nuevo)
+                                .addOnSuccessListener(aVoid -> Log.d("Curso", "Popularidad actualizada: " + nuevo))
+                                .addOnFailureListener(e -> Log.e("Curso", "Fallo al actualizar popularidad", e));
+                    } else {
+                        Log.e("Curso", "Curso no encontrado con idCurso = " + clase.getIdCurso());
+                        Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("Curso", "Error en búsqueda de curso", e));
+    }
+
+
 }

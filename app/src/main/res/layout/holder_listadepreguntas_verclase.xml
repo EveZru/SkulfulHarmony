@@ -33,8 +33,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@color/gray2"
-                android:backgroundTint="@color/gray2"
-                />
+                android:backgroundTint="@color/gray2"/>
         </LinearLayout>
 
 

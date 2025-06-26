@@ -13,11 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Curso implements Serializable {
-
-
-
     //Atributos
-
     private Integer idCurso;
     private String imagen;
     private String titulo;

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- maquetado check-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -73,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAllCaps="false"
-            android:text="Género" />
+            android:text="Género"
+            android:backgroundTint="@color/grayrojo2"/>
 
         <Button
             android:id="@+id/btn_binstumento"
@@ -81,7 +83,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAllCaps="false"
-            android:text="Instrumento" />
+            android:text="Instrumento"
+
+            android:backgroundTint="@color/rojo_oscuro"/>
 
         <Button
             android:id="@+id/btn_bdificultad"
@@ -89,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAllCaps="false"
+            android:backgroundTint="@color/grayrojo2"
             android:text="Dificultad" />
     </LinearLayout>
 

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--maquetado-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:padding="69dp"
-            android:text="..."
+            android:text="Pregunta"
             android:textColor="@color/white"
             android:textSize="18sp" />
 
@@ -53,7 +54,10 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/third_rounder_button"
                 android:text="Anterior "
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+
+
+                />
 
             <View
                 android:layout_width="0dp"

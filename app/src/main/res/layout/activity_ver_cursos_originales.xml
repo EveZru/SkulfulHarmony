@@ -12,18 +12,24 @@
         android:id="@+id/toolbar_ver_cursos"
         android:layout_width="match_parent"
         android:layout_height="60sp"
-        android:background="@color/black"
+        android:background="@color/gray1"
         >
         <ImageView
             android:id="@+id/iv_regresar"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
-            android:padding="8dp"
-            android:src="@drawable/bacground_dialog"
+            android:layout_margin="6dp"
+            android:src="@drawable/atras"
             android:contentDescription="Toolbar Icon" />
 
     </androidx.appcompat.widget.Toolbar>
+<View
+    android:layout_width="match_parent"
+    android:layout_height="2dp"
+    android:background="@color/rojo_oscuro"/>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cursos_originales"

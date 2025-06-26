@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray1"
     android:padding="16dp">
-
+<!-- maquetados-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,6 +14,7 @@
             android:text="Centro de notificaciones"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:textColor="@color/black"
             android:layout_marginBottom="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -43,6 +44,7 @@
             android:id="@+id/btn_config_notificaciones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/rojo_oscuro"
             android:text="Ir a configuración de notificaciones"
             android:layout_marginTop="24dp" />
 

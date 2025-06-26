@@ -11,4 +11,8 @@
         android:id="@+id/it_denunciar"
         android:title="Denunciar"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/it_compartir"
+        android:title="Denunciar"
+        app:showAsAction="never"/>
 </menu>
