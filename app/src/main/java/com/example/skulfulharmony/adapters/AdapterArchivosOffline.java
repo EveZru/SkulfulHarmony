@@ -1,13 +1,11 @@
 package com.example.skulfulharmony.adapters;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +30,7 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView nombreArchivo;
+
         public ViewHolder(View itemView) {
             super(itemView);
             nombreArchivo = itemView.findViewById(R.id.tv_nombre_archivo_offline);
@@ -40,13 +39,13 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
 
     @NonNull
     @Override
-    public AdapterArchivosOffline.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_archivo_offline, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdapterArchivosOffline.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String path = archivos.get(position);
         File archivo = new File(path);
 
@@ -55,21 +54,18 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
 
             holder.itemView.setOnClickListener(v -> {
                 try {
-                    Uri uri = FileProvider.getUriForFile(
-                            context,
-                            context.getPackageName() + ".provider",
-                            archivo
-                    );
+                    String mime = obtenerMimeType(archivo.getName());
+                    Uri uri = FileProvider.getUriForFile(context,
+                            context.getPackageName() + ".provider", archivo);
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(uri, getMimeType(uri.toString()));
+                    intent.setDataAndType(uri, mime);
                     intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    Intent chooser = Intent.createChooser(intent, "Abrir archivo con...");
+                    context.startActivity(chooser);
 
-                    context.startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(context, "No hay apps instaladas para abrir este archivo", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(context, "No se pudo abrir el archivo: " + archivo.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "No se pudo abrir: " + archivo.getName(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -85,13 +81,9 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
         return archivos.size();
     }
 
-    private String getMimeType(String url) {
-        String type = "*/*";
-        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension != null) {
-            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
-            if (mime != null) type = mime;
-        }
-        return type;
+    private String obtenerMimeType(String fileName) {
+        fileName = fileName.toLowerCase();
+        if (fileName.endsWith(".pdf")) return "application/pdf";
+        return "*/*";
     }
 }
