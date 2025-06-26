@@ -361,17 +361,12 @@ public class CrearClase extends AppCompatActivity {
 
     private void SubirArchivo(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
-        String[] mimeTypes = {
-                "application/pdf",
-                "application/msword",                   // .doc
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
-        };
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        intent.setType("application/pdf"); // ✅ Solo PDF
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.addCategory(Intent.CATEGORY_OPENABLE); // Para que no elija cosas que no se pueden abrir
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         filePickerLauncher.launch(intent);
     }
+
     private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
@@ -392,8 +387,14 @@ public class CrearClase extends AppCompatActivity {
 
 
     private void manejarArchivoSeleccionado(Uri fileUri) {
+        String nombreArchivo = obtenerNombreArchivoDesdeUri(fileUri);
+        if (nombreArchivo == null || !nombreArchivo.toLowerCase().endsWith(".pdf")) {
+            Toast.makeText(this, "Solo se permiten archivos PDF", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         long fileSizeInBytes = getFileSizeFromUri(fileUri);
-        long maxSizeInBytes = 200 * 1024 * 1024; // ✅ 200MB
+        long maxSizeInBytes = 200 * 1024 * 1024; // 200MB
 
         if (fileSizeInBytes <= maxSizeInBytes) {
             File archivoTemporal = copiarUriAArchivoTemporal(fileUri);
@@ -402,6 +403,7 @@ public class CrearClase extends AppCompatActivity {
             Toast.makeText(this, "El archivo supera los 200MB", Toast.LENGTH_LONG).show();
         }
     }
+
 
     //__________________coso de subir la pregunta
     private void SubirPregunta() {
