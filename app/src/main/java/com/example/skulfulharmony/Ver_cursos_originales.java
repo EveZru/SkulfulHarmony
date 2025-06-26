@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ver_cursos_originales extends AppCompatActivity implements Serializable{
-// esta clase es para ver la lista de cursos en este caso
-// que se vean las 6 clases de fundamentos y las 3 de escribir partituras
 
     private List<Curso> listaCursos;
     private RecyclerView rvCursosOriginales;
@@ -36,12 +34,9 @@ public class Ver_cursos_originales extends AppCompatActivity implements Serializ
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ver_cursos_originales);
-//
         rvCursosOriginales = findViewById(R.id.rv_cursos_originales);
         rvCursosOriginales.setLayoutManager(new LinearLayoutManager(this));
         ivRegresar = findViewById(R.id.iv_regresar);
-
-
 
         ivRegresar.setOnClickListener(v -> {
             Intent intent = new Intent(Ver_cursos_originales.this, Home.class);
@@ -72,7 +67,6 @@ public class Ver_cursos_originales extends AppCompatActivity implements Serializ
         }
         adapterClasesOriginales = new AdapterClasesOriginales(this, listaCursos);
         rvCursosOriginales.setAdapter(adapterClasesOriginales);
-
 
     }
 }
