@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.Serializable;
-import java.util.ResourceBundle;
 
 public class Usuario implements Serializable {
 
@@ -68,13 +67,12 @@ public class Usuario implements Serializable {
     private List<Curso> historialCursos;
     private List<Clase> historialClases;
     private List<Date> horasEntrada;
+    private List<Date> fechasAcceso;
     private String tiempoDeNotificacion;
     private Date ultimoAcceso;
     private Integer cluster;
     private PreferenciasUsuario preferenciasUsuario;
     private RespuestasCuestionario respuestasCuestionario;
-
-
     private List<PreguntaRecomendacion> preguntaRecomendacionList;
 
     // CONSTRUCTORES
@@ -338,6 +336,9 @@ public class Usuario implements Serializable {
         this.tiempoDeNotificacion = tiempoDeNotificacion;
     }
 
+    public void setFechasAcceso(List<Date> fechasAcceso) {
+        this.fechasAcceso = fechasAcceso;
+    }
 
     public String setRol(){return rol;}
     public List<Integer> getCursosSeguidos() {
