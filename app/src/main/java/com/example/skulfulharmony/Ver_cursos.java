@@ -113,9 +113,6 @@ public class Ver_cursos extends AppCompatActivity {
         Log.d("Ya entro al curso", "creando curso");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_cursos);
-        crearCanalNotificacion();
-        pedirPermisoNotificaciones();
-
 
         // Vincular vistas
         imagenTitulo = findViewById(R.id.imgen_vercurso_imagentitulo);
@@ -701,48 +698,17 @@ public class Ver_cursos extends AppCompatActivity {
                 startActivity(denuncia);
                 return true;
             }  else if (id == R.id.it_descargar) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("¿Qué deseas descargar?");
-                builder.setItems(new CharSequence[]{"Curso completo", "Solo curso sin clases"}, (dialog, which) -> {
-                    if (which == 0) {
-                        ProgressDialog progressDialog = new ProgressDialog(this);
-                        progressDialog.setMessage("Descargando curso completo...");
-                        progressDialog.setCancelable(false);
-                        progressDialog.show();
-
-                        DescargarCursoCompleto.descargarCursoYClasesFirestore(
-                                this,
-                                idCurso,
-                                new DescargarCursoCompleto.Callback() {
-                                    @Override
-                                    public void onFinalizado(String titulo) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(Ver_cursos.this, "Curso descargado: " + titulo, Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    @Override
-                                    public void onError(String mensaje) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(Ver_cursos.this, "Error: " + mensaje, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                        );
-
-                    } else if (which == 1) {
-                        // Solo curso sin clases
-                        DescargarCursoCompleto.descargar(this, idCurso, new DescargarCursoCompleto.Callback() {
-                            @Override
-                            public void onFinalizado(String titulo) {
-                                // Ya lanza VerCursoDescargado automáticamente
-                            }
-                            @Override
-                            public void onError(String mensaje) {
-                                // Puedes loguear si quieres
-                            }
-                        });
+                // Solo curso sin clases
+                DescargarCursoCompleto.descargar(this, idCurso, new DescargarCursoCompleto.Callback() {
+                    @Override
+                    public void onFinalizado(String titulo) {
+                        // Ya lanza VerCursoDescargado automáticamente
+                    }
+                    @Override
+                    public void onError(String mensaje) {
+                        // Puedes loguear si quieres
                     }
                 });
-                builder.show();
                 return true;
             }
             return false; // Importante devolver false si no se manejó el clic
@@ -751,9 +717,6 @@ public class Ver_cursos extends AppCompatActivity {
         // Mostrar el menú
         popupMenu.show();
     }
-
-
-    
 
     //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {
@@ -870,56 +833,6 @@ public class Ver_cursos extends AppCompatActivity {
         }
     }
 
-    private void crearCanalNotificacion() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "canal_descarga",
-                    "Descarga de cursos",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-    }
-
-    private void pedirPermisoNotificaciones() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIF);
-        }
-    }
-
-    private void mostrarProgresoCurso(String tituloCurso, int progreso) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "canal_descargas")
-                .setSmallIcon(R.drawable.ic_cloud_download)
-                .setContentTitle("Descargando curso")
-                .setContentText(tituloCurso)
-                .setProgress(100, progreso, false)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
-    }
-
-    private void mostrarFinalizadoCurso(String tituloCurso) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "canal_descargas")
-                .setSmallIcon(R.drawable.ic_check)
-                .setContentTitle("Curso descargado")
-                .setContentText("El curso '" + tituloCurso + "' está listo para usarse sin conexión.")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat.from(this).notify(("CURSO_" + tituloCurso).hashCode(), builder.build());
-    }
-
     private void cargarComentarios(Integer idCurso){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -945,66 +858,6 @@ public class Ver_cursos extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al cargar comentarios", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    private void descargarCursoCompletoFirestore() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("cursos")
-                .whereEqualTo("idCurso", idCurso)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(cursoQuery -> {
-                    if (!cursoQuery.isEmpty()) {
-                        DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
-                        Curso curso = cursoDoc.toObject(Curso.class);
-
-                        if (curso == null) {
-                            Toast.makeText(this, "Error al leer el curso", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        mostrarProgresoCurso(curso.getTitulo(), 0);
-
-                        DbHelper dbHelper = new DbHelper(this);
-
-                        // Guardamos el curso y recuperamos el ID insertado
-                        SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
-                        ContentValues cursoValues = new ContentValues();
-                        cursoValues.put("titulo", curso.getTitulo());
-                        cursoValues.put("descripcion", curso.getDescripcion());
-                        cursoValues.put("imagen", curso.getImagen());
-                        long cursoLocalId = sqlDB.insert("cursodescargado", null, cursoValues);
-
-                        if (cursoLocalId == -1) {
-                            Toast.makeText(this, "Error guardando curso local", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        db.collection("clases")
-                                .whereEqualTo("idCurso", idCurso)
-                                .get()
-                                .addOnSuccessListener(clasesQuery -> {
-                                    List<Clase> clasesFirestore = new ArrayList<>();
-                                    for (DocumentSnapshot claseDoc : clasesQuery.getDocuments()) {
-                                        Clase clase = claseDoc.toObject(Clase.class);
-                                        if (clase != null) clasesFirestore.add(clase);
-                                    }
-
-                                    Toast.makeText(this, "Iniciando descarga...", Toast.LENGTH_SHORT).show();
-                                    DescargaManager.descargarCursoYClases(curso, clasesFirestore, Ver_cursos.this);
-                                    mostrarFinalizadoCurso(curso.getTitulo());
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Error al obtener clases", Toast.LENGTH_SHORT).show();
-                                });
-                    } else {
-                        Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error al obtener curso", Toast.LENGTH_SHORT).show();
                 });
     }
     private double calcularPopularidad(Curso curso) {
