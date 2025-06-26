@@ -1,6 +1,7 @@
 package com.example.skulfulharmony;
 
 // 🧠 Clases internas del proyecto
+import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.example.skulfulharmony.server.zip.ComprimirZip; // Para comprimir archivos
 import com.example.skulfulharmony.server.config.DropboxConfig; // Configuración del cliente de Dropbox
 
@@ -23,6 +24,7 @@ import android.os.Looper; // Obtener el hilo principal
 import android.util.Log; // Logcat
 import android.widget.Button; // Botón
 import android.widget.ImageView; // Imagen
+import android.widget.LinearLayout;
 import android.widget.TextView; // Texto
 import android.widget.Toast; // Mensajes emergentes
 import android.view.View;
@@ -40,9 +42,12 @@ import android.widget.PopupMenu;
 import com.bumptech.glide.Glide; // Cargar imágenes desde URL
 
 // 🧩 Firebase
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth; // Autenticación
 import com.google.firebase.auth.FirebaseUser; // Usuario actual
 import com.google.firebase.firestore.DocumentReference; // Referencia a documentos
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore; // Base de datos Firestore
 
 // 💾 Manejo de archivos
@@ -84,6 +89,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import android.graphics.Color;
 
@@ -101,6 +107,7 @@ public class Perfil extends AppCompatActivity {
     private static final String ACCESS_TOKEN =  DropboxConfig.ACCESS_TOKEN;
     private LineChart chartPracticaSemanal;
     private BarChart chartProgresoCursos;
+    private BarChart chartNivelInstrumentos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,11 +145,11 @@ public class Perfil extends AppCompatActivity {
 
         btn_gotoconfiguracion = findViewById(R.id.iv_gotoconfiguracion);
         btn_gotoconfiguracion.setOnClickListener(v -> showPopupMenu(v));  // Se pasa la vista del botón que se ha clickeado
-btn_preguntas_incorrectas=findViewById(R.id.btnpreguntasIncorrectas);
-btn_preguntas_incorrectas.setOnClickListener(v -> {
-        Intent intent;
-    intent=new Intent(Perfil.this,PreguntasIncorrectas.class);
-    startActivity(intent);
+        btn_preguntas_incorrectas=findViewById(R.id.btn_preguntas_incorrectas);
+        btn_preguntas_incorrectas.setOnClickListener(v -> {
+         Intent intent;
+         intent=new Intent(Perfil.this,PreguntasIncorrectas.class);
+         startActivity(intent);
         });
 
         // Configuración de los botones
@@ -178,6 +185,8 @@ btn_preguntas_incorrectas.setOnClickListener(v -> {
         // Gráfica de práctica semanal
         chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
         chartProgresoCursos = findViewById(R.id.chartProgresoCursos);
+        chartNivelInstrumentos = findViewById(R.id.chartNivelInstrumentos);
+
 
         if (bottomNavigationView1 != null) {
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
@@ -303,6 +312,21 @@ btn_preguntas_incorrectas.setOnClickListener(v -> {
 
                     cargarGraficaProgresoCursos(progresoCursos);
                 }
+
+                // 🧠 Calcular nivel por instrumento desde Perfil directamente
+                calcularNivelInstrumentos(db, userId, resultado -> {
+                    for (String instrumento : resultado.keySet()) {
+                        Map<String, Object> nivelData = resultado.get(instrumento);
+                        String nivel = (String) nivelData.get("nivel");
+                        int tiempo = (int) nivelData.get("tiempoTotal");
+                        int clases = (int) nivelData.get("clasesVistas");
+
+                        Log.d("NivelInstrumento", "🎸 " + instrumento + ": " + nivel +
+                                " (Tiempo: " + tiempo + "s, Clases: " + clases + ")");
+                    }
+
+                    cargarGraficaNivelInstrumentos(resultado);
+                });
 
             } else {
                 // Crear perfil nuevo con valores predeterminados
@@ -503,6 +527,227 @@ btn_preguntas_incorrectas.setOnClickListener(v -> {
         chartProgresoCursos.setFitBars(true);
         chartProgresoCursos.animateY(1000);
         chartProgresoCursos.invalidate(); // 🧼 refrescar vista
+    }
+
+    // 🔍 Extrae correctamente el nombre del instrumento sin importar el tipo de campo
+    private String extraerInstrumento(DocumentSnapshot cursoDoc) {
+        Object instrumentoObj = cursoDoc.get("instrumento");
+        if (instrumentoObj instanceof String) {
+            return (String) instrumentoObj;
+        } else if (instrumentoObj instanceof Map) {
+            Map<String, Object> instrumentoMap = (Map<String, Object>) instrumentoObj;
+            if (!instrumentoMap.isEmpty()) {
+                return instrumentoMap.keySet().iterator().next();
+            }
+        }
+        return null;
+    }
+
+    private void calcularNivelInstrumentos(FirebaseFirestore db, String userId, NivelInstrumentoCallback callback) {
+        DocumentReference userRef = db.collection("usuarios").document(userId);
+
+        userRef.get().addOnSuccessListener(userDoc -> {
+            Map<String, Map<String, Object>> resultadoFinal = new HashMap<>();
+
+            Map<String, Object> tiempoPorClase = (Map<String, Object>) userDoc.get("tiempoPorClase");
+            Map<String, Object> progresoCursos = (Map<String, Object>) userDoc.get("progresoCursos");
+
+            if (tiempoPorClase == null || progresoCursos == null) {
+                Log.w("NivelInstrumento", "⛔ No hay datos suficientes para calcular niveles");
+                mostrarNivelesEnTexto(resultadoFinal);
+                callback.onResultado(resultadoFinal);
+                return;
+            }
+
+            Map<String, Integer> tiempoPorInstrumento = new HashMap<>();
+            Map<String, Integer> clasesPorInstrumento = new HashMap<>();
+            List<Task<Void>> tareas = new ArrayList<>();
+
+            for (String clave : tiempoPorClase.keySet()) {
+                try {
+                    Map<String, Object> claseInfo = (Map<String, Object>) tiempoPorClase.get(clave);
+                    int idCurso = ((Number) claseInfo.get("idCurso")).intValue();
+                    int tiempo = ((Number) claseInfo.get("tiempo")).intValue();
+
+                    Task<Void> tarea = db.collection("cursos")
+                            .whereEqualTo("idCurso", idCurso)
+                            .limit(1)
+                            .get()
+                            .continueWith(task -> {
+                                for (DocumentSnapshot cursoDoc : task.getResult()) {
+                                    String instrumento = extraerInstrumento(cursoDoc);
+                                    if (instrumento != null) {
+                                        tiempoPorInstrumento.merge(instrumento, tiempo, Integer::sum);
+                                    } else {
+                                        Log.w("NivelInstrumento", "⚠️ Curso sin instrumento válido (tiempo): " + idCurso);
+                                    }
+                                }
+                                return null;
+                            });
+
+                    tareas.add(tarea);
+                } catch (Exception e) {
+                    Log.e("NivelInstrumento", "❌ Error en tiempoPorClase: " + clave, e);
+                }
+            }
+
+            for (String claveCurso : progresoCursos.keySet()) {
+                try {
+                    int idCurso = Integer.parseInt(claveCurso.replace("curso_", ""));
+                    List<Long> clasesCompletadas = (List<Long>) progresoCursos.get(claveCurso);
+
+                    Task<Void> tarea = db.collection("cursos")
+                            .whereEqualTo("idCurso", idCurso)
+                            .limit(1)
+                            .get()
+                            .continueWith(task -> {
+                                for (DocumentSnapshot cursoDoc : task.getResult()) {
+                                    String instrumento = extraerInstrumento(cursoDoc);
+                                    if (instrumento != null) {
+                                        clasesPorInstrumento.merge(instrumento, clasesCompletadas.size(), Integer::sum);
+                                    } else {
+                                        Log.w("NivelInstrumento", "⚠️ Curso sin instrumento válido (progreso): " + idCurso);
+                                    }
+                                }
+                                return null;
+                            });
+
+                    tareas.add(tarea);
+                } catch (Exception e) {
+                    Log.e("NivelInstrumento", "❌ Error en progresoCursos: " + claveCurso, e);
+                }
+            }
+
+            Tasks.whenAllSuccess(tareas).addOnSuccessListener(result -> {
+                for (String instrumento : tiempoPorInstrumento.keySet()) {
+                    int tiempo = tiempoPorInstrumento.getOrDefault(instrumento, 0);
+                    int clases = clasesPorInstrumento.getOrDefault(instrumento, 0);
+                    String nivel;
+
+                    if (tiempo >= 90 || clases >= 6) {
+                        nivel = "Avanzado";
+                    } else if (tiempo >= 30 || clases >= 3) {
+                        nivel = "Intermedio";
+                    } else {
+                        nivel = "Principiante";
+                    }
+
+                    Map<String, Object> datos = new HashMap<>();
+                    datos.put("nivel", nivel);
+                    datos.put("tiempoTotal", tiempo);
+                    datos.put("clasesVistas", clases);
+                    resultadoFinal.put(instrumento, datos);
+                }
+
+                Log.d("NivelInstrumento", "🔥 Subiendo nivelInstrumentos: " + resultadoFinal);
+
+                if (!resultadoFinal.isEmpty()) {
+                    userRef.update("nivelInstrumentos", resultadoFinal)
+                            .addOnSuccessListener(aVoid -> Log.d("Firestore", "✅ nivelInstrumentos subido"))
+                            .addOnFailureListener(e -> Log.e("Firestore", "❌ Error subiendo nivelInstrumentos", e));
+                }
+
+                mostrarNivelesEnTexto(resultadoFinal); // 👈 Mostrarlo en pantalla
+                callback.onResultado(resultadoFinal);
+            }).addOnFailureListener(e -> {
+                Log.e("NivelInstrumento", "❌ Error en whenAllSuccess", e);
+                callback.onResultado(resultadoFinal);
+            });
+        });
+    }
+
+    private interface NivelInstrumentoCallback {
+        void onResultado(Map<String, Map<String, Object>> resultado);
+    }
+
+    private void mostrarNivelesEnTexto(Map<String, Map<String, Object>> datosInstrumento) {
+        LinearLayout layout = findViewById(R.id.layout_nivel_instrumentos);
+        layout.removeAllViews(); // limpia antes de cargar
+
+        for (Map.Entry<String, Map<String, Object>> entry : datosInstrumento.entrySet()) {
+            String instrumento = entry.getKey();
+            Map<String, Object> valores = entry.getValue();
+
+            String nivel = (String) valores.get("nivel");
+            int tiempo = (int) valores.get("tiempoTotal"); // en segundos
+            int clases = (int) valores.get("clasesVistas");
+
+            int minutos = tiempo / 60;
+            int segundos = tiempo % 60;
+
+            String info = "🎵 Instrumento: " + instrumento +
+                    "\n📈 Nivel: " + nivel +
+                    "\n⏱️ Tiempo total: " + minutos + " min " + segundos + " s" +
+                    "\n📚 Clases vistas: " + clases;
+
+            TextView texto = new TextView(this);
+            texto.setText(info);
+            texto.setTextSize(16f);
+            texto.setPadding(8, 8, 8, 16);
+            texto.setTextColor(Color.BLACK);
+
+            layout.addView(texto);
+        }
+    }
+
+    private void cargarGraficaNivelInstrumentos(Map<String, Map<String, Object>> datosInstrumento) {
+        List<BarEntry> entries = new ArrayList<>();
+        List<String> etiquetasInstrumentos = new ArrayList<>();
+
+        int index = 0;
+        for (Map.Entry<String, Map<String, Object>> entry : datosInstrumento.entrySet()) {
+            String instrumento = entry.getKey();
+            Map<String, Object> valores = entry.getValue();
+            int tiempo = (int) valores.get("tiempoTotal");
+
+            entries.add(new BarEntry(index, tiempo / 60f)); // Mostrar en minutos
+            etiquetasInstrumentos.add(instrumento);
+            index++;
+        }
+
+        BarDataSet dataSet = new BarDataSet(entries, "Minutos totales por instrumento");
+        dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setValueTextSize(12f);
+
+        // ✅ Mostrar “min” encima de cada barra
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getBarLabel(BarEntry barEntry) {
+                return String.format("%.0f min", barEntry.getY());
+            }
+        });
+
+        BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.6f);
+
+        chartNivelInstrumentos.setData(barData);
+
+        // ✅ Eje X (instrumentos)
+        XAxis xAxis = chartNivelInstrumentos.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(etiquetasInstrumentos));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        xAxis.setLabelRotationAngle(0);
+        xAxis.setLabelCount(etiquetasInstrumentos.size());
+
+        // ✅ Eje Y con “min”
+        chartNivelInstrumentos.getAxisLeft().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.format("%.0f min", value);
+            }
+        });
+        chartNivelInstrumentos.getAxisLeft().setAxisMinimum(0f);
+
+        chartNivelInstrumentos.getAxisRight().setEnabled(false);
+        chartNivelInstrumentos.getDescription().setEnabled(false);
+        chartNivelInstrumentos.getLegend().setEnabled(false);
+
+        chartNivelInstrumentos.setFitBars(true);
+        chartNivelInstrumentos.animateY(1000);
+        chartNivelInstrumentos.invalidate();
     }
 
     // Método para seleccionar una imagen
