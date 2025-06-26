@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
 
     <application
         android:name=".MyApp"
@@ -96,10 +98,6 @@
             android:exported="false" />
         <activity
             android:name=".TerminosCondiciones"
-            android:exported="false" />
-        <activity
-            android:name=".videos"
-            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false" />
         <activity android:name=".vertiempousuario" />
         <activity
@@ -207,6 +205,15 @@
             android:exported="false" />
         <activity android:name=".PerfilMostrar" />
         <activity android:name=".CentroNotificaciones" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <receiver
             android:name=".javaobjects.notifications.RecordatorioEntradaReceiver"

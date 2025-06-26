@@ -9,7 +9,6 @@ import com.example.skulfulharmony.databaseinfo.DbCourse;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
@@ -102,8 +101,6 @@ public class DescargaManager {
 
         Log.d("DESCARGA", "📚 Clases detectadas en Firestore: " + clasesFirestore.size());
 
-        List<ClaseFirebase> clases = new ArrayList<>();
-
         for (Clase clase : clasesFirestore) {
             if (clase == null) continue;
 
@@ -116,6 +113,14 @@ public class DescargaManager {
                     clase.getVideoUrl()
             );
 
+            // ✅ Agregar preguntas si existen
+            if (clase.getPreguntas() != null && !clase.getPreguntas().isEmpty()) {
+                Log.d("DESCARGA", "📘 Preguntas encontradas: " + clase.getPreguntas().size());
+                claseFirebase.setPreguntas(clase.getPreguntas());
+            } else {
+                Log.w("DESCARGA", "📭 Clase sin preguntas: " + clase.getTitulo());
+            }
+
             String titulo = clase.getTitulo().replaceAll("[^a-zA-Z0-9]", "_");
             Log.d("DESCARGA", "🔽 Descargando clase: " + clase.getTitulo());
 
@@ -124,7 +129,15 @@ public class DescargaManager {
 
             List<String> archivosLocales = new ArrayList<>();
             for (String url : clase.getArchivos()) {
-                String nombreArchivo = "archivo_" + titulo + "_" + archivosLocales.size() + ".pdf";
+                // Obtener extensión real desde el link limpio (sin parámetros)
+                String cleanUrl = url.split("\\?")[0];
+                String extension = ".bin";
+                int lastDot = cleanUrl.lastIndexOf(".");
+                if (lastDot != -1 && lastDot < cleanUrl.length() - 1) {
+                    extension = cleanUrl.substring(lastDot);
+                }
+
+                String nombreArchivo = "archivo_" + titulo + "_" + archivosLocales.size() + extension;
                 String archivoLocal = descargarArchivo(context, url, nombreArchivo);
                 if (archivoLocal != null) archivosLocales.add(archivoLocal);
             }

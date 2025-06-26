@@ -1,15 +1,18 @@
 package com.example.skulfulharmony.adapters;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.R;
@@ -47,16 +50,24 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
         String path = archivos.get(position);
         File archivo = new File(path);
 
-        // Validación adicional
         if (archivo.exists()) {
             holder.nombreArchivo.setText(archivo.getName());
 
             holder.itemView.setOnClickListener(v -> {
                 try {
+                    Uri uri = FileProvider.getUriForFile(
+                            context,
+                            context.getPackageName() + ".provider",
+                            archivo
+                    );
+
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(archivo), "application/pdf");
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setDataAndType(uri, getMimeType(uri.toString()));
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
                     context.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(context, "No hay apps instaladas para abrir este archivo", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     Toast.makeText(context, "No se pudo abrir el archivo: " + archivo.getName(), Toast.LENGTH_SHORT).show();
                 }
@@ -72,5 +83,15 @@ public class AdapterArchivosOffline extends RecyclerView.Adapter<AdapterArchivos
     @Override
     public int getItemCount() {
         return archivos.size();
+    }
+
+    private String getMimeType(String url) {
+        String type = "*/*";
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            String mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+            if (mime != null) type = mime;
+        }
+        return type;
     }
 }
