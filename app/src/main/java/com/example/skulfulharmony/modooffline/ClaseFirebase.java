@@ -1,4 +1,5 @@
 package com.example.skulfulharmony.modooffline;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,6 +9,7 @@ public class ClaseFirebase implements Serializable {
     private List<String> archivosUrl;
     private String imagenUrl;
     private String videoUrl;
+    private List<PreguntaCuestionario> preguntas;
 
     public ClaseFirebase() {}
 
@@ -27,4 +29,6 @@ public class ClaseFirebase implements Serializable {
     public void setArchivosUrl(List<String> archivosUrl) { this.archivosUrl = archivosUrl; }
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
     public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+    public List<PreguntaCuestionario> getPreguntas() { return preguntas; }
+    public void setPreguntas(List<PreguntaCuestionario> preguntas) { this.preguntas = preguntas; }
 }
