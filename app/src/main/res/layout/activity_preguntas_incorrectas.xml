@@ -52,6 +52,13 @@
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false" />
 
+        <TextView
+            android:id="@+id/tv_preguntas_corregidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:paddingBottom="8dp"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_reintentar"

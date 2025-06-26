@@ -302,9 +302,22 @@ public class Ver_clases extends AppCompatActivity {
                                         Long claseId = ((Number) intento.get("idClase")).longValue();
 
                                         if (cursoId == idCurso && claseId == idClase) {
-                                            intento.put("respuestas", mapaRespuestas); // ✅ incluye correctas también
+                                            List<Map<String, Object>> intentosPrevios = new ArrayList<>();
+                                            Object intentosRaw = intento.get("intentos");
+
+                                            if (intentosRaw instanceof List<?>) {
+                                                for (Object obj : (List<?>) intentosRaw) {
+                                                    if (obj instanceof Map) {
+                                                        intentosPrevios.add((Map<String, Object>) obj);
+                                                    }
+                                                }
+                                            }
+
+                                            // 👉 Agregar nuevo intento
+                                            intentosPrevios.add(new HashMap<>(mapaRespuestas));
+                                            intento.put("intentos", intentosPrevios);
                                             actualizo = true;
-                                            Log.d("Firebase", "🔁 Actualizando respuestas (todo)");
+                                            Log.d("Firebase", "🔁 Agregando intento a clase ya existente");
                                             break;
                                         }
                                     }
@@ -313,18 +326,20 @@ public class Ver_clases extends AppCompatActivity {
                                         Map<String, Object> nueva = new HashMap<>();
                                         nueva.put("idCurso", idCurso);
                                         nueva.put("idClase", idClase);
-                                        nueva.put("respuestas", mapaRespuestas);
+                                        List<Map<String, Object>> intentos = new ArrayList<>();
+                                        intentos.add(new HashMap<>(mapaRespuestas));
+                                        nueva.put("intentos", intentos);
                                         listaRespuestas.add(nueva);
-                                        Log.d("Firebase", "🆕 Agregando nuevo set completo");
+                                        Log.d("Firebase", "🆕 Nuevo set de intentos para clase");
                                     }
 
                                     userRef.set(new HashMap<String, Object>() {{
                                         put("respuestasIncorrectas", listaRespuestas);
                                     }}, SetOptions.merge()).addOnSuccessListener(unused -> {
-                                        Toast.makeText(Ver_clases.this, "✅ Respuestas guardadas (completo)", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Ver_clases.this, "✅ Intento guardado correctamente", Toast.LENGTH_SHORT).show();
                                     }).addOnFailureListener(e -> {
-                                        Log.e("Firebase", "🔥 Error al guardar respuestas", e);
-                                        Toast.makeText(Ver_clases.this, "Error al guardar respuestas", Toast.LENGTH_SHORT).show();
+                                        Log.e("Firebase", "🔥 Error al guardar intento", e);
+                                        Toast.makeText(Ver_clases.this, "Error al guardar intento", Toast.LENGTH_SHORT).show();
                                     });
                                 });
 
