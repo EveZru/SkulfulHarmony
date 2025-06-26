@@ -753,6 +753,8 @@ public class Ver_cursos extends AppCompatActivity {
     }
 
 
+    
+
     //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {
         if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {
