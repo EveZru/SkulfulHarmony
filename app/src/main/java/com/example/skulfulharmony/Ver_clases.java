@@ -87,9 +87,9 @@ public class Ver_clases extends AppCompatActivity {
     private AdapterPreguntasEnVerClase adapterPreguntasEnVerClase;
     private int cantidadRespuestasCorrectas;
     private FirebaseFirestore firestore;
-
     private boolean like=false, dislike=false;
-
+    private long tiempoInicioClase = 0;
+    private long tiempoAcumuladoClase = 0;
 
     private static final String TAG = "Ver_clases";
 
@@ -593,6 +593,85 @@ public class Ver_clases extends AppCompatActivity {
         super.onDestroy();
         if (player != null) {
             player.release();
+        }
+
+        guardarTiempoClaseSiSuperaUmbral();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tiempoInicioClase = System.currentTimeMillis();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (tiempoInicioClase > 0) {
+            long tiempoVisto = (System.currentTimeMillis() - tiempoInicioClase) / 1000; // en segundos
+            tiempoAcumuladoClase += tiempoVisto;
+            tiempoInicioClase = 0;
+        }
+    }
+
+    private void guardarTiempoClaseSiSuperaUmbral() {
+        if (tiempoAcumuladoClase >= 90) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) return;
+
+            String userId = user.getUid();
+            DocumentReference userRef = FirebaseFirestore.getInstance().collection("usuarios").document(userId);
+
+            // Guarda tiempo detallado
+            String claveClase = "clase_" + idClase;
+            Map<String, Object> tiempoPorClase = new HashMap<>();
+            Map<String, Object> claseInfo = new HashMap<>();
+            claseInfo.put("idCurso", idCurso);
+            claseInfo.put("tiempo", tiempoAcumuladoClase);
+            tiempoPorClase.put(claveClase, claseInfo);
+
+            userRef.set(new HashMap<String, Object>() {{
+                        put("tiempoPorClase", tiempoPorClase);
+                    }}, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d("TiempoClase", "⏱️ Tiempo registrado correctamente: " + tiempoAcumuladoClase + "s"))
+                    .addOnFailureListener(e -> Log.e("TiempoClase", "❌ Error al registrar tiempo", e));
+
+            // ✅ También cuenta como clase vista (si no está ya)
+            userRef.get().addOnSuccessListener(docSnapshot -> {
+                Map<String, Object> progreso = new HashMap<>();
+                Map<String, Object> nuevosDatos = new HashMap<>();
+
+                Object raw = docSnapshot.get("progresoCursos");
+                if (raw instanceof Map) {
+                    progreso = (Map<String, Object>) raw;
+                }
+
+                String claveCurso = "curso_" + idCurso;
+                List<Long> clasesCompletadas = new ArrayList<>();
+
+                if (progreso.containsKey(claveCurso)) {
+                    Object listaRaw = progreso.get(claveCurso);
+                    if (listaRaw instanceof List<?>) {
+                        for (Object id : (List<?>) listaRaw) {
+                            if (id instanceof Number) {
+                                clasesCompletadas.add(((Number) id).longValue());
+                            }
+                        }
+                    }
+                }
+
+                if (!clasesCompletadas.contains((long) idClase)) {
+                    clasesCompletadas.add((long) idClase);
+                    progreso.put(claveCurso, clasesCompletadas);
+                    nuevosDatos.put("progresoCursos", progreso);
+
+                    userRef.set(nuevosDatos, SetOptions.merge())
+                            .addOnSuccessListener(aVoid -> Log.d("Progreso", "✅ Clase marcada como vista por tiempo"))
+                            .addOnFailureListener(e -> Log.e("Progreso", "❌ Error al marcar progreso", e));
+                } else {
+                    Log.d("Progreso", "⏸️ Ya estaba marcada como vista");
+                }
+            });
         }
     }
 
