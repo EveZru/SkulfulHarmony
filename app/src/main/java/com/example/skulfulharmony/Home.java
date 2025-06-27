@@ -266,7 +266,6 @@ public class Home extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
 
-                        // Convertimos el documento completo a un objeto Usuario
                         Usuario usuario = doc.toObject(Usuario.class);
 
                         if (usuario != null) {
@@ -282,8 +281,12 @@ public class Home extends AppCompatActivity {
                                     return b.getFechaAcceso().compareTo(a.getFechaAcceso()); // Más reciente primero
                                 });
 
-                                // Configura el RecyclerView con el historial cargado
-                                AdapterHomeVerClaseHistorial adapter = new AdapterHomeVerClaseHistorial(historialClases, Home.this);
+                                // --- AQUI EL CAMBIO: Limita a las últimas 10 clases ---
+                                // Aseguramos que solo tomamos hasta 10 elementos, o menos si el historial es más corto.
+                                List<Clase> ultimasDiezClases = historialClases.subList(0, Math.min(historialClases.size(), 10));
+
+                                // Configura el RecyclerView con el historial limitado
+                                AdapterHomeVerClaseHistorial adapter = new AdapterHomeVerClaseHistorial(ultimasDiezClases, Home.this, true); // Cambia el constructor del adaptador
                                 rv_homehistorial.setAdapter(adapter);
                             } else {
                                 Log.d("Historial", "No hay historial de clases para mostrar");
@@ -300,7 +303,6 @@ public class Home extends AppCompatActivity {
                     Toast.makeText(this, "Error al cargar historial", Toast.LENGTH_SHORT).show();
                 });
     }
-
     @Override
     protected void onResume() {
         super.onResume();
