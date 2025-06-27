@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DescargaManager {
+public class  DescargaManager {
 
     private static final String CHANNEL_ID = "descarga_clases";
     private static final int NOTI_ID = 4000;

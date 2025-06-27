@@ -31,6 +31,9 @@ import java.util.List;
 
 public class Biblioteca extends AppCompatActivity {
 
+    private static final String PREF_ORDEN_CURSOS = "orden_cursos_seguidos";
+    private static final String KEY_ORDEN = "orden";
+
     private DbUser dbUser = new DbUser(this);
     private BottomNavigationView bottomNavigationView;
 
@@ -52,9 +55,23 @@ public class Biblioteca extends AppCompatActivity {
         btnVerHistorial = findViewById(R.id.btn_gotohistorial);
 
         rvDescargados.setLayoutManager(new LinearLayoutManager(this));
-        btnVerDescargas.setOnClickListener(v -> cargarCursosDescargados());
-        btnVerSeguidos.setOnClickListener(v -> cargarCursosSeguidos());
-        btnVerHistorial.setOnClickListener(v -> cargarCursosHistorial());
+        btnVerDescargas.setOnClickListener(v -> {
+            resaltarBotonSeleccionado(btnVerDescargas);
+            cargarCursosDescargados();
+        });
+        btnVerSeguidos.setOnClickListener(v -> {
+            resaltarBotonSeleccionado(btnVerSeguidos);
+            cargarCursosSeguidos();
+        });
+        btnVerSeguidos.setOnLongClickListener(v -> {
+            resaltarBotonSeleccionado(btnVerSeguidos);
+            mostrarDialogoOrdenSeguidos();
+            return true;
+        });
+        btnVerHistorial.setOnClickListener(v -> {
+            resaltarBotonSeleccionado(btnVerHistorial);
+            cargarCursosHistorial();
+        });
 
         cargarCursosSeguidos();
 
@@ -119,31 +136,6 @@ public class Biblioteca extends AppCompatActivity {
         }
     }
 
-    private void cargarCursosSeguidos() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null ){
-            db.collection("usuarios")
-                    .whereEqualTo("correo", user.getEmail())
-                    .limit(1)
-                    .get()
-                    .addOnSuccessListener(onQuerySnapshot -> {
-                        if (!onQuerySnapshot.isEmpty()) {
-                            Usuario usuario = onQuerySnapshot.getDocuments().get(0).toObject(Usuario.class);
-                            List<Integer> cursosSeguidos = new ArrayList<>();
-                            if (usuario != null && usuario.getCursosSeguidos() != null) {
-                                cursosSeguidos = usuario.getCursosSeguidos();
-                            }
-                            AdapterBibliotecaVerCursosActualizacion adapter = new AdapterBibliotecaVerCursosActualizacion(cursosSeguidos);
-                            rvDescargados.setAdapter(adapter);
-
-                        }
-                    })
-                    .addOnFailureListener( e -> {
-                        Log.e("Error", "Error al obtener los cursos seguidos", e);
-                    });
-        }
-    }
 
     private void cargarCursosDescargados() {
         DbHelper dbHelper = new DbHelper(this);
@@ -162,6 +154,89 @@ public class Biblioteca extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_VER_CURSO && resultCode == RESULT_OK) {
             cargarCursosDescargados();
+        }
+    }
+
+    private String obtenerOrdenGuardado() {
+        String orden = getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE).getString(KEY_ORDEN, null);
+        if (orden == null) {
+            guardarOrden("popularidad");
+            return "popularidad";
+        }
+        return orden;
+    }
+
+    private void guardarOrden(String orden) {
+        getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE)
+                .edit()
+                .putString(KEY_ORDEN, orden)
+                .apply();
+    }
+
+    private void mostrarDialogoOrdenSeguidos() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_seleccion_orden_biblioteca, null);
+
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        dialogView.findViewById(R.id.btn_orden_popularidad).setOnClickListener(v -> {
+            guardarOrden("popularidad");
+            cargarCursosSeguidos();
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btn_orden_alfabetico).setOnClickListener(v -> {
+            guardarOrden("alfabetico");
+            cargarCursosSeguidos();
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btn_orden_recientes).setOnClickListener(v -> {
+            guardarOrden("recientes");
+            cargarCursosSeguidos();
+            dialog.dismiss();
+        });
+
+        dialogView.findViewById(R.id.btn_cancelar_dialog).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void cargarCursosSeguidos() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            db.collection("usuarios")
+                    .whereEqualTo("correo", user.getEmail())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(onQuerySnapshot -> {
+                        if (!onQuerySnapshot.isEmpty()) {
+                            Usuario usuario = onQuerySnapshot.getDocuments().get(0).toObject(Usuario.class);
+                            List<Integer> cursosSeguidos = usuario != null && usuario.getCursosSeguidos() != null
+                                    ? usuario.getCursosSeguidos() : new ArrayList<>();
+
+                            String orden = obtenerOrdenGuardado();
+                            AdapterBibliotecaVerCursosActualizacion adapter =
+                                    new AdapterBibliotecaVerCursosActualizacion(cursosSeguidos, orden);
+
+                            rvDescargados.setAdapter(adapter);
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("Error", "Error al obtener los cursos seguidos", e));
+        }
+    }
+    private void resaltarBotonSeleccionado(Button botonSeleccionado) {
+        Button[] botones = {btnVerDescargas, btnVerSeguidos, btnVerHistorial};
+
+        for (Button btn : botones) {
+            if (btn == botonSeleccionado) {
+                btn.setTextColor(getResources().getColor(R.color.rojo_oscuro, getTheme()));
+            } else {
+                btn.setTextColor(getResources().getColor(R.color.white, getTheme()));
+            }
         }
     }
 }

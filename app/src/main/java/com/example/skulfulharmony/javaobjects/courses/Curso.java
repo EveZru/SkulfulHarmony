@@ -41,7 +41,13 @@ public class Curso implements Serializable {
     private String firestoreId;
     private Integer cluster;
 
+    private Boolean strike1;
+    private Boolean strike2;
+    private Boolean strike3;
+
     //Constructores
+
+
 
     public Curso(String notaDeSol, String s) {
         // Initialize collections and maps to avoid NullPointerException
@@ -264,6 +270,30 @@ public class Curso implements Serializable {
 
     public void setFechaAcceso(Timestamp fechaAcceso) {
         this.fechaAcceso = fechaAcceso;
+    }
+
+    public Boolean getStrike1() {
+        return strike1;
+    }
+
+    public void setStrike1(Boolean strike1) {
+        this.strike1 = strike1;
+    }
+
+    public Boolean getStrike2() {
+        return strike2;
+    }
+
+    public void setStrike2(Boolean strike2) {
+        this.strike2 = strike2;
+    }
+
+    public Boolean getStrike3() {
+        return strike3;
+    }
+
+    public void setStrike3(Boolean strike3) {
+        this.strike3 = strike3;
     }
 
 }

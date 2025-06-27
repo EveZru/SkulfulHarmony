@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bacground_dialog"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:elevation="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ordenar por:"
+        android:textSize="22sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btn_orden_popularidad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Populares"
+        android:backgroundTint="@color/verde"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_orden_recientes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recientes"
+        android:backgroundTint="@color/verde"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btn_orden_alfabetico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alfabético"
+        android:backgroundTint="@color/verde"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btn_cancelar_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancelar"
+        android:backgroundTint="@color/rojo_oscuro"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
+</LinearLayout>

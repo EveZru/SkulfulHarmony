@@ -249,6 +249,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
+                android:contentDescription="Lista de comentarios"
                 android:padding="10dp" />
         </LinearLayout>
 

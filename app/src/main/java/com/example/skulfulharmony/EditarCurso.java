@@ -26,6 +26,7 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.example.skulfulharmony.server.config.DropboxConfig;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -100,7 +101,7 @@ public class EditarCurso extends AppCompatActivity {
                    // proseso para editar la descrpcion
                     if(nuevaDescripcion!=null  && !nuevaDescripcion.isBlank()) {
                         Toast.makeText(EditarCurso.this,"Cambiando descripcion",Toast.LENGTH_SHORT).show();
-                        docRef.update("descripcion", nuevaDescripcion);
+                        docRef.update("descripcion", nuevaDescripcion, "fechaActualizacion", Timestamp.now());
                     }else{
                         Toast.makeText(EditarCurso.this,"No se realizaron cambios en la descripcion del curso ",Toast.LENGTH_SHORT).show();
                     }
@@ -223,7 +224,7 @@ public class EditarCurso extends AppCompatActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentReference docRef = queryDocumentSnapshots.getDocuments().get(0).getReference();
-                        docRef.update("imagen", nuevaUrlImagen)
+                        docRef.update("imagen", nuevaUrlImagen, "fechaActualizacion", Timestamp.now())
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(EditarCurso.this, "Imagen actualizada correctamente", Toast.LENGTH_SHORT).show();
                                     // Opcional: Actualizar la imagen en la interfaz

@@ -636,6 +636,46 @@ public class Ver_clases extends AppCompatActivity {
 
     }
 
+    // para la reprocuccion de video
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (player != null) {
+            player.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release();
+        }
+
+        guardarTiempoClaseSiSuperaUmbral();
+    }
+
+    public void abrirArchivoEnWebView(String url) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.archivo_webview);
+        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+
+        WebView webView = dialog.findViewById(R.id.webview_archivo);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+
+        // Asegúrate que el link es tipo raw directo (no dropbox.com sino dl.dropboxusercontent.com)
+        String viewer = "https://docs.google.com/gview?embedded=true&url=" +
+                url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
+
+        webView.loadUrl(viewer);
+
+        Button btnCerrar = dialog.findViewById(R.id.btn_cerrar_archivo);
+        btnCerrar.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
     private void cargarComentarios(int idCurso, int idClase) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -666,24 +706,6 @@ public class Ver_clases extends AppCompatActivity {
 
     }
 
-    // para la reprocuccion de video
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (player != null) {
-            player.pause();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (player != null) {
-            player.release();
-        }
-
-        guardarTiempoClaseSiSuperaUmbral();
-    }
 
     @Override
     protected void onResume() {
@@ -762,26 +784,7 @@ public class Ver_clases extends AppCompatActivity {
         }
     }
 
-    public void abrirArchivoEnWebView(String url) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.archivo_webview);
-        dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
-        WebView webView = dialog.findViewById(R.id.webview_archivo);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-
-        // Asegúrate que el link es tipo raw directo (no dropbox.com sino dl.dropboxusercontent.com)
-        String viewer = "https://docs.google.com/gview?embedded=true&url=" +
-                url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
-
-        webView.loadUrl(viewer);
-
-        Button btnCerrar = dialog.findViewById(R.id.btn_cerrar_archivo);
-        btnCerrar.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
-    }
 
     private void showPopupMenu(View view) {
         // Crear el PopupMenu y asociarlo con la vista 'view' (la ImageView desplegarmenu)
@@ -868,6 +871,7 @@ public class Ver_clases extends AppCompatActivity {
         });
         popupMenu.show();
     }
+
     private void modificarmegusta(boolean activado, boolean antesLike, boolean antesDislike) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {

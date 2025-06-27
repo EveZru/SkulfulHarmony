@@ -718,6 +718,8 @@ public class Ver_cursos extends AppCompatActivity {
         popupMenu.show();
     }
 
+
+
     //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {
         if (nuevaPuntuacion >= 0 && nuevaPuntuacion <= 5) {

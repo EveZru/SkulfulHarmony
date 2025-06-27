@@ -124,6 +124,7 @@ public class AdapterAdminVerCursosDenunciados extends RecyclerView.Adapter<Adapt
             btn_examinar.setOnClickListener(v2 -> {
                 Intent intent = new Intent(holder.itemView.getContext(), VerCursoComoAdministrador.class);
                 intent.putExtra("idCurso", denuncia.getIdCurso());
+                intent.putExtra("idDenuncia", denuncia.getIdDenuncia());
                 holder.itemView.getContext().startActivity(intent);
                 alertDialog.dismiss();
             });

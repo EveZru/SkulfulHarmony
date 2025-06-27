@@ -44,7 +44,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Date;
 
-public class IniciarSesion extends AppCompatActivity {
+public class  IniciarSesion extends AppCompatActivity {
 
     private EditText etCorreoOUser, etContraseña_Iniciar;
     private Button btnIniciar, btnGoToCrear;

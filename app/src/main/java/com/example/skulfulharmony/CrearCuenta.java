@@ -170,6 +170,7 @@ public class CrearCuenta extends AppCompatActivity {
 
                         // Redirigir al usuario a la pantalla de Términos y Condiciones
                         Intent intent = new Intent(CrearCuenta.this, TerminosCondiciones.class);
+                        intent.putExtra("cuentaRecienCreada", true);
                         startActivity(intent);
                         finish();
 
@@ -234,7 +235,9 @@ public class CrearCuenta extends AppCompatActivity {
                         }
 
                         Toast.makeText(CrearCuenta.this, "Inicio de sesión con Google exitoso", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(CrearCuenta.this, Home.class));
+                        Intent intent = new Intent(CrearCuenta.this, TerminosCondiciones.class);
+                        intent.putExtra("cuentaRecienCreada", true);
+                        startActivity(intent);
                         finish();
                     } else {
                         Toast.makeText(CrearCuenta.this, "Autenticación fallida", Toast.LENGTH_SHORT).show();

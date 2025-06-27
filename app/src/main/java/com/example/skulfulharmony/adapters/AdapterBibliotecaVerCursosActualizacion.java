@@ -15,81 +15,107 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.Ver_cursos;
-import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
-import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapter<AdapterBibliotecaVerCursosActualizacion.CursoViewHolder> {
+public class AdapterBibliotecaVerCursosActualizacion extends RecyclerView.Adapter<AdapterBibliotecaVerCursosActualizacion.CursoViewHolder> {
 
-    private List<Integer> seguidos;
+    private List<Curso> listaCursos = new ArrayList<>();
+    private Context context;
 
-    public AdapterBibliotecaVerCursosActualizacion(List<Integer> seguidos) {
-        this.seguidos = (seguidos != null) ? seguidos : new ArrayList<>();
+    public AdapterBibliotecaVerCursosActualizacion(List<Integer> idsCursosSeguidos, String orden) {
+        cargarCursos(idsCursosSeguidos, orden);
     }
-    //  this.actualizaciones = (actualizaciones != null) ? actualizaciones : new ArrayList<>();
+
+    private void cargarCursos(List<Integer> ids, String orden) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        for (Integer id : ids) {
+            db.collection("cursos")
+                    .whereEqualTo("idCurso", id)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            DocumentSnapshot doc = snapshot.getDocuments().get(0);
+                            Curso curso = doc.toObject(Curso.class);
+                            if (curso != null) {
+                                listaCursos.add(curso);
+
+                                if (listaCursos.size() == ids.size()) {
+                                    ordenarCursos(orden);
+                                    notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("AdapterCursosSeguidos", "Error cargando curso ID: " + id, e));
+        }
+    }
+
+    private void ordenarCursos(String orden) {
+        switch (orden) {
+            case "alfabetico":
+                Collections.sort(listaCursos, Comparator.comparing(Curso::getTitulo, String::compareToIgnoreCase));
+                break;
+            case "popularidad":
+                Collections.sort(listaCursos, (a, b) -> Double.compare(b.getPopularidad(), a.getPopularidad()));
+                break;
+            case "recientes":
+            default:
+                Collections.sort(listaCursos, (a, b) -> {
+                    if (a.getFechaActualizacion() == null || b.getFechaActualizacion() == null) return 0;
+                    return b.getFechaActualizacion().compareTo(a.getFechaActualizacion());
+                });
+                break;
+        }
+    }
 
     @NonNull
     @Override
     public CursoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.holder_verlista_clase_curso, parent, false);
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.holder_verlista_clase_curso, parent, false);
         return new CursoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CursoViewHolder holder, int position) {
-        Integer idCurso = seguidos.get(position);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("cursos")
-                .whereEqualTo("idCurso", idCurso)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(onQuerySnapshot -> {
-                    if (!onQuerySnapshot.isEmpty()) {
-                        DocumentSnapshot document = onQuerySnapshot.getDocuments().get(0);
-                        Curso curso = document.toObject(Curso.class);
-                        holder.nombreCurso.setText(curso.getTitulo());
-                        if (curso.getFechaActualizacion() == null) {
-                            holder.fechaActualizacion.setText("");
-                        } else {
-                            holder.fechaActualizacion.setText(curso.getFechaActualizacion().toDate().toString());
-                        }
-                        Glide.with(holder.itemView.getContext())
-                                .load(curso.getImagen())
-                                .placeholder(R.drawable.loading)
-                                .error(R.drawable.img_defaultclass)
-                                .into(holder.imagenCurso);
-                    }
-                })
-                .addOnFailureListener( e -> {
-                    holder.nombreCurso.setText("Curso desconocido");
-                    holder.fechaActualizacion.setText("");
-                    Glide.with(holder.itemView.getContext())
-                            .load(R.drawable.img_defaultclass)
-                            .into(holder.imagenCurso);
-                    Log.e("AdapterBibliotecaVerCursosActualizacion", "Error al obtener el curso: " + e.getMessage());
-                });
+        Curso curso = listaCursos.get(position);
+        holder.nombreCurso.setText(curso.getTitulo());
+
+        if (curso.getFechaActualizacion() != null) {
+            holder.fechaActualizacion.setText(curso.getFechaActualizacion().toDate().toString());
+        } else {
+            holder.fechaActualizacion.setText("");
+        }
+
+        Glide.with(context)
+                .load(curso.getImagen())
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.img_defaultclass)
+                .into(holder.imagenCurso);
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(holder.itemView.getContext(), Ver_cursos.class);
-            intent.putExtra("idCurso", idCurso);
-            holder.itemView.getContext().startActivity(intent);
+            Intent intent = new Intent(context, Ver_cursos.class);
+            intent.putExtra("idCurso", curso.getId());
+            context.startActivity(intent);
         });
-        if (position == seguidos.size() - 1) {
+
+        if (position == listaCursos.size() - 1) {
             holder.itemView.setPadding(0, 0, 0, 100);
         }
     }
 
     @Override
     public int getItemCount() {
-        return (seguidos != null) ? seguidos.size() : 0;
+        return listaCursos.size();
     }
 
     public static class CursoViewHolder extends RecyclerView.ViewHolder {
@@ -104,4 +130,3 @@ public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapt
         }
     }
 }
-

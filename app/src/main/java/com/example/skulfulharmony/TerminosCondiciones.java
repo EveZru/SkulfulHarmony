@@ -17,6 +17,7 @@ public class TerminosCondiciones extends AppCompatActivity {
     private CheckBox checkboxAceptar;
     private Button btnAceptar;
     private TextView tvTerms;
+    private Boolean cuentaRecienCreada = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,9 @@ public class TerminosCondiciones extends AppCompatActivity {
             btnAceptar.setEnabled(isChecked);
         });
 
+        // Obtener el valor de cuentaRecienCreada del intent
+        cuentaRecienCreada = getIntent().getBooleanExtra("cuentaRecienCreada", false);
+
         // Configurar la acción del botón para aceptar los términos
         btnAceptar.setOnClickListener(v -> {
             if (checkboxAceptar.isChecked()) {
@@ -49,9 +53,17 @@ public class TerminosCondiciones extends AppCompatActivity {
                                 // Mostrar un mensaje confirmando la aceptación
                                 Toast.makeText(this, "Términos aceptados", Toast.LENGTH_SHORT).show();
                                 // Redirigir al Home
-                                Intent intent = new Intent(TerminosCondiciones.this, Home.class);
-                                startActivity(intent);
-                                finish();
+
+                                if (cuentaRecienCreada) {
+                                    Intent intent = new Intent(TerminosCondiciones.this, PreguntasRecomendacion.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                                else {
+                                    Intent intent = new Intent(TerminosCondiciones.this, Home.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             })
                             .addOnFailureListener(e -> {
                                 // Si ocurre un error al guardar, mostrar un mensaje

@@ -193,6 +193,15 @@ public class EditarClase extends AppCompatActivity {
 
         claseDocRef.update(updates)
                 .addOnSuccessListener(aVoid -> {
+                    firestore.collection("cursos")
+                                    .whereEqualTo("idCurso", idCurso)
+                                    .get()
+                                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                                        if (!queryDocumentSnapshots.isEmpty()) {
+                                            DocumentReference cursoDocRef = queryDocumentSnapshots.getDocuments().get(0).getReference();
+                                            cursoDocRef.update("fechaActualizacion", Timestamp.now());
+                                        }
+                                    });
                     Toast.makeText(EditarClase.this, "Clase actualizada correctamente.", Toast.LENGTH_SHORT).show();
                     finish();
                 })
