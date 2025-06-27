@@ -14,6 +14,7 @@ public class Denuncia {
     private Integer idClase;
     private Integer idComentario;
     private String autorContenido;
+    private String formato;
 
     // Constructor sin argumentos
     public Denuncia() {
@@ -93,5 +94,12 @@ public class Denuncia {
     }
     public void setAutorContenido(String autorContenido) {
         this.autorContenido = autorContenido;
+    }
+
+    public String getFormato() {
+        return formato;
+    }
+    public void setFormato(String formato) {
+        this.formato = formato;
     }
 }

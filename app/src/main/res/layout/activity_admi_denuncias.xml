@@ -8,8 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/gray2"
     tools:context=".admi_denuncias">
-    <!-- Tmaquetado -->
-    <!-- Toolbar moderna -->
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
@@ -22,13 +21,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Controles en la parte superior -->
     <LinearLayout
         android:id="@+id/top_buttons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/rojo_oscuro"
+        android:background="@color/black"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -38,52 +36,50 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-          android:layout_marginVertical="5dp"
-            android:backgroundTint="@color/rojo_oscuro"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             android:text="Cursos"/>
-<View
-    android:layout_width="1dp"
-    android:layout_height="match_parent"
-    android:background="@color/cafe"/>
-        <Button
-            android:id="@+id/btn_vercomentarios_verdenuncias"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginVertical="5dp"
-            android:layout_weight="2"
-            android:backgroundTint="@color/rojo_oscuro"
-            android:text="Comentario"/>
+
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@color/cafe"/>
 
+        <Button
+            android:id="@+id/btn_vercomentarios_verdenuncias"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
+            android:text="Comentario"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/cafe"/>
 
         <Button
             android:id="@+id/btn_verclases_verdenuncias"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:layout_marginVertical="5dp"
-            android:backgroundTint="@color/rojo_oscuro"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             android:text="Clases"/>
-
     </LinearLayout>
 
-    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_demandas"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="8dp"
-        app:layout_constraintTop_toBottomOf="@id/top_buttons"
-        app:layout_constraintBottom_toTopOf="@id/barra_navegacionadmi"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:paddingBottom="80dp"
+    android:clipToPadding="false"
+    app:layout_constraintTop_toBottomOf="@id/top_buttons"
+    app:layout_constraintBottom_toTopOf="@id/barra_navegacionadmi"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- BottomNavigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacionadmi"
         android:layout_width="0dp"
@@ -96,5 +92,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

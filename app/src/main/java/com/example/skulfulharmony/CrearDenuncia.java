@@ -38,6 +38,7 @@ public class CrearDenuncia extends AppCompatActivity {
     private int idCurso;
     private int idClase;
     private int idComentario;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,237 +50,174 @@ public class CrearDenuncia extends AppCompatActivity {
             return insets;
         });
 
-        {
-            RadioButton rb_contenidoilegal = findViewById(R.id.rb_contenidoilegal);
-            RadioButton rb_suplantacion = findViewById(R.id.rb_suplantacion);
-            RadioButton rb_inapropiado = findViewById(R.id.rb_inapropiado);
-            RadioButton rb_spam = findViewById(R.id.rb_spam);
-            RadioButton rb_abuso = findViewById(R.id.rb_abuso);
-            RadioButton rb_normas = findViewById(R.id.rb_normas_);
-            RadioButton rb_otro = findViewById(R.id.rb_otro);
-
-            rb_contenidoilegal.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_suplantacion.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_inapropiado.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_spam.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_abuso.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_normas.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
-            rb_otro.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
+        // RadioButtons tint setup
+        for (int id : new int[]{
+                R.id.rb_contenidoilegal, R.id.rb_suplantacion, R.id.rb_inapropiado,
+                R.id.rb_spam, R.id.rb_abuso, R.id.rb_normas_, R.id.rb_otro
+        }) {
+            ((RadioButton) findViewById(id)).setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
         }
 
         btn_denunciar = findViewById(R.id.btn_hacerdemanda);
         rg_TipoDenuncia = findViewById(R.id.rg_tipo_denuncia);
         et_denuncia = findViewById(R.id.et_descripciondemanda);
 
-        btn_denunciar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Captura la denuncia
-                firestore = FirebaseFirestore.getInstance();
-                // Obtener idCurso del intent
-                idCurso = getIntent().getIntExtra("idCurso", -1);
-                idClase = getIntent().getIntExtra("idClase", -1);
-                idComentario = getIntent().getIntExtra("idComentario", -1);
+        btn_denunciar.setOnClickListener(view -> {
+            firestore = FirebaseFirestore.getInstance();
 
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String usuario = user.getEmail();
-                String txtDenuncia = et_denuncia.getText().toString();
+            idCurso = getIntent().getIntExtra("idCurso", -1);
+            idClase = getIntent().getIntExtra("idClase", -1);
+            idComentario = getIntent().getIntExtra("idComentario", -1);
 
-                // Validación: Verificar que el campo de denuncia no esté vacío
-                if (txtDenuncia.isEmpty()) {
-                    Toast.makeText(CrearDenuncia.this, "Por favor, especifica el problema", Toast.LENGTH_SHORT).show();
-                    return; // Si está vacío, salimos de la función
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String usuario = user.getEmail();
+            String txtDenuncia = et_denuncia.getText().toString();
+
+            if (txtDenuncia.isEmpty()) {
+                Toast.makeText(this, "Por favor, especifica el problema", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int selectedId = rg_TipoDenuncia.getCheckedRadioButtonId();
+            if (selectedId == -1) {
+                Toast.makeText(this, "Por favor, selecciona el tipo de denuncia", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String tipoDenuncia = "";
+
+            if (selectedId == R.id.rb_contenidoilegal) {
+                tipoDenuncia = "Contenido ilegal";
+            } else if (selectedId == R.id.rb_suplantacion) {
+                tipoDenuncia = "Suplantación de identidad";
+            } else if (selectedId == R.id.rb_inapropiado) {
+                tipoDenuncia = "Contenido inapropiado";
+            } else if (selectedId == R.id.rb_spam) {
+                tipoDenuncia = "Spam";
+            } else if (selectedId == R.id.rb_abuso) {
+                tipoDenuncia = "Abuso de plataforma";
+            } else if (selectedId == R.id.rb_normas_) {
+                tipoDenuncia = "Violación de normas de la plataforma";
+            } else if (selectedId == R.id.rb_otro) {
+                tipoDenuncia = "Otro";
+            }
+
+            // Crear objeto denuncia
+            Denuncia denuncia = new Denuncia(usuario, tipoDenuncia, txtDenuncia, -1);
+            denuncia.setFecha_denuncia(Timestamp.now());
+
+            if (idComentario != -1) {
+                if (idCurso != -1 && idClase != -1) {
+                    // Comentario dentro de clase
+                    denuncia.setIdCurso(idCurso);
+                    denuncia.setIdClase(idClase);
+                } else if (idCurso != -1) {
+                    // Comentario de curso
+                    denuncia.setIdCurso(idCurso);
+                    denuncia.setIdClase(-1);
                 }
-
-                // Validación: Verificar que el usuario haya seleccionado un tipo de denuncia
-                int selectedId = rg_TipoDenuncia.getCheckedRadioButtonId();
-                if (selectedId == -1) {  // Si no se ha seleccionado ninguna opción
-                    Toast.makeText(CrearDenuncia.this, "Por favor, selecciona el tipo de denuncia", Toast.LENGTH_SHORT).show();
-                    return; // Si no se ha seleccionado, salimos de la función
-                }
-
-
-                // Determina el tipo de denuncia basado en la opción seleccionada
-                String tipoDenuncia = "";
-                if (selectedId == R.id.rb_contenidoilegal) {
-                    tipoDenuncia = "Contenido ilegal";
-                } else if (selectedId == R.id.rb_suplantacion) {
-                    tipoDenuncia = "Suplantación de identidad";
-                } else if (selectedId == R.id.rb_inapropiado) {
-                    tipoDenuncia = "Contenido inapropiado";
-                } else if (selectedId == R.id.rb_spam) {
-                    tipoDenuncia = "Spam";
-                } else if (selectedId == R.id.rb_abuso) {
-                    tipoDenuncia = "Abuso de plataforma";
-                } else if (selectedId == R.id.rb_normas_) {
-                    tipoDenuncia = "Violación de normas de la plataforma";
-                } else if (selectedId == R.id.rb_otro) {
-                    tipoDenuncia = "Otro";
-                }
-
-                // Crea el objeto denuncia
-                Denuncia denuncia = new Denuncia(usuario, tipoDenuncia, txtDenuncia, idCurso);
-                denuncia.setIdClase(idClase);
-                denuncia.setFecha_denuncia(Timestamp.now());
                 denuncia.setIdComentario(idComentario);
+                denuncia.setFormato("comentario");
+            } else if (idClase != -1 && idCurso != -1) {
+                // Clase
+                denuncia.setIdCurso(idCurso);
+                denuncia.setIdClase(idClase);
+                denuncia.setIdComentario(-1);
+                denuncia.setFormato("clase");
+            } else if (idCurso != -1) {
+                // Curso
+                denuncia.setIdCurso(idCurso);
+                denuncia.setIdClase(-1);
+                denuncia.setIdComentario(-1);
+                denuncia.setFormato("curso");
+            } else {
+                Toast.makeText(this, "❌ Error: no se proporcionaron datos válidos para la denuncia", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
+            View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_crear_denuncia, null);
+            TextView tipo_denuncia = dialogView.findViewById(R.id.txt_vertipo_denuncia);
+            TextView denuncia_texto = dialogView.findViewById(R.id.et_vermensaje_denuncia);
+            Button btn_cancelar = dialogView.findViewById(R.id.btn_cancelar_dialog_creardenuncia);
+            Button btn_enviar = dialogView.findViewById(R.id.btn_enviar_dialog_creardenuncia);
 
-                db.collection("denuncias")
+            tipo_denuncia.setText("Tipo: " + tipoDenuncia);
+            denuncia_texto.setText("Contenido: \n\n" + txtDenuncia);
+            denuncia_texto.setMovementMethod(new ScrollingMovementMethod());
+
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .setView(dialogView)
+                    .create();
+
+            btn_cancelar.setOnClickListener(v -> alertDialog.dismiss());
+            btn_enviar.setOnClickListener(v -> {
+                firestore.collection("denuncias")
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             int idDenuncia = queryDocumentSnapshots.size() + 1;
                             denuncia.setIdDenuncia(idDenuncia);
+                            buscarAutorYSubir(denuncia, alertDialog);
                         })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(CrearDenuncia.this, "Error al obtener el ID de la denuncia", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Error al obtener el ID de la denuncia", Toast.LENGTH_SHORT).show();
                         });
+            });
 
-
-                View dialogView = LayoutInflater.from(CrearDenuncia.this).inflate(R.layout.dialog_crear_denuncia, null);
-
-                // ✅ Buscar dentro del layout del diálogo, no en la actividad
-                Button btn_cancelar = dialogView.findViewById(R.id.btn_cancelar_dialog_creardenuncia);
-                Button btn_enviar = dialogView.findViewById(R.id.btn_enviar_dialog_creardenuncia);
-                TextView tipo_denuncia = dialogView.findViewById(R.id.txt_vertipo_denuncia);
-                TextView denuncia_texto = dialogView.findViewById(R.id.et_vermensaje_denuncia);
-
-                // ✅ Establecer texto y scrolling aquí
-                tipo_denuncia.setText("Tipo: " + tipoDenuncia);
-                denuncia_texto.setText("Contenido: \n \n" + txtDenuncia);
-                denuncia_texto.setMovementMethod(new ScrollingMovementMethod()); // Scroll funcionando
-
-                // Crear y mostrar el diálogo
-                AlertDialog alertDialog = new AlertDialog.Builder(CrearDenuncia.this)
-                        .setView(dialogView)
-                        .create();
-
-                btn_cancelar.setOnClickListener(v2 -> alertDialog.dismiss());
-                btn_enviar.setOnClickListener(v2 -> {
-                    if (idComentario != -1) {
-                        firestore.collection("clases")
-                                .get()
-                                .addOnSuccessListener(snapshot -> {
-                                    for (var doc : snapshot.getDocuments()) {
-                                        List<Map<String, Object>> comentarios = (List<Map<String, Object>>) doc.get("comentarios");
-                                        if (comentarios != null) {
-                                            for (Map<String, Object> comentario : comentarios) {
-                                                Long id = (Long) comentario.get("idComentario");
-                                                if (id != null && id.intValue() == idComentario) {
-                                                    String correo = (String) comentario.get("usuario");
-                                                    if (correo != null) {
-                                                        firestore.collection("usuarios")
-                                                                .whereEqualTo("correo", correo)
-                                                                .get()
-                                                                .addOnSuccessListener(usuarios -> {
-                                                                    if (!usuarios.isEmpty()) {
-                                                                        String uidAutor = usuarios.getDocuments().get(0).getId();
-                                                                        denuncia.setAutorContenido(uidAutor);
-                                                                    }
-                                                                    denuncia.setIdCurso(-1);
-                                                                    denuncia.setIdClase(-1);
-                                                                    subirDenuncia(denuncia, alertDialog);
-                                                                });
-                                                    }
-                                                    return;
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    // Si no está en clases, buscar en cursos
-                                    firestore.collection("cursos")
-                                            .get()
-                                            .addOnSuccessListener(snapshotCursos -> {
-                                                for (var doc : snapshotCursos.getDocuments()) {
-                                                    List<Map<String, Object>> comentarios = (List<Map<String, Object>>) doc.get("comentarios");
-                                                    if (comentarios != null) {
-                                                        for (Map<String, Object> comentario : comentarios) {
-                                                            Long id = (Long) comentario.get("idComentario");
-                                                            if (id != null && id.intValue() == idComentario) {
-                                                                String correo = (String) comentario.get("usuario");
-                                                                if (correo != null) {
-                                                                    firestore.collection("usuarios")
-                                                                            .whereEqualTo("correo", correo)
-                                                                            .get()
-                                                                            .addOnSuccessListener(usuarios -> {
-                                                                                if (!usuarios.isEmpty()) {
-                                                                                    String uidAutor = usuarios.getDocuments().get(0).getId();
-                                                                                    denuncia.setAutorContenido(uidAutor);
-                                                                                }
-                                                                                denuncia.setIdCurso(-1);
-                                                                                denuncia.setIdClase(-1);
-                                                                                subirDenuncia(denuncia, alertDialog);
-                                                                            });
-                                                                }
-                                                                return;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            });
-                                });
-
-                    } else if (idClase != -1) {
-                        firestore.collection("clases")
-                                .whereEqualTo("idClase", idClase)
-                                .get()
-                                .addOnSuccessListener(snapshot -> {
-                                    if (!snapshot.isEmpty()) {
-                                        String uidAutor = snapshot.getDocuments().get(0).getString("creadorUid");
-                                        if (uidAutor != null) {
-                                            denuncia.setAutorContenido(uidAutor);
-                                        }
-                                    }
-                                    subirDenuncia(denuncia, alertDialog);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(CrearDenuncia.this, "Error al obtener clase", Toast.LENGTH_SHORT).show();
-                                    subirDenuncia(denuncia, alertDialog);
-                                });
-                    } else if (idCurso != -1) {
-                        firestore.collection("cursos")
-                                .whereEqualTo("idCurso", idCurso)
-                                .get()
-                                .addOnSuccessListener(snapshot -> {
-                                    if (!snapshot.isEmpty()) {
-                                        String correoCreador = snapshot.getDocuments().get(0).getString("creador");
-                                        if (correoCreador != null) {
-                                            firestore.collection("usuarios")
-                                                    .whereEqualTo("correo", correoCreador.trim().toLowerCase())
-                                                    .get()
-                                                    .addOnSuccessListener(usuarioSnap -> {
-                                                        if (!usuarioSnap.isEmpty()) {
-                                                            String uidAutor = usuarioSnap.getDocuments().get(0).getId();
-                                                            Log.d("DENUNCIA_DEBUG", "UID encontrado: " + uidAutor);
-                                                            denuncia.setAutorContenido(uidAutor);
-                                                        } else {
-                                                            Log.w("DENUNCIA_DEBUG", "No se encontró usuario con correo: " + correoCreador);
-                                                        }
-                                                        subirDenuncia(denuncia, alertDialog);
-                                                    })
-                                                    .addOnFailureListener(e -> {
-                                                        Log.e("DENUNCIA_DEBUG", "Error al buscar UID", e);
-                                                        subirDenuncia(denuncia, alertDialog);
-                                                    });
-
-                                        } else {
-                                            subirDenuncia(denuncia, alertDialog);
-                                        }
-                                    } else {
-                                        subirDenuncia(denuncia, alertDialog);
-                                    }
-                                });
-
-                    } else {
-                        subirDenuncia(denuncia, alertDialog);
-                    }
-                });
-                alertDialog.show();
-            }
+            alertDialog.show();
         });
-
     }
+
+    private void buscarAutorYSubir(Denuncia denuncia, AlertDialog dialog) {
+        if (denuncia.getFormato().equals("comentario")) {
+            firestore.collection("usuarios")
+                    .whereEqualTo("correo", FirebaseAuth.getInstance().getCurrentUser().getEmail())
+                    .get()
+                    .addOnSuccessListener(users -> {
+                        if (!users.isEmpty()) {
+                            denuncia.setAutorContenido(users.getDocuments().get(0).getId());
+                        }
+                        subirDenuncia(denuncia, dialog);
+                    });
+        } else if (denuncia.getFormato().equals("clase")) {
+            firestore.collection("clases")
+                    .whereEqualTo("idClase", denuncia.getIdClase())
+                    .whereEqualTo("idCurso", denuncia.getIdCurso())
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            String uidAutor = snapshot.getDocuments().get(0).getString("creadorUid");
+                            denuncia.setAutorContenido(uidAutor);
+                        }
+                        subirDenuncia(denuncia, dialog);
+                    });
+        } else if (denuncia.getFormato().equals("curso")) {
+            firestore.collection("cursos")
+                    .whereEqualTo("idCurso", denuncia.getIdCurso())
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            String correo = snapshot.getDocuments().get(0).getString("creador");
+                            firestore.collection("usuarios")
+                                    .whereEqualTo("correo", correo)
+                                    .get()
+                                    .addOnSuccessListener(usuarioSnap -> {
+                                        if (!usuarioSnap.isEmpty()) {
+                                            denuncia.setAutorContenido(usuarioSnap.getDocuments().get(0).getId());
+                                        }
+                                        subirDenuncia(denuncia, dialog);
+                                    });
+                        } else {
+                            subirDenuncia(denuncia, dialog);
+                        }
+                    });
+        }
+    }
+
     private void subirDenuncia(Denuncia denuncia, AlertDialog dialog) {
         FirebaseFirestore.getInstance().collection("denuncias")
                 .add(denuncia)

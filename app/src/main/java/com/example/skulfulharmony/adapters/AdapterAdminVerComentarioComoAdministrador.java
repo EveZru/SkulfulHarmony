@@ -26,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Adapter<AdapterAdminVerComentarioComoAdministrador.ViewHolder> {
-    List<Denuncia> comentarios = new ArrayList<>();
+
+    private List<Denuncia> comentarios = new ArrayList<>();
 
     public AdapterAdminVerComentarioComoAdministrador(List<Denuncia> comentarios) {
         this.comentarios = comentarios;
@@ -34,20 +35,19 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
 
     @NonNull
     @Override
-    public AdapterAdminVerComentarioComoAdministrador.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.holder_verdenuncia_comentario, parent, false);
-        return new AdapterAdminVerComentarioComoAdministrador.ViewHolder(view);
+        return new ViewHolder(view);
     }
+
     @Override
-    public void onBindViewHolder(@NonNull AdapterAdminVerComentarioComoAdministrador.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Denuncia denuncia = comentarios.get(position);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Mostrar tipo y fecha de denuncia
         holder.tipo.setText(denuncia.getTipo_denuncia());
         holder.fecha.setText(denuncia.getFecha_denuncia().toDate().toString());
 
-        // Establecer color de fondo según tipo
         int color;
         switch (denuncia.getTipo_denuncia()) {
             case "Contenido ilegal":
@@ -67,9 +67,13 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         }
         holder.card.setCardBackgroundColor(holder.itemView.getResources().getColor(color));
 
-        // Verificar si la denuncia es de clase o curso
-        if (denuncia.getIdClase() != null && !denuncia.getIdClase().equals("") && !denuncia.getIdClase().equals("-1")) {
-            // Denuncia en clase
+        if (!"comentario".equals(denuncia.getFormato())) {
+            holder.identificador_comentario.setText("⚠️ Formato inválido");
+            return;
+        }
+
+        // Comentario dentro de una CLASE
+        if (denuncia.getIdClase() != -1) {
             db.collection("clases")
                     .whereEqualTo("idCurso", denuncia.getIdCurso())
                     .whereEqualTo("idClase", denuncia.getIdClase())
@@ -79,10 +83,9 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                         if (!claseSnapshot.isEmpty()) {
                             Clase clase = claseSnapshot.getDocuments().get(0).toObject(Clase.class);
                             String claseDocId = claseSnapshot.getDocuments().get(0).getId();
-                            Comentario comentarioObj = clase.getComentarios().get(denuncia.getIdComentario());
-                            String textoComentario = comentarioObj != null ? comentarioObj.getTexto() : "Comentario no encontrado";
+                            String textoComentario = obtenerTextoComentario(clase.getComentarios(), denuncia.getIdComentario());
 
-                            // Obtener curso
+
                             db.collection("cursos")
                                     .whereEqualTo("idCurso", clase.getIdCurso())
                                     .limit(1)
@@ -92,7 +95,6 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                                             Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
                                             holder.identificador_comentario.setText("#" + clase.getIdClase() + ": " + curso.getTitulo());
 
-                                            // Obtener autor
                                             db.collection("usuarios")
                                                     .whereEqualTo("correo", curso.getCreador())
                                                     .limit(1)
@@ -111,8 +113,8 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                                     });
                         }
                     });
-        } else {
-            // Denuncia en curso
+
+        } else { // Comentario en CURSO
             db.collection("cursos")
                     .whereEqualTo("idCurso", denuncia.getIdCurso())
                     .limit(1)
@@ -121,8 +123,7 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                         if (!cursoSnapshot.isEmpty()) {
                             Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
                             String cursoDocId = cursoSnapshot.getDocuments().get(0).getId();
-                            Comentario comentarioObj = curso.getComentarios().get(denuncia.getIdComentario());
-                            String textoComentario = comentarioObj != null ? comentarioObj.getTexto() : "Comentario no encontrado";
+                            String textoComentario = obtenerTextoComentario(curso.getComentarios(), denuncia.getIdComentario());
 
                             holder.identificador_comentario.setText(curso.getTitulo());
 
@@ -133,7 +134,11 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                                     .addOnSuccessListener(userSnapshot -> {
                                         if (!userSnapshot.isEmpty()) {
                                             Usuario user = userSnapshot.getDocuments().get(0).toObject(Usuario.class);
-                                            holder.autor.setText(user.getNombre());
+                                            if (user != null){
+                                                holder.autor.setText(user.getNombre());
+                                            }
+                                            holder.autor.setText(curso.getCreador());
+
                                         } else {
                                             holder.autor.setText("Autor desconocido");
                                         }
@@ -150,6 +155,14 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         return comentarios.size();
     }
 
+    private String obtenerTextoComentario(List<Comentario> lista, int index) {
+        if (lista != null && index >= 0 && index < lista.size()) {
+            Comentario c = lista.get(index);
+            return c != null ? c.getTexto() : "Comentario nulo";
+        }
+        return "Comentario no encontrado";
+    }
+
     private void configurarDialogo(ViewHolder holder, Denuncia denuncia, String textoComentario, boolean esClase, String documentoId) {
         View dialogView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.dialog_vercomentario_denunciado_admin, null);
         TextView tipoDenuncia = dialogView.findViewById(R.id.txt_vertipo_denuncia_comentario_admin);
@@ -158,12 +171,12 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         Button btnOmitir = dialogView.findViewById(R.id.btn_omitir_dialog_verdenuncia_comentario_admin);
         Button btnEliminar = dialogView.findViewById(R.id.btn_eliminar_dialog_verdenuncia_comentario_admin);
 
-        denunciaTexto.setMovementMethod(new ScrollingMovementMethod());
-        comentario.setMovementMethod(new ScrollingMovementMethod());
-
         tipoDenuncia.setText("Tipo:\n" + denuncia.getTipo_denuncia());
         denunciaTexto.setText("Contenido:\n" + denuncia.getDenuncia());
         comentario.setText(textoComentario);
+
+        denunciaTexto.setMovementMethod(new ScrollingMovementMethod());
+        comentario.setMovementMethod(new ScrollingMovementMethod());
 
         AlertDialog alertDialog = new AlertDialog.Builder(holder.itemView.getContext())
                 .setView(dialogView)
@@ -192,7 +205,6 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
                         });
             };
 
-
             if (esClase) {
                 db.collection("clases").document(documentoId).get().addOnSuccessListener(doc -> {
                     Clase clase = doc.toObject(Clase.class);
@@ -215,12 +227,8 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         alertDialog.show();
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView identificador_comentario;
-        TextView autor;
-        TextView fecha;
-        TextView tipo;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView identificador_comentario, autor, fecha, tipo;
         ImageView imagen;
         CardView card;
 
