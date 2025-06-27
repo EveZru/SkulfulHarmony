@@ -53,6 +53,7 @@ public class CrearCurso extends AppCompatActivity {
     private Button btnSubirCurso;
     private ImageView imageView;
     private Uri im = Uri.EMPTY;
+    private boolean creando=false;
 
     private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
@@ -100,7 +101,11 @@ public class CrearCurso extends AppCompatActivity {
         });
 
         imageView.setOnClickListener(v -> openGallery());
-        btnSubirCurso.setOnClickListener(v -> subirCurso());
+        btnSubirCurso.setOnClickListener(v ->{
+             if(!creando){
+                 subirCurso();
+             }
+         });
     }
 
     private void openGallery() {
@@ -114,9 +119,14 @@ public class CrearCurso extends AppCompatActivity {
         String instrumento = spInstrumento.getSelectedItem().toString();
         String dificultad = spNivel.getSelectedItem().toString();
         String genero = spGenero.getSelectedItem().toString();
-
+        creando=true;
+        btnSubirCurso.setEnabled(false);
+        btnSubirCurso.setText("Subiendo...");
         if (nombre.isEmpty() || descripcion.isEmpty() || im == Uri.EMPTY) {
             Toast.makeText(this, "Completa todos los campos y selecciona una imagen", Toast.LENGTH_SHORT).show();
+            btnSubirCurso.setEnabled(true);
+            btnSubirCurso.setText("PUBLICAR");
+            creando=false;
             return;
         }
 
@@ -158,8 +168,12 @@ public class CrearCurso extends AppCompatActivity {
                 ));
             } catch (Exception e) {
                 handler.post(() -> Toast.makeText(this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
+                finish();
+            }finally {
+                executor.shutdown();
             }
         });
+
     }
 
     private void procesarKMeansYGuardarCurso(String nombre, String descripcion,

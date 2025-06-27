@@ -32,8 +32,9 @@ public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapt
     private List<Integer> seguidos;
 
     public AdapterBibliotecaVerCursosActualizacion(List<Integer> seguidos) {
-        this.seguidos = seguidos;
+        this.seguidos = (seguidos != null) ? seguidos : new ArrayList<>();
     }
+    //  this.actualizaciones = (actualizaciones != null) ? actualizaciones : new ArrayList<>();
 
     @NonNull
     @Override
@@ -88,7 +89,7 @@ public class AdapterBibliotecaVerCursosActualizacion  extends RecyclerView.Adapt
 
     @Override
     public int getItemCount() {
-        return seguidos.size();
+        return (seguidos != null) ? seguidos.size() : 0;
     }
 
     public static class CursoViewHolder extends RecyclerView.ViewHolder {

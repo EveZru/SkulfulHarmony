@@ -1,5 +1,34 @@
 package com.example.skulfulharmony;
 
+/*
+La clase usa elementos visuales como tv_acorde (muestra el acorde a tocar) y dos contenedores:
+imagenContainer (para mostrar lecciones) y actividadContainer (donde se practica).
+
+En cuanto a la lógica, acordeActual guarda el acorde que el usuario debe tocar. posicionesAcordes
+es un mapa que sabe qué botones de cuerda/traste corresponden a cada acorde. botonesPresionados lleva
+un registro de los botones que el usuario ha pulsado para el acorde actual. Un objeto Random elige los acordes
+al azar del arreglo acordes. mapaBotones guarda todos los botones de la interfaz para poder manejarlos fácilmente.
+ La variable acordeAcertado ayuda a saber si el usuario ya completó el acorde.
+
+
+Al iniciar: La app muestra primero la lección (imagenContainer). Al tocarla, cambia a la pantalla
+de práctica (actividadContainer) y genera un nuevo acorde.
+Botones de Cuerda/Traste: La aplicación identifica automáticamente todos los botones de las cuerdas
+y trastes (lX_tY) y los prepara para que el usuario los presione.
+Métodos y su Función
+generarNuevoAcorde(): Prepara una nueva práctica. Borra los botones pulsados antes, restablece sus colores
+y elige un acorde al azar, mostrándolo en pantalla para que el usuario lo toque.
+onBotonTocado(String botonId): Se activa cada vez que el usuario presiona un botón de cuerda/traste.
+Verifica si el botón presionado es parte del acorde correcto.
+Si es correcto, lo marca de verde. Si todos los botones correctos de un acorde fueron presionados,
+felicita al usuario y genera otro acorde después de un momento.
+Si es incorrecto, el botón se pone rojo brevemente para indicar el error.
+cambiarColorBoton(String botonId, int colorResId): Cambia el color de un botón específico,
+útil para mostrar si fue correcto o incorrecto.
+restablecerColoresBotones(): Pone todos los botones de cuerda/traste en su color original.
+mostrarMensaje(String mensaje): Muestra un mensaje corto en la parte inferior de la pantalla
+ para informar al usuario (ej. "¡Acorde Correcto!").
+*/
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;

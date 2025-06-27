@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,13 +16,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull; // Importar para onRequestPermissionsResult
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -30,16 +27,17 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
-import be.tarsos.dsp.pitch.Yin; // O MpM, etc.
 
 
 public class Afinador extends AppCompatActivity {
 
-    private TextView noteTextView;
-    private TextView frequencyTextView;
+    private TextView tv_nota;
+    private TextView tv_frecuencia;
     private Spinner targetNoteSpinner;
-    private String selectedTargetNote;
-    private CardView cardView1, cardView2;
+    private String notaObjetivo;
+    private View v_fondo;
+    private Button btn_decoracion;
+    private boolean notaCoincide = false;
 
     // Constantes para la detección de tono (usadas por TarsosDSP)
     private final static int SAMPLE_RATE = 44100; // Tasa de muestreo
@@ -60,38 +58,50 @@ public class Afinador extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_afinador);
 
-        noteTextView = findViewById(R.id.noteTextView);
-        frequencyTextView = findViewById(R.id.frequencyTextView);
+        tv_nota = findViewById(R.id.noteTextView);
+        tv_frecuencia = findViewById(R.id.frequencyTextView);
         targetNoteSpinner = findViewById(R.id.targetNoteSpinner);
-
-        cardView1 = findViewById(R.id.cardView1);
-        cardView2 = findViewById(R.id.cardView2);
+        v_fondo = findViewById(R.id.v_fondo);
+        btn_decoracion = findViewById(R.id.btn_decoracion);
         // Configurar el ArrayAdapter para el Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, noteNames);
         targetNoteSpinner.setAdapter(adapter);
 
-        // Establecer el listener para obtener la nota seleccionada
         targetNoteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedTargetNote = (String) parent.getItemAtPosition(position);
-                Toast.makeText(Afinador.this, "Nota objetivo seleccionada: " + selectedTargetNote, Toast.LENGTH_SHORT).show();
+                notaObjetivo = (String) parent.getItemAtPosition(position);
+                Toast.makeText(Afinador.this, "Nota objetivo seleccionada: " + notaObjetivo, Toast.LENGTH_SHORT).show();
+                updateUIWithCurrentNote();
+
+
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selectedTargetNote = null;
+                notaObjetivo = null;
             }
         });
 
         if (checkAudioPermission()) {
             startPitchDetection(); // Permiso ya concedido, iniciar
-            noteTextView.setText("cargando");
+            tv_nota.setText("cargando");
 
         } else {
             requestAudioPermission(); // Solicitar permiso
         }
     }
+    private void updateUIWithCurrentNote() {
+        String currentNote = tv_nota.getText().toString();
+        if (isValidNote(currentNote)) {
+            String baseNote = extraerNota(currentNote);
+            cambiarColor(baseNote, notaObjetivo);
+        }
+    }
+    private boolean isValidNote(String note) {
+        return note != null && !note.isEmpty() && !note.equals("--") && !note.equals("cargando");
+    }
+
 
     private boolean checkAudioPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
@@ -108,49 +118,41 @@ public class Afinador extends AppCompatActivity {
         if (requestCode == REQUEST_AUDIO_PERMISSION_CODE) { // Asegúrate de usar el mismo código
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getApplicationContext(), "Permiso de micrófono concedido", Toast.LENGTH_LONG).show();
-                // Si el permiso se concedió, iniciar la detección de tono con TarsosDSP
 
             } else {
                 Toast.makeText(getApplicationContext(), "Permiso de micrófono denegado. No se puede usar el afinador.", Toast.LENGTH_LONG).show();
-                // Aquí podrías cerrar la actividad o deshabilitar la funcionalidad del afinador
-            }
+                 }
         }
     }
-
     // La anotación @RequiresPermission es para que el IDE te advierta, pero no previene el error en runtime si el permiso no está.
     // La verdadera seguridad la da el check de permisos y la llamada condicional.
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private void startPitchDetection() {
-        // Siempre detén el dispatcher anterior si existe antes de iniciar uno nuevo
-        // Esto previene errores si onResume se llama varias veces.
         stopPitchDetection();
-
         // Inicializa el PitchDetectionHandler para manejar los resultados
         pdh = new PitchDetectionHandler() {
             @Override
             public void handlePitch(PitchDetectionResult pitchDetectionResult, AudioEvent audioEvent) {
                 float pitchInHz = pitchDetectionResult.getPitch(); // Obtiene la frecuencia en Hz
-
-
                 // Actualizar la UI en el hilo principal
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (pitchInHz > 0) { // Si se detectó un tono válido
-                            frequencyTextView.setText(String.format("Frecuencia: %.2f Hz", pitchInHz));
-                            noteTextView.setText(getNoteFromFrequency(pitchInHz));
-
-
+                            tv_frecuencia.setText(String.format("Frecuencia: %.2f Hz", pitchInHz));
+                            tv_nota.setText(getNotadeFrecuencia(pitchInHz));
+                            String baseNote = extraerNota(getNotadeFrecuencia(pitchInHz));
+                            cambiarColor(baseNote, notaObjetivo);
                         } else {
-                            frequencyTextView.setText("Frecuencia: --- Hz");
-                            noteTextView.setText("--");
-                            cambiarColor(000);
+                            tv_frecuencia.setText("Frecuencia: --- Hz");
+                            tv_nota.setText("--");
+                            cambiarColor(null, null);
+
                         }
                     }
                 });
             }
         };
-
         // Crea el AudioDispatcher desde el micrófono
         // TarsosDSP se encarga de usar AudioRecord internamente con los permisos ya concedidos.
         try {
@@ -179,7 +181,7 @@ public class Afinador extends AppCompatActivity {
         }
     }
 
-    private String getNoteFromFrequency(double frequency) {
+    private String getNotadeFrecuencia(double frequency) {
         if (frequency <= 0) return "---";
         final double A4 = 440.0;
         final int SEMITONES_PER_OCTAVE = 12;
@@ -197,38 +199,45 @@ public class Afinador extends AppCompatActivity {
         return noteNames[(noteIndex - 3 + 12) % 12] + octave;
     }
 
-    private String extractBaseNote(String fullNoteWithOctave) {
+    private String extraerNota(String fullNoteWithOctave) {
         if (fullNoteWithOctave == null || fullNoteWithOctave.equals("---") || fullNoteWithOctave.equals("--")) {
             return null;
         }
-        // Itera sobre los nombres de las notas para encontrar la coincidencia más larga
-        // Esto es importante para distinguir "Do#" de "Do".
-        String baseNote = null;
-        for (String note : noteNames) {
-            if (fullNoteWithOctave.startsWith(note)) {
-                if (baseNote == null || note.length() > baseNote.length()) { // Prioriza "Do#" sobre "Do"
-                    baseNote = note;
-                }
-            }
-        }
-        return baseNote;
+        return fullNoteWithOctave.replaceAll("[0-9]", "");
     }
-    private void  cambiarColor(int noteIndex){
-        if (selectedTargetNote != null) {
-            // Coincidencia: cambia a un color de "coincidencia"
-            int color1nuevo = ContextCompat.getColor(this, R.color.grayverde);
-            int color2nuevo = ContextCompat.getColor(this, R.color.grayverde);
+    private String ultimaNotaCoincidente = null;
 
+    private void cambiarColor(String notaDetectada, String notaObjetivo) {
+        runOnUiThread(() -> {
+            try {
+                boolean coincideAhora = notaObjetivo != null && notaDetectada != null &&
+                        notaObjetivo.equalsIgnoreCase(notaDetectada);
 
-            cardView1.setCardBackgroundColor(color1nuevo);
-            cardView2.setCardBackgroundColor(color2nuevo);
-        } else {
-            // No hay coincidencia o no se detecta tono: restablece a los colores originales
-            int innerDefaultColor = ContextCompat.getColor(this, R.color.rojo); // Usa @color/rojo o el que definiste como defaultInnerCardColor
-            int outerDefaultColor = ContextCompat.getColor(this, R.color.tinto); // Usa @color/tinto o el que definiste como defaultOuterCardColor
-            cardView1.setCardBackgroundColor(innerDefaultColor);
-            cardView2.setCardBackgroundColor(outerDefaultColor);
-        }
+                // Si antes no coincidía pero ahora sí
+                if (coincideAhora && (ultimaNotaCoincidente == null ||
+                        !ultimaNotaCoincidente.equals(notaDetectada))) {
+
+                    int colorFondo = ContextCompat.getColor(Afinador.this, R.color.grayverde2);
+                    int colorBoton = ContextCompat.getColor(Afinador.this, R.color.grayverde);
+                    v_fondo.setBackgroundColor(colorFondo);
+                    btn_decoracion.setBackgroundColor(colorBoton);
+
+                    Toast.makeText(Afinador.this, "Nota correcta: " + notaDetectada, Toast.LENGTH_SHORT).show();
+                    ultimaNotaCoincidente = notaDetectada;
+                }
+                // Si antes coincidía pero ahora no
+                else if (!coincideAhora && ultimaNotaCoincidente != null) {
+                    int colorFondo = ContextCompat.getColor(Afinador.this, R.color.rojo_oscuro);
+                    int colorBoton = ContextCompat.getColor(Afinador.this, R.color.rojo);
+                    v_fondo.setBackgroundColor(colorFondo);
+                    btn_decoracion.setBackgroundColor(colorBoton);
+
+                    ultimaNotaCoincidente = null;
+                }
+            } catch (Exception e) {
+                Log.e("ColorError", "Error cambiando color: " + e.getMessage());
+            }
+        });
     }
 
     // Métodos del ciclo de vida de la Activity

@@ -33,8 +33,10 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class VerCursoComoCreador extends AppCompatActivity {
 
@@ -215,7 +217,8 @@ public class VerCursoComoCreador extends AppCompatActivity {
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Toast.makeText(VerCursoComoCreador.this, "Error al eliminar el curso", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(VerCursoComoCreador.this, "Fallo eliminacion, intentando desabilitar ", Toast.LENGTH_SHORT).show();
+                                    deshabilitarCurso(db, documentIdCurso);
                                 });
                     } else {
                         Toast.makeText(VerCursoComoCreador.this, "ID del curso no encontrado", Toast.LENGTH_SHORT).show();
@@ -226,12 +229,35 @@ public class VerCursoComoCreador extends AppCompatActivity {
                 });
 
         // 3. Eliminar archivos locales
+        eliminarArchivosLocales(cursoId);
+    }
+    private void deshabilitarCurso(FirebaseFirestore db, String documentIdCurso) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("titulo", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧"); // Carácter invisible + texto
+        updates.put("creador", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧");
+        updates.put("descripcion", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧Este curso ha sido eliminado");
+
+        db.collection("cursos").document(documentIdCurso)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(VerCursoComoCreador.this, "Curso marcado como eliminado", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(VerCursoComoCreador.this, "Error al deshabilitar curso: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void eliminarArchivosLocales(int cursoId) {
         File claseFolder = new File(getFilesDir(), "clases/" + cursoId);
         if (claseFolder.exists()) {
-            for (File archivo : claseFolder.listFiles()) {
-                archivo.delete();
+            File[] files = claseFolder.listFiles();
+            if (files != null) {
+                for (File archivo : files) {
+                    archivo.delete();
+                }
+                claseFolder.delete();
             }
-            claseFolder.delete();
         }
     }
 

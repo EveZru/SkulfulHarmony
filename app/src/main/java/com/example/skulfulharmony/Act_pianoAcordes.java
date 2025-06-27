@@ -1,3 +1,44 @@
+
+/*
+La clase organiza y maneja botones que representan las teclas blancas (btn_do1, btn_re1, etc.)
+y negras (btn_doso1, btn_reso1, etc.) de un piano.
+
+En cuanto a la lógica, tv_acorde y tv_tipoAcorde muestran el nombre y tipo del acorde que el usuario
+debe tocar. acordeActual guarda el acorde elegido. teclasPresionadasCorrectas lleva la cuenta de cuántas
+ notas correctas ha tocado el usuario. teclasPiano es una lista de todos los botones del piano, y
+notasAcordeActual guarda las notas que forman el acorde actual. acordesMap es el "cerebro" que contiene
+la información de cada acorde (su nombre, tipo y las notas que lo forman). Un objeto Random elige los
+ acordes al azar. coloresOriginales y drawableMap guardan los colores iniciales de las teclas para poder restaurarlos.
+
+La app muestra primero la lección (imagenContainer). Al tocarla, cambia a la pantalla de práctica
+ (actividadContainer),el programa encuentra y organiza todos los botones del piano, guardando sus colores
+originales y preparándolos para ser tocados al entrar a la pantalla de práctica, se carga y muestra un
+ acorde al azar para que el usuario intente tocarlo.
+
+Métodos y su Función
+inicializarAcordes(): Prepara la "base de datos" de la aplicación. Aquí se define cada acorde
+(Do, Re, Mi, etc.), su tipo (Mayor en este caso) y qué notas lo forman.
+
+AcordeRandom(): Elige un acorde al azar de la lista y lo muestra en pantalla. También resetea el
+ contador de teclas correctas y devuelve todas las teclas de piano a sus colores originales.
+
+verificarTeclaPresionada(AppCompatButton botonPresionado): Se activa cada vez que el usuario
+presiona una tecla del piano.
+
+Identifica la nota de la tecla presionada (Do, Do#, Re, etc.).
+
+Si la tecla es parte del acorde que se debe tocar, la marca de verde y aumenta el contador
+ de teclas correctas. Si el usuario toca todas las notas del acorde, se le felicita y se elige
+un nuevo acorde automáticamente.
+
+Si la tecla es incorrecta, la marca de rojo brevemente para indicar el error y luego vuelve a su color original.
+
+getButtonBackgroundColor(AppCompatButton button): Es una ayuda para saber qué color de fondo original
+ debe tener una tecla, dependiendo si es blanca o negra (redonda o cuadrada).
+
+agregarTecla(AppCompatButton tecla): Añade los botones de las teclas a una lista (teclasPiano)
+para poder manejarlos fácilmente todos juntos.*/
+
 package com.example.skulfulharmony;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,9 +64,8 @@ import java.util.Random;
 
 public class Act_pianoAcordes extends AppCompatActivity {
 
-    // Teclas blancas
     private AppCompatButton btn_do1, btn_re1, btn_mi1, btn_fa1, btn_sol1, btn_la1, btn_si1, btn_do2, btn_re2, btn_mi2, btn_fa2, btn_sol2, btn_la2, btn_si2;
-    // Teclas negras
+
     private AppCompatButton btn_doso1, btn_reso1, btn_faso1, btn_solso1, btn_laso1, btn_doso2, btn_reso2, btn_faso2, btn_solso2, btn_laso2;
 
     private TextView tv_acorde, tv_tipoAcorde;
@@ -36,13 +76,11 @@ public class Act_pianoAcordes extends AppCompatActivity {
     // Variables para el control del acorde
     private String acordeActual;
     private int teclasPresionadasCorrectas = 0;
-    private List<AppCompatButton> teclasPiano; // Lista para guardar todas las teclas
-    private List<String> notasAcordeActual;   // Lista para las notas del acorde actual
-
-    // Map para definir los acordes con sus notas y tipo
+    private List<AppCompatButton> teclasPiano; //todas las teclas
+    private List<String> notasAcordeActual;
     private final Map<String, AcordeInfo> acordesMap = new HashMap<>();
 
-    // Clase interna para almacenar información del acorde
+
     private static class AcordeInfo {
 
         String nombre;
@@ -56,7 +94,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
         }
     }
 
-    // Map para almacenar los colores originales de las teclas
     private final Map<AppCompatButton, Integer> coloresOriginales = new HashMap<>();
     private final Map<String, Integer> drawableMap = new HashMap<>();
 
@@ -95,7 +132,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         btn_solso2 = findViewById(R.id.btn_solso2);
         btn_laso2 = findViewById(R.id.btn_laso2);
 
-        // Inicializar la lista de teclas del piano
+
         teclasPiano = new ArrayList<>();
         agregarTecla(btn_do1);
         agregarTecla(btn_doso1);
@@ -122,7 +159,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         agregarTecla(btn_laso2);
         agregarTecla(btn_si2);
 
-        // Inicializar el mapa de drawables
+
         drawableMap.put("btn_do1", R.drawable.third_rounder_button);
         drawableMap.put("btn_re1", R.drawable.third_rounder_button);
         drawableMap.put("btn_mi1", R.drawable.third_rounder_button);
@@ -149,7 +186,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         drawableMap.put("btn_solso2", R.drawable.five_rounder_button);
         drawableMap.put("btn_laso2", R.drawable.five_rounder_button);
 
-        // Guardar los colores originales de las teclas y establecer OnClickListener
+
         for (AppCompatButton tecla : teclasPiano) {
             if (tecla != null) { // Check if the button is not null
                 coloresOriginales.put(tecla, drawableMap.get(getResources().getResourceEntryName(tecla.getId())));
@@ -214,9 +251,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         acordesMap.put("La#", new AcordeInfo("La#", "Mayor", List.of("La#", "Re", "Fa")));
         acordesMap.put("Si", new AcordeInfo("Si", "Mayor", List.of("Si", "Re#", "Fa#")));
 
-        // Ejemplo de acorde menor
-        acordesMap.put("Do Menor", new AcordeInfo("Do Menor", "Menor", List.of("Do", "Mib", "Sol"))); // Corrección: "Do Menor"
-    }
+        }
 
     private void AcordeRandom() {
         List<String> nombresAcordes = new ArrayList<>(acordesMap.keySet());
@@ -225,7 +260,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
         AcordeInfo acordeInfo = acordesMap.get(acordeActual);
 
         tv_acorde.setText("Toca el acorde: " + acordeInfo.nombre);
-        tv_tipoAcorde.setText("Tipo: " + acordeInfo.tipo); // Corrección: Muestra el tipo aquí
+        tv_tipoAcorde.setText("Tipo: " + acordeInfo.tipo);
         teclasPresionadasCorrectas = 0;
 
         notasAcordeActual = acordeInfo.notas;
@@ -293,17 +328,17 @@ public class Act_pianoAcordes extends AppCompatActivity {
             nombreTecla = "La#";
         }
 
-        // Mostrar un Toast con el nombre de la tecla presionada
+
         Toast.makeText(this, "Presionaste: " + nombreTecla, Toast.LENGTH_SHORT).show();
 
-        // Verificar si la tecla presionada es parte del acorde actual
+
         boolean teclaCorrecta = notasAcordeActual.contains(nombreTecla);
         if (teclaCorrecta) {
             // La tecla es correcta, cambiar su color
             botonPresionado.setBackgroundColor(ContextCompat.getColor(this, R.color.verde));
             teclasPresionadasCorrectas++;
 
-            // Verificar si se han presionado todas las teclas correctas
+
             if (teclasPresionadasCorrectas == notasAcordeActual.size()) {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
@@ -314,15 +349,15 @@ public class Act_pianoAcordes extends AppCompatActivity {
                 Toast.makeText(this, "¡Acorde correcto!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            // La tecla es incorrecta, cambiar su color a rojo y mostrar mensaje
+
             botonPresionado.setBackgroundColor(ContextCompat.getColor(this, R.color.rojo));
             Toast.makeText(this, "¡Inténtalo otra vez!", Toast.LENGTH_SHORT).show();
 
-            // Restablecer el color de la tecla después de un breve retraso
+
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    botonPresionado.setBackgroundResource(coloresOriginales.get(botonPresionado)); // Restablece al drawable original
+                    botonPresionado.setBackgroundResource(coloresOriginales.get(botonPresionado));
                 }
             }, 500);
         }

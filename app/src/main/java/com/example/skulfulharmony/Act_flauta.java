@@ -1,28 +1,73 @@
-package com.example.skulfulharmony;
 
 /*Explicacion
 La clase Act_flauta. java se ejecuta al entrar a ella por medio de home
 la clase cuenta con los elementos de interaccion de usuario  botones  btn_oatras, btn_ouno,
  btn_odos, btn_otres, btn_ocuatro, btn_ocinco, btn_oseis, btn_oocho,
 
-En cuanto a la lógica del juego, notaActual es una cadena de texto que almacena la nota musical
-activa, sirviendo como la referencia contra la que se evalúan las acciones del usuario.
-agujerosCorrectos, una List<Integer>, contiene los índices de los agujeros que el usuario debe
-presionar para la notaActual, estableciendo así la respuesta correcta. Las acciones del usuario
+En cuanto a la lógica de la actividad , notaActual es una cadena de texto que almacena la nota musical
+activa, sirviendo como la referencia al objetivo del usuario.El usaurio debera presionar los botones .
+ correspondientes a agujerosCorrectos, una List<Integer> Las acciones del usuario
 se registran en agujerosPresionados, un Set<Integer>, que permite un seguimiento eficiente de los
 agujeros ya cubiertos por el usuario sin duplicados. Para la selección aleatoria de notas, se
 utiliza un objeto Random, llamado random. Aunque declarado, el objeto mediaPlayer no se utiliza
 explícitamente en el código proporcionado para la reproducción de sonidos de notas; sin embargo, se incluye una
 gestión de recursos para él en el ciclo de vida de la actividad.
 
-Finalmente, el corazón de la lógica de digitación reside en posicionesNotas, un Map<String, List<Integer>>
+las  variables posicionesNotas, un Map<String, List<Integer>>
 que asocia cada nota musical con su correspondiente lista de agujeros a cubrir, funcionando como
 un diccionario de digitaciones. El arreglo de cadenas notas ("Do", "Re", "Mi", etc.) es el conjunto
  de todas las notas posibles que la aplicación puede proponer para la práctica.
+El elementos ll_verapuntes hace visible el cntenido de imagenContainer(el cual cumple con mostrar la leccion de
+la clase)
+El elemento ll_volveralcurso lleva a la aactividad anterior (home)
+Metodos y su funcionalidad
+generar nueva nota
+  crea en el tv_acorne una nota aleatoria por un proceso aleatorio se llama al cerrar la actividad, presionar todos
+   los elementos correctos
+   onAgujeroTocado(int indiceAgujero): Este método es el núcleo de la interacción del usuario. Se encarga de procesar
+cada vez que el usuario presiona uno de los botones de agujero (btn_oatras, btn_ouno, etc.). Su función principal es:
 
+-Verificar si el agujero presionado (indiceAgujero) forma parte de los agujerosCorrectos para la notaActual.
 
+-Si es correcto, registra el agujero en agujerosPresionados y cambia el color del botón a verde para indicar acierto.
+Si el usuario ha presionado todos los agujeros correctos para la nota actual, deshabilita temporalmente los botones,
+muestra un mensaje de "¡Correcto!", y después de un breve retraso, vuelve a habilitar los botones y llama
+ a generarNuevaNota() para la siguiente ronda.
+
+-Si es incorrecto, muestra un mensaje de "¡Error!", y el botón presionado
+ incorrectamente cambia de color a rojo brevemente para dar una retroalimentación visual al usuario.
+
+cambiarColorAgujero(int indiceAgujero, int colorResId): Este método auxiliar es responsable de actualizar
+visualmente el color de fondo de un botón de agujero específico. Recibe el índice del agujero y el recurso
+ de color deseado, aplicándolo al botón correspondiente para indicar si fue presionado correctamente (verde)
+o para restablecer su color.
+
+restablecerColoresAgujeros(): Como su nombre indica, este método restaura el color de fondo original
+ (definido por R.drawable.five_rounder_button) de todos los botones de los agujeros de la flauta. Se
+utiliza principalmente al inicio de una nueva nota o cuando se necesita limpiar la interfaz de cualquier
+indicación de error o acierto previo.
+
+mostrarMensaje(String mensaje): Un método simple pero efectivo para proporcionar retroalimentación textual al
+usuario. Utiliza un Toast para mostrar mensajes breves en la pantalla, como "¡Correcto!" o "¡Error! Intenta de
+nuevo.", informando al usuario sobre el resultado de sus acciones.
+
+onStop(): Este es un método del ciclo de vida de Android que se llama cuando la actividad ya no
+                         es visible para el usuario. Su función aquí es crucial para la gestión de recursos:
+ asegura que el objeto mediaPlayer (si existe y no es nulo) sea liberado (mediaPlayer.release()). Esto previene
+ fugas de memoria y libera recursos del sistema, lo cual es una buena práctica de programación en Android.
+
+deshabilitarBotones(): Este método desactiva la interactividad de todos los botones de los agujeros, impidiendo
+que el usuario pueda presionarlos. Se usa, por ejemplo, después de que el usuario ha completado correctamente una
+nota, para evitar entradas adicionales mientras se prepara la siguiente nota.
+
+habilitarBotones(): Complementario a deshabilitarBotones(), este método vuelve a activar la interactividad de todos
+ los botones de los agujeros, permitiendo al usuario continuar con la práctica de digitación. Se llama después de
+ que la interfaz se ha preparado para la siguiente nota o ronda.
 
  */
+
+package com.example.skulfulharmony;
+
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -101,7 +146,7 @@ public class Act_flauta extends AppCompatActivity {
         imagenContainer.setOnClickListener(v -> {
             imagenContainer.setVisibility(View.GONE);
             actividadContainer.setVisibility(View.VISIBLE);
-            generarNuevaNota(); // Generar la primera nota al entrar a la práctica
+            generarNuevaNota();
         });
 
         ll_verapuntes.setOnClickListener(v -> {

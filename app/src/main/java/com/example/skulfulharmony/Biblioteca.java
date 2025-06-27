@@ -107,8 +107,10 @@ public class Biblioteca extends AppCompatActivity {
                             if (usuario != null) {
                                 cursosHistorial = usuario.getHistorialCursos();
                             }
-                            AdapterBibliotecaVerCursosHistorial adapter = new AdapterBibliotecaVerCursosHistorial(cursosHistorial);
-                            rvDescargados.setAdapter(adapter);
+
+                                AdapterBibliotecaVerCursosHistorial adapter = new AdapterBibliotecaVerCursosHistorial(cursosHistorial);
+                                rvDescargados.setAdapter(adapter);
+
                         }
                     })
                     .addOnFailureListener( e -> {
@@ -129,7 +131,7 @@ public class Biblioteca extends AppCompatActivity {
                         if (!onQuerySnapshot.isEmpty()) {
                             Usuario usuario = onQuerySnapshot.getDocuments().get(0).toObject(Usuario.class);
                             List<Integer> cursosSeguidos = new ArrayList<>();
-                            if (usuario != null) {
+                            if (usuario != null && usuario.getCursosSeguidos() != null) {
                                 cursosSeguidos = usuario.getCursosSeguidos();
                             }
                             AdapterBibliotecaVerCursosActualizacion adapter = new AdapterBibliotecaVerCursosActualizacion(cursosSeguidos);
