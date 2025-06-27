@@ -58,23 +58,23 @@
             android:text=""
             android:textStyle="italic" />
 
-        <!-- Sección de preguntas -->
         <TextView
             android:id="@+id/tv_preguntas_titulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Preguntas:"
+            android:text="Preguntas del cuestionario"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_preguntas_offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false" />
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="10dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

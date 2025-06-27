@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.modooffline;
 
+import static com.example.skulfulharmony.databaseinfo.DbHelper.convertirPreguntasFirebase;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,8 +23,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.skulfulharmony.R;
+import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.ArrayList;
@@ -126,9 +130,8 @@ public class DescargaManager {
     public static void descargarCursoYClases(Curso curso, List<Clase> clasesFirestore, Context context) {
         Log.d("DESCARGA", "⏬ Iniciando descarga COMPLETA de: " + curso.getTitulo());
 
-        crearCanal(context); // Canal de notificación
+        crearCanal(context);
 
-        // Si no está descargado, lo insertamos
         if (!cursoYaDescargado(curso.getIdCurso(), context)) {
             String imagenCursoUrl = curso.getImagen().split("\\?")[0];
             String nombreImagenCurso = imagenCursoUrl.substring(imagenCursoUrl.lastIndexOf("/") + 1);
@@ -137,7 +140,6 @@ public class DescargaManager {
             new DbCourse(context).insertCurso(curso);
         }
 
-        // Recuperar el ID local del curso
         DbHelper dbHelper = new DbHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -158,7 +160,6 @@ public class DescargaManager {
             Clase clase = clasesFirestore.get(i);
             if (clase == null) continue;
 
-            // ⚠️ Validar si la clase ya fue descargada
             if (dbHelper.claseYaDescargadaConIdLocal(clase.getTitulo(), cursoLocalId)) {
                 Log.d("DESCARGA", "⏩ Clase ya descargada, se omite: " + clase.getTitulo());
                 continue;
@@ -173,8 +174,40 @@ public class DescargaManager {
                     clase.getVideoUrl()
             );
 
+            // ✅ Convertir preguntas si vienen como Map
+
             if (clase.getPreguntas() != null && !clase.getPreguntas().isEmpty()) {
-                claseFirebase.setPreguntas(clase.getPreguntas());
+                Object primera = clase.getPreguntas().get(0);
+
+                if (primera instanceof Map) {
+                    Log.d("DESCARGA", "🔄 Convirtiendo preguntas desde Map...");
+                    List<Map<String, Object>> listaMap = (List<Map<String, Object>>) (List<?>) clase.getPreguntas();
+                    List<PreguntaCuestionario> convertidas = convertirPreguntasFirebase(listaMap);
+
+                    // 🧪 Log de cada pregunta
+                    for (PreguntaCuestionario p : convertidas) {
+                        Log.d("DESCARGA", "🎯 Pregunta convertida: " + p.getPregunta());
+                    }
+
+                    claseFirebase.setPreguntas(convertidas);
+
+                } else if (primera instanceof PreguntaCuestionario) {
+                    Log.d("DESCARGA", "✅ Preguntas ya son tipo PreguntaCuestionario");
+                    List<PreguntaCuestionario> preguntasOriginales = (List<PreguntaCuestionario>) clase.getPreguntas();
+
+                    for (PreguntaCuestionario p : preguntasOriginales) {
+                        Log.d("DESCARGA", "🎯 Pregunta original: " + p.getPregunta());
+                    }
+
+                    claseFirebase.setPreguntas(preguntasOriginales);
+                } else {
+                    Log.w("DESCARGA", "❌ Tipo de pregunta desconocido: " + primera.getClass().getName());
+                }
+
+                Log.d("DESCARGA", "🧪 Total preguntas convertidas: " +
+                        (claseFirebase.getPreguntas() != null ? claseFirebase.getPreguntas().size() : 0));
+            } else {
+                    Log.d("DESCARGA", "ℹ No hay preguntas en esta clase");
             }
 
             // Video
@@ -204,12 +237,13 @@ public class DescargaManager {
             claseFirebase.setImagenUrl(imagenLocal);
             claseFirebase.setArchivosUrl(archivosLocales);
 
-            dbHelper.guardarClaseDescargada(claseFirebase, cursoLocalId); // ← Guarda preguntas también
+            dbHelper.guardarClaseDescargada(claseFirebase, cursoLocalId);
         }
 
         ocultarProgreso(context);
         mostrarFinal(context, curso.getTitulo());
         Log.d("DESCARGA", "✅ Descarga finalizada de curso + clases.");
     }
+
 
 }

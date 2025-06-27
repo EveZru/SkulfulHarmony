@@ -2,6 +2,7 @@ package com.example.skulfulharmony;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +39,8 @@ public class VerClaseOffline extends AppCompatActivity {
         tvTitulo = findViewById(R.id.tv_titulo_clase_offline);
         tvTexto = findViewById(R.id.tv_texto_clase_offline);
         tvSinArchivo = findViewById(R.id.tv_no_disponible);
-        rvArchivos = findViewById(R.id.rv_archivos_offline);
         tvPreguntasTitulo = findViewById(R.id.tv_preguntas_titulo);
+        rvArchivos = findViewById(R.id.rv_archivos_offline);
         rvPreguntas = findViewById(R.id.rv_preguntas_offline);
 
         String titulo = getIntent().getStringExtra("titulo");
@@ -90,18 +91,19 @@ public class VerClaseOffline extends AppCompatActivity {
             tvSinArchivo.setText("No hay archivos disponibles offline.");
         }
 
-        // Preguntas descargadas
+        // 🧠 Preguntas offline
         DbHelper dbHelper = new DbHelper(this);
         List<PreguntaCuestionario> preguntas = dbHelper.obtenerPreguntasPorClase(titulo);
-
-        if (preguntas.isEmpty()) {
-            tvPreguntasTitulo.setText("Esta clase no contiene preguntas.");
-        } else {
+        Log.d("VERCLASEOFFLINE", "📦 Total preguntas recuperadas: " + preguntas.size());
+        if (!preguntas.isEmpty()) {
+            tvPreguntasTitulo.setText("Preguntas del cuestionario");
             rvPreguntas.setLayoutManager(new LinearLayoutManager(this));
-            AdapterPreguntasOffline adapterPreguntas = new AdapterPreguntasOffline(preguntas);
-            rvPreguntas.setAdapter(adapterPreguntas);
+            rvPreguntas.setAdapter(new AdapterPreguntasOffline(preguntas));
+        } else {
+            tvPreguntasTitulo.setText(""); // Ocultar título si no hay
         }
     }
+
 
     @Override
     protected void onStop() {

@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 5; // Incrementado de 4 a 5
@@ -106,12 +107,14 @@ public class DbHelper extends SQLiteOpenHelper {
             db.insert(TABLE_CLASS, null, values);
 
             // Título normalizado como ID
-            String idClaseNormalizado = clase.getTitulo().trim().toLowerCase();
+            String idClaseNormalizado = normalizarIdClase(clase.getTitulo());
+            Log.d("DBHELPER", "🧩 ID clase normalizado para guardar: " + idClaseNormalizado);
 
             if (clase.getPreguntas() != null && !clase.getPreguntas().isEmpty()) {
                 Log.d("DBHELPER", "📋 Preguntas detectadas para clase '" + clase.getTitulo() + "': " + clase.getPreguntas().size());
-
+                Log.d("DBHELPER", "📦 Preguntas convertidas antes de guardar: " + clase.getPreguntas().size());
                 for (PreguntaCuestionario pregunta : clase.getPreguntas()) {
+                    Log.d("DBHELPER", "📝 Guardando pregunta: " + pregunta.getPregunta());
                     ContentValues preguntaValues = new ContentValues();
                     preguntaValues.put("id_clase", idClaseNormalizado);
                     preguntaValues.put("pregunta", pregunta.getPregunta());
@@ -215,6 +218,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 }
 
                 ClaseFirebase clase = new ClaseFirebase(titulo, archivos, imagen, video);
+                //String idClaseNormalizado = normalizarIdClase(titulo);
                 clase.setPreguntas(obtenerPreguntasPorClase(titulo));
                 clases.add(clase);
             } while (cursor.moveToNext());
@@ -229,7 +233,7 @@ public class DbHelper extends SQLiteOpenHelper {
         List<PreguntaCuestionario> preguntas = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String idClaseNormalizado = idClase.trim().toLowerCase();
+        String idClaseNormalizado = normalizarIdClase(idClase);
         Log.d("DBHELPER", "🔍 Buscando preguntas con ID clase: '" + idClaseNormalizado + "'");
 
         Cursor cursor = db.rawQuery(
@@ -252,6 +256,37 @@ public class DbHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return preguntas;
+    }
+
+    public static List<PreguntaCuestionario> convertirPreguntasFirebase(List<Map<String, Object>> listaPreguntasMap) {
+        List<PreguntaCuestionario> preguntas = new ArrayList<>();
+
+        for (Map<String, Object> map : listaPreguntasMap) {
+            PreguntaCuestionario pregunta = new PreguntaCuestionario();
+            pregunta.setPregunta((String) map.get("pregunta"));
+
+            Object respuestaCorrectaObj = map.get("respuestaCorrecta");
+            if (respuestaCorrectaObj instanceof Number) {
+                pregunta.setRespuestaCorrecta(((Number) respuestaCorrectaObj).intValue());
+            }
+
+            List<String> respuestas = new ArrayList<>();
+            List<Object> respuestasRaw = (List<Object>) map.get("respuestas");
+            for (Object obj : respuestasRaw) {
+                respuestas.add(String.valueOf(obj));
+            }
+            pregunta.setRespuestas(respuestas);
+
+            pregunta.setRespuestaUsuario(null); // o también podrías poner map.get("respuestaUsuario") si la tiene
+            preguntas.add(pregunta);
+            Log.d("DBHELPER", "🎯 Pregunta convertida: " + pregunta.getPregunta());
+        }
+
+        return preguntas;
+    }
+
+    private static String normalizarIdClase(String titulo) {
+        return titulo.toLowerCase().replaceAll("[^a-z0-9]", "_");
     }
 
     public void eliminarCursoYClasesPorId(int cursoId) {
