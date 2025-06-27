@@ -5,11 +5,27 @@
     android:layout_height="match_parent"
     android:background="@color/gray2"
     android:padding="12dp">
-<!--maquetado-->
+
+    <!--maquetado-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_curso_descargado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray2">
+            <ImageView
+                android:id="@+id/iv_menu_curso_descargado"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:padding="8dp"
+                android:src="@drawable/menutrespuntos"
+                android:contentDescription="Icono de menú" />
+        </androidx.appcompat.widget.Toolbar>
 
         <TextView
             android:id="@+id/tv_titulo_clase_offline"
@@ -75,6 +91,16 @@
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             android:layout_marginBottom="10dp" />
+        <Button
+            android:id="@+id/btn_enviar_respuestas_offline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enviar respuestas"
+            android:textAllCaps="false"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/verde"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

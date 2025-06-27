@@ -1,7 +1,6 @@
 package com.example.skulfulharmony.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +9,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.skulfulharmony.R;
 import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterPreguntasOffline extends RecyclerView.Adapter<AdapterPreguntasOffline.ViewHolder> {
@@ -28,13 +27,13 @@ public class AdapterPreguntasOffline extends RecyclerView.Adapter<AdapterPregunt
 
     @NonNull
     @Override
-    public AdapterPreguntasOffline.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pregunta_offline, parent, false);
         return new ViewHolder(vista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdapterPreguntasOffline.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PreguntaCuestionario pregunta = listaPreguntas.get(position);
         Context context = holder.itemView.getContext();
 
@@ -45,12 +44,14 @@ public class AdapterPreguntasOffline extends RecyclerView.Adapter<AdapterPregunt
             RadioButton rb = new RadioButton(context);
             rb.setText(pregunta.getRespuestas().get(i));
             rb.setId(View.generateViewId());
-            rb.setEnabled(false);
 
-            if (i == pregunta.getRespuestaCorrecta()) {
-                rb.setTextColor(ContextCompat.getColor(context, R.color.verde));
+            // Si el usuario ya había respondido, seleccionamos la opción
+            if (pregunta.getRespuestaUsuario() != null && pregunta.getRespuestaUsuario() == i) {
                 rb.setChecked(true);
             }
+
+            final int indexRespuesta = i;
+            rb.setOnClickListener(v -> pregunta.setRespuestaUsuario(indexRespuesta));
 
             holder.rgOpciones.addView(rb);
         }
@@ -59,6 +60,14 @@ public class AdapterPreguntasOffline extends RecyclerView.Adapter<AdapterPregunt
     @Override
     public int getItemCount() {
         return listaPreguntas.size();
+    }
+
+    public List<Integer> getRespuestas() {
+        List<Integer> respuestas = new ArrayList<>();
+        for (PreguntaCuestionario p : listaPreguntas) {
+            respuestas.add(p.getRespuestaUsuario() != null ? p.getRespuestaUsuario() : -1);
+        }
+        return respuestas;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

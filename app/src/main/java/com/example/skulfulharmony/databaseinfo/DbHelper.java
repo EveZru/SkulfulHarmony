@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 "documento TEXT, " +
                 "imagen TEXT, " +
                 "video TEXT, " +
+                "completada INTEGER DEFAULT 0, " +  // <-- CAMPO NUEVO
                 "FOREIGN KEY (curso_id) REFERENCES " + TABLE_COURSE + "(id) ON DELETE CASCADE);");
 
         db.execSQL("CREATE TABLE " + TABLE_QUESTION + " (" +
@@ -63,6 +65,16 @@ public class DbHelper extends SQLiteOpenHelper {
                 "pregunta TEXT NOT NULL, " +
                 "opciones TEXT NOT NULL, " +
                 "respuesta_correcta INTEGER NOT NULL);");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS preguntasdescargadas (" +
+                "idPregunta INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "tituloClase TEXT NOT NULL, " +
+                "respuestaUsuario INTEGER NOT NULL);");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS progreso_clase_offline (" +
+                "tituloClase TEXT PRIMARY KEY, " +
+                "tiempoVisto INTEGER DEFAULT 0, " +
+                "cuestionarioCompletado INTEGER DEFAULT 0);");
 
         // Nuevo índice para mejorar búsqueda de clases
         db.execSQL("CREATE INDEX idx_clase_titulo_curso ON " + TABLE_CLASS + " (titulo, curso_id)");
@@ -74,6 +86,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COURSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+        db.execSQL("DROP TABLE IF EXISTS preguntasdescargadas");
         onCreate(db);
     }
 
@@ -289,16 +302,116 @@ public class DbHelper extends SQLiteOpenHelper {
         return titulo.toLowerCase().replaceAll("[^a-z0-9]", "_");
     }
 
+    public List<Integer> obtenerRespuestasUsuarioPorClase(String tituloClase) {
+        List<Integer> respuestas = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT respuestaUsuario FROM preguntasdescargadas WHERE tituloClase = ? ORDER BY idPregunta ASC", new String[]{tituloClase});
+
+        if (cursor.moveToFirst()) {
+            do {
+                respuestas.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return respuestas;
+    }
+    public void marcarClaseComoCompletadaLocal(String tituloClase) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("completada", 1); // Marca como completada
+
+        int filas = db.update(TABLE_CLASS, values, "titulo = ?", new String[]{tituloClase});
+        if (filas > 0) {
+            Log.d("DBHELPER", "✅ Clase marcada como completada localmente: " + tituloClase);
+        } else {
+            Log.w("DBHELPER", "⚠️ No se encontró clase para marcar como completada: " + tituloClase);
+        }
+
+        db.close();
+    }
+
+    public void eliminarClasePorTitulo(String tituloClase) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_CLASS, "titulo = ?", new String[]{tituloClase});
+        db.delete("preguntas_locales", "id_clase = ?", new String[]{normalizarIdClase(tituloClase)});
+        db.delete("preguntasdescargadas", "tituloClase = ?", new String[]{tituloClase});
+        db.delete("progreso_clase_offline", "tituloClase = ?", new String[]{tituloClase});
+        db.close();
+    }
+
     public void eliminarCursoYClasesPorId(int cursoId) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
+            List<String> titulosClase = new ArrayList<>();
+            Cursor cursor = db.rawQuery("SELECT titulo FROM " + TABLE_CLASS + " WHERE curso_id = ?", new String[]{String.valueOf(cursoId)});
+            while (cursor.moveToNext()) {
+                titulosClase.add(cursor.getString(0));
+            }
+            cursor.close();
+
             db.delete(TABLE_CLASS, "curso_id = ?", new String[]{String.valueOf(cursoId)});
             db.delete(TABLE_COURSE, "id = ?", new String[]{String.valueOf(cursoId)});
+
+            for (String titulo : titulosClase) {
+                String idClaseNormalizado = normalizarIdClase(titulo);
+                db.delete(TABLE_QUESTION, "id_clase = ?", new String[]{idClaseNormalizado});
+                db.delete("preguntasdescargadas", "tituloClase = ?", new String[]{titulo});
+            }
+
             db.setTransactionSuccessful();
+            Log.d("DBHELPER", "🧹 Curso y clases eliminados junto con preguntas");
         } finally {
             db.endTransaction();
             db.close();
         }
     }
+
+    public void guardarProgresoOffline(String tituloClase, long tiempoVisto, boolean cuestionarioCompletado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("tituloClase", tituloClase);
+        values.put("tiempoVisto", tiempoVisto);
+        values.put("cuestionarioCompletado", cuestionarioCompletado ? 1 : 0);
+
+        db.insertWithOnConflict("progreso_clase_offline", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.close();
+    }
+
+    public Map<String, Object> obtenerProgresoOffline(String tituloClase) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT tiempoVisto, cuestionarioCompletado FROM progreso_clase_offline WHERE tituloClase = ?", new String[]{tituloClase});
+
+        Map<String, Object> datos = new HashMap<>();
+        if (cursor.moveToFirst()) {
+            datos.put("tiempoVisto", cursor.getLong(0));
+            datos.put("cuestionarioCompletado", cursor.getInt(1) == 1);
+        }
+        cursor.close();
+        db.close();
+        return datos;
+    }
+
+    public List<Map<String, Object>> obtenerTodosLosProgresosOffline() {
+        List<Map<String, Object>> lista = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT p.tituloClase, p.tiempoVisto, p.cuestionarioCompletado, c.curso_id, c.id FROM progreso_clase_offline p INNER JOIN clasedescargada c ON p.tituloClase = c.titulo", null);
+
+        while (cursor.moveToNext()) {
+            Map<String, Object> progreso = new HashMap<>();
+            progreso.put("tituloClase", cursor.getString(0));
+            progreso.put("tiempoVisto", cursor.getLong(1));
+            progreso.put("cuestionarioCompletado", cursor.getInt(2) == 1);
+            progreso.put("idCurso", cursor.getInt(3));
+            progreso.put("idClase", cursor.getInt(4));
+            lista.add(progreso);
+        }
+
+        cursor.close();
+        db.close();
+        return lista;
+    }
+
 }

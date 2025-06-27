@@ -805,10 +805,11 @@ public class Ver_clases extends AppCompatActivity {
                 // Convertir a ClaseFirebase
                 ClaseFirebase claseOffline = new ClaseFirebase(
                         clase.getTitulo(),
-                        clase.getArchivos(), // Asegúrate que es List<String>
+                        clase.getArchivos(),
                         clase.getImagen(),
                         clase.getVideoUrl()
                 );
+                claseOffline.setPreguntas(clase.getPreguntas());
 
                 int idCursoActual = idCurso;
 
@@ -1062,5 +1063,6 @@ public class Ver_clases extends AppCompatActivity {
         });
     }
 
+    
 
 }

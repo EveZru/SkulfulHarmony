@@ -127,6 +127,10 @@ public class VerCursoDescargado extends AppCompatActivity {
 
         Toast.makeText(this, "Curso eliminado correctamente", Toast.LENGTH_SHORT).show();
 
+        // 🧼 Limpia la lista por si acaso
+        clases.clear();
+        adapter.notifyDataSetChanged();
+
         // Marcar resultado para que Biblioteca sepa que refresque
         setResult(RESULT_OK);
         finish();
