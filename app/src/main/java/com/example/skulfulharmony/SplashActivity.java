@@ -1,8 +1,12 @@
 package com.example.skulfulharmony;
 
+import static com.example.skulfulharmony.MyApp.hayInternet;
+
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +16,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.skulfulharmony.databaseinfo.DbHelper;
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.tiempoUsuario;
+import com.example.skulfulharmony.modooffline.ClaseFirebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -57,6 +71,11 @@ public class SplashActivity extends AppCompatActivity {
                             tiempo.registrarHoraEntrada();
                             tiempo.registrarFechaUltimaEntrada();
                             MyApp.setContadorTiempo(tiempo);
+
+                            if (hayInternet(this)) {
+                                DbHelper dbHelper = new DbHelper(this);
+                                sincronizarProgresoOffline(dbHelper, user.getUid());
+                            }
 
                             if ("admin".equals(rol)) {
                                 startActivity(new Intent(this, admi_populares.class));
@@ -99,4 +118,56 @@ public class SplashActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    public static boolean hayInternet(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm != null && cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    public static void sincronizarProgresoOffline(DbHelper dbHelper, String userId) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("usuarios").document(userId);
+
+        List<Curso> cursos = dbHelper.obtenerCursosDescargados();
+        Map<String, Object> progresoPorCurso = new HashMap<>();
+        Map<String, Object> tiempoPorClase = new HashMap<>();
+
+        for (Curso curso : cursos) {
+            List<ClaseFirebase> clases = dbHelper.obtenerClasesPorCurso(curso.getId());
+            List<String> clasesCompletadas = new ArrayList<>(); // ✅ Aquí se declara UNA vez
+
+            for (ClaseFirebase clase : clases) {
+                Map<String, Object> progreso = dbHelper.obtenerProgresoOffline(clase.getTitulo());
+
+                long tiempoVisto = (long) progreso.getOrDefault("tiempoVisto", 0L);
+                boolean cuestionarioOk = (boolean) progreso.getOrDefault("cuestionarioCompletado", false);
+
+                String tituloClase = clase.getTitulo().trim().toLowerCase().replaceAll("[^a-z0-9]", "_");
+
+                if (tiempoVisto >= 90 || cuestionarioOk) {
+                    clasesCompletadas.add(tituloClase);
+
+                    tiempoPorClase.put("clase_" + tituloClase, new HashMap<String, Object>() {{
+                        put("idCurso", curso.getIdCurso());
+                        put("tiempo", tiempoVisto);
+                    }});
+                }
+            }
+
+            if (!clasesCompletadas.isEmpty()) {
+                progresoPorCurso.put("curso_" + curso.getIdCurso(), clasesCompletadas);
+            }
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        if (!progresoPorCurso.isEmpty()) updates.put("progresoCursoOffline", progresoPorCurso);
+        if (!tiempoPorClase.isEmpty()) updates.put("tiempoVisualizadoOffline", tiempoPorClase);
+
+        if (!updates.isEmpty()) {
+            userRef.set(updates, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d("SYNC_OFFLINE", "✅ Sincronización completada"))
+                    .addOnFailureListener(e -> Log.e("SYNC_OFFLINE", "❌ Error al sincronizar progreso offline", e));
+        }
+    }
+
 }

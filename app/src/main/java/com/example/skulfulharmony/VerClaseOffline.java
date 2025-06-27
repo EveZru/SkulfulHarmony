@@ -1,5 +1,6 @@
 package com.example.skulfulharmony;
 
+import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -178,6 +179,52 @@ public class VerClaseOffline extends AppCompatActivity {
             }
 
             final int correctasFinal = correctas;
+            int total = preguntasLista.size();
+            int incorrectas = total - correctasFinal;
+            int porcentaje = (int) (((double) correctasFinal / total) * 100);
+
+            // ✅ Dialog original con botones
+            runOnUiThread(() -> {
+                new androidx.appcompat.app.AlertDialog.Builder(VerClaseOffline.this)
+                        .setTitle("Resultados")
+                        .setMessage("Correctas: " + correctasFinal + "\nIncorrectas: " + incorrectas)
+                        .setCancelable(false)
+                        .setPositiveButton("Aceptar", (dialog, which) -> {
+                            enviarResultadosAFirebase(currentUser, finalTitulo, preguntasLista, respuestasUsuario, mapaRespuestas, finalIdCurso, finalIdClase, dbHelper);
+                        })
+                        .setNegativeButton("Reintentar", (dialog, which) -> {
+                            Toast.makeText(VerClaseOffline.this, "Puedes modificar tus respuestas", Toast.LENGTH_SHORT).show();
+                        })
+                        .show();
+            });
+
+            // 🟦 Nuevo dialogo personalizado como Ver_clases
+            runOnUiThread(() -> {
+                Dialog dialog = new Dialog(VerClaseOffline.this);
+                dialog.setContentView(R.layout.dialog_calificacionpreguntas_verclase);
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                dialog.getWindow().setDimAmount(0.5f);
+
+                TextView mensajeGrande = dialog.findViewById(R.id.txt_mensajegrande_dialogcalificacionpreguntas);
+                TextView mensajePequeno = dialog.findViewById(R.id.txt_mensajepequeno_dialogcalificacionpreguntas);
+                TextView puntuacion = dialog.findViewById(R.id.txt_puntuacion_dialogcalificacionpreguntas);
+                Button aceptar = dialog.findViewById(R.id.btn_aceptar_dialogcalificacionpreguntas);
+                Button reintentar = dialog.findViewById(R.id.btn_reintentar_dialogcalificacionpreguntas);
+
+                mensajeGrande.setText(MensajeCalificacion.obtenerMensaje(porcentaje));
+                mensajePequeno.setText("Has completado la tarea con éxito.");
+                puntuacion.setText(correctasFinal + "/" + total);
+
+                aceptar.setOnClickListener(v1 -> dialog.dismiss());
+                reintentar.setOnClickListener(v1 -> {
+                    Toast.makeText(VerClaseOffline.this, "Puedes modificar tus respuestas", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                });
+
+                dialog.show();
+            });
+
+            // 🔁 Guardado Firebase
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
             DocumentReference userRef = firestore.collection("usuarios").document(currentUser.getUid());
 
@@ -231,7 +278,6 @@ public class VerClaseOffline extends AppCompatActivity {
                     dbHelper.marcarClaseComoCompletadaLocal(finalTitulo);
                     dbHelper.guardarProgresoOffline(finalTitulo, tiempoAcumuladoClase, true);
                 }
-
 
                 Log.d("OFFLINE_SYNC", "📤 Respuestas enviadas correctamente");
 
@@ -358,6 +404,110 @@ public class VerClaseOffline extends AppCompatActivity {
 
             DbHelper db = new DbHelper(this);
             db.guardarProgresoOffline(tvTitulo.getText().toString(), tiempoAcumuladoClase, false);
+        }
+    }
+
+    private void enviarResultadosAFirebase(FirebaseUser currentUser, String finalTitulo,
+                                           List<PreguntaCuestionario> preguntasLista,
+                                           List<Integer> respuestasUsuario,
+                                           Map<String, Object> mapaRespuestas,
+                                           int finalIdCurso, int finalIdClase, DbHelper dbHelper) {
+
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("usuarios").document(currentUser.getUid());
+
+        userRef.get().addOnSuccessListener(snapshot -> {
+            List<Map<String, Object>> listaRespuestas = new ArrayList<>();
+            Object raw = snapshot.get("respuestasIncorrectas");
+            if (raw instanceof List<?>) {
+                for (Object r : (List<?>) raw) {
+                    if (r instanceof Map) listaRespuestas.add((Map<String, Object>) r);
+                }
+            }
+
+            boolean actualizado = false;
+            for (Map<String, Object> intento : listaRespuestas) {
+                Long cId = ((Number) intento.get("idCurso")).longValue();
+                Long clId = ((Number) intento.get("idClase")).longValue();
+
+                if (cId == finalIdCurso && clId == finalIdClase) {
+                    List<Map<String, Object>> previos = new ArrayList<>();
+                    Object rawPrevios = intento.get("intentos");
+                    if (rawPrevios instanceof List<?>) {
+                        for (Object obj : (List<?>) rawPrevios) {
+                            if (obj instanceof Map) {
+                                previos.add((Map<String, Object>) obj);
+                            }
+                        }
+                    }
+                    previos.add(new HashMap<>(mapaRespuestas));
+                    intento.put("intentos", previos);
+                    actualizado = true;
+                    break;
+                }
+            }
+
+            if (!actualizado) {
+                Map<String, Object> nuevoIntento = new HashMap<>();
+                nuevoIntento.put("idCurso", finalIdCurso);
+                nuevoIntento.put("idClase", finalIdClase);
+                List<Map<String, Object>> intentos = new ArrayList<>();
+                intentos.add(new HashMap<>(mapaRespuestas));
+                nuevoIntento.put("intentos", intentos);
+                listaRespuestas.add(nuevoIntento);
+            }
+
+            userRef.set(new HashMap<String, Object>() {{
+                put("respuestasIncorrectas", listaRespuestas);
+            }}, SetOptions.merge());
+
+            // 🔁 Reemplazo de .stream().map().toList() por código manual compatible
+            List<Integer> respuestasCorrectas = new ArrayList<>();
+            for (PreguntaCuestionario p : preguntasLista) {
+                respuestasCorrectas.add(p.getRespuestaCorrecta());
+            }
+
+            if (preguntasLista.size() == respuestasUsuario.size() &&
+                    respuestasUsuario.equals(respuestasCorrectas)) {
+                guardarClaseComoCompletadaOffline(userRef);
+                dbHelper.marcarClaseComoCompletadaLocal(finalTitulo);
+                dbHelper.guardarProgresoOffline(finalTitulo, tiempoAcumuladoClase, true);
+            }
+
+            Log.d("OFFLINE_SYNC", "📤 Respuestas enviadas correctamente");
+
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Respuestas enviadas", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            });
+
+        }).addOnFailureListener(e -> Log.e("OFFLINE_SYNC", "🔥 Error al obtener documento de usuario", e));
+    }
+
+    private enum MensajeCalificacion {
+        CIEN_CORRECTO(100, "¡Perfecto!"),
+        OCHENTA_CORRECTO(80, "¡Felicidades!"),
+        SESENTA_CORRECTO(60, "¡Buen trabajo!"),
+        CUARENTA_CORRECTO(40, "¡Tú puedes!"),
+        VEINTE_CORRECTO(20, "¡No te rindas!"),
+        CERO_CORRECTO(0, "¡Sigue intentándolo!");
+
+        private final int minimoPorcentaje;
+        private final String mensaje;
+
+        MensajeCalificacion(int minimoPorcentaje, String mensaje) {
+            this.minimoPorcentaje = minimoPorcentaje;
+            this.mensaje = mensaje;
+        }
+
+        public static String obtenerMensaje(int porcentaje) {
+            for (MensajeCalificacion mensaje : MensajeCalificacion.values()) {
+                if (porcentaje >= mensaje.minimoPorcentaje) {
+                    return mensaje.mensaje;
+                }
+            }
+            return "¡Ups!";
         }
     }
 
