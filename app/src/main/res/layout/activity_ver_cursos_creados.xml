@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".VerCursosCreados"
     android:fitsSystemWindows="true"
-    android:background="@color/grayrojo2"
+    android:background="@color/black"
     >
 
     <!-- RecyclerView ocupa toda la pantalla pero sin tapar la BottomNavigation -->

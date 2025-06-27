@@ -16,6 +16,7 @@ import com.example.skulfulharmony.Ver_cursos;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AdapterBibliotecaVerCursosHistorial extends RecyclerView.Adapter<AdapterBibliotecaVerCursosHistorial.CursoViewHolder> {
@@ -23,6 +24,7 @@ public class AdapterBibliotecaVerCursosHistorial extends RecyclerView.Adapter<Ad
 
     public AdapterBibliotecaVerCursosHistorial(List<Curso> cursos) {
         if (cursos != null) {
+            Collections.reverse(cursos); // 👈 Inviertes la lista
             this.cursos = cursos;
         } else {
             this.cursos = new ArrayList<>();

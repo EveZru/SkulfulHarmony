@@ -73,16 +73,11 @@ public class Biblioteca extends AppCompatActivity {
             cargarCursosHistorial();
         });
 
+        resaltarBotonSeleccionado(btnVerSeguidos);
         cargarCursosSeguidos();
 
         bottomNavigationView = findViewById(R.id.barra_navegacion);
 
-        EdgeToEdge.enable(this);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         if (bottomNavigationView != null) {
             bottomNavigationView.setOnNavigationItemSelectedListener(item -> {

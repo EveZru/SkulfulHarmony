@@ -111,6 +111,10 @@ public class AdapterBibliotecaVerCursosActualizacion extends RecyclerView.Adapte
         if (position == listaCursos.size() - 1) {
             holder.itemView.setPadding(0, 0, 0, 100);
         }
+
+        if (position == 0) {
+            holder.itemView.setPadding(0, 100, 0, 0);
+        }
     }
 
     @Override

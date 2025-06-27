@@ -1,53 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--mauqetado-->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Biblioteca"
-    android:background="@color/gray2"
-    >
+    android:orientation="vertical"
+    android:background="@color/black"
+    tools:context=".Biblioteca">
+
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/black"
-        >
+        android:background="@color/black">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mis Cursos"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:textSize="25sp"
-            />
+            android:textSize="25sp" />
     </androidx.appcompat.widget.Toolbar>
 
     <View
-        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/gray1"/>
+        android:background="@color/gray1" />
 
     <LinearLayout
-        android:layout_marginTop="62dp"
         android:id="@+id/linearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:background="@color/gray2"
-       >
+        android:background="@color/black">
 
         <Button
             android:id="@+id/btn_gotoseguidos"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-          android:backgroundTint="@color/gray2"
+            android:backgroundTint="@color/black"
             android:padding="10dp"
-            android:layout_gravity="top|center_horizontal"
             android:text="Seguidos"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -56,15 +51,14 @@
         <View
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="@color/gray1"
-            />
+            android:background="@color/gray1" />
 
         <Button
             android:id="@+id/btn_gotohistorial"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray2"
+            android:backgroundTint="@color/black"
             android:padding="10dp"
             android:text="Historial"
             android:textAllCaps="false"
@@ -74,43 +68,35 @@
         <View
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="@color/gray1"
-            />
+            android:background="@color/gray1" />
 
         <Button
             android:id="@+id/btn_gotodescargados"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/gray2"
+            android:backgroundTint="@color/black"
             android:padding="10dp"
             android:text="Descargas"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="20sp" />
-
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/gray1"/>
+        android:background="@color/gray1" />
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bliblioteca"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:orientation="horizontal">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_bliblioteca"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="70dp"
+        android:clipToPadding="false"
+        android:contentDescription="lista de cursos"
+        />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion"
@@ -119,10 +105,5 @@
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"
-        app:menu="@menu/barra_navegacionprincipal"
-        android:layout_gravity="bottom|end"
-
-        />
-
-
-</FrameLayout>
+        app:menu="@menu/barra_navegacionprincipal" />
+</LinearLayout>
