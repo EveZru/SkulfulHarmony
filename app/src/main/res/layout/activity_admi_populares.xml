@@ -12,16 +12,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray2"
+        android:background="@color/black"
+        app:title="Estadisticas"
+        app:titleTextColor="@color/white"
         android:layout_alignParentTop="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Estadísticas"
-            android:textSize="30sp"
-            android:layout_gravity="center"
-            android:textColor="@color/black"/>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -32,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
         app:tabMode="scrollable"
-        app:tabTextColor="@color/black"
+        app:tabTextColor="@color/white"
         app:tabSelectedTextColor="@color/rojo"
         app:tabIndicatorColor="@color/rojo" />
 <!--maquetado-->
@@ -50,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/gray2"
+        android:background="@color/black"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"

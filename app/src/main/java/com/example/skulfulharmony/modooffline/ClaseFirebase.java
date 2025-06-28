@@ -20,6 +20,8 @@ public class ClaseFirebase implements Serializable {
         this.videoUrl = videoUrl;
     }
 
+
+
     public String getTitulo() { return titulo; }
     public List<String> getArchivosUrl() { return archivosUrl; }
     public String getImagenUrl() { return imagenUrl; }

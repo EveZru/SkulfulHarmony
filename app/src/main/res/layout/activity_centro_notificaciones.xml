@@ -1,60 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray1"
-    android:padding="16dp">
-<!-- maquetados-->
-    <LinearLayout
+    android:orientation="vertical"
+    tools:context=".CentroNotificaciones">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="60dp"
+        android:background="@color/black">
 
         <TextView
-            android:text="Centro de notificaciones"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="16dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_horaentrada"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Recordatorio de hora promedio de entrada" />
+            android:text="Centro de Notificaciones"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp"/>
+    </androidx.appcompat.widget.Toolbar>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_megustacomentario"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Notificación de me gusta en comentario" />
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_comentariodenunciatuclase"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:text="Notificación de comentario/clase denunciada" />
+    <!-- Contenido desplazable -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="5dp">
 
-        <Button
-            android:id="@+id/btn_config_notificaciones"
-            android:layout_width="match_parent"
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/rojo_oscuro"
-            android:text="Ir a configuración de notificaciones"
-            android:layout_marginTop="24dp" />
+            app:cardBackgroundColor="@color/gray2"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📢 En caso de dar problemas con las notificaciones (no se muestran), entra a configuración en 'Permisos especiales' y activa 'Alarmas y recordatorios'. Suele estar bloqueado por el dispositivo. ¡Estamos trabajando en arreglar eso! :D"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
-    </LinearLayout>
-</ScrollView>
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="vertical">
+
+                <!-- Switches -->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_horaentrada"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recordatorio de hora promedio de entrada"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="12dp"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_megustacomentario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notificación de me gusta en comentario"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="12dp"/>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch_comentariodenunciatuclase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Notificación de comentario/clase denunciada"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Botón de configuración -->
+                <Button
+                    android:id="@+id/btn_config_notificaciones"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ir a configuración de notificaciones"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/rojo_oscuro"
+                    android:textAllCaps="false"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Mensaje informativo -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📢 Si tienes problemas con las notificaciones, entra a Configuración > Permisos especiales y activa 'Alarmas y recordatorios'. Algunos dispositivos bloquean esto por defecto. ¡Estamos trabajando en arreglarlo! 😄"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ScrollView>
+
+</LinearLayout>

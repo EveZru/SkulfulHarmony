@@ -27,8 +27,6 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         Log.d("MyApp", "🔥 MyApp.onCreate ejecutado");
-        // Ya no inicializamos aquí, ahora lo maneja SplashActivity completamente
-
         if (hayInternet(this)) {
             Log.d("MyApp", "🌐 Conexión detectada, sincronizando progreso offline...");
             sincronizarProgresoOffline(this);

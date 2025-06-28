@@ -119,7 +119,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
             db.insert(TABLE_CLASS, null, values);
 
-            // Título normalizado como ID
             String idClaseNormalizado = normalizarIdClase(clase.getTitulo());
             Log.d("DBHELPER", "🧩 ID clase normalizado para guardar: " + idClaseNormalizado);
 
