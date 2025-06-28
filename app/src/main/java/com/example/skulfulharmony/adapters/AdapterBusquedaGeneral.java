@@ -95,11 +95,15 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             String detalle = "Publicado por: " + (curso.getCreador() != null ? curso.getCreador() : "Desconocido");
             txtDetalleBusqueda.setText(detalle);
 
-            Glide.with(itemView.getContext())
-                    .load(curso.getImagen() != null ? curso.getImagen() : "")
-                    .placeholder(R.drawable.logo_sh)
-                    .centerCrop()
-                    .into(imgBusquedaItem);
+            if (curso.getImagen() != null && !curso.getImagen().isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(curso.getImagen())
+                        .placeholder(R.drawable.logo_sh)
+                        .centerCrop()
+                        .into(imgBusquedaItem);
+            } else {
+                imgBusquedaItem.setImageResource(R.drawable.logo_sh);
+            }
 
             itemView.setOnClickListener(v -> listener.onCursoClick(curso));
         }
@@ -112,16 +116,20 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
 
         public UsuarioViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtNombre = itemView.findViewById(R.id.txt_holder_busqueda_nombre);
+            txtNombre = itemView.findViewById(R.id.txt_nombre_persona_busqueda);
             imgPerfil = itemView.findViewById(R.id.img_holder_busqueda_imagenperfil);
         }
 
         public void bind(Usuario usuario, OnItemClickListener listener) {
             txtNombre.setText(usuario.getNombre());
-            Glide.with(itemView.getContext())
-                    .load(usuario.getFotoPerfil())  // Usar fotoPerfil aquí
-                    .placeholder(R.drawable.default_profile)
-                    .into(imgPerfil);
+            if (usuario.getFotoPerfil() != null && !usuario.getFotoPerfil().isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(usuario.getFotoPerfil())
+                        .placeholder(R.drawable.default_profile)
+                        .into(imgPerfil);
+            } else {
+                imgPerfil.setImageResource(R.drawable.default_profile);
+            }
 
             itemView.setOnClickListener(v -> listener.onUsuarioClick(usuario));
         }
@@ -143,11 +151,16 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             txtTituloClase.setText(clase.getTitulo());
             txtCurso.setText(clase.getNombreCurso() != null ? clase.getNombreCurso() : "Curso desconocido");
 
-            Glide.with(itemView.getContext())
-                    .load(clase.getImagen() != null ? clase.getImagen() : "")
-                    .placeholder(R.drawable.logo_sh)
-                    .centerCrop()
-                    .into(imgClase);
+            if (clase.getImagen() != null && !clase.getImagen().isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(clase.getImagen())
+                        .placeholder(R.drawable.logo_sh)
+                        .centerCrop()
+                        .into(imgClase);
+            } else {
+                imgClase.setImageResource(R.drawable.logo_sh);
+            }
+
 
             itemView.setOnClickListener(v -> listener.onClaseClick(clase));
         }
