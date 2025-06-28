@@ -157,16 +157,22 @@ public class Busqueda extends AppCompatActivity {
                         }
                     }
 
+                    Log.d("DEBUG", "📚 Cursos cargados: " + cursos.size());
+                    Log.d("DEBUG", "👤 Usuarios cargados: " + usuarios.size());
+                    Log.d("DEBUG", "🎬 Clases cargadas: " + clases.size());
+
                     List<Object> resultadosCombinados = buscarConIndiceInvertidoMejorado(textoBusqueda, cursos, usuarios, clases);
 
                     if (resultadosCombinados.isEmpty()) {
                         Toast.makeText(this, "No se encontraron resultados.", Toast.LENGTH_SHORT).show();
                     } else {
+
+                        Log.d("DEBUG", "🔍 Resultados combinados: " + resultadosCombinados.size());
                         AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(resultadosCombinados, new AdapterBusquedaGeneral.OnItemClickListener() {
                             @Override
                             public void onCursoClick(Curso curso) {
                                 Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
-                                intent.putExtra("idCurso", curso.getIdCurso());
+                                intent.putExtra("idCurso", curso.getIdCurso() != null ? curso.getIdCurso() : -1);
                                 startActivity(intent);
                             }
 
@@ -180,8 +186,8 @@ public class Busqueda extends AppCompatActivity {
                             @Override
                             public void onClaseClick(Clase clase) {
                                 Intent intent = new Intent(Busqueda.this, Ver_clases.class);
-                                intent.putExtra("idClase", clase.getIdClase());
-                                intent.putExtra("idCurso", clase.getIdCurso());
+                                intent.putExtra("idClase", clase.getIdClase() != null ? clase.getIdClase() : -1);
+                                intent.putExtra("idCurso", clase.getIdCurso() != null ? clase.getIdCurso() : -1);
                                 startActivity(intent);
                             }
                         });
@@ -201,80 +207,68 @@ public class Busqueda extends AppCompatActivity {
     }
 
     private List<Object> buscarConIndiceInvertidoMejorado(String textoBusqueda, List<Curso> cursos, List<Usuario> usuarios, List<Clase> clases) {
-        Set<String> cursosEncontrados = new HashSet<>();
+        Set<Integer> cursosEncontrados = new HashSet<>();
         Set<String> usuariosEncontrados = new HashSet<>();
-        Set<String> clasesEncontradas = new HashSet<>();
+        Set<Integer> clasesEncontradas = new HashSet<>();
 
         String textoLower = textoBusqueda.toLowerCase();
+        Log.d("BUSQUEDA", "🔍 Buscando: " + textoLower);
 
+        // Buscar en cursos
         for (Curso c : cursos) {
-            String titulo = c.getTitulo();
-            if (titulo != null && titulo.toLowerCase().contains(textoLower)) {
-                cursosEncontrados.add(String.valueOf(c.getId()));
+            String titulo = c.getTitulo() != null ? c.getTitulo().toLowerCase() : "";
+            String descripcion = c.getDescripcion() != null ? c.getDescripcion().toLowerCase() : "";
+
+            boolean match = titulo.contains(textoLower) || descripcion.contains(textoLower);
+            if (match && c.getIdCurso() != null) {
+                cursosEncontrados.add(c.getIdCurso());
+                Log.d("BUSQUEDA", "✅ Curso coincide: " + titulo);
             }
         }
 
+        // Buscar en usuarios
         for (Usuario u : usuarios) {
-            String nombre = u.getNombre();
-            if (nombre != null && nombre.toLowerCase().contains(textoLower)) {
-                usuariosEncontrados.add(nombre.toLowerCase());
+            String nombre = u.getNombre() != null ? u.getNombre().toLowerCase() : "";
+            String correo = u.getCorreo() != null ? u.getCorreo().toLowerCase() : "";
+
+            if ((nombre.contains(textoLower) || correo.contains(textoLower)) && u.getId() != null) {
+                usuariosEncontrados.add(u.getId());
+                Log.d("BUSQUEDA", "✅ Usuario coincide: " + nombre);
             }
         }
 
+        // Buscar en clases
         for (Clase cl : clases) {
-            String titulo = cl.getTitulo();
-            if (titulo != null && titulo.toLowerCase().contains(textoLower)) {
-                clasesEncontradas.add(titulo.toLowerCase());
+            String titulo = cl.getTitulo() != null ? cl.getTitulo().toLowerCase() : "";
+            String nombreCurso = cl.getNombreCurso() != null ? cl.getNombreCurso().toLowerCase() : "";
+
+            if ((titulo.contains(textoLower) || nombreCurso.contains(textoLower)) && cl.getIdClase() != null) {
+                clasesEncontradas.add(cl.getIdClase());
+                Log.d("BUSQUEDA", "✅ Clase coincide: " + titulo);
             }
         }
 
         List<Object> resultados = new ArrayList<>();
 
         for (Curso c : cursos) {
-            if (cursosEncontrados.contains(String.valueOf(c.getId()))) {
+            if (c.getIdCurso() != null && cursosEncontrados.contains(c.getIdCurso())) {
                 resultados.add(c);
             }
         }
 
         for (Usuario u : usuarios) {
-            String nombre = u.getNombre();
-            if (nombre != null && usuariosEncontrados.contains(nombre.toLowerCase())) {
+            if (u.getId() != null && usuariosEncontrados.contains(u.getId())) {
                 resultados.add(u);
             }
         }
 
         for (Clase cl : clases) {
-            String titulo = cl.getTitulo();
-            if (titulo != null && clasesEncontradas.contains(titulo.toLowerCase())) {
+            if (cl.getIdClase() != null && clasesEncontradas.contains(cl.getIdClase())) {
                 resultados.add(cl);
             }
         }
 
-        return resultados;
-    }
-
-    private List<Object> buscarEnTodos(String texto, List<Curso> cursos, List<Usuario> usuarios, List<Clase> clases) {
-        String textoLower = texto.toLowerCase();
-        List<Object> resultados = new ArrayList<>();
-
-        for (Curso c : cursos) {
-            if (c.getTitulo() != null && c.getTitulo().toLowerCase().contains(textoLower)) {
-                resultados.add(c);
-            }
-        }
-
-        for (Usuario u : usuarios) {
-            if (u.getNombre() != null && u.getNombre().toLowerCase().contains(textoLower)) {
-                resultados.add(u);
-            }
-        }
-
-        for (Clase cl : clases) {
-            if (cl.getTitulo() != null && cl.getTitulo().toLowerCase().contains(textoLower)) {
-                resultados.add(cl);
-            }
-        }
-
+        Log.d("BUSQUEDA", "📦 Total resultados encontrados: " + resultados.size());
         return resultados;
     }
 
@@ -319,7 +313,22 @@ public class Busqueda extends AppCompatActivity {
     }
 
     private boolean tieneClave(DocumentSnapshot doc, String campo, String clave) {
-        Map<String, Object> mapa = (Map<String, Object>) doc.get(campo);
-        return mapa != null && mapa.containsKey(clave);
+        Object valor = doc.get(campo);
+        if (valor instanceof Map) {
+            Map<String, Object> mapa = (Map<String, Object>) valor;
+            for (String k : mapa.keySet()) {
+                if (k.equalsIgnoreCase(clave)) return true;
+            }
+        } else if (valor instanceof List) {
+            List<?> lista = (List<?>) valor;
+            for (Object obj : lista) {
+                if (obj != null && obj.toString().equalsIgnoreCase(clave)) return true;
+            }
+        } else if (valor instanceof String) {
+            return ((String) valor).equalsIgnoreCase(clave);
+        }
+        return false;
     }
+
+
 }

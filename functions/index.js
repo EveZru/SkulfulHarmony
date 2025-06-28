@@ -115,6 +115,7 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
 exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event) => {
   const data = event.data.data();
   const autorId = data.autorContenido;
+  const formato = data.formato;
 
   if (!autorId) {
     console.log("❌ No se especificó autorContenido en la denuncia.");
@@ -138,12 +139,13 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
     return;
   }
 
-  let tipo = "contenido";
-  if (typeof data.idComentario === "number" && data.idComentario !== -1) {
+  // Determinar el tipo de contenido denunciado usando "formato"
+  let tipo = "contenido"; // por si acaso no coincide
+  if (formato === "comentario") {
     tipo = "comentario";
-  } else if (typeof data.idClase === "number" && data.idClase !== -1) {
+  } else if (formato === "clase") {
     tipo = "clase";
-  } else if (typeof data.idCurso === "number" && data.idClase === -1 && data.idComentario === -1) {
+  } else if (formato === "curso") {
     tipo = "curso";
   }
 
@@ -162,24 +164,3 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
     console.error("❌ Error al enviar notificación de denuncia:", error);
   }
 });
-
-
-//🛡️ Ocultar contenido automáticamente por denuncias acumuladas
-exports.ocultarContenidoDenunciado = onDocumentCreated("denuncias/{id}", async (event) => {
-    const data = event.data.data();
-    const contenidoId = data.contenidoId;
-  
-    // Ver cuántas denuncias tiene ese contenido
-    const snapshot = await admin.firestore()
-      .collection("denuncias")
-      .where("contenidoId", "==", contenidoId)
-      .get();
-  
-    if (snapshot.size >= 3) {
-      // Ocultar automáticamente el contenido (ej. clase)
-      await admin.firestore().collection("clases").doc(contenidoId).update({
-        visible: false,
-        ocultadoPor: "denuncias automáticas"
-      });
-    }
-  });  

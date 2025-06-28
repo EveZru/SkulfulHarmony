@@ -99,7 +99,7 @@
             android:text="Instrumento"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:backgroundTint="@color/rojo_oscuro"/>
+            android:backgroundTint="@color/grayrojo2"/>
 
         <Button
             android:id="@+id/btn_bdificultad"
