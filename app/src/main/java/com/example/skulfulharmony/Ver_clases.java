@@ -796,6 +796,7 @@ public class Ver_clases extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.it_denunciar) {
                 Intent denuncia = new Intent(Ver_clases.this, CrearDenuncia.class);
+                denuncia.putExtra("idCurso", idCurso);
                 denuncia.putExtra("idClase", idClase);
                 startActivity(denuncia);
                 return true;
