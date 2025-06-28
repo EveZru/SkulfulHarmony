@@ -224,6 +224,10 @@ public class CrearDenuncia extends AppCompatActivity {
                 .addOnSuccessListener(ref -> {
                     Toast.makeText(CrearDenuncia.this, "Denuncia enviada", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(CrearDenuncia.this, "Error al enviar la denuncia", Toast.LENGTH_SHORT).show();
                 });
     }
 }
