@@ -183,6 +183,9 @@ public class Curso implements Serializable {
         return instrumento;
     }
     public List<Comentario> getComentarios() {
+        if (comentarios == null) {
+            comentarios = new ArrayList<>();
+        }
         return comentarios;
     }
     public void setComentarios(List<Comentario> comentarios) {

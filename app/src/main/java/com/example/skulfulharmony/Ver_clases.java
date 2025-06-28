@@ -456,145 +456,158 @@ public class Ver_clases extends AppCompatActivity {
         });
 
         crear_comentario.setOnClickListener(v -> {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    String coment = etcomentario.getText().toString().trim();
-                    Timestamp fecha = Timestamp.now();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String coment = etcomentario.getText().toString().trim();
+            Timestamp fecha = Timestamp.now();
 
-                    if (user == null) {
-                        Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (coment.isEmpty()) {
-                        Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            if (user == null) {
+                Toast.makeText(this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (coment.isEmpty()) {
+                Toast.makeText(this, "Comentario vacío", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                    Comentario comentario = new Comentario();
-                    comentario.setUsuario(user.getEmail());
-                    comentario.setTexto(coment);
-                    comentario.setFecha(fecha);
-                    comentario.setIdCurso(idCurso);
-                    comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
-                    comentario.setUidAutor(user.getUid());
+            Comentario comentario = new Comentario();
+            comentario.setUsuario(user.getEmail());
+            comentario.setTexto(coment);
+            comentario.setFecha(fecha);
+            comentario.setIdCurso(idCurso);
+            comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
+            comentario.setUidAutor(user.getUid());
 
-                    db.collection("clases")
-                            .whereEqualTo("idCurso", idCurso)
-                            .whereEqualTo("idClase", idClase)
-                            .get()
-                            .addOnSuccessListener(queryDocumentSnapshots -> {
-                                if (!queryDocumentSnapshots.isEmpty()) {
-                                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                                    String docId = doc.getId();
-                                    Clase clase = doc.toObject(Clase.class);
-                                    List<Comentario> comentarios = clase.getComentarios();
-                                    if (comentarios == null) comentarios = new ArrayList<>();
-                                    Integer nuevaId = comentarios.size() + 1;
-                                    comentario.setIdComentario(nuevaId);
-                                    comentarios.add(comentario);
+            db.collection("clases")
+                    .whereEqualTo("idCurso", idCurso)
+                    .whereEqualTo("idClase", idClase)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                            String docId = doc.getId();
+                            Clase clase = doc.toObject(Clase.class);
+                            List<Comentario> comentarios = clase.getComentarios();
+                            if (comentarios == null) comentarios = new ArrayList<>();
+                            Integer nuevaId = comentarios.size() + 1;
+                            comentario.setIdComentario(nuevaId);
+                            comentarios.add(comentario);
 
-                                    db.collection("clases")
-                                            .document(docId)
-                                            .update("comentarios", comentarios)
-                                            .addOnSuccessListener(unused -> {
-                                                Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                                etcomentario.setText("");
-                                                cargarComentarios(idCurso, idClase);
+                            db.collection("clases")
+                                    .document(docId)
+                                    .update("comentarios", comentarios)
+                                    .addOnSuccessListener(unused -> {
+                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                        etcomentario.setText("");
+                                        cargarComentarios(idCurso, idClase);
 
-                                                // ✅ También subimos el doc a la colección 'comentarios' para activar notificaciones después
-                                                db.collection("comentarios")
-                                                        .document(String.valueOf(nuevaId))
-                                                        .set(new HashMap<String, Object>() {{
-                                                            put("autorId", user.getUid());
-                                                            put("texto", coment);
-                                                            put("likes", 0); // desde el inicio
-                                                            put("idClase", idClase);
-                                                            put("idCurso", idCurso);
-                                                            put("timestamp", fecha);
-                                                        }})
-                                                        .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
-                                                        .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
-                                            });
+                                        db.collection("comentarios")
+                                                .document(String.valueOf(nuevaId))
+                                                .set(new HashMap<String, Object>() {{
+                                                    put("autorId", user.getUid());
+                                                    put("texto", coment);
+                                                    put("likes", 0);
+                                                    put("idClase", idClase);
+                                                    put("idCurso", idCurso);
+                                                    put("timestamp", fecha);
+                                                }})
+                                                .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
+                                                .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                    });
 
-                                } else {
-                                    Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
+                    });
+
+            db.collection("usuarios")
+                    .whereEqualTo("correo", user.getEmail())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
+                            String docId = doc.getId();
+                            Usuario usuario = doc.toObject(Usuario.class);
+
+                            if (usuario != null) {
+                                // Validamos que la lista de comentarios del usuario no sea null
+                                List<Comentario> listaComentarios = usuario.getComentarios();
+                                if (listaComentarios == null) {
+                                    listaComentarios = new ArrayList<>();
+                                    usuario.setComentarios(listaComentarios); // actualizamos en el objeto
                                 }
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
-                            });
-                    db.collection("usuarios")
-                            .whereEqualTo("correo", user.getEmail())
-                            .limit(1)
-                            .get()
-                            .addOnSuccessListener(queryDocumentSnapshots -> {
-                                if (!queryDocumentSnapshots.isEmpty()) {
-                                    DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                                    String docId = doc.getId();
-                                    Usuario usuario = doc.toObject(Usuario.class);
 
-                                    if (usuario != null) {
-                                        comentario.setIdComentario(usuario.getComentarios().size() + 1);
-                                        usuario.getComentarios().add(comentario);
+                                comentario.setIdComentario(listaComentarios.size() + 1);
+                                listaComentarios.add(comentario);
 
-                                        PreferenciasUsuario preferenciasUsuarioTemp = usuario.getPreferenciasUsuario();
-                                        if (preferenciasUsuarioTemp == null) {
-                                            preferenciasUsuarioTemp = new PreferenciasUsuario();
-                                        }
-                                        final PreferenciasUsuario finalPreferenciasUsuario = preferenciasUsuarioTemp;
+                                PreferenciasUsuario preferenciasUsuarioTemp = usuario.getPreferenciasUsuario();
+                                if (preferenciasUsuarioTemp == null) {
+                                    preferenciasUsuarioTemp = new PreferenciasUsuario();
+                                }
+                                final PreferenciasUsuario finalPreferenciasUsuario = preferenciasUsuarioTemp;
 
-                                        db.collection("cursos")
-                                                .whereEqualTo("idCurso", idCurso)
-                                                .limit(1)
-                                                .get()
-                                                .addOnSuccessListener(cursoQuery -> {
-                                                    if (!cursoQuery.isEmpty()) {
-                                                        Curso curso = cursoQuery.getDocuments().get(0).toObject(Curso.class);
+                                List<Comentario> finalListaComentarios = listaComentarios;
+                                db.collection("cursos")
+                                        .whereEqualTo("idCurso", idCurso)
+                                        .limit(1)
+                                        .get()
+                                        .addOnSuccessListener(cursoQuery -> {
+                                            if (!cursoQuery.isEmpty()) {
+                                                Curso curso = cursoQuery.getDocuments().get(0).toObject(Curso.class);
 
-                                                        if (curso != null) {
-                                                            // Asegúrate de que no sean listas vacías o null
-                                                            if (!curso.getInstrumento().isEmpty()) {
-                                                                String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, curso.getInstrumento().get(0));
-                                                                if (instrumentoStr != null) {
-                                                                    finalPreferenciasUsuario.incrementarInstrumento(instrumentoStr);
-                                                                }
-                                                            }
-                                                            if (!curso.getDificultad().isEmpty()) {
-                                                                String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, curso.getDificultad().get(0));
-                                                                if (dificultadStr != null) {
-                                                                    finalPreferenciasUsuario.incrementarDificultad(dificultadStr);
-                                                                }
-                                                            }
-                                                            if (!curso.getGenero().isEmpty()) {
-                                                                String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, curso.getGenero().get(0));
-                                                                if (generoStr != null) {
-                                                                    finalPreferenciasUsuario.decrementarGenero(generoStr);
-                                                                }
-                                                            }
-
-                                                            usuario.setPreferenciasUsuario(finalPreferenciasUsuario);
-
-                                                            // Convertimos el usuario en un Map para hacer merge
-                                                            Map<String, Object> userMap = new HashMap<>();
-                                                            userMap.put("comentarios", usuario.getComentarios());
-                                                            userMap.put("preferenciasUsuario", finalPreferenciasUsuario);
-
-                                                            db.collection("usuarios")
-                                                                    .document(docId)
-                                                                    .set(userMap, SetOptions.merge())
-                                                                    .addOnSuccessListener(aVoid ->
-                                                                            Log.d("Usuario", "Preferencias y comentario actualizados correctamente"))
-                                                                    .addOnFailureListener(e ->
-                                                                            Log.e("Usuario", "Error al actualizar usuario", e));
+                                                if (curso != null) {
+                                                    if (curso.getInstrumento() != null && !curso.getInstrumento().isEmpty()) {
+                                                        Map<String, Integer> instrumentoMap = curso.getInstrumento();
+                                                        int instrumentoId = instrumentoMap.values().iterator().next(); // ✅ obtiene el único valor
+                                                        String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, instrumentoId);
+                                                        if (instrumentoStr != null) {
+                                                            finalPreferenciasUsuario.incrementarInstrumento(instrumentoStr);
                                                         }
                                                     }
-                                                });
-                                    }
-                                }
-                            });
-                });
+                                                    if (curso.getDificultad() != null && !curso.getDificultad().isEmpty()) {
+                                                        Map<String, Integer> dificultadMap = curso.getDificultad();
+                                                        int dificultadId = dificultadMap.values().iterator().next(); // ✅ obtiene el único valor
+                                                        String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, dificultadId);
+                                                        if (dificultadStr != null) {
+                                                            finalPreferenciasUsuario.incrementarDificultad(dificultadStr);
+                                                        }
+                                                    }
+                                                    if (curso.getGenero() != null && !curso.getGenero().isEmpty()) {
+                                                        Map<String, Integer> generoMap = curso.getGenero();
+                                                        int generoId = generoMap.values().iterator().next(); // ✅ obtiene el único valor
+                                                        String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, generoId);
+                                                        if (generoStr != null) {
+                                                            finalPreferenciasUsuario.decrementarGenero(generoStr);
+                                                        }
+                                                    }
+
+                                                    usuario.setPreferenciasUsuario(finalPreferenciasUsuario);
+
+                                                    Map<String, Object> userMap = new HashMap<>();
+                                                    userMap.put("comentarios", finalListaComentarios);
+                                                    userMap.put("preferenciasUsuario", finalPreferenciasUsuario);
+
+                                                    db.collection("usuarios")
+                                                            .document(docId)
+                                                            .set(userMap, SetOptions.merge())
+                                                            .addOnSuccessListener(aVoid ->
+                                                                    Log.d("Usuario", "Preferencias y comentario actualizados correctamente"))
+                                                            .addOnFailureListener(e ->
+                                                                    Log.e("Usuario", "Error al actualizar usuario", e));
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+                    });
+        });
+
 
         iv_like.setOnClickListener(v -> {
             boolean estabaLike = like;

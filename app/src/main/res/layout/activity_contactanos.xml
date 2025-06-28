@@ -1,95 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/cafe2">
-    <!-- Maquetado -->
-    <!-- Título de la sección -->
-    <TextView
-        android:id="@+id/contactUsTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Contáctanos"
-        android:textSize="20sp"
-        android:textColor="#333333"
-        android:paddingBottom="16dp"
-        android:layout_gravity="center_horizontal" /> <!-- Corregido -->
+    android:background="@color/black"
+    tools:context=".Contactanos">
 
-    <!-- Descripción breve -->
-    <TextView
-        android:id="@+id/contactUsDescription"
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="¿Tienes alguna pregunta, sugerencia o necesitas ayuda? ¡Estamos aquí para ayudarte! Puedes contactarnos de las siguientes maneras:"
-        android:textSize="16sp"
-        android:textColor="#555555"
-        android:lineSpacingExtra="4dp"
-        android:paddingBottom="16dp" />
+        android:layout_height="60dp"
+        android:background="@color/black">
 
-    <!-- Correo electrónico -->
-    <TextView
-        android:id="@+id/emailContact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📧 Email: contacto@skillfulharmony.app"
-        android:textSize="16sp"
-        android:textColor="#1E88E5"
-        android:paddingBottom="16dp"
-        android:autoLink="email"
-        android:layout_gravity="center_horizontal" /> <!-- Corregido -->
-
-    <!-- Teléfono -->
-    <TextView
-        android:id="@+id/phoneContact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="📞 Teléfono: +1 800-123-4567"
-        android:textSize="16sp"
-        android:textColor="#1E88E5"
-        android:paddingBottom="16dp"
-        android:autoLink="phone"
-        android:layout_gravity="center_horizontal" /> <!-- Corregido -->
-
-    <!-- Redes sociales -->
-    <TextView
-        android:id="@+id/socialMediaContact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="🌐 Síguenos en nuestras redes sociales:"
-        android:textSize="16sp"
-        android:textColor="#555555"
-        android:layout_gravity="center_horizontal" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <!-- Facebook -->
         <TextView
-            android:id="@+id/facebookLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Facebook"
-            android:textSize="16sp"
-            android:textColor="#3b5998"
-            android:paddingRight="16dp"
-            android:clickable="true"
-            android:onClick="openFacebook" />
+            android:text="Contáctanos"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    </androidx.appcompat.widget.Toolbar>
 
-        <!-- Instagram -->
-        <TextView
-            android:id="@+id/instagramLink"
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1" />
+
+    <!-- Contenido -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Instagram"
-            android:textSize="16sp"
-            android:textColor="#E1306C"
-            android:clickable="true"
-            android:onClick="openInstagram" />
-    </LinearLayout>
+            app:cardBackgroundColor="@color/gray2"
+            app:cardElevation="10dp"
+            app:cardCornerRadius="10dp"
+            android:layout_margin="5dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:orientation="vertical">
 
+                <!-- Descripción -->
+                <TextView
+                    android:id="@+id/contactUsDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="¿Tienes alguna pregunta, sugerencia o necesitas ayuda? ¡Estamos aquí para ayudarte! Puedes contactarnos de las siguientes maneras:"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Email -->
+                <TextView
+                    android:id="@+id/emailContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📧 contacto@skillfulharmony.app"
+                    android:textSize="16sp"
+                    android:textColor="@color/rojo"
+                    android:autoLink="email"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Teléfono -->
+                <TextView
+                    android:id="@+id/phoneContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📞 +1 800-123-4567"
+                    android:textSize="16sp"
+                    android:textColor="@color/rojo"
+                    android:autoLink="phone"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Social -->
+                <TextView
+                    android:id="@+id/socialMediaContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🌐 Síguenos en nuestras redes sociales:"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_horizontal">
+
+                    <!-- Facebook -->
+                    <TextView
+                        android:id="@+id/facebookLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Facebook"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:paddingEnd="20dp"
+                        android:clickable="true"
+                        android:onClick="openFacebook" />
+
+                    <!-- Instagram -->
+                    <TextView
+                        android:id="@+id/instagramLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Instagram"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:clickable="true"
+                        android:onClick="openInstagram" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ScrollView>
 </LinearLayout>

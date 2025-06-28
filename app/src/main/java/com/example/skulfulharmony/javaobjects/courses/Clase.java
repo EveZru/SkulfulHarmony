@@ -81,6 +81,9 @@ public class Clase implements Serializable {
     }
 
     public List<Comentario> getComentarios() {
+        if (comentarios == null) {
+            comentarios = new ArrayList<>();
+        }
         return comentarios;
     }
 

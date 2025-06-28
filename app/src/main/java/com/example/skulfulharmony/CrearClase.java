@@ -73,7 +73,7 @@ public class CrearClase extends AppCompatActivity {
     private EditText et_pregunta, et_titulo, et_texto;
     private Button btn_subirpregunta,btn_subirarchivo, btn_subirclase;
     private LinearLayout containerOpciones;
-    private ImageView vid,btn_subirvideo;
+    private ImageView vid, btn_subirvideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

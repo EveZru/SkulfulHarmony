@@ -345,19 +345,25 @@ public class Ver_cursos extends AppCompatActivity {
                                                 if (curso != null) {
                                                     // Asegúrate de que no sean listas vacías o null
                                                     if (!curso.getInstrumento().isEmpty()) {
-                                                        String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, curso.getInstrumento().get(0));
+                                                        Map<String, Integer> instrumentoMap = curso.getInstrumento();
+                                                        int instrumentoId = instrumentoMap.values().iterator().next();
+                                                        String instrumentoStr = obtenerClavePorValor(DataClusterList.listaInstrumentos, instrumentoId);
                                                         if (instrumentoStr != null) {
                                                             finalPreferenciasUsuario.incrementarInstrumento(instrumentoStr);
                                                         }
                                                     }
                                                     if (!curso.getDificultad().isEmpty()) {
-                                                        String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, curso.getDificultad().get(0));
+                                                        Map<String, Integer> dificultadMap = curso.getDificultad();
+                                                        int dificultadId = dificultadMap.values().iterator().next();
+                                                        String dificultadStr = obtenerClavePorValor(DataClusterList.listaDificultad, dificultadId);
                                                         if (dificultadStr != null) {
                                                             finalPreferenciasUsuario.incrementarDificultad(dificultadStr);
                                                         }
                                                     }
                                                     if (!curso.getGenero().isEmpty()) {
-                                                        String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, curso.getGenero().get(0));
+                                                        Map<String, Integer> generoMap = curso.getGenero();
+                                                        int generoId = generoMap.values().iterator().next();
+                                                        String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, generoId);
                                                         if (generoStr != null) {
                                                             finalPreferenciasUsuario.decrementarGenero(generoStr);
                                                         }

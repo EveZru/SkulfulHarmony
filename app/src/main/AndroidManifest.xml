@@ -177,9 +177,6 @@
             android:name=".EliminarCuenta"
             android:exported="false" />
         <activity
-            android:name=".Configuracion"
-            android:exported="false" />
-        <activity
             android:name=".PreguntasRecomendacion"
             android:exported="false" />
         <activity
