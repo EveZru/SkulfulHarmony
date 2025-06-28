@@ -1,8 +1,6 @@
 package com.example.skulfulharmony;
 
 // 🧠 Clases internas del proyecto
-import com.example.skulfulharmony.javaobjects.users.Usuario;
-import com.example.skulfulharmony.server.zip.ComprimirZip; // Para comprimir archivos
 import com.example.skulfulharmony.server.config.DropboxConfig; // Configuración del cliente de Dropbox
 
 // ☁️ Dropbox SDK
@@ -12,11 +10,7 @@ import com.dropbox.core.v2.files.UploadErrorException; // Excepción al subir ar
 import com.dropbox.core.v2.sharing.SharedLinkMetadata; // Metadatos del enlace compartido
 
 // 📱 Android básico
-import android.Manifest;
 import android.content.Intent; // Navegación entre actividades
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor; // Lectura de bases de datos
 import android.net.Uri; // Referencia a recursos (como imágenes)
 import android.os.Bundle; // Datos entre actividades
 import android.os.Handler; // Ejecutar tareas en el hilo principal
@@ -30,12 +24,10 @@ import android.widget.Toast; // Mensajes emergentes
 import android.view.View;
 
 // 🔄 Concurrencia y ejecución en segundo plano
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService; // Ejecutor de hilos
 import java.util.concurrent.Executors; // Utilidad para crear ejecutores
 
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.PopupMenu;
 
 // 🖼️ Librería externa para imágenes
@@ -66,7 +58,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView; // Bar
 
 // 🎨 Compatibilidad
 import androidx.appcompat.app.AppCompatActivity; // Actividad compatible
-import androidx.core.content.ContextCompat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -88,8 +79,6 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
 
 import android.graphics.Color;
 
