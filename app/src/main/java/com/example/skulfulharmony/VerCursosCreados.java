@@ -120,7 +120,7 @@ public class VerCursosCreados extends AppCompatActivity {
                 // Recorrer los documentos obtenidos y convertirlos en objetos Curso
                 for (DocumentSnapshot document : queryDocumentSnapshots) {
                     Curso curso = document.toObject(Curso.class);
-                    if (curso != null&&!curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧")) {
+                    if (curso != null && !curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧")) {
                         listaCursost.add(curso);
                     }
                 }

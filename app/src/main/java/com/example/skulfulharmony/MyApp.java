@@ -26,6 +26,11 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        DbHelper dbHelper = new DbHelper(getApplicationContext());
+        dbHelper.getWritableDatabase(); // Forzar creación
+
+
         Log.d("MyApp", "🔥 MyApp.onCreate ejecutado");
         if (hayInternet(this)) {
             Log.d("MyApp", "🌐 Conexión detectada, sincronizando progreso offline...");

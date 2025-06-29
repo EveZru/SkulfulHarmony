@@ -236,6 +236,13 @@ public class VerCursoComoCreador extends AppCompatActivity {
         updates.put("titulo", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧"); // Carácter invisible + texto
         updates.put("creador", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧");
         updates.put("descripcion", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧Este curso ha sido eliminado");
+        updates.put("popularidad",0.0);
+        updates.put("visitas",0);
+        updates.put("cantidadDescargas",0);
+       updates.put( "promedioCalificacion",0.0);
+        updates.put("strike1",true);
+        updates.put("strike2",true);
+        updates.put("strike3",true);
 
         db.collection("cursos").document(documentIdCurso)
                 .update(updates)

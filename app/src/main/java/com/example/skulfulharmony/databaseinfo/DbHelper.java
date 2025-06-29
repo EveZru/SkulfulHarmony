@@ -1,5 +1,7 @@
 package com.example.skulfulharmony.databaseinfo;
 
+import static com.example.skulfulharmony.SplashActivity.sincronizarProgresoOffline;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,6 +36,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        
         db.execSQL("CREATE TABLE " + TABLE_USER + " (" +
                 "correo TEXT PRIMARY KEY, " +
                 "nombre TEXT NOT NULL, " +
@@ -79,13 +82,17 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX idx_clase_titulo_curso ON " + TABLE_CLASS + " (titulo, curso_id)");
     }
 
+  
+
     @Override
+
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COURSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS preguntasdescargadas");
+        db.execSQL("DROP TABLE IF EXISTS progreso_clase_offline"); // <--- AGREGA ESTO
         onCreate(db);
     }
 

@@ -7,14 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditarPerfil"
-    android:background="@color/rojo_oscuro">
+    android:background="@color/grayrojo2">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp"
         android:layout_margin="10dp"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:text="@string/editar_informacion"
             android:textSize="25sp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/cafe2"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
             android:paddingBottom="8dp"

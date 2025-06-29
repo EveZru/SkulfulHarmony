@@ -3,14 +3,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/cafe2"
+    android:background="@color/grayrojo2"
     android:padding="16dp">
     <!--mauqetado-->
     <androidx.cardview.widget.CardView
         android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/cafe2"
         app:cardCornerRadius="10dp"
         android:elevation="6dp"
         android:layout_marginVertical="200dp"
@@ -18,7 +18,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/cafe2"
+        android:backgroundTint="@color/grayrojo2"
         app:cardCornerRadius="10dp"
         android:layout_margin="3dp"
         >
@@ -32,6 +32,7 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/cafe1"
         android:text="Configura tu tiempo de descanso"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"/>
@@ -42,6 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="240"
+        android:progressTint="@color/cafe2"
+        android:thumbTint="@color/grayverde"
         android:progress="60"/> <!-- Valor inicial 1 hora -->
 
     <!-- Mostrar el tiempo seleccionado -->
@@ -49,6 +52,7 @@
         android:id="@+id/tiempoDescansoTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/cafe2"
         android:text="Tiempo de descanso: 60 minutos"
         android:textSize="16sp"
         android:layout_marginTop="10dp"/>
@@ -60,7 +64,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Guardar Tiempo"
-                android:backgroundTint="@color/black"
+                android:textColor="@color/grayrojo2"
+                android:backgroundTint="@color/cafe2"
                 android:layout_marginTop="20dp"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
