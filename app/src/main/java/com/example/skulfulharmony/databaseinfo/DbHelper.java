@@ -76,7 +76,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 "tiempoVisto INTEGER DEFAULT 0, " +
                 "cuestionarioCompletado INTEGER DEFAULT 0);");
 
-        // Nuevo índice para mejorar búsqueda de clases
         db.execSQL("CREATE INDEX idx_clase_titulo_curso ON " + TABLE_CLASS + " (titulo, curso_id)");
     }
 
@@ -88,17 +87,6 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS preguntasdescargadas");
         onCreate(db);
-    }
-
-    public void guardarCursoDescargado(Curso curso) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("idCurso", curso.getIdCurso());
-        values.put("titulo", curso.getTitulo());
-        values.put("descripcion", curso.getDescripcion());
-        values.put("imagen", curso.getImagen());
-        db.insertWithOnConflict(TABLE_COURSE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-        db.close();
     }
 
     public void guardarClaseDescargada(ClaseFirebase clase, int cursoId) {
@@ -143,19 +131,6 @@ public class DbHelper extends SQLiteOpenHelper {
             db.endTransaction();
             db.close();
         }
-    }
-
-    public boolean claseYaDescargadaConIdLocal(String titulo, int cursoIdLocal) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String tituloNormalizado = titulo.trim().toLowerCase();
-        Cursor cursor = db.rawQuery(
-                "SELECT id FROM " + TABLE_CLASS + " WHERE LOWER(TRIM(titulo)) = ? AND curso_id = ?",
-                new String[]{tituloNormalizado, String.valueOf(cursoIdLocal)}
-        );
-        boolean existe = cursor.moveToFirst();
-        cursor.close();
-        db.close();
-        return existe;
     }
 
     public List<Curso> obtenerCursosDescargados() {

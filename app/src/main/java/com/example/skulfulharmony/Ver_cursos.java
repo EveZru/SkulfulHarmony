@@ -704,27 +704,21 @@ public class Ver_cursos extends AppCompatActivity {
                 startActivity(denuncia);
                 return true;
             }  else if (id == R.id.it_descargar) {
-                // Solo curso sin clases
+
                 DescargarCursoCompleto.descargar(this, idCurso, new DescargarCursoCompleto.Callback() {
                     @Override
                     public void onFinalizado(String titulo) {
-                        // Ya lanza VerCursoDescargado automáticamente
                     }
                     @Override
                     public void onError(String mensaje) {
-                        // Puedes loguear si quieres
                     }
                 });
                 return true;
             }
-            return false; // Importante devolver false si no se manejó el clic
+            return false;
         });
-
-        // Mostrar el menú
         popupMenu.show();
     }
-
-
 
     //_______estrellas_____
     private void actualizarPuntuacion(int nuevaPuntuacion) {

@@ -80,5 +80,4 @@ dependencies {
     implementation ("androidx.media3:media3-ui:1.3.1")
 
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
-
 }

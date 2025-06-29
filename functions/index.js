@@ -5,6 +5,8 @@ const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { onObjectFinalized } = require("firebase-functions/v2/storage");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
+
+
 admin.initializeApp();
 
 function convertirHoraStringAMinutos(horaStr) {
@@ -22,7 +24,7 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
   const ahora = new Date();
   const horaActual = ahora.getHours();
   const minutoActual = ahora.getMinutes();
-  const hoyStr = ahora.toISOString().split("T")[0]; // "yyyy-MM-dd"
+  const hoyStr = ahora.toISOString().split("T")[0];
 
   snapshot.forEach(async (doc) => {
     const data = doc.data();
@@ -31,7 +33,6 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
     const notis = data.notificaciones || {};
     const fechaUltimaEntrada = data.fechaUltimaEntrada;
 
-    // 🛑 Filtros
     if (!tiempoStr || typeof tiempoStr !== "string" || !token) return;
     if (notis.horaEntrada === false) return;
     if (fechaUltimaEntrada === hoyStr) {
@@ -39,7 +40,6 @@ exports.notificacionInactividadV2 = onSchedule("every 15 minutes", async (event)
       return;
     }
 
-    // ⏱️ Calcular diferencia en minutos
     const minutosPromedio = convertirHoraStringAMinutos(tiempoStr);
     if (minutosPromedio === null) return;
 
@@ -132,15 +132,14 @@ exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event)
   }
 
   const notificaciones = userData?.notificaciones || {};
-  const tieneActiva = notificaciones.denunciaComentario ?? true; // true por default si no existe
+  const tieneActiva = notificaciones.denunciaComentario ?? true;
 
   if (!tieneActiva) {
     console.log("🔕 Usuario tiene desactivadas las notificaciones de denuncia:", autorId);
     return;
   }
 
-  // Determinar el tipo de contenido denunciado usando "formato"
-  let tipo = "contenido"; // por si acaso no coincide
+  let tipo = "contenido"; 
   if (formato === "comentario") {
     tipo = "comentario";
   } else if (formato === "clase") {

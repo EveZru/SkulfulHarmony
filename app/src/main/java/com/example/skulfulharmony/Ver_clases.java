@@ -1,6 +1,5 @@
 package com.example.skulfulharmony;
 
-import static com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.RequestBuilder.put;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
@@ -59,9 +57,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +65,7 @@ import java.util.Map;
 
 public class Ver_clases extends AppCompatActivity {
     private Toolbar toolbar;
-    private TextView tvPuntuacion, tvInfo, tvTitulo;
+    private TextView tvInfo, tvTitulo;
     private Button btnCalificar;
     private EditText etcomentario;
     private PlayerView playerViewPortrait;
@@ -800,10 +796,9 @@ public class Ver_clases extends AppCompatActivity {
 
 
     private void showPopupMenu(View view) {
-        // Crear el PopupMenu y asociarlo con la vista 'view' (la ImageView desplegarmenu)
         PopupMenu popupMenu = new PopupMenu(this, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.menu_cursos, popupMenu.getMenu()); // Usamos el mismo menú que para la ActionBar
+        inflater.inflate(R.menu.menu_cursos, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
@@ -835,7 +830,6 @@ public class Ver_clases extends AppCompatActivity {
                     return true;
                 }
 
-                // Obtener ID interno del curso
                 DbHelper dbHelper = new DbHelper(this);
                 SQLiteDatabase db = dbHelper.getReadableDatabase();
                 int idCursoLocal = -1;
@@ -848,6 +842,11 @@ public class Ver_clases extends AppCompatActivity {
 
                 if (idCursoLocal == -1) {
                     Toast.makeText(this, "Error: Curso no está en base local", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                if (DescargaManager.claseYaDescargada(this, clase.getTitulo(), idCursoLocal)) {
+                    Toast.makeText(this, "Esta clase ya fue descargada", Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
@@ -881,7 +880,7 @@ public class Ver_clases extends AppCompatActivity {
 
                 return true;
             }
-            return false; // Importante devolver false si no se manejó el clic
+            return false;
         });
         popupMenu.show();
     }
@@ -926,7 +925,6 @@ public class Ver_clases extends AppCompatActivity {
 
                         db.collection("clases").document(docId).update(updates);
 
-                        // Actualizar preferencias del usuario
                         db.collection("cursos").document(String.valueOf(idCurso))
                                 .get().addOnSuccessListener(cursoDoc -> {
                                     if (cursoDoc.exists()) {
@@ -1040,7 +1038,6 @@ public class Ver_clases extends AppCompatActivity {
         userRef.get().addOnSuccessListener(snapshot -> {
             if (!snapshot.exists()) return;
 
-            // Obtener PreferenciasUsuario directamente desde el documento
             Map<String, Object> rawPrefs = (Map<String, Object>) snapshot.get("preferenciasUsuario");
             PreferenciasUsuario preferencias = new PreferenciasUsuario();
 
@@ -1063,7 +1060,6 @@ public class Ver_clases extends AppCompatActivity {
                 }
             }
 
-            // Actualizar preferencias
             instrumento.keySet().forEach(instr -> {
                 if (incremento) preferencias.incrementarInstrumento(instr);
                 else preferencias.decrementarInstrumento(instr);
