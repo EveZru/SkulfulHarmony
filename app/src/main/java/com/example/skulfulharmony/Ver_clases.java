@@ -37,6 +37,7 @@ import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.clustering.DataClusterList;
 import com.example.skulfulharmony.javaobjects.clustering.PreferenciasUsuario;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
+import com.example.skulfulharmony.javaobjects.notifications.NotificacionHelper;
 import com.google.firebase.firestore.DocumentReference;
 
 import com.dropbox.core.v2.clouddocs.UserInfo;
@@ -437,7 +438,6 @@ public class Ver_clases extends AppCompatActivity {
             }
         });
 
-
         etcomentario.setMovementMethod(new ScrollingMovementMethod());
 
         etcomentario.setOnTouchListener((v, event) -> {
@@ -639,10 +639,6 @@ public class Ver_clases extends AppCompatActivity {
                 modificarnogusta(false, estabaLike, estabaDislike); // Quitar dislike
             }
         });
-
-
-
-
     }
 
     // para la reprocuccion de video
@@ -793,8 +789,6 @@ public class Ver_clases extends AppCompatActivity {
         }
     }
 
-
-
     private void showPopupMenu(View view) {
         PopupMenu popupMenu = new PopupMenu(this, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
@@ -814,7 +808,6 @@ public class Ver_clases extends AppCompatActivity {
                     return true;
                 }
 
-                // Convertir a ClaseFirebase
                 ClaseFirebase claseOffline = new ClaseFirebase(
                         clase.getTitulo(),
                         clase.getArchivos(),
@@ -855,6 +848,16 @@ public class Ver_clases extends AppCompatActivity {
                 new Thread(() -> {
                     DbHelper dbHelperLocal = new DbHelper(Ver_clases.this);
 
+                    int totalElementos = claseOffline.getArchivosUrl().size() + 2; // +2 por video e imagen
+                    int descargados = 0;
+
+                    NotificacionHelper.mostrarProgreso(
+                            Ver_clases.this, 40,
+                            "Descargando clase",
+                            claseOffline.getTitulo(),
+                            0
+                    );
+
                     List<String> archivosDescargados = new ArrayList<>();
                     int i = 1;
                     for (String url : claseOffline.getArchivosUrl()) {
@@ -862,18 +865,41 @@ public class Ver_clases extends AppCompatActivity {
                             String nombre = "archivo_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + "_" + i + ".pdf";
                             String ruta = DescargaManager.descargarArchivo(Ver_clases.this, url, nombre);
                             if (ruta != null) archivosDescargados.add(ruta);
+                            descargados++;
+                            int progreso = (descargados * 100) / totalElementos;
+                            NotificacionHelper.mostrarProgreso(Ver_clases.this, 40, "Descargando clase", claseOffline.getTitulo(), progreso);
                             i++;
                         }
                     }
 
-                    String videoLocal = DescargaManager.descargarArchivo(Ver_clases.this, claseOffline.getVideoUrl(), "video_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".mp4");
-                    String imgLocal = DescargaManager.descargarArchivo(Ver_clases.this, claseOffline.getImagenUrl(), "img_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".jpg");
+                    String videoLocal = DescargaManager.descargarArchivo(
+                            Ver_clases.this,
+                            claseOffline.getVideoUrl(),
+                            "video_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".mp4"
+                    );
+                    descargados++;
+                    NotificacionHelper.mostrarProgreso(Ver_clases.this, 40, "Descargando clase", claseOffline.getTitulo(), (descargados * 100) / totalElementos);
+
+                    String imgLocal = DescargaManager.descargarArchivo(
+                            Ver_clases.this,
+                            claseOffline.getImagenUrl(),
+                            "img_" + claseOffline.getTitulo().replaceAll("[^a-zA-Z0-9]", "_") + ".jpg"
+                    );
+                    descargados++;
+                    NotificacionHelper.mostrarProgreso(Ver_clases.this, 40, "Descargando clase", claseOffline.getTitulo(), (descargados * 100) / totalElementos);
 
                     claseOffline.setVideoUrl(videoLocal);
                     claseOffline.setImagenUrl(imgLocal);
                     claseOffline.setArchivosUrl(archivosDescargados);
 
                     dbHelperLocal.guardarClaseDescargada(claseOffline, finalIdCursoLocal);
+
+                    NotificacionHelper.completarProgreso(
+                            Ver_clases.this,
+                            40,
+                            "Clase descargada",
+                            claseOffline.getTitulo() + " se descargó correctamente"
+                    );
 
                     runOnUiThread(() -> Toast.makeText(Ver_clases.this, "Clase descargada correctamente", Toast.LENGTH_SHORT).show());
                 }).start();
@@ -1005,7 +1031,6 @@ public class Ver_clases extends AppCompatActivity {
         return null;
     }
 
-
     private void actualizarPromedioCurso(double cambio) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -1076,7 +1101,4 @@ public class Ver_clases extends AppCompatActivity {
             userRef.update("preferenciasUsuario", preferencias);
         });
     }
-
-    
-
 }

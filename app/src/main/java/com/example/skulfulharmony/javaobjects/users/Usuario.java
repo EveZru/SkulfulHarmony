@@ -42,7 +42,6 @@ public class Usuario implements Serializable {
     private String rol;
     private Map<String,Integer> instrumento;
 
-
     public ArrayList<PreguntaCuestionario> getPreguntasRepaso() {
         return preguntasRepaso;
     }
@@ -952,7 +951,6 @@ public class Usuario implements Serializable {
             });
         });
     }
-
 
     private int obtenerIndiceGenero(String genero) {
         for (Map<String, Integer> map : DataClusterList.listaGenero) {
