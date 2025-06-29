@@ -38,6 +38,7 @@ public class Clase implements Serializable {
     private Timestamp fechaAcceso;
     private String contenido;
     private String videoUrl;
+    private String imagenCurso;
     private transient Context context;
 
 
@@ -143,8 +144,6 @@ public class Clase implements Serializable {
         this.imagenCurso = imagenCurso;
     }
 
-    private String imagenCurso;
-
     public String getTitulo() {
         return titulo;
     }
@@ -195,7 +194,6 @@ public class Clase implements Serializable {
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
     }
-
 
     public Integer getMeGusta() {
         return meGusta;

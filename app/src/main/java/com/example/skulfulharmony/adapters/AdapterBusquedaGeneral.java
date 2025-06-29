@@ -151,9 +151,9 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             txtTituloClase.setText(clase.getTitulo());
             txtCurso.setText(clase.getNombreCurso() != null ? clase.getNombreCurso() : "Curso desconocido");
 
-            if (clase.getImagen() != null && !clase.getImagen().isEmpty()) {
+            if (clase.getImagenCurso() != null && !clase.getImagenCurso().isEmpty()) {
                 Glide.with(itemView.getContext())
-                        .load(clase.getImagen())
+                        .load(clase.getImagenCurso())
                         .placeholder(R.drawable.logo_sh)
                         .centerCrop()
                         .into(imgClase);
@@ -161,9 +161,9 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
                 imgClase.setImageResource(R.drawable.logo_sh);
             }
 
-
             itemView.setOnClickListener(v -> listener.onClaseClick(clase));
         }
+
     }
 
 

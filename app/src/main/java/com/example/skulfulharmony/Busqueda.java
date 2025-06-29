@@ -124,31 +124,45 @@ public class Busqueda extends AppCompatActivity {
                     curso.setIdCurso(doc.getLong("idCurso") != null ? doc.getLong("idCurso").intValue() : null);
                     curso.setImagen(doc.getString("imagen"));
                     curso.setTitulo(doc.getString("titulo"));
-                    curso.setDescripcion(doc.getString("descripcion"));
-                    curso.setVisitas(doc.getLong("visitas") != null ? doc.getLong("visitas").intValue() : null);
-                    curso.setCantidadDescargas(doc.getLong("cantidadDescargas") != null ? doc.getLong("cantidadDescargas").intValue() : null);
-                    curso.setPromedioCalificacion(doc.getDouble("promedioCalificacion"));
-                    curso.setPopularidad(doc.getDouble("popularidad"));
-                    curso.setCluster(doc.getLong("cluster") != null ? doc.getLong("cluster").intValue() : null);
-                    curso.setStrike1(doc.getBoolean("strike1"));
-                    curso.setStrike2(doc.getBoolean("strike2"));
-                    curso.setStrike3(doc.getBoolean("strike3"));
-                    curso.setFechaCreacionf(doc.getTimestamp("fechaCreacionf"));
-                    curso.setFechaActualizacion(doc.getTimestamp("fechaActualizacion"));
-                    curso.setFechaAcceso(doc.getTimestamp("fechaAcceso"));
+                    //curso.setDescripcion(doc.getString("descripcion"));
 
+                    String correoCreador = null;
                     Object creadorRaw = doc.get("creador");
                     if (creadorRaw instanceof String) {
-                        curso.setCreador((String) creadorRaw);
+                        correoCreador = (String) creadorRaw;
                     } else if (creadorRaw instanceof Map) {
                         Map<String, Object> creadorMap = (Map<String, Object>) creadorRaw;
                         if (creadorMap.containsKey("email")) {
-                            curso.setCreador((String) creadorMap.get("email"));
+                            correoCreador = (String) creadorMap.get("email");
                         } else if (creadorMap.containsKey("uid")) {
                             curso.setCreador((String) creadorMap.get("uid"));
-                        } else {
-                            curso.setCreador("Creador Desconocido");
                         }
+                    }
+
+                    if (correoCreador != null) {
+                        String finalCorreoCreador = correoCreador;
+                        db.collection("usuarios")
+                                .whereEqualTo("correo", correoCreador)
+                                .get()
+                                .addOnSuccessListener(userQuery -> {
+                                    if (!userQuery.isEmpty()) {
+                                        String nombre = userQuery.getDocuments().get(0).getString("nombre");
+                                        curso.setCreador(nombre != null ? nombre : finalCorreoCreador);
+                                    } else {
+                                        curso.setCreador(finalCorreoCreador);
+                                    }
+                                    cursos.add(curso);
+                                    Log.d("Busqueda", "✅ Curso leído: " + curso.getTitulo());
+                                })
+                                .addOnFailureListener(e -> {
+                                    curso.setCreador(finalCorreoCreador);
+                                    cursos.add(curso);
+                                    Log.w("Busqueda", "⚠️ No se pudo obtener nombre de creador: " + e.getMessage());
+                                });
+                    } else {
+                        curso.setCreador("Creador Desconocido");
+                        cursos.add(curso);
+                        Log.d("Busqueda", "⚠️ Curso sin correo de creador definido");
                     }
 
                     if (doc.get("instrumento") instanceof Map)
@@ -157,11 +171,7 @@ public class Busqueda extends AppCompatActivity {
                         curso.setGenero((Map<String, Integer>) doc.get("genero"));
                     if (doc.get("dificultad") instanceof Map)
                         curso.setDificultad((Map<String, Integer>) doc.get("dificultad"));
-                    if (doc.get("calificacionesPorUsuario") instanceof Map)
-                        curso.setCalificacionesPorUsuario((Map<String, Integer>) doc.get("calificacionesPorUsuario"));
 
-                    cursos.add(curso);
-                    Log.d("Busqueda", "✅ Curso leído: " + curso.getTitulo());
                 } catch (Exception e) {
                     Log.e("Busqueda", "❌ Error leyendo curso: " + e.getMessage());
                 }
@@ -184,7 +194,6 @@ public class Busqueda extends AppCompatActivity {
                         try {
                             Clase clase = new Clase();
 
-                            // ✅ Obtener idClase del campo, no del doc ID
                             Object idClaseRaw = doc.get("idClase");
                             if (idClaseRaw instanceof Long) {
                                 clase.setIdClase(((Long) idClaseRaw).intValue());
@@ -195,7 +204,6 @@ public class Busqueda extends AppCompatActivity {
                                 continue;
                             }
 
-                            // ✅ Leer título robusto
                             String tituloClase = null;
                             if (doc.contains("titulo")) {
                                 tituloClase = doc.getString("titulo");
@@ -224,10 +232,6 @@ public class Busqueda extends AppCompatActivity {
                             Log.e("Busqueda", "❌ Error al leer clase: " + e.getMessage());
                         }
                     }
-
-                    Log.d("DEBUG", "📚 Cursos cargados: " + cursos.size());
-                    Log.d("DEBUG", "👤 Usuarios cargados: " + usuarios.size());
-                    Log.d("DEBUG", "🎬 Clases cargadas: " + clases.size());
 
                     List<Object> resultadosCombinados = buscarConIndiceInvertidoMejorado(textoBusqueda, cursos, usuarios, clases);
 
@@ -273,12 +277,10 @@ public class Busqueda extends AppCompatActivity {
         String textoLower = textoBusqueda.toLowerCase();
         Log.d("BUSQUEDA", "🔍 Buscando: " + textoLower);
 
-        // Buscar en cursos
         for (Curso c : cursos) {
             String titulo = c.getTitulo() != null ? c.getTitulo().toLowerCase() : "";
-            String descripcion = c.getDescripcion() != null ? c.getDescripcion().toLowerCase() : "";
 
-            boolean match = titulo.contains(textoLower) || descripcion.contains(textoLower);
+            boolean match = titulo.contains(textoLower);
             if (match && c.getIdCurso() != null) {
                 cursosEncontrados.add(c.getIdCurso());
                 Log.d("BUSQUEDA", "✅ Curso coincide: " + titulo);
@@ -287,12 +289,10 @@ public class Busqueda extends AppCompatActivity {
             }
         }
 
-        // Buscar en usuarios
         for (Usuario u : usuarios) {
             String nombre = u.getNombre() != null ? u.getNombre().toLowerCase() : "";
-            String correo = u.getCorreo() != null ? u.getCorreo().toLowerCase() : "";
 
-            boolean match = nombre.contains(textoLower) || correo.contains(textoLower);
+            boolean match = nombre.contains(textoLower);
             if (match && u.getId() != null) {
                 usuariosEncontrados.add(u.getId());
                 Log.d("BUSQUEDA", "✅ Usuario coincide: " + nombre);
@@ -301,7 +301,6 @@ public class Busqueda extends AppCompatActivity {
             }
         }
 
-        // Buscar en clases
         for (Clase cl : clases) {
             String titulo = cl.getTitulo() != null ? cl.getTitulo().toLowerCase() : "";
             String nombreCurso = cl.getNombreCurso() != null ? cl.getNombreCurso().toLowerCase() : "";
@@ -318,7 +317,6 @@ public class Busqueda extends AppCompatActivity {
             }
         }
 
-        // Construir lista final
         List<Object> resultados = new ArrayList<>();
 
         for (Curso c : cursos) {
@@ -348,18 +346,34 @@ public class Busqueda extends AppCompatActivity {
             List<Object> resultados = new ArrayList<>();
 
             for (DocumentSnapshot doc : snapshot) {
-                Curso curso = doc.toObject(Curso.class);
-                if (curso == null) continue;
-
-                boolean cumple = true;
-
-                if (filtroGenero != null && !tieneClave(doc, "genero", filtroGenero)) cumple = false;
-                if (filtroInstrumento != null && !tieneClave(doc, "instrumento", filtroInstrumento)) cumple = false;
-                if (filtroDificultad != null && !tieneClave(doc, "dificultad", filtroDificultad)) cumple = false;
-
-                if (cumple) {
+                try {
+                    Curso curso = doc.toObject(Curso.class);
+                    if (curso == null) continue;
                     curso.setFirestoreId(doc.getId());
-                    resultados.add(curso);
+
+                    boolean cumple = true;
+
+                    if (filtroGenero != null) {
+                        Map<String, Integer> genero = curso.getGenero();
+                        cumple &= genero != null && genero.containsKey(filtroGenero);
+                    }
+
+                    if (filtroInstrumento != null) {
+                        Map<String, Integer> instrumento = curso.getInstrumento();
+                        cumple &= instrumento != null && instrumento.containsKey(filtroInstrumento);
+                    }
+
+                    if (filtroDificultad != null) {
+                        Map<String, Integer> dificultad = curso.getDificultad();
+                        cumple &= dificultad != null && dificultad.containsKey(filtroDificultad);
+                    }
+
+                    if (cumple) {
+                        resultados.add(curso);
+                    }
+
+                } catch (Exception e) {
+                    Log.e("FiltroCursos", "❌ Error leyendo curso con filtros: " + e.getMessage());
                 }
             }
 
@@ -382,24 +396,5 @@ public class Busqueda extends AppCompatActivity {
             Log.e("Busqueda", "Error al aplicar filtros", e);
         });
     }
-
-    private boolean tieneClave(DocumentSnapshot doc, String campo, String clave) {
-        Object valor = doc.get(campo);
-        if (valor instanceof Map) {
-            Map<String, Object> mapa = (Map<String, Object>) valor;
-            for (String k : mapa.keySet()) {
-                if (k.equalsIgnoreCase(clave)) return true;
-            }
-        } else if (valor instanceof List) {
-            List<?> lista = (List<?>) valor;
-            for (Object obj : lista) {
-                if (obj != null && obj.toString().equalsIgnoreCase(clave)) return true;
-            }
-        } else if (valor instanceof String) {
-            return ((String) valor).equalsIgnoreCase(clave);
-        }
-        return false;
-    }
-
 
 }
