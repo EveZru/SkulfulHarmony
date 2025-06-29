@@ -535,8 +535,9 @@ public class Ver_cursos extends AppCompatActivity {
                                                 String nombre = queryDocumentSnapshots.getDocuments().get(0).getString("nombre");
                                                 if (nombre != null)
                                                 autorCurso.setText("Publicado por: " + nombre);
-                                                else
-                                                autorCurso.setText("Autor desconocido");
+                                                else {
+                                                    autorCurso.setText("Autor desconocido");
+                                                }
                                             } else {
                                                 autorCurso.setText("Autor desconocido");
                                                 Log.w("Firebase", "No se encontró autor con correo: " + curso.getCreador());

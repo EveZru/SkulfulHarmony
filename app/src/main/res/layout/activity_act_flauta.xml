@@ -8,7 +8,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray1"
+    android:background="@color/black"
     tools:context=".Act_flauta">
     <LinearLayout
         android:id="@+id/actividadcontainer"
@@ -133,25 +133,35 @@
         </FrameLayout>
 
         <LinearLayout
-
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:layout_marginVertical="20dp"
-                android:text="Selecciona los agujeros correspondientes a la nota de  "/>
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:cardBackgroundColor="@color/gray2"
+                app:cardCornerRadius="10dp"
+                android:elevation="10dp"
+                android:layout_marginTop="20dp">
             <TextView
                 android:id="@+id/tv_acorde"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="30dp"
                 android:gravity="center"
-                android:text="..."/>
+                android:textColor="@color/white"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="10dp"
+                android:text="FA mayor"/>
+            </androidx.cardview.widget.CardView>
 
             <View
                 android:layout_width="match_parent"
@@ -167,10 +177,14 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
                     android:background="@drawable/perfil_logo"/>
                 <TextView
                     android:text="Ver apuntes "
                     android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -180,15 +194,20 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
+                android:layout_marginBottom="30dp"
+                android:layout_gravity="center"
                 android:clickable="true">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
                     android:background="@drawable/atras"/>
                 <TextView
+                    android:layout_marginRight="5dp"
                     android:text="Volver al curso "
                     android:textSize="20dp"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

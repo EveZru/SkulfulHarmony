@@ -18,7 +18,7 @@ public class Descanso extends AppCompatActivity {
     private TextView tv_mensaje;
     private TextView tvCuentaRegresiva; // Para mostrar la cuenta regresiva de 5 minutos
     private Button btnSaltar;
-    private String mensajes[] = {"¡Chido crack!", "¡Puto el que se rinda!", "¡5 comentarios positivos!"};
+    private String mensajes[] = {"¡Vas Muy Bien!", "¡No Te Rindas!", "¡Un Descanso Es Bueno!"};
 
     private Handler handler = new Handler();
     private long tiempoRestante = 5 * 60; // 5 minutos en segundos (300 segundos)

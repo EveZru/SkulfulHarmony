@@ -8,7 +8,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray1"
+    android:background="@color/black"
     tools:context=".Act_guitarra">
     <LinearLayout
         android:id="@+id/actividadcontainer"
@@ -261,10 +261,6 @@
                 android:orientation="vertical"
                 >
 
-
-
-
-
             </LinearLayout>
         </FrameLayout>
 
@@ -274,50 +270,47 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="match_parent"
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                android:layout_marginVertical="20dp"
-                android:text="Presiona en la zona correspondiente a  "/>
-
-            <TextView
-                android:id="@+id/tv_acorde"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:textColor="@color/black"
-                android:gravity="center"
-                android:text="..."/>
-            <TextView
-                android:id="@+id/tv_tipoacorde"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="30dp"
-                android:gravity="center"
-                android:textColor="@color/black"
-                android:text="..."/>
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/gray2"
+                android:elevation="10dp"
+                android:layout_marginTop="40dp"
+                android:radius="10dp">
+                <TextView
+                    android:id="@+id/tv_acorde"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="30dp"
+                    android:layout_margin="10dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:text="..."/>
+            </androidx.cardview.widget.CardView>
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="0dp"
                 android:layout_weight="1"/>
             <LinearLayout
                 android:id="@+id/ll_verapuntes"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
                 android:clickable="true">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-
+                    android:layout_marginRight="5dp"
                     android:background="@drawable/perfil_logo"/>
                 <TextView
                     android:text="Ver apuntes "
                     android:textSize="20dp"
-                    android:textColor="@color/black"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -327,16 +320,20 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
                 android:clickable="true">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:layout_marginRight="5dp"
                     android:background="@drawable/atras"/>
                 <TextView
+                    android:layout_marginLeft="5dp"
                     android:text="Volver al curso "
                     android:textSize="20dp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -348,6 +345,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
         android:gravity="center_vertical">
         <ImageView
             android:layout_width="400dp"
