@@ -27,16 +27,6 @@
                 app:title="Perfil de Usuario"
                 app:titleTextColor="@color/white"
                 android:background="@color/black">
-
-                <Button
-                    android:id="@+id/btnCompartirPerfil"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Compartir Perfil"
-                    android:textColor="@android:color/white"
-                    android:layout_gravity="end"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:layout_marginEnd="16dp" />
             </androidx.appcompat.widget.Toolbar>
 
             <View

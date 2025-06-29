@@ -66,7 +66,6 @@ public class PerfilMostrar extends AppCompatActivity {
         tv_correo = findViewById(R.id.tv_correo);
         tv_Seguidores = findViewById(R.id.tv_Seguidores);
         tv_Seguido = findViewById(R.id.tv_Seguido);
-        btnCompartirPerfil = findViewById(R.id.btnCompartirPerfil);
 
         // Componentes para perfil con seguimiento y cursos
         ivProfilePic = ivProfilePicture;
@@ -129,8 +128,6 @@ public class PerfilMostrar extends AppCompatActivity {
             btnSeguirUsuario.setVisibility(Button.GONE);
             rvCursosUsuario.setVisibility(RecyclerView.GONE);
         }
-
-        btnCompartirPerfil.setOnClickListener(v -> compartirPerfil());
 
     }
 
@@ -217,21 +214,6 @@ public class PerfilMostrar extends AppCompatActivity {
             Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show();
             finish();
         });
-    }
-
-    private void compartirPerfil() {
-        String usuarioId = usuarioPerfil != null && usuarioPerfil.getCorreo() != null ? usuarioPerfil.getCorreo() : "";
-        String perfilUrl = "https://tuapp.com/perfil?usuario=" + usuarioId;
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, "Mira el perfil de este usuario: " + perfilUrl);
-
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(Intent.createChooser(intent, "Compartir perfil"));
-        } else {
-            Toast.makeText(this, "No se puede compartir en este momento", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void cargarCursosUsuario(String correoUsuario) {
