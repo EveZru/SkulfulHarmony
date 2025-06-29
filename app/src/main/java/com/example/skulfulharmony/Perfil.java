@@ -158,12 +158,15 @@ public class Perfil extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == R.id.it_homme) {
                     startActivity(new Intent(Perfil.this, Home.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_new) {
                     startActivity(new Intent(Perfil.this, VerCursosCreados.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
                     startActivity(new Intent(Perfil.this, Biblioteca.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_perfil) {
                     return true;

@@ -112,7 +112,9 @@ public class EliminarCuenta extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(this, "Cuenta eliminada exitosamente", Toast.LENGTH_SHORT).show();
                             mAuth.signOut();
-                            startActivity(new Intent(this, IniciarSesion.class));
+                            Intent intent = new Intent(EliminarCuenta.this, IniciarSesion.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
                             finish();
                         } else {
                             Toast.makeText(this, "Error al eliminar la cuenta: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();

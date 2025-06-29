@@ -58,10 +58,12 @@ public class perfil_admin extends AppCompatActivity {
             if (itemId == R.id.menu_denuncias) {
                 startActivity(new Intent(this, admi_denuncias.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (itemId == R.id.menu_estadisticas) {
                 startActivity(new Intent(this, admi_populares.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (itemId == R.id.menu_perfil) {
                 return true;

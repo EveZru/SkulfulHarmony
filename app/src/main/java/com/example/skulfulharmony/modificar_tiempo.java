@@ -87,6 +87,7 @@ public class modificar_tiempo extends AppCompatActivity {
                 if (tiempoDescansoFirestore != null) {
                     seekBarDescanso.setProgress(tiempoDescansoFirestore.intValue()); // Establecemos el progreso del SeekBar
                     tiempoDescansoTextView.setText("Tiempo de descanso: " + tiempoDescansoFirestore + " minutos");
+                    finish();
                 }
             }
         }).addOnFailureListener(e -> {

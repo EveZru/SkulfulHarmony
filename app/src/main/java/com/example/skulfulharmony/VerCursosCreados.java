@@ -74,6 +74,7 @@ public class VerCursosCreados extends AppCompatActivity {
                 if (itemId == R.id.it_homme) {
                     // Acción para Home
                     startActivity(new Intent(VerCursosCreados.this, Home.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_new) {
                     // Navegar a la actividad para crear un curso
@@ -82,10 +83,12 @@ public class VerCursosCreados extends AppCompatActivity {
                 } else if (itemId == R.id.it_seguidos) {
                     // Navegar a la actividad para ver la Biblioteca
                     startActivity(new Intent(VerCursosCreados.this, Biblioteca.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_perfil) {
                     // Navegar a la actividad para buscar perfiles
                     startActivity(new Intent(VerCursosCreados.this, Perfil.class));
+                    finish();
                     return true;
                 }
                 return false;

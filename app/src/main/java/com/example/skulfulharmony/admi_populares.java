@@ -40,6 +40,7 @@ public class admi_populares extends AppCompatActivity {
             if (itemId == R.id.menu_denuncias) {
                 startActivity(new Intent(this, admi_denuncias.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             } else if (itemId == R.id.menu_estadisticas) {
 
@@ -47,6 +48,7 @@ public class admi_populares extends AppCompatActivity {
             } else if (itemId == R.id.menu_perfil) {
                 startActivity(new Intent(this, perfil_admin.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true; // Ya estamos aquí
             }
 

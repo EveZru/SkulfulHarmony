@@ -83,14 +83,17 @@ public class Biblioteca extends AppCompatActivity {
                 int itemId = item.getItemId();
                 if (itemId == R.id.it_homme) {
                     startActivity(new Intent(Biblioteca.this, Home.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_new) {
                     startActivity(new Intent(Biblioteca.this, VerCursosCreados.class));
+                    finish();
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
                     return true;
                 } else if (itemId == R.id.it_perfil) {
                     startActivity(new Intent(Biblioteca.this, Perfil.class));
+                    finish();
                     return true;
                 }
                 return false;
