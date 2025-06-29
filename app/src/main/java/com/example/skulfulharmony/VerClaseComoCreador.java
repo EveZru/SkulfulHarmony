@@ -53,8 +53,8 @@ public class VerClaseComoCreador extends AppCompatActivity {
         tv_titulo=findViewById(R.id.tv_tituloclas);
         tv_info=findViewById(R.id.tv_info_verclase);
         rv_preguntas=findViewById(R.id.rv_preguntasporclase_verclase);
-        idClase = getIntent().getIntExtra("idClase",1);
-        idCurso = getIntent().getIntExtra("idCurso",1);
+        idClase = getIntent().getIntExtra("idClase",-1);
+        idCurso = getIntent().getIntExtra("idCurso",-1);
 
         menupop=findViewById(R.id.iv_menu);
         menupop.setOnClickListener(new View.OnClickListener() {
@@ -63,8 +63,8 @@ public class VerClaseComoCreador extends AppCompatActivity {
         });
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("clases")
-                .whereEqualTo("idClase", idClase) // Mantén este filtro
-                .whereEqualTo("idCurso", idCurso) // ¡Añade este filtro!
+                .whereEqualTo("idCurso", idCurso)
+                .whereEqualTo("idClase", idClase)
                 .limit(1)
                 .get()
                 .addOnCompleteListener(task -> {  if (task.isSuccessful()) {
