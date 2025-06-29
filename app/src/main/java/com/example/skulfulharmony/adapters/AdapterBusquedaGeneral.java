@@ -22,8 +22,7 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
     private static final int TYPE_CURSO = 0;
     private static final int TYPE_USUARIO = 1;
     private static final int TYPE_CLASE = 2;
-
-    private List<Object> items; // Puede ser Curso o Usuario
+    private List<Object> items;
     private OnItemClickListener listener;
 
     public AdapterBusquedaGeneral(List<Object> items, OnItemClickListener listener) {
@@ -68,7 +67,7 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
         } else if (holder instanceof UsuarioViewHolder && item instanceof Usuario) {
             ((UsuarioViewHolder) holder).bind((Usuario) item, listener);
         } else if (holder instanceof ClaseViewHolder && item instanceof Clase) {
-            ((ClaseViewHolder) holder).bind((Clase) item, listener);
+            ((ClaseViewHolder) holder).bind((Clase) item, listener, items);
         }
     }
 
@@ -77,7 +76,6 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
         return items.size();
     }
 
-    // ViewHolder para cursos
     static class CursoViewHolder extends RecyclerView.ViewHolder {
         ImageView imgBusquedaItem;
         TextView txtTituloBusqueda, txtDetalleBusqueda;
@@ -108,8 +106,6 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             itemView.setOnClickListener(v -> listener.onCursoClick(curso));
         }
     }
-
-    // ViewHolder para usuarios
     static class UsuarioViewHolder extends RecyclerView.ViewHolder {
         TextView txtNombre;
         ImageView imgPerfil;
@@ -134,8 +130,6 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             itemView.setOnClickListener(v -> listener.onUsuarioClick(usuario));
         }
     }
-
-    // Nuevo ViewHolder para clases
     static class ClaseViewHolder extends RecyclerView.ViewHolder {
         ImageView imgClase;
         TextView txtTituloClase, txtCurso;
@@ -147,25 +141,39 @@ public class AdapterBusquedaGeneral extends RecyclerView.Adapter<RecyclerView.Vi
             txtCurso = itemView.findViewById(R.id.txt_holder_busqueda_titulocurso);
         }
 
-        public void bind(Clase clase, OnItemClickListener listener) {
+        public void bind(Clase clase, OnItemClickListener listener, List<Object> items) {
             txtTituloClase.setText(clase.getTitulo());
-            txtCurso.setText(clase.getNombreCurso() != null ? clase.getNombreCurso() : "Curso desconocido");
 
-            if (clase.getImagenCurso() != null && !clase.getImagenCurso().isEmpty()) {
-                Glide.with(itemView.getContext())
-                        .load(clase.getImagenCurso())
-                        .placeholder(R.drawable.logo_sh)
-                        .centerCrop()
-                        .into(imgClase);
+            Curso cursoRelacionado = null;
+            for (Object obj : items) {
+                if (obj instanceof Curso) {
+                    Curso c = (Curso) obj;
+                    if (c.getIdCurso() != null && clase.getIdCurso() != null && c.getIdCurso().equals(clase.getIdCurso())) {
+                        cursoRelacionado = c;
+                        break;
+                    }
+                }
+            }
+
+            if (cursoRelacionado != null) {
+                txtCurso.setText(cursoRelacionado.getTitulo() != null ? cursoRelacionado.getTitulo() : "Curso sin título");
+                if (cursoRelacionado.getImagen() != null && !cursoRelacionado.getImagen().isEmpty()) {
+                    Glide.with(itemView.getContext())
+                            .load(cursoRelacionado.getImagen())
+                            .placeholder(R.drawable.logo_sh)
+                            .centerCrop()
+                            .into(imgClase);
+                } else {
+                    imgClase.setImageResource(R.drawable.logo_sh);
+                }
             } else {
+                txtCurso.setText("Curso desconocido");
                 imgClase.setImageResource(R.drawable.logo_sh);
             }
 
             itemView.setOnClickListener(v -> listener.onClaseClick(clase));
         }
-
     }
-
 
     // Interfaz para manejar clicks
     public interface OnItemClickListener {

@@ -124,7 +124,6 @@ public class Busqueda extends AppCompatActivity {
                     curso.setIdCurso(doc.getLong("idCurso") != null ? doc.getLong("idCurso").intValue() : null);
                     curso.setImagen(doc.getString("imagen"));
                     curso.setTitulo(doc.getString("titulo"));
-                    //curso.setDescripcion(doc.getString("descripcion"));
 
                     String correoCreador = null;
                     Object creadorRaw = doc.get("creador");
@@ -217,13 +216,24 @@ public class Busqueda extends AppCompatActivity {
                             }
                             clase.setTitulo(tituloClase);
 
-                            clase.setNombreCurso(doc.getString("nombreCurso"));
-
+                            Integer idCurso = null;
                             Object idCursoRaw = doc.get("idCurso");
                             if (idCursoRaw instanceof Long) {
-                                clase.setIdCurso(((Long) idCursoRaw).intValue());
+                                idCurso = ((Long) idCursoRaw).intValue();
                             } else if (idCursoRaw instanceof Integer) {
-                                clase.setIdCurso((Integer) idCursoRaw);
+                                idCurso = (Integer) idCursoRaw;
+                            }
+
+                            clase.setIdCurso(idCurso);
+
+                            if (idCurso != null) {
+                                for (Curso c : cursos) {
+                                    if (c.getIdCurso() != null && c.getIdCurso().equals(idCurso)) {
+                                        clase.setNombreCurso(c.getTitulo());
+                                        clase.setImagenCurso(c.getImagen());
+                                        break;
+                                    }
+                                }
                             }
 
                             clases.add(clase);
@@ -233,7 +243,7 @@ public class Busqueda extends AppCompatActivity {
                         }
                     }
 
-                    List<Object> resultadosCombinados = buscarConIndiceInvertidoMejorado(textoBusqueda, cursos, usuarios, clases);
+                List<Object> resultadosCombinados = buscarConIndiceInvertidoMejorado(textoBusqueda, cursos, usuarios, clases);
 
                     if (resultadosCombinados.isEmpty()) {
                         Toast.makeText(this, "No se encontraron resultados.", Toast.LENGTH_SHORT).show();
@@ -343,16 +353,28 @@ public class Busqueda extends AppCompatActivity {
 
     private void aplicarFiltros() {
         db.collection("cursos").get().addOnSuccessListener(snapshot -> {
+            List<Curso> cursosFiltrados = new ArrayList<>();
             List<Object> resultados = new ArrayList<>();
+
+            int totalDocs = snapshot.size();
+            final int[] procesados = {0};
 
             for (DocumentSnapshot doc : snapshot) {
                 try {
-                    Curso curso = doc.toObject(Curso.class);
-                    if (curso == null) continue;
+                    Curso curso = new Curso();
                     curso.setFirestoreId(doc.getId());
+                    curso.setIdCurso(doc.getLong("idCurso") != null ? doc.getLong("idCurso").intValue() : null);
+                    curso.setImagen(doc.getString("imagen"));
+                    curso.setTitulo(doc.getString("titulo"));
+
+                    if (doc.get("instrumento") instanceof Map)
+                        curso.setInstrumento((Map<String, Integer>) doc.get("instrumento"));
+                    if (doc.get("genero") instanceof Map)
+                        curso.setGenero((Map<String, Integer>) doc.get("genero"));
+                    if (doc.get("dificultad") instanceof Map)
+                        curso.setDificultad((Map<String, Integer>) doc.get("dificultad"));
 
                     boolean cumple = true;
-
                     if (filtroGenero != null) {
                         Map<String, Integer> genero = curso.getGenero();
                         cumple &= genero != null && genero.containsKey(filtroGenero);
@@ -368,33 +390,91 @@ public class Busqueda extends AppCompatActivity {
                         cumple &= dificultad != null && dificultad.containsKey(filtroDificultad);
                     }
 
-                    if (cumple) {
+                    if (!cumple) {
+                        procesados[0]++;
+                        if (procesados[0] == totalDocs) {
+                            cargarAdapter(resultados);
+                        }
+                        continue;
+                    }
+
+                    // Buscar nombre del creador
+                    String correoCreador = null;
+                    Object creadorRaw = doc.get("creador");
+                    if (creadorRaw instanceof String) {
+                        correoCreador = (String) creadorRaw;
+                    } else if (creadorRaw instanceof Map) {
+                        Map<String, Object> creadorMap = (Map<String, Object>) creadorRaw;
+                        if (creadorMap.containsKey("email")) {
+                            correoCreador = (String) creadorMap.get("email");
+                        } else if (creadorMap.containsKey("uid")) {
+                            curso.setCreador((String) creadorMap.get("uid"));
+                        }
+                    }
+
+                    if (correoCreador != null) {
+                        String finalCorreoCreador = correoCreador;
+                        db.collection("usuarios").whereEqualTo("correo", correoCreador)
+                                .get()
+                                .addOnSuccessListener(userQuery -> {
+                                    if (!userQuery.isEmpty()) {
+                                        String nombre = userQuery.getDocuments().get(0).getString("nombre");
+                                        curso.setCreador(nombre != null ? nombre : finalCorreoCreador);
+                                    } else {
+                                        curso.setCreador(finalCorreoCreador);
+                                    }
+                                    resultados.add(curso);
+                                    procesados[0]++;
+                                    if (procesados[0] == totalDocs) {
+                                        cargarAdapter(resultados);
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    curso.setCreador(finalCorreoCreador);
+                                    resultados.add(curso);
+                                    procesados[0]++;
+                                    if (procesados[0] == totalDocs) {
+                                        cargarAdapter(resultados);
+                                    }
+                                });
+                    } else {
+                        curso.setCreador("Creador Desconocido");
                         resultados.add(curso);
+                        procesados[0]++;
+                        if (procesados[0] == totalDocs) {
+                            cargarAdapter(resultados);
+                        }
                     }
 
                 } catch (Exception e) {
                     Log.e("FiltroCursos", "❌ Error leyendo curso con filtros: " + e.getMessage());
+                    procesados[0]++;
+                    if (procesados[0] == totalDocs) {
+                        cargarAdapter(resultados);
+                    }
                 }
             }
-
-            if (resultados.isEmpty()) {
-                Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados", Toast.LENGTH_SHORT).show();
-            }
-
-            rv_resultados.setAdapter(new AdapterBusquedaGeneral(resultados, new AdapterBusquedaGeneral.OnItemClickListener() {
-                @Override
-                public void onCursoClick(Curso curso) {
-                    startActivity(new Intent(Busqueda.this, Ver_cursos.class).putExtra("idCurso", curso.getId()));
-                }
-
-                @Override public void onUsuarioClick(Usuario usuario) {}
-                @Override public void onClaseClick(Clase clase) {}
-            }));
 
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error al buscar cursos: " + e.getMessage(), Toast.LENGTH_LONG).show();
             Log.e("Busqueda", "Error al aplicar filtros", e);
         });
     }
+
+    private void cargarAdapter(List<Object> resultados) {
+        if (resultados.isEmpty()) {
+            Toast.makeText(this, "No se encontraron cursos con los filtros seleccionados", Toast.LENGTH_SHORT).show();
+        }
+
+        runOnUiThread(() -> rv_resultados.setAdapter(new AdapterBusquedaGeneral(resultados, new AdapterBusquedaGeneral.OnItemClickListener() {
+            @Override public void onCursoClick(Curso curso) {
+                startActivity(new Intent(Busqueda.this, Ver_cursos.class).putExtra("idCurso", curso.getId()));
+            }
+
+            @Override public void onUsuarioClick(Usuario usuario) {}
+            @Override public void onClaseClick(Clase clase) {}
+        })));
+    }
+
 
 }
