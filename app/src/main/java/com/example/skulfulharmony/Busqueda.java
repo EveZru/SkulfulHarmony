@@ -119,20 +119,53 @@ public class Busqueda extends AppCompatActivity {
             cursos.clear();
             for (DocumentSnapshot doc : queryCursos) {
                 try {
-                    Curso curso = doc.toObject(Curso.class);
-                    if (curso == null) continue;
+                    Curso curso = new Curso();
+                    curso.setFirestoreId(doc.getId());
+                    curso.setIdCurso(doc.getLong("idCurso") != null ? doc.getLong("idCurso").intValue() : null);
+                    curso.setImagen(doc.getString("imagen"));
+                    curso.setTitulo(doc.getString("titulo"));
+                    curso.setDescripcion(doc.getString("descripcion"));
+                    curso.setVisitas(doc.getLong("visitas") != null ? doc.getLong("visitas").intValue() : null);
+                    curso.setCantidadDescargas(doc.getLong("cantidadDescargas") != null ? doc.getLong("cantidadDescargas").intValue() : null);
+                    curso.setPromedioCalificacion(doc.getDouble("promedioCalificacion"));
+                    curso.setPopularidad(doc.getDouble("popularidad"));
+                    curso.setCluster(doc.getLong("cluster") != null ? doc.getLong("cluster").intValue() : null);
+                    curso.setStrike1(doc.getBoolean("strike1"));
+                    curso.setStrike2(doc.getBoolean("strike2"));
+                    curso.setStrike3(doc.getBoolean("strike3"));
+                    curso.setFechaCreacionf(doc.getTimestamp("fechaCreacionf"));
+                    curso.setFechaActualizacion(doc.getTimestamp("fechaActualizacion"));
+                    curso.setFechaAcceso(doc.getTimestamp("fechaAcceso"));
 
-                    // ID del documento como entero (si es posible)
-                    try {
-                        curso.setIdCurso(Integer.parseInt(doc.getId()));
-                    } catch (NumberFormatException e) {
-                        Log.w("Busqueda", "ID del curso no es numérico: " + doc.getId());
-                        continue;
+                    // Creador con validación
+                    Object creadorRaw = doc.get("creador");
+                    if (creadorRaw instanceof String) {
+                        curso.setCreador((String) creadorRaw);
+                    } else if (creadorRaw instanceof Map) {
+                        Map<String, Object> creadorMap = (Map<String, Object>) creadorRaw;
+                        if (creadorMap.containsKey("email")) {
+                            curso.setCreador((String) creadorMap.get("email"));
+                        } else if (creadorMap.containsKey("uid")) {
+                            curso.setCreador((String) creadorMap.get("uid"));
+                        } else {
+                            curso.setCreador("Creador Desconocido");
+                        }
                     }
 
+                    // Mapas
+                    if (doc.get("instrumento") instanceof Map)
+                        curso.setInstrumento((Map<String, Integer>) doc.get("instrumento"));
+                    if (doc.get("genero") instanceof Map)
+                        curso.setGenero((Map<String, Integer>) doc.get("genero"));
+                    if (doc.get("dificultad") instanceof Map)
+                        curso.setDificultad((Map<String, Integer>) doc.get("dificultad"));
+                    if (doc.get("calificacionesPorUsuario") instanceof Map)
+                        curso.setCalificacionesPorUsuario((Map<String, Integer>) doc.get("calificacionesPorUsuario"));
+
                     cursos.add(curso);
+                    Log.d("Busqueda", "✅ Curso leído: " + curso.getTitulo());
                 } catch (Exception e) {
-                    Log.e("Busqueda", "Error al procesar curso: " + e.getMessage());
+                    Log.e("Busqueda", "❌ Error leyendo curso: " + e.getMessage());
                 }
             }
 
@@ -143,6 +176,7 @@ public class Busqueda extends AppCompatActivity {
                     if (usuario != null && !"admin".equalsIgnoreCase(usuario.getRol())) {
                         usuario.setId(doc.getId());
                         usuarios.add(usuario);
+                        Log.d("Busqueda", "✅ Usuario leído: " + usuario.getNombre());
                     }
                 }
 
@@ -150,19 +184,31 @@ public class Busqueda extends AppCompatActivity {
                     clases.clear();
                     for (DocumentSnapshot doc : queryClases) {
                         try {
-                            Clase clase = doc.toObject(Clase.class);
-                            if (clase == null) continue;
+                            Clase clase = new Clase();
 
+                            clase.setTitulo(doc.contains("titulo") ? doc.getString("titulo") : doc.getString("Titulo"));
+                            clase.setNombreCurso(doc.getString("nombreCurso"));
+
+                            // ID de clase desde doc.getId()
                             try {
                                 clase.setIdClase(Integer.parseInt(doc.getId()));
                             } catch (NumberFormatException e) {
-                                Log.w("Busqueda", "ID clase no numérico: " + doc.getId());
+                                Log.w("Busqueda", "⚠️ ID clase no convertible: " + doc.getId());
                                 continue;
                             }
 
+                            // idCurso con validación
+                            Object idCursoRaw = doc.get("idCurso");
+                            if (idCursoRaw instanceof Long) {
+                                clase.setIdCurso(((Long) idCursoRaw).intValue());
+                            } else if (idCursoRaw instanceof Integer) {
+                                clase.setIdCurso((Integer) idCursoRaw);
+                            }
+
                             clases.add(clase);
+                            Log.d("Busqueda", "✅ Clase leída: " + clase.getTitulo());
                         } catch (Exception e) {
-                            Log.e("Busqueda", "Error al procesar clase: " + e.getMessage());
+                            Log.e("Busqueda", "❌ Error al leer clase: " + e.getMessage());
                         }
                     }
 
@@ -201,14 +247,10 @@ public class Busqueda extends AppCompatActivity {
                         });
                         rv_resultados.setAdapter(adapter);
                     }
-
                 }).addOnFailureListener(e -> Toast.makeText(this, "Error al buscar clases", Toast.LENGTH_SHORT).show());
-
             }).addOnFailureListener(e -> Toast.makeText(this, "Error al buscar usuarios", Toast.LENGTH_SHORT).show());
-
         }).addOnFailureListener(e -> Toast.makeText(this, "Error al buscar cursos", Toast.LENGTH_SHORT).show());
     }
-
 
     private List<Object> buscarConIndiceInvertidoMejorado(String textoBusqueda, List<Curso> cursos, List<Usuario> usuarios, List<Clase> clases) {
         Set<Integer> cursosEncontrados = new HashSet<>();
