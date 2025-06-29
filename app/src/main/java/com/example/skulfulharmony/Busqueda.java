@@ -120,8 +120,39 @@ public class Busqueda extends AppCompatActivity {
         db.collection("cursos").get().addOnSuccessListener(queryCursos -> {
             cursos.clear();
             for (DocumentSnapshot doc : queryCursos) {
-                Curso curso = doc.toObject(Curso.class);
-                if (curso != null) cursos.add(curso);
+                try {
+                    Curso curso = doc.toObject(Curso.class);
+                    if (curso == null) continue;
+
+                    // 🔥 Aseguramos ID del curso desde Firestore
+                    try {
+                        curso.setIdCurso(Integer.parseInt(doc.getId()));
+                    } catch (NumberFormatException e) {
+                        Log.e("Busqueda", "ID inválido (no numérico) para curso: " + doc.getId());
+                        continue; // Ignora el curso si el ID no es un número
+                    }
+
+                    // 🛡️ Manejo seguro del campo 'creador'
+                    Object creadorRaw = doc.get("creador");
+                    if (creadorRaw instanceof String) {
+                        curso.setCreador((String) creadorRaw);
+                    } else if (creadorRaw instanceof Map) {
+                        Map<String, Object> creadorMap = (Map<String, Object>) creadorRaw;
+                        if (creadorMap.containsKey("email")) {
+                            curso.setCreador((String) creadorMap.get("email"));
+                        } else if (creadorMap.containsKey("uid")) {
+                            curso.setCreador((String) creadorMap.get("uid"));
+                        } else {
+                            curso.setCreador("Creador desconocido");
+                        }
+                    } else {
+                        curso.setCreador("Creador inválido");
+                    }
+
+                    cursos.add(curso);
+                } catch (Exception e) {
+                    Log.e("Busqueda", "❌ Error al procesar curso: " + e.getMessage(), e);
+                }
             }
 
             db.collection("usuarios").get().addOnSuccessListener(queryUsuarios -> {
@@ -140,20 +171,17 @@ public class Busqueda extends AppCompatActivity {
                         try {
                             Clase clase = doc.toObject(Clase.class);
 
-                            // Manejo especial para "preguntas"
-                            Object preguntasObj = doc.get("preguntas");
-                            if (preguntasObj instanceof List) {
-                                List<?> preguntasRaw = (List<?>) preguntasObj;
-                                // Puedes procesar preguntasRaw si tienes setter
-                            } else if (preguntasObj instanceof String) {
-                                // Opcional procesar JSON string si quieres
-                            }
-
                             if (clase != null) {
+                                try {
+                                    clase.setIdClase(Integer.parseInt(doc.getId()));
+                                } catch (NumberFormatException e) {
+                                    Log.e("Busqueda", "ID inválido para clase: " + doc.getId());
+                                    continue;
+                                }
                                 clases.add(clase);
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.e("Busqueda", "❌ Error al procesar clase: " + e.getMessage(), e);
                         }
                     }
 
@@ -166,45 +194,57 @@ public class Busqueda extends AppCompatActivity {
                     if (resultadosCombinados.isEmpty()) {
                         Toast.makeText(this, "No se encontraron resultados.", Toast.LENGTH_SHORT).show();
                     } else {
-
                         Log.d("DEBUG", "🔍 Resultados combinados: " + resultadosCombinados.size());
+
                         AdapterBusquedaGeneral adapter = new AdapterBusquedaGeneral(resultadosCombinados, new AdapterBusquedaGeneral.OnItemClickListener() {
                             @Override
                             public void onCursoClick(Curso curso) {
-                                Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
-                                intent.putExtra("idCurso", curso.getIdCurso() != null ? curso.getIdCurso() : -1);
-                                startActivity(intent);
+                                if (curso.getIdCurso() != null) {
+                                    Intent intent = new Intent(Busqueda.this, Ver_cursos.class);
+                                    intent.putExtra("idCurso", curso.getIdCurso());
+                                    startActivity(intent);
+                                }
                             }
 
                             @Override
                             public void onUsuarioClick(Usuario usuario) {
-                                Intent intent = new Intent(Busqueda.this, PerfilMostrar.class);
-                                intent.putExtra("usuarioId", usuario.getId());
-                                startActivity(intent);
+                                if (usuario.getId() != null) {
+                                    Intent intent = new Intent(Busqueda.this, PerfilMostrar.class);
+                                    intent.putExtra("usuarioId", usuario.getId());
+                                    startActivity(intent);
+                                }
                             }
 
                             @Override
                             public void onClaseClick(Clase clase) {
-                                Intent intent = new Intent(Busqueda.this, Ver_clases.class);
-                                intent.putExtra("idClase", clase.getIdClase() != null ? clase.getIdClase() : -1);
-                                intent.putExtra("idCurso", clase.getIdCurso() != null ? clase.getIdCurso() : -1);
-                                startActivity(intent);
+                                if (clase.getIdClase() != null && clase.getIdCurso() != null) {
+                                    Intent intent = new Intent(Busqueda.this, Ver_clases.class);
+                                    intent.putExtra("idClase", clase.getIdClase());
+                                    intent.putExtra("idCurso", clase.getIdCurso());
+                                    startActivity(intent);
+                                }
                             }
                         });
+
                         rv_resultados.setAdapter(adapter);
                     }
+
                 }).addOnFailureListener(e -> {
                     Toast.makeText(this, "Error al buscar clases", Toast.LENGTH_SHORT).show();
+                    Log.e("Busqueda", "❌ Error al obtener clases", e);
                 });
 
             }).addOnFailureListener(e -> {
                 Toast.makeText(this, "Error al buscar usuarios", Toast.LENGTH_SHORT).show();
+                Log.e("Busqueda", "❌ Error al obtener usuarios", e);
             });
 
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "Error al buscar cursos", Toast.LENGTH_SHORT).show();
+            Log.e("Busqueda", "❌ Error al obtener cursos", e);
         });
     }
+
 
     private List<Object> buscarConIndiceInvertidoMejorado(String textoBusqueda, List<Curso> cursos, List<Usuario> usuarios, List<Clase> clases) {
         Set<Integer> cursosEncontrados = new HashSet<>();

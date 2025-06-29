@@ -35,8 +35,6 @@ public class Curso implements Serializable {
 
     private Map<String, Integer> calificacionesPorUsuario; // Nuevo: Usuario UID/Correo -> Calificación
     private Double promedioCalificacion = 0.0;
-
-
     private Double popularidad;
     private String firestoreId;
     private Integer cluster;

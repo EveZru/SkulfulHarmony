@@ -398,8 +398,6 @@ public class Ver_cursos extends AppCompatActivity {
             }
         });
 
-        // SharedPreferences sharedPreferences=getsa
-
         //---- contador de visitas-----
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("cursos")

@@ -47,11 +47,10 @@ public class PerfilMostrar extends AppCompatActivity {
     TextView tvNombreUsuario, tvCorreo, tvDescripcion, tvNoCursos, tvSeguidores, tvSeguidos;
     Button btnSeguirUsuario;
     RecyclerView rvCursosUsuario;
-
-    Usuario usuarioPerfil; // Usuario cuyo perfil se muestra
+    Usuario usuarioPerfil;
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    boolean siguiendo = false; // estado seguimiento
+    boolean siguiendo = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -418,7 +417,7 @@ public class PerfilMostrar extends AppCompatActivity {
                     String idDocPerfil = docPerfil.getId();
                     String nombrePerfil = docPerfil.getString("nombre");
 
-                    // Busca documento usuario actual
+
                     db.collection("usuarios")
                             .whereEqualTo("correo", correoActual)
                             .get()
