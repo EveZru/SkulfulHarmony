@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/default_profile"
+                    android:src="@drawable/logo_confondo_sh"
                     android:contentDescription="Profile Picture" />
             </androidx.cardview.widget.CardView>
 

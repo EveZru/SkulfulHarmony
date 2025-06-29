@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,10 +42,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class EditarCurso extends AppCompatActivity {
-    private TextView tv_nombrecurso,tv_descripcioncurso;
+    private TextView  tv_nombrecurso,tv_descripcioncurso;
     private Button btn_cambiar, btn_cancelar ;
     private EditText et_nueva_descripcion;
     private FirebaseFirestore firestore;
+
     private int idCurso;
     private ImageView iv_fotocurso;
     private String nombreCursoActual;
@@ -73,14 +75,17 @@ public class EditarCurso extends AppCompatActivity {
             return insets;
         });
 
-        Intent intent = getIntent();
-        idCurso=intent.getIntExtra("idCurso",-1);
-        if(idCurso!=-1){
-            cargarDatosCurso(idCurso);
-            Toast.makeText(this, "idCurso: "+idCurso, Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(this, "Error al obtener la informacion del curso", Toast.LENGTH_SHORT).show();
-        }
+
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Intent intent = getIntent();
+            idCurso = intent.getIntExtra("idCurso", -1);
+            if(idCurso != -1){
+                cargarDatosCurso(idCurso);
+                Toast.makeText(this, "idCurso: " + idCurso, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Error al obtener la información del curso", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btn_cancelar.setOnClickListener(v -> {
 

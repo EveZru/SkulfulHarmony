@@ -12,7 +12,6 @@
 
     <!-- Título -->
     <Toolbar
-        android:id="@+id/tv_nombrecurso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:title="Editar Curso"
@@ -20,7 +19,16 @@
         android:background="@color/black"
         android:titleTextColor="@color/white"
         android:textStyle="bold"
-        android:gravity="center" />
+        android:gravity="center" >
+
+    </Toolbar>
+    <TextView
+        android:id="@+id/tv_nombrecurso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grayverde"
+
+        />
 
     <View
         android:layout_width="match_parent"

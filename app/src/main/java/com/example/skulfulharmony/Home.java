@@ -238,8 +238,14 @@ public class Home extends AppCompatActivity {
                                     .get()
                                     .addOnSuccessListener(snapshot -> {
                                         List<Curso> cursos = new ArrayList<>();
+
                                         for (DocumentSnapshot c : snapshot) {
-                                            cursos.add(c.toObject(Curso.class));
+                                            Curso curso = c.toObject(Curso.class);
+                                        
+                                            if (curso != null && curso.getTitulo() != null && !curso.getTitulo().toLowerCase().startsWith("desabilitado")) {
+
+                                                cursos.add(c.toObject(Curso.class));
+                                            }
                                         }
 
                                         AdapterHomeVerCursos adapter = new AdapterHomeVerCursos(cursos, Home.this);
@@ -339,7 +345,9 @@ public class Home extends AppCompatActivity {
                     List<Curso> cursosPopulares = new ArrayList<>();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Curso curso = doc.toObject(Curso.class);
-                        cursosPopulares.add(curso);
+                        if (curso != null && curso.getTitulo() != null && !curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧")) {
+                            cursosPopulares.add(curso);
+                        }
                     }
 
                     if (!cursosPopulares.isEmpty()) {
