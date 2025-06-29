@@ -1,34 +1,23 @@
 package com.example.skulfulharmony.adapters;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.skulfulharmony.Act_guitarra;
 import com.example.skulfulharmony.Clase_Fundamentos;
 import com.example.skulfulharmony.EscribirPartiturasAct;
 import com.example.skulfulharmony.EscribirPartiturasDo;
 import com.example.skulfulharmony.EscribirPartiturasFa;
-import com.example.skulfulharmony.Home;
 import com.example.skulfulharmony.R;
-import com.example.skulfulharmony.Ver_clases;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
-import com.example.skulfulharmony.javaobjects.miscellaneous.questions.PreguntaCuestionario;
-import com.example.skulfulharmony.videos;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 public class AdapterClasesOriginales extends RecyclerView.Adapter<AdapterClasesOriginales.ClaseViewHolder> implements Serializable {
     //eve
