@@ -1,87 +1,89 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:orientation="vertical"
+    android:background="@color/black"
     tools:context=".TerminosCondiciones">
-<!--maquetado-->
-    <!-- ScrollView para que el usuario pueda leer los Términos y Condiciones -->
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y Condiciones"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
+
+    <!-- Contenido en Scroll -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/botonAceptar">
+        android:layout_weight="1"
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <!-- Términos y condiciones -->
-            <TextView
-                android:id="@+id/terminosText"
+            <!-- Card con el texto -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Términos y Condiciones de Uso - Skillful Harmony\n
-1. Aceptación de los términos\n
-Al utilizar la aplicación Skillful Harmony, el usuario acepta todos los términos, condiciones y políticas descritas en este documento.\n
-2. Descripción del servicio\n
-Skillful Harmony es una aplicación educativa para aprender música mediante clases creadas por la comunidad o el equipo de la app.\n
-3. Cuentas de usuario\n
-El usuario debe mantener confidencial su cuenta y puede ser suspendido si viola estos términos.\n
-4. Contenido generado por el usuario\n
-No se permite contenido ofensivo, ilegal o que infrinja derechos de autor. La app puede eliminar contenido o cuentas.\n
-5. Algoritmo de recomendación\n
-Se usa K-Means clustering para personalizar recomendaciones según el comportamiento del usuario.\n
-6. Notificaciones\n
-La app enviará alertas sobre clases, recomendaciones, denuncias y descargas.\n
-7. Denuncias y apelaciones\n
-Los usuarios pueden denunciar contenido. El administrador revisará y decidirá su validez.\n
-8. Protección de datos\n
-La información se cifra con AES-128. No se comparte sin consentimiento.\n
-9. Uso permitido\n
-Solo para fines educativos. Prohibido el uso comercial o abusivo.\n
-10. Limitación de responsabilidad\n
-Skillful Harmony no garantiza disponibilidad constante ni veracidad de contenido generado por usuarios.\n
-11. Modificaciones\n
-Los términos pueden cambiar. Se notificará dentro de la app.\n
-12. Jurisdicción\n
-Regido por las leyes mexicanas. Conflictos se resuelven en Guadalajara, Jalisco.\n
-13. Contacto\n
-Para dudas o quejas: contacto@skillfulharmony.app"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"/>
+                app:cardCornerRadius="16dp"
+                app:cardElevation="10dp"
+                app:cardBackgroundColor="@color/gray2">
 
-            <!-- CheckBox para aceptar los términos -->
+                <TextView
+                    android:id="@+id/terminosText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/terminosycondiciones"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:lineSpacingExtra="6dp"
+                    android:padding="20dp"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Check de aceptación -->
             <CheckBox
                 android:id="@+id/checkboxAceptar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Acepto los términos y condiciones"
                 android:textSize="14sp"
-                android:layout_marginTop="16dp"/>
-
+                android:textColor="@color/white"
+                android:buttonTint="@color/rojo_oscuro"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp"/>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Botón para aceptar los términos -->
+    <!-- Botón Aceptar -->
     <Button
         android:id="@+id/botonAceptar"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Aceptar"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:enabled="false" /> <!-- Inicialmente deshabilitado -->
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textColor="@color/white"
+        android:backgroundTint="@color/rojo_oscuro"
+        android:textAllCaps="false"
+        android:layout_margin="12dp"
+        android:enabled="false"/>
+</LinearLayout>

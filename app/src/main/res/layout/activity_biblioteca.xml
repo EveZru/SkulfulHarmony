@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context=".Biblioteca">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/black">
+        android:background="@color/black1">
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,67 +27,23 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/gray1" />
+        android:background="@color/gray1"/>
 
-    <LinearLayout
-        android:id="@+id/linearLayout4"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:background="@color/black">
-
-        <Button
-            android:id="@+id/btn_gotoseguidos"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:padding="10dp"
-            android:text="Seguidos"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@color/gray1" />
-
-        <Button
-            android:id="@+id/btn_gotohistorial"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:padding="10dp"
-            android:text="Historial"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-
-        <View
-            android:layout_width="2dp"
-            android:layout_height="match_parent"
-            android:background="@color/gray1" />
-
-        <Button
-            android:id="@+id/btn_gotodescargados"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:padding="10dp"
-            android:text="Descargas"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="20sp" />
-    </LinearLayout>
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        android:background="@color/black"
+        app:tabTextColor="@color/white"
+        app:tabSelectedTextColor="@color/rojo"
+        app:tabIndicatorColor="@color/rojo" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/gray1" />
+        android:background="@color/gray1"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bliblioteca"
@@ -93,15 +51,17 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingBottom="70dp"
-        android:clipToPadding="false"
-        android:contentDescription="lista de cursos"
-        />
+        android:clipToPadding="false" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemBackground="@color/black"
+        app:itemBackground="@color/black1"
         app:itemIconTint="@color/rojo"
         app:itemTextColor="@color/gray1"
         app:menu="@menu/barra_navegacionprincipal" />

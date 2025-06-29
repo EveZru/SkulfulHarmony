@@ -6,6 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".admi_denuncias">
 
     <androidx.appcompat.widget.Toolbar
@@ -18,67 +19,48 @@
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/top_buttons"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_denuncias"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@color/black"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabTextColor="@color/white"
+        app:tabSelectedTextColor="@color/rojo"
+        app:tabIndicatorColor="@color/rojo"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <Button
-            android:id="@+id/btn_vercursos_verdenuncias"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
-            android:text="Cursos"/>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/cafe"/>
-
-        <Button
-            android:id="@+id/btn_vercomentarios_verdenuncias"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
-            android:text="Comentario"/>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/cafe"/>
-
-        <Button
-            android:id="@+id/btn_verclases_verdenuncias"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
-            android:text="Clases"/>
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/gray1"
+        app:layout_constraintTop_toBottomOf="@id/tab_denuncias"
+        app:layout_constraintBottom_toTopOf="@id/recycler_demandas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_demandas"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingBottom="80dp"
-    android:clipToPadding="false"
-    app:layout_constraintTop_toBottomOf="@id/top_buttons"
-    app:layout_constraintBottom_toTopOf="@id/barra_navegacionadmi"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"/>
-
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tab_denuncias"
+        app:layout_constraintBottom_toTopOf="@id/barra_navegacionadmi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/gray1"
+        app:layout_constraintTop_toBottomOf="@id/recycler_demandas"
+        app:layout_constraintBottom_toTopOf="@id/barra_navegacionadmi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacionadmi"
         android:layout_width="0dp"
@@ -90,5 +72,5 @@
         app:menu="@menu/barra_adminnavegacion"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

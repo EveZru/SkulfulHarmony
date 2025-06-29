@@ -1,224 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearCurso"
     android:background="@color/black"
     android:orientation="vertical"
-    >
+    tools:context=".CrearCurso">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Curso"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1" />
+
+    <!-- Scroll principal -->
     <ScrollView
-        android:id="@+id/scrollable_createcourse"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
+
         <LinearLayout
-            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <androidx.cardview.widget.CardView
-                android:layout_marginVertical="10dp"
-                android:layout_width="210dp"
-                android:layout_height="210dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="20dp"
-                app:cardBackgroundColor="@color/rojo_oscuro"
-                >
-                <ImageView
-                    android:layout_gravity="center"
-                    android:id="@+id/iv_fotocurso"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/subir_ico"
-                    android:contentDescription="Seleccionar imagen"
-                    android:clickable="true"
-                    android:focusable="true"/>
+            android:orientation="vertical"
+            android:padding="12dp">
 
-
-            </androidx.cardview.widget.CardView>
-
-
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:layout_marginHorizontal="20dp"
-    android:layout_marginVertical="10dp"
-    app:cardBackgroundColor="@color/grayverde2"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="20dp">
-
-            <EditText
-                android:id="@+id/et_nombre_nuevo_curso"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_margin="10dp"
-                android:padding="8dp"
-                android:gravity="center"
-                android:hint="Agregale un nombre a tu curso"
-                android:textColor="@color/cafe2"
-                android:textColorHint="@color/grayverde"
-                android:backgroundTint="@color/cafe1"/>
-
-</androidx.cardview.widget.CardView>
-
-            <ScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginVertical="10dp"
-                    app:cardBackgroundColor="@color/grayverde2"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="20dp">
-                <EditText
-                    android:id="@+id/et_descripcion_nuevo_curso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Agrega una pequeña descripción de tu curso explicando los temas que buscas tratar"
-                    android:layout_margin="10dp"
-                    android:padding="8dp"
-                    android:textColor="@color/cafe2"
-                    android:textColorHint="@color/grayverde"
-                    android:backgroundTint="@color/cafe1"
-                    android:inputType="textMultiLine"
-                    android:gravity="top|start"
-                    android:minLines="1"
-                    android:maxLines="5"
-                    android:scrollbars="vertical"
-                    android:overScrollMode="ifContentScrolls"
-                    android:scrollHorizontally="false"
-                    />
-                </androidx.cardview.widget.CardView>
-            </ScrollView>
-
-
+            <!-- Card contenedor -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="10dp"
-                app:cardBackgroundColor="@color/grayverde2"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="20dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/gray2">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="horizontal"
-                android:background="@drawable/rounded_topb"
+                    android:orientation="vertical"
+                    android:padding="12dp">
 
-                android:gravity="center_vertical">
+                    <!-- Foto del curso -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="210dp"
+                        android:layout_height="210dp"
+                        android:layout_gravity="center"
+                        app:cardCornerRadius="20dp"
+                        app:cardBackgroundColor="@color/gray1"
+                        >
+                        <ImageView
+                            android:layout_margin="2dp"
+                            android:id="@+id/iv_fotocurso"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/subir_ico"
+                            android:scaleType="centerCrop"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:alpha="0.8" />
+                    </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:textColor="@color/cafe1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="Instrumento"
-                    android:textSize="18sp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Agrega una imagen de portada"
+                        android:textAlignment="center"
+                        android:textColor="@color/gray1"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        android:layout_marginTop="8dp"/>
 
-                <Spinner
-                    android:id="@+id/sp_Instrumento"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="4"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/gray1"
-                    android:backgroundTint="@color/rojo_oscuro"
+                    <!-- Nombre del curso -->
+                    <EditText
+                        android:id="@+id/et_nombre_nuevo_curso"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="16dp"
+                        android:padding="8dp"
+                        android:hint="Agrega un nombre a tu curso"
+                        android:textColor="@color/cafe2"
+                        android:textColorHint="@color/gray1"
+                        android:backgroundTint="@color/rojo_oscuro"
+                        android:gravity="center"/>
 
+                    <!-- Descripción -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="10dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardBackgroundColor="@color/black">
+                    <EditText
+                        android:id="@+id/et_descripcion_nuevo_curso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Agrega una descripción para tus alumnos..."
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/gray1"
+                        android:textSize="15sp"
+                        android:backgroundTint="@color/gray1"
+                        android:minLines="1"
+                        android:maxLines="10"
+                        android:layout_margin="2dp"
+                        android:inputType="textMultiLine"
+                        android:padding="10dp"
+                        android:gravity="top|start"/>
 
-                    />
-            </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                    <!-- Selección de campos -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                        <!-- Instrumento -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="10dp">
 
-                <TextView
-                    android:textColor="@color/cafe1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="Nivel"
-                    android:textSize="18sp" />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:text="Instrumento"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"/>
 
-                <Spinner
-                    android:id="@+id/sp_Nivel"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="4"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="@color/rojo_oscuro"
-                    android:textColor="@color/black"
-                    style="@style/SpinnerBlackText"
-                    />
-            </LinearLayout>
+                            <Spinner
+                                android:id="@+id/sp_Instrumento"
+                                android:textColor="@color/white"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="4"
+                                android:backgroundTint="@color/rojo_oscuro"/>
+                        </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                        <!-- Nivel -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="10dp">
 
-                <TextView
-                    android:textColor="@color/cafe1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="Género"
-                    android:textSize="18sp" />
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:text="Nivel"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"/>
 
-                <Spinner
-                    android:id="@+id/sp_Genero"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="4"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="@color/rojo_oscuro"
-                    />
-            </LinearLayout>
+                            <Spinner
+                                android:id="@+id/sp_Nivel"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="4"
+                                android:textColor="@color/white"
+                                android:backgroundTint="@color/rojo_oscuro"/>
+                        </LinearLayout>
+
+                        <!-- Género -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:text="Género"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"/>
+
+                            <Spinner
+                                android:id="@+id/sp_Genero"
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="4"
+                                android:textColor="@color/white"
+                                android:backgroundTint="@color/rojo_oscuro"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
-
         </LinearLayout>
-
     </ScrollView>
 
-    <android.widget.Button
+    <!-- Botón publicar -->
+    <Button
         android:id="@+id/btn_subir_curso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:background="@drawable/error_button"
-        android:text="publicar"
+        android:layout_margin="12dp"
+        android:text="Publicar curso"
         android:textColor="@color/white"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        />
-
-
+        android:backgroundTint="@color/rojo_oscuro"/>
 </LinearLayout>

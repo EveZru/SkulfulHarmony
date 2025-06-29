@@ -1,150 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="0dp"
-    android:background="@color/white">
-<!--maquetado-->
-    <!-- Toolbar con botón para compartir -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        android:padding="0dp">
+    android:background="@color/black"
+    android:id="@+id/main">
 
-        <Button
-            android:id="@+id/btnCompartirPerfil"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Compartir Perfil"
-            android:textColor="@android:color/white"
-            android:layout_gravity="end"
-            android:layout_marginEnd="16dp"
-            android:background="?android:attr/selectableItemBackground" />
-    </androidx.appcompat.widget.Toolbar>
-
-    <!-- Imagen y datos del usuario -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_margin="16dp">
-
-        <!-- Imagen de perfil -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="6dp">
-            <ImageView
-                android:id="@+id/ivProfilePicture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_vacia"
-                android:contentDescription="Profile Picture" />
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
-
-            <TextView
-                android:id="@+id/tv_NombreUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre del Usuario"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black" />
-
-            <TextView
-                android:id="@+id/tv_correo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Correo"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/gray1" />
-
-            <TextView
-                android:id="@+id/tv_DescripcionUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Descripción breve del usuario"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/tv_No_Cursos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cursos Creados: 10"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <!-- Seguidores y Seguidos -->
-            <TextView
-                android:id="@+id/tv_Seguidores"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seguidores: 200"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-
-            <TextView
-                android:id="@+id/tv_Seguido"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seguidos: 150"
-                android:textSize="16sp"
-                android:textColor="@color/gray1"
-                android:layout_marginTop="4dp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Botón para seguir -->
-    <Button
-        android:id="@+id/btnSeguirUsuario"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Seguir"
-        android:textAllCaps="false"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/rojo"
-        android:textColor="@android:color/white" />
-
-    <!-- Texto para cursos -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cursos del usuario"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="4dp"
-        android:textColor="@color/black" />
-
-    <!-- RecyclerView para cursos (horizontal) con peso para que ocupe todo el espacio restante -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCursosUsuario"
+    <!-- Contenido scrollable -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:clipToPadding="false" />
+        android:layout_weight="1">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Toolbar con botón de compartir -->
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Perfil de Usuario"
+                app:titleTextColor="@color/white"
+                android:background="@color/black">
+
+                <Button
+                    android:id="@+id/btnCompartirPerfil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Compartir Perfil"
+                    android:textColor="@android:color/white"
+                    android:layout_gravity="end"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginEnd="16dp" />
+            </androidx.appcompat.widget.Toolbar>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/tinto"/>
+
+            <!-- Imagen de perfil -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                app:cardCornerRadius="110dp"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"
+                app:cardElevation="6dp">
+
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_vacia"
+                    android:contentDescription="Profile Picture" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Datos del usuario -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tv_NombreUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del Usuario"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tv_correo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Correo"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
+
+                <TextView
+                    android:id="@+id/tv_DescripcionUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Descripción breve del usuario"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_No_Cursos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cursos Creados: 10"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_Seguidores"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seguidores: 200"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp"/>
+
+                <TextView
+                    android:id="@+id/tv_Seguido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seguidos: 150"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- Botón seguir -->
+            <Button
+                android:id="@+id/btnSeguirUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seguir"
+                android:textAllCaps="false"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/rojo_oscuro"
+                android:textColor="@android:color/white" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/gray1"
+                android:layout_marginVertical="10dp"
+                android:layout_marginHorizontal="10dp"/>
+
+            <!-- Texto cursos -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cursos del usuario"
+                android:textAlignment="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingTop="8dp"
+                android:paddingBottom="4dp"
+                android:textColor="@color/white" />
+
+            <!-- Cursos del usuario -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCursosUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:clipToPadding="false"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

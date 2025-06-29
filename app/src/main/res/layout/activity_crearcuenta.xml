@@ -1,128 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado check-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearCuenta"
-    android:background="@color/white">
+    android:background="@color/black">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="331dp"
-        android:layout_height="411dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918">
+    <!-- Imagen de encabezado -->
+    <ImageView
+        android:id="@+id/img_encabezado"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_encabezado" />
 
-        <EditText
-            android:id="@+id/Et_nameuser"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="@string/nombre" />
-
-        <EditText
-            android:id="@+id/Et_correo"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="@string/correo" />
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/Et_contraseña"
-            android:layout_width="280dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="@string/contraseña" />
-
-
-        <ImageView
-            android:id="@+id/ivTogglePassword"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:contentDescription="@string/toggle_password_visibility"
-            android:src="@drawable/ic_visibility_off" />
-    </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCrearCuenta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_button"
-            android:text="@string/crear"
-            android:textColor="#000000"
-            android:textSize="16sp" />
+    <!-- Contenedor principal -->
+    <ScrollView
+        android:id="@+id/scroll_contenido"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/img_encabezado"
+        android:padding="20dp">
 
         <LinearLayout
-            android:layout_width="200dp"
+            android:id="@+id/contenido"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
+            <!-- Nombre -->
+            <EditText
+                android:id="@+id/Et_nameuser"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/nombre" />
+
+            <!-- Correo -->
+            <EditText
+                android:id="@+id/Et_correo"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/correo" />
+
+            <!-- Contraseña con ícono -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/Et_contraseña"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="50dp"
+                    android:background="@drawable/rounded_edit_text"
+                    android:hint="@string/contraseña"
+                    android:inputType="textPassword" />
+
+                <ImageView
+                    android:id="@+id/ivTogglePassword"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="@string/toggle_password_visibility" />
+            </LinearLayout>
+
+            <!-- Botón Crear cuenta -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCrearCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/rojo_oscuro"
+                android:text="@string/crear"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <!-- Google -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/googlecuenta"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+
+                <ImageButton
+                    android:id="@+id/btn_googlecrear"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/google_login"
+                    android:src="@drawable/logo_google"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
+
+            <!-- Ya tienes cuenta -->
             <TextView
-                android:layout_width="120dp"
-                android:layout_height="70dp"
-                android:text="@string/googlecuenta"
-                android:textSize="20sp"
-                android:gravity="center_vertical"
-                />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/yatienes"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp" />
 
-            <ImageButton
-                android:id="@+id/btn_googlecrear"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:contentDescription="@string/google_login"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logo_google" />
-
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnGotoiniciar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/gray1"
+                android:text="@string/iniciar"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:text="@string/yatienes"
-            android:textColor="@color/black"
-            android:textSize="23sp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnGotoiniciar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/secod_rounded_button"
-            android:text="@string/iniciar"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="438dp"
-        android:layout_height="283dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/img_encabezado" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

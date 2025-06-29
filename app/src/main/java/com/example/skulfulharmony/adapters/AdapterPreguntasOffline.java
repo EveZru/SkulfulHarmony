@@ -44,6 +44,10 @@ public class AdapterPreguntasOffline extends RecyclerView.Adapter<AdapterPregunt
             RadioButton rb = new RadioButton(context);
             rb.setText(pregunta.getRespuestas().get(i));
             rb.setId(View.generateViewId());
+            rb.setPadding(0, 10, 0, 10);
+            rb.setTextSize(16);
+            rb.setTextColor(context.getResources().getColor(R.color.white));
+            rb.setTextColor(context.getResources().getColor(R.color.white));
 
             // Si el usuario ya había respondido, seleccionamos la opción
             if (pregunta.getRespuestaUsuario() != null && pregunta.getRespuestaUsuario() == i) {

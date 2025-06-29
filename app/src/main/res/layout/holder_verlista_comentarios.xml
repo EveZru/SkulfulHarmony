@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@color/gray2">
+    android:background="@color/black">
 
     <!-- Encabezado: perfil + nombre + fecha -->
     <LinearLayout
@@ -121,6 +121,6 @@
         android:layout_height="1dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="2dp"
-        android:background="#FF222222"/>
+        android:background="@color/gray1"/>
 
 </LinearLayout>

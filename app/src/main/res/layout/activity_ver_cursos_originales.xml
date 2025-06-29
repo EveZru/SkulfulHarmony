@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -6,36 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Ver_cursos_originales"
-    android:background="@color/gray1"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/black">
+
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_ver_cursos"
         android:layout_width="match_parent"
-        android:layout_height="60sp"
-        android:background="@color/gray1"
-        >
+        android:layout_height="60dp"
+        android:background="@color/black"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
         <ImageView
             android:id="@+id/iv_regresar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:layout_margin="6dp"
-            android:src="@drawable/atras"
-            android:contentDescription="Toolbar Icon" />
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="start"
+            android:layout_margin="5dp"
+            android:src="@drawable/atras_rojo"
+            android:contentDescription="Regresar" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:text="Originales"
+            android:textSize="30sp"/>
     </androidx.appcompat.widget.Toolbar>
-<View
-    android:layout_width="match_parent"
-    android:layout_height="2dp"
-    android:background="@color/rojo_oscuro"/>
 
+    <!-- Línea decorativa -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/rojo_oscuro" />
 
-
+    <!-- RecyclerView para mostrar los cursos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_cursos_originales"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="1dp" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false" />
 </LinearLayout>

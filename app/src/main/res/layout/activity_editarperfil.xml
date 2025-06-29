@@ -1,110 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--mauqetado-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditarPerfil"
-    android:background="@color/grayrojo2">
+    android:background="@color/black"
+    tools:context=".EditarPerfil">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardCornerRadius="10dp"
-        android:layout_margin="10dp"
-        android:backgroundTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="10dp"
+        android:backgroundTint="@color/gray2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="5dp"
-       >
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/editar_informacion"
-            android:textSize="25sp"
-            android:textColor="@color/cafe2"
-            android:textStyle="bold"
-            android:layout_marginTop="10dp"
-            android:paddingBottom="8dp"
-            android:contentDescription="@string/editar_informacion_desc"/>
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <EditText
-            android:id="@+id/et_nombrecambiar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/nuevo_nombre"
-            android:textColor="@android:color/black"
-            android:inputType="textPersonName"
-            android:autofillHints="name"
-            android:layout_marginVertical="10dp"
-            android:textColorHint="@color/gray2"
-            android:background="@drawable/third_rounder_button"
-            android:contentDescription="@string/et_nombrecambiar_desc"/>
+            <!-- Título -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editar_informacion"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:paddingBottom="16dp"/>
 
-        <EditText
-            android:id="@+id/et_nuevadescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="@string/nueva_descripcion"
-            android:layout_marginVertical="10dp"
-            android:background="@drawable/third_rounder_button"
-            android:textColor="@android:color/black"
-            android:inputType="textMultiLine"
-            android:autofillHints="description"
-            android:textColorHint="@color/gray2"
-            android:contentDescription="@string/et_nuevadescripcion_desc"/>
+            <!-- Nombre -->
+            <EditText
+                android:id="@+id/et_nombrecambiar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="@string/nuevo_nombre"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/gray1"
+                android:inputType="textPersonName"
+                android:layout_marginBottom="12dp"/>
 
+            <!-- Descripción -->
+            <EditText
+                android:id="@+id/et_nuevadescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="@string/nueva_descripcion"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/gray1"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="16dp"/>
 
-        <androidx.cardview.widget.CardView
-            android:layout_marginVertical="10dp"
-            android:layout_width="215dp"
-            android:layout_height="215dp"
-            android:backgroundTint="@color/black"
-            android:layout_gravity="center"
-            app:cardCornerRadius="20dp">
-        <androidx.cardview.widget.CardView
-            android:layout_width="210dp"
-            android:layout_height="210dp"
-            android:backgroundTint="@color/white"
-            android:layout_gravity="center"
-            app:cardCornerRadius="20dp"
-            >
-        <ImageView
-            android:id="@+id/iv_fotoperfil"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-           android:layout_gravity="center"
-            android:background="@drawable/subir_ico"
-            android:contentDescription="@string/imagen_perfil_desc"/>
-        </androidx.cardview.widget.CardView>
-        </androidx.cardview.widget.CardView>
-<View
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    />
-        <android.widget.Button
-            android:id="@+id/btn_cambiardatos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/publicar"
-            android:layout_margin="10dp"
-            android:background="@drawable/third_rounder_button"
-            android:padding="16dp"
-            android:contentDescription="@string/btn_cambiardatos_desc"/>
+            <!-- Imagen de perfil -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                android:backgroundTint="@color/gray1">
 
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_fotoperfil"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/subir_ico"
+                    android:contentDescription="@string/imagen_perfil_desc"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Espacio -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp"/>
+
+            <!-- Botón publicar -->
+            <Button
+                android:id="@+id/btn_cambiardatos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/publicar"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/rojo_oscuro"
+                android:padding="14dp"
+                android:layout_marginTop="16dp"/>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

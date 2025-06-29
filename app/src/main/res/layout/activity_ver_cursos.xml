@@ -1,17 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--maquetado-->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray2">
+    android:background="@color/black">
 
-    <!-- Toolbar superior -->
-
-
-    <!-- Contenido scrollable -->
+    <!-- Scroll principal -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,25 +16,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="5dp"
-            android:background="@color/gray2">
+            android:padding="10dp"
+            android:background="@color/black">
 
-
-            <!-- Imagen destacada con degradado, título, autor y descripción -->
+            <!-- Portada con degradado -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp"
-                android:elevation="6dp"
-                app:cardElevation="6dp"
-                android:layout_marginBottom="16dp"
-                android:background="@color/gray1">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="10dp"
+                app:cardBackgroundColor="@color/gray1"
+                android:layout_marginBottom="16dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="300dp">
-
-
 
                     <ImageView
                         android:id="@+id/imgen_vercurso_imagentitulo"
@@ -52,48 +43,52 @@
                         android:id="@+id/toolbar_ver_cursos"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="top|start"
-                        android:layout_marginRight="15dp"
-                        android:layout_alignParentTop="true"
-                        android:background="#00000000">
+                        android:background="#00000000"
+                        android:gravity="end">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
 
-                        <ImageView
-                            android:clickable="true"
-                            android:id="@+id/iv_despegarmenu"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="end"
-                            android:padding="8dp"
-                            android:layout_marginLeft="0dp"
-                            android:src="@drawable/menutrespuntos"
-                            android:contentDescription="Toolbar Icon" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"/>
 
-                        <ImageView
-                            android:clickable="true"
-                            android:id="@+id/img_vercurso_seguircurso"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="end"
-                            android:src="@drawable/cursonoseguido"
-                            android:contentDescription="Toolbar Icon" />
+
+
+                            <ImageView
+                                android:id="@+id/img_vercurso_seguircurso"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:src="@drawable/cursonoseguido"
+                                android:contentDescription="Seguir curso" />
+
+                            <ImageView
+                                android:id="@+id/iv_despegarmenu"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:padding="8dp"
+                                android:layout_marginRight="20dp"
+                                android:src="@drawable/menutrespuntos"
+                                android:contentDescription="Toolbar Icon" />
+                        </LinearLayout>
                     </androidx.appcompat.widget.Toolbar>
 
-                    <!-- Degradado inferior -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:orientation="vertical"
                         android:background="@drawable/degradado_holder_texts"
-
-                        android:padding="10dp">
+                        android:padding="12dp">
 
                         <TextView
                             android:id="@+id/text_vercurso_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Título del Curso"
-                            android:textSize="24sp"
+                            android:textSize="22sp"
                             android:textStyle="bold"
                             android:textColor="@color/white"
                             android:maxLines="2" />
@@ -114,33 +109,30 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray1"
-                app:cardBackgroundColor="@color/gray1"
-                app:cardCornerRadius="8dp"
-                android:elevation="4dp"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/gray1">
 
                 <TextView
                     android:id="@+id/text_vercurso_descripcion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp"
-                    android:text="Aquí va la descripción del curso. Puede ser un texto más largo con varias líneas."
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:background="@color/gray1"/>
+                    android:padding="16dp"
+                    android:text="Aquí va la descripción del curso..."
+                    android:textSize="15sp"
+                    android:textColor="@color/white" />
             </androidx.cardview.widget.CardView>
 
-
-
-            <!-- Lista de clases (RecyclerView) -->
+            <!-- Lista de clases -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Clases incluidas"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:paddingBottom="8dp" />
+                android:layout_marginBottom="8dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_verclasesencurso"
@@ -154,10 +146,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/calificacion"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textColor="@color/white"
                 android:background="@drawable/rounded_edit_text"
-                android:padding="10dp" />
+                android:padding="12dp" />
 
             <LinearLayout
                 android:id="@+id/ll_estrellas"
@@ -173,86 +165,63 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="x / 5"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:background="@drawable/rounded_button"
-                    android:layout_marginRight="5dp"
-                    android:padding="8dp" />
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:background="@color/rojo_oscuro"
+                    android:padding="8dp"
+                    android:layout_marginEnd="5dp" />
 
-                <ImageView android:id="@+id/iv_1_estrella"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="3dp"
-                    android:background="@drawable/estrella" />
-                <ImageView android:id="@+id/iv_2_estrella"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="3dp"
-                    android:background="@drawable/estrella" />
-                <ImageView android:id="@+id/iv_3_estrella"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="3dp"
-                    android:background="@drawable/estrella" />
-                <ImageView android:id="@+id/iv_4_estrella"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="3dp"
-                    android:background="@drawable/estrella" />
-                <ImageView android:id="@+id/iv_5_estrella"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginHorizontal="3dp"
-                    android:background="@drawable/estrella" />
+                <!-- Estrellas -->
+                <ImageView android:id="@+id/iv_1_estrella" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginHorizontal="3dp" android:background="@drawable/estrella"/>
+                <ImageView android:id="@+id/iv_2_estrella" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginHorizontal="3dp" android:background="@drawable/estrella"/>
+                <ImageView android:id="@+id/iv_3_estrella" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginHorizontal="3dp" android:background="@drawable/estrella"/>
+                <ImageView android:id="@+id/iv_4_estrella" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginHorizontal="3dp" android:background="@drawable/estrella"/>
+                <ImageView android:id="@+id/iv_5_estrella" android:layout_width="40dp" android:layout_height="40dp" android:layout_marginHorizontal="3dp" android:background="@drawable/estrella"/>
             </LinearLayout>
 
+
+            <!-- Comentario -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:background="@color/gray2"
-                >
+                android:gravity="center">
 
                 <EditText
                     android:id="@+id/et_comentario_vercurso"
-                    android:layout_marginLeft="5dp"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Escribe un comentario\n"
+                    android:hint="Escribe un comentario"
                     android:textSize="15sp"
                     android:textColor="@color/white"
                     android:textColorHint="@color/gray1"
                     android:inputType="textMultiLine"
                     android:minLines="1"
-                    android:maxLines="10"
-                    android:scrollHorizontally="false"
+                    android:maxLines="5"
                     android:padding="10dp"
-                    android:gravity="top|start"
-                    android:scrollbars="vertical"
-                    />
+                    android:gravity="top|start" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_subir_comentario_curso"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginStart="10dp"
-                    android:background="@drawable/img_encabezado"
-                    android:backgroundTint="@color/rojo"
+                    android:background="@drawable/jugar_rojo"
                     android:contentDescription="Subir comentario" />
             </LinearLayout>
 
-            <!-- Lista de comentarios -->
+            <!-- Comentarios -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_comentarios_vercurso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:contentDescription="Lista de comentarios"
-                android:padding="10dp" />
+                android:padding="10dp"
+                android:layout_marginTop="10dp" />
         </LinearLayout>
-
-
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
+

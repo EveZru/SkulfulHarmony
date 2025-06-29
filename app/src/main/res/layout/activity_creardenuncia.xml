@@ -1,137 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearDenuncia"
-    android:background="@color/gray2">
+    android:orientation="vertical"
+    android:background="@color/black"
+    tools:context=".CrearDenuncia">
 
-    <LinearLayout
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="30dp"
-        >
-       <android.widget.Button
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:background="@color/grayrojo2"
-           android:text="¿Cual es el problema?"
-           android:textAllCaps="false"
-           android:textSize="30sp"
-           android:textColor="@color/white"
-           android:layout_marginVertical="10dp"
-           />
-        <RadioGroup
-            android:id="@+id/rg_tipo_denuncia"
-            android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black">
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            >
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_contenidoilegal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Contenido ilegal"
-                android:buttonTint="@color/black"
-                />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_suplantacion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Suplantación de identidad"
-                android:buttonTint="@color/black"
-            />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_inapropiado"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Contenido inapropiado"
-                android:buttonTint="@color/black"
-                />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_spam"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Spam"
-                android:buttonTint="@color/black"
-                />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_abuso"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Abuso de plataforma "
-                android:buttonTint="@color/black"
-                />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_normas_"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Violación de normas de la plataforma "
-                android:buttonTint="@color/black"
-                />
-            <RadioButton
-                android:textColor="@color/white"
-                android:id="@+id/rb_otro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Otro"
-                android:buttonTint="@color/black"
-                />
-
-        </RadioGroup>
-        <android.widget.Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/grayrojo2"
-            android:text="Especifica un poco mas  \n el problema"
-            android:textAllCaps="false"
-            android:textSize="20sp"
+            android:text="Reportar contenido"
+            android:textStyle="bold"
             android:textColor="@color/white"
-            android:layout_marginVertical="10dp"
-            />
-        <EditText
-            android:id="@+id/et_descripciondemanda"
+            android:textSize="22sp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
+
+    <!-- Contenido desplazable -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp">
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Intenta ser consiso y claro"
-            android:textColorHint="@color/gray1"
-           android:textColorHighlight="@color/gray1"
-            android:textColor="@color/white"
-            android:maxLines="10"
-            android:minLines="1"
-            android:scrollHorizontally="false"
-            android:scrollbars="vertical"
-            android:inputType="textMultiLine"
-            />
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-        <android.widget.Button
-            android:id="@+id/btn_hacerdemanda"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hacer demanda "
-            android:textSize="25sp"
-            android:textColor="@color/black"
-            android:background="@drawable/third_rounder_button"/>
+            app:cardBackgroundColor="@color/gray2"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    </LinearLayout>
+                <!-- Título -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="¿Cuál es el problema?"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="12dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- RadioGroup -->
+                <RadioGroup
+                    android:id="@+id/rg_tipo_denuncia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/rb_contenidoilegal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contenido ilegal"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_suplantacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Suplantación de identidad"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_inapropiado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contenido inapropiado"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_spam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Spam"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_abuso"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Abuso de plataforma"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_normas_"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Violación de normas"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+
+                    <RadioButton
+                        android:id="@+id/rb_otro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Otro"
+                        android:textColor="@color/white"
+                        android:buttonTint="@color/rojo_oscuro" />
+                </RadioGroup>
+
+                <!-- Subtítulo -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Especifica el problema"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Descripción -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/black"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="10dp">
+
+                    <EditText
+                        android:id="@+id/et_descripciondemanda"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="10"
+                        android:minLines="1"
+                        android:scrollHorizontally="false"
+                        android:scrollbars="vertical"
+                        android:hint="Intenta ser claro y conciso"
+                        android:textColorHint="@color/gray1"
+                        android:textColor="@color/white"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine"
+                        android:layout_margin="2dp"
+                        android:padding="10dp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Botón -->
+                <Button
+                    android:id="@+id/btn_hacerdemanda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hacer denuncia"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/rojo_oscuro"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </ScrollView>
+</LinearLayout>

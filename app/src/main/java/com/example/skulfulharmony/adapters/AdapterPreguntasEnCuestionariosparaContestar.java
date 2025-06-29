@@ -77,6 +77,8 @@ public class AdapterPreguntasEnCuestionariosparaContestar extends RecyclerView.A
             radioButton.setText(pregunta.getRespuestas().get(i));
             radioButton.setId(i); // Usar el índice como ID
             radioButton.setButtonTintList(ContextCompat.getColorStateList(holder.itemView.getContext(),R.color.radiobutton_tint));
+            radioButton.setTextColor(context.getResources().getColor(android.R.color.white));
+            radioButton.setTextSize(15f);
             holder.rgOpciones.addView(radioButton);
         }
 

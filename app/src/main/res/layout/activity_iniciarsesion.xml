@@ -1,135 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado check-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".IniciarSesion">
+    android:background="@color/black">
 
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="333dp"
-        android:layout_height="404dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.951">
-
-        <EditText
-            android:id="@+id/Et_correoOuser"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_edit_text"
-            android:hint="@string/usercorreo" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/Et_contraseña_iniciar"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/rounded_edit_text"
-                android:hint="@string/contraseña"
-                android:inputType="textPassword" />
-
-            <ImageView
-                android:id="@+id/ivTogglePassword"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="@string/toggle_password_visibility"
-                android:padding="10dp"
-                android:src="@drawable/ic_visibility_off" />
-        </LinearLayout>
-
-        <!-- NUEVO: Botón para recuperar contraseña -->
-        <TextView
-            android:id="@+id/tvRecuperarContraseña"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:clickable="true"
-            android:focusable="true"
-            android:minHeight="48dp"
-            android:padding="10dp"
-            android:text="@string/recuperar_contraseña"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnIniciarsecion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_button"
-            android:text="@string/iniciar"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="200dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:text="@string/googlecuenta"
-                android:textSize="20sp" />
-
-            <ImageButton
-                android:id="@+id/btn_google_iniciar"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:contentDescription="@string/google_login"
-                android:scaleType="fitCenter"
-                android:src="@drawable/logo_google" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:text="@string/notienes"
-            android:textColor="@color/black"
-            android:textSize="23sp" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_gotocrearcuenta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/secod_rounded_button"
-            android:text="@string/crear"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:textSize="16sp" />
-    </LinearLayout>
-
+    <!-- Imagen de encabezado -->
     <ImageView
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/img_encabezado" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:id="@+id/img_encabezado"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_encabezado" />
+
+    <!-- Contenedor principal -->
+    <ScrollView
+        android:id="@+id/scroll_contenido"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/img_encabezado"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/contenido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Correo o usuario -->
+            <EditText
+                android:id="@+id/Et_correoOuser"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/usercorreo" />
+
+            <!-- Contraseña con ícono -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/Et_contraseña_iniciar"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_edit_text"
+                    android:hint="@string/contraseña"
+                    android:inputType="textPassword" />
+
+                <ImageView
+                    android:id="@+id/ivTogglePassword"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:padding="10dp"
+                    android:src="@drawable/ic_visibility_off"
+                    android:contentDescription="@string/toggle_password_visibility" />
+            </LinearLayout>
+
+            <!-- Recuperar contraseña -->
+            <TextView
+                android:id="@+id/tvRecuperarContraseña"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="10dp"
+                android:text="@string/recuperar_contraseña"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <!-- Botón iniciar sesión -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnIniciarsecion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/rojo_oscuro"
+                android:text="@string/iniciar"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <!-- Google -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/googlecuenta"
+                    android:textSize="18sp"
+                    android:textColor="@color/white" />
+
+                <ImageButton
+                    android:id="@+id/btn_google_iniciar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/google_login"
+                    android:src="@drawable/logo_google"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
+
+            <!-- ¿No tienes cuenta? -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notienes"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_gotocrearcuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/gray1"
+                android:text="@string/crear"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
+
 

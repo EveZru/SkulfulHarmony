@@ -81,15 +81,15 @@ public class EditarClase extends AppCompatActivity {
         setContentView(R.layout.activity_editar_clase);
 
 
-        btn_cancelar = findViewById(R.id.btn_cancelar);
-        tvNombreClase = findViewById(R.id.tv_nombrecurso);
+        btn_cancelar = findViewById(R.id.btn_cancelar_edicion);
+        tvNombreClase = findViewById(R.id.et_titulo_editar_clase);
         tvDescripAnterior = findViewById(R.id.tv_descripantreior);
-        etNuevaDescripcion = findViewById(R.id.tv_info_verclase);
-        btn_cambiar = findViewById(R.id.btn_updatecurso);
-        btn_cambiarVid = findViewById(R.id.btn_camiarvid);
+        etNuevaDescripcion = findViewById(R.id.et_descripcion_editar_clase);
+        btn_cambiar = findViewById(R.id.btn_actualizar_clase);
+        btn_cambiarVid = findViewById(R.id.btn_cambiar_video);
 
 
-        playerViewEditar = findViewById(R.id.vv_videoclaseditar);
+        playerViewEditar = findViewById(R.id.vv_video_actual);
         player = new ExoPlayer.Builder(this).build();
         playerViewEditar.setPlayer(player);
 

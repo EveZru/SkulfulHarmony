@@ -40,6 +40,7 @@ public class Descanso extends AppCompatActivity {
         tv_mensaje.setText(mensajes[ifrase]);
 
         btnSaltar.setEnabled(false); // Desactivar el botón al principio
+        btnSaltar.setVisibility(View.INVISIBLE); // Ocultar el botón al principio
 
         // Iniciamos la cuenta regresiva de 5 minutos
         handler.postDelayed(cuentaRegresivaRunnable, 1000);
@@ -83,6 +84,7 @@ public class Descanso extends AppCompatActivity {
                 handler.postDelayed(this, 1000); // Llamamos de nuevo después de 1 segundo
             } else {
                 btnSaltar.setEnabled(true); // Habilitamos el botón después de 3 segundos
+                btnSaltar.setVisibility(View.VISIBLE); // Mostramos el botón
             }
         }
     };

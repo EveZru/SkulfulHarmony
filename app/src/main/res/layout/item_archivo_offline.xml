@@ -1,8 +1,51 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tv_nombre_archivo_offline"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textColor="@color/white"
-    android:padding="10dp"
-    android:text="Archivo.pdf"
-    android:background="@color/gray1" />
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/gray2">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="center_vertical">
+
+            <!-- Imagen decorativa sin ID -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                app:cardBackgroundColor="@color/black"
+                app:cardCornerRadius="20dp"
+                >
+                <ImageView
+                    android:layout_margin="5dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="Ícono del archivo"
+                    android:src="@drawable/icon_file" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Tu TextView original adaptado -->
+            <TextView
+                android:id="@+id/tv_nombre_archivo_offline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Archivo.pdf"
+                android:textColor="@color/white"
+                android:padding="10dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
+

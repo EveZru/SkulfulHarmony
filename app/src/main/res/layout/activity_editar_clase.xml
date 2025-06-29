@@ -1,196 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/grayrojo1">
+    android:background="@color/black"
+    tools:context=".EditarClase">
 
-
-    <androidx.core.widget.NestedScrollView
+    <!-- Toolbar personalizada -->
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar Clase"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/grayrojo1"
-            >
-            <!-- Card de la clase -->
+            android:padding="12dp">
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@color/grayrojo2"
-                app:cardCornerRadius="10dp"
-                android:elevation="6dp"
-                app:cardElevation="6dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/gray2">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@color/grayrojo2"
-                    android:padding="10dp">
-                    <TextView
-                        android:id="@+id/tv_nombrecurso"
+                    android:padding="12dp">
+
+                    <!-- Título -->
+                    <EditText
+                        android:id="@+id/et_titulo_editar_clase"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Actualizar clase ..titulo."
-                        android:layout_marginVertical="20dp"
-                        android:textColor="@color/grayverde"
-                        android:gravity="center"
-                        android:textSize="22sp"/>
+                        android:hint="Editar título de la clase"
+                        android:textColor="@color/cafe2"
+                        android:textColorHint="@color/gray1"
+                        android:textSize="20sp"
+                        android:backgroundTint="@color/rojo_oscuro"
+                        android:minLines="1"
+                        android:maxLines="3"
+                        android:gravity="center_horizontal"/>
+
+                    <!-- Video actual -->
                     <androidx.media3.ui.PlayerView
-                        android:id="@+id/vv_videoclaseditar"
+                        android:id="@+id/vv_video_actual"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"
-                        android:layout_marginBottom="10dp" />
-                    <android.widget.Button
-                        android:id="@+id/btn_camiarvid"
+                        android:layout_marginTop="12dp" />
+
+                    <Button
+                        android:id="@+id/btn_cambiar_video"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:background="@color/grayverde2"
-                        android:text="cambiar video "
+                        android:text="Cambiar video"
                         android:textColor="@color/white"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="10dp"
-                        />
+                        android:backgroundTint="@color/rojo_oscuro"
+                        android:layout_marginTop="8dp"/>
+
+                    <!-- Archivos -->
+                    <Button
+                        android:id="@+id/btn_editar_archivos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Cambiar archivos"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/gray1"
+                        android:layout_marginTop="16dp"/>
+
+                    <!-- Estado -->
+                    <TextView
+                        android:id="@+id/tv_estado_archivos_editar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Archivos actuales: 0"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        android:layout_marginBottom="4dp"/>
 
                     <TextView
                         android:id="@+id/tv_descripantreior"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="10dp"
-                        android:text="Antigua descripción"
-                        />
+                        android:text="Descripcion anterior:"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
 
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            android:backgroundTint="@color/rojo_oscuro"
-                            app:cardCornerRadius="20dp"
-                            >
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
+                        android:layout_marginVertical="4dp"/>
 
-                            <EditText
-                                android:id="@+id/tv_info_verclase"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="10dp"
-                                android:text="Nueva descripcion"
-                                android:textColorHint="@color/grayrojo"
-                                android:textColor="@color/cafe2"
-                                android:backgroundTint="@color/grayverde2"
-                                android:textSize="22sp"
-
-                                />
-                            </LinearLayout>
-                        </androidx.cardview.widget.CardView>
-
-
-                    <!-- Preguntas
+                    <!-- Descripción -->
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/gray2"
-                        app:cardCornerRadius="5dp"
-                        android:elevation="0dp"
-                        app:cardElevation="0dp"
-                        android:layout_marginTop="10dp"
-                        app:cardBackgroundColor="@color/gray2"
-                        >
-                        <LinearLayout
+                        android:layout_marginTop="12dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardBackgroundColor="@color/black"
+                        app:cardElevation="10dp">
+                        <EditText
+                            android:id="@+id/et_descripcion_editar_clase"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical"
-                            >
+                            android:layout_height="wrap_content"
+                            android:hint="Editar la descripción de la clase..."
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/gray1"
+                            android:textSize="15sp"
+                            android:padding="10dp"
+                            android:minLines="3"
+                            android:maxLines="10"
+                            android:inputType="textMultiLine" />
+                    </androidx.cardview.widget.CardView>
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Cuestionario de la clase"
-                                android:textSize="22sp"
-                                android:background="@color/grayverde1"
-                                android:textColor="@color/white"
-                                android:padding="5dp"
-                                android:gravity="center|top"
-                                android:textStyle="bold"
-                                />
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <EditText
-                                    android:id="@+id/et_ingresar_pregunta"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:textSize="22sp"
-                                    android:textColorHint="@color/gray1"
-                                    android:textColor="@color/cafe2"
-                                    android:hint="*Añadir pregunta*"
-                                    android:backgroundTint="@color/grayrojo"
-                                    android:padding="10dp"
-                                    android:inputType="textMultiLine"
-                                    android:minLines="1"
-                                    android:maxLines="5"
-                                    android:scrollbars="vertical"
-                                    android:overScrollMode="ifContentScrolls"
-                                    android:scrollHorizontally="false"
-                                    />
-                                <Button
-                                    android:id="@+id/btn_subir_pregunta"
-                                    android:layout_width="60dp"
-                                    android:layout_height="50dp"
-                                    android:text=" + "
-                                    android:textColor="@color/grayrojo2"
-                                    android:backgroundTint="@color/grayverde" />
-                            </LinearLayout>
-
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/rv_preguntasporclase_verclase"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:nestedScrollingEnabled="false" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>-->
                 </LinearLayout>
-
             </androidx.cardview.widget.CardView>
-            <android.widget.Button
-                android:id="@+id/btn_updatecurso"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:background="@drawable/third_rounder_button"
-                android:text="Cambiar"
-                android:textColor="@color/grayverde1"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="10dp"
-                />
 
-            <android.widget.Button
-                android:id="@+id/btn_cancelar"
+            <!-- Botones -->
+            <Button
+                android:id="@+id/btn_actualizar_clase"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:background="@drawable/error_button"
+                android:text="Actualizar clase"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:backgroundTint="@color/verde"/>
+
+            <Button
+                android:id="@+id/btn_cancelar_edicion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Cancelar"
                 android:textColor="@color/white"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="10dp"
-                />
-
+                android:textSize="16sp"
+                android:backgroundTint="@color/rojo_oscuro"/>
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 </LinearLayout>

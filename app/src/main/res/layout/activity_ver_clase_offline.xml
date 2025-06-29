@@ -1,22 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray2"
+    android:background="@color/black"
     android:padding="12dp">
 
-    <!--maquetado-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_curso_descargado"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray2">
+            android:layout_height="60dp"
+            app:title="Clase Offline"
+            app:titleTextColor="@color/white"
+            android:background="@color/black">
             <ImageView
                 android:id="@+id/iv_menu_curso_descargado"
                 android:layout_width="40dp"
@@ -27,6 +29,13 @@
                 android:contentDescription="Icono de menú" />
         </androidx.appcompat.widget.Toolbar>
 
+        <!-- Línea separadora -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/rojo" />
+
+        <!-- Título -->
         <TextView
             android:id="@+id/tv_titulo_clase_offline"
             android:layout_width="match_parent"
@@ -34,73 +43,131 @@
             android:text="Título de la clase"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:gravity="center"
             android:textColor="@color/white"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginVertical="10dp" />
 
-        <!-- PlayerView para el video -->
-        <FrameLayout
+        <!-- Video -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@color/gray2"
             android:layout_marginBottom="10dp">
 
             <androidx.media3.ui.PlayerView
                 android:id="@+id/exoplayer_clase_offline"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-        </FrameLayout>
+        </androidx.cardview.widget.CardView>
 
-        <!-- Archivo principal -->
-        <TextView
-            android:id="@+id/tv_texto_clase_offline"
+        <!-- Texto principal -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="Aquí iría el archivo principal"
-            android:layout_marginBottom="10dp" />
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@color/gray2">
 
-        <!-- Lista de archivos -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_archivos_offline"
+            <TextView
+                android:id="@+id/tv_texto_clase_offline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sin texto informativo"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:padding="16dp" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Archivos -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@color/gray2">
 
-        <!-- Mensaje si no hay archivos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Archivos de la clase"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:gravity="center" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_archivos_offline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Si no hay archivos -->
         <TextView
             android:id="@+id/tv_no_disponible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/rojo"
             android:text=""
-            android:textStyle="italic" />
+            android:textStyle="italic"
+            android:layout_marginTop="8dp"
+            android:padding="5dp" />
 
-        <TextView
-            android:id="@+id/tv_preguntas_titulo"
+        <!-- Preguntas -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Preguntas del cuestionario"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp" />
+            app:cardCornerRadius="10dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@color/gray2">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_preguntas_offline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="10dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_preguntas_titulo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Preguntas del cuestionario"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:gravity="center" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_preguntas_offline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botón enviar -->
         <Button
             android:id="@+id/btn_enviar_respuestas_offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enviar respuestas"
             android:textAllCaps="false"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="20dp"
             android:backgroundTint="@color/verde"
-            android:textColor="@android:color/white" />
-
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="20dp" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
+

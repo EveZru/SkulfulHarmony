@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/gray2">
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/gray2"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="5dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingVertical="10dp"
-        android:background="@color/gray2">
+        android:background="@drawable/degradado_holder_background">
 
         <ImageView
             android:id="@+id/img_holder_denuncias_clase_imagen"
@@ -92,6 +100,7 @@
 
 
     </LinearLayout>
+    </androidx.cardview.widget.CardView>
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"

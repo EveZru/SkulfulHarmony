@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--maquetado check-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,40 +6,63 @@
     android:layout_height="match_parent"
     tools:context=".VerCursosCreados"
     android:fitsSystemWindows="true"
-    android:background="@color/black"
-    >
+    android:background="@color/black">
 
-    <!-- RecyclerView ocupa toda la pantalla pero sin tapar la BottomNavigation -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_cursos_creados"
+    <!-- Contenedor superior con Toolbar -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="56dp" />
-    <!-- Botón flotante encima del RecyclerView -->
+        android:orientation="vertical">
+
+        <!-- Toolbar agregado -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_vercursoscreados"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/black"
+            app:title="Mis cursos creados"
+            app:titleTextColor="@color/white"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Large" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/gray1"/>
+
+        <!-- RecyclerView con espacio para BottomNav -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_cursos_creados"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="72dp" />
+    </LinearLayout>
+
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bttn_vercursocreador_agregarclase"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="80dp"
-        android:layout_marginRight="15dp"
-        android:src="@drawable/mas_logo"
+        android:src="@drawable/mas_logo_blanco"
+        android:contentDescription="Agregar nueva clase"
         app:backgroundTint="@color/rojo"
-        app:iconTint="@color/cafe2"
-        android:contentDescription="Agregar nueva clase" />
+        app:iconTint="@color/white" />
 
-    <!-- BottomNavigation fijo abajo -->
+    <!-- BottomNavigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@color/grayverde"
         app:menu="@menu/barra_navegacionprincipal"
         app:itemBackground="@color/black"
         app:itemIconTint="@color/rojo"
-        app:itemTextColor="@color/gray1"
-        android:layout_gravity="end|bottom"
-        />
+        app:itemTextColor="@color/gray1" />
 
 </FrameLayout>
-

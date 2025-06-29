@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/black"
     tools:context=".CrearClase">
 
     <!-- Toolbar -->
@@ -47,7 +48,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/black">
+                app:cardBackgroundColor="@color/gray2">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -60,7 +61,7 @@
                         android:id="@+id/et_titulo_nueva_clase"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="*Agrega tu título aquí*"
+                        android:hint="Agrega tu título aquí"
                         android:textColor="@color/cafe2"
                         android:textColorHint="@color/gray1"
                         android:textSize="20sp"
@@ -83,7 +84,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="160dp"
                             android:layout_margin="5dp"
-                            android:alpha=".40"
+                            android:alpha=".80"
                             android:src="@drawable/subir_ico" />
                     </androidx.cardview.widget.CardView>
                     <!-- Video -->
@@ -127,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         app:cardCornerRadius="10dp"
-                        app:cardBackgroundColor="@color/gray1"
+                        app:cardBackgroundColor="@color/black"
                         app:cardElevation="10dp">
                         <EditText
                             android:id="@+id/et_descripcion_crear_clase"
@@ -137,10 +138,10 @@
                             android:textColor="@color/white"
                             android:textColorHint="@color/gray1"
                             android:textSize="15sp"
-                            android:background="#DDDDDD"
                             android:padding="10dp"
                             android:minLines="3"
                             android:maxLines="10"
+                            android:layout_margin="2dp"
                             android:inputType="textMultiLine" />
                     </androidx.cardview.widget.CardView>
 
@@ -164,7 +165,7 @@
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:hint="*Añadir pregunta*"
+                            android:hint="¿Añadir pregunta?"
                             android:textColor="@color/cafe2"
                             android:textColorHint="@color/gray1"
                             android:backgroundTint="@color/grayrojo"

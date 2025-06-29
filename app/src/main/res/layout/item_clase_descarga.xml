@@ -1,27 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:padding="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iconoEstado"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_cloud_download" />
-
-    <TextView
-        android:id="@+id/tituloClase"
-        android:layout_width="0dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Clase X"
-        android:textSize="16sp" />
+        android:layout_margin="5dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="@color/gray2">
 
-    <Button
-        android:id="@+id/botonDescargar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Descargar" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/iconoEstado"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_cloud_download"
+                android:contentDescription="Estado de descarga" />
+
+            <TextView
+                android:id="@+id/tituloClase"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Clase X"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <Button
+                android:backgroundTint="@color/rojo_oscuro"
+                android:id="@+id/botonDescargar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descargar" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"
+        android:layout_marginBottom="2dp"/>
 </LinearLayout>

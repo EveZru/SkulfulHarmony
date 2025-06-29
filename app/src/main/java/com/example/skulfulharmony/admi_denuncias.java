@@ -3,13 +3,8 @@ package com.example.skulfulharmony;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +13,7 @@ import com.example.skulfulharmony.adapters.AdapterAdminVerComentarioComoAdminist
 import com.example.skulfulharmony.adapters.AdapterAdminVerCursosDenunciados;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Denuncia;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -26,76 +22,41 @@ import java.util.List;
 
 public class admi_denuncias extends AppCompatActivity {
 
-    Button btn_vercursos_verdenuncias;
-    Button btn_verclases_verdenuncias;
-    Button btn_vercomentarios_verdenuncias;
-    RecyclerView recycler_demandas;
-    BottomNavigationView barra_navegacion1;
+    private RecyclerView recycler_demandas;
+    private BottomNavigationView barra_navegacion1;
+    private TabLayout tab_denuncias;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admi_denuncias);
 
-        btn_vercursos_verdenuncias = findViewById(R.id.btn_vercursos_verdenuncias);
-        btn_verclases_verdenuncias = findViewById(R.id.btn_verclases_verdenuncias);
-        btn_vercomentarios_verdenuncias = findViewById(R.id.btn_vercomentarios_verdenuncias);
         recycler_demandas = findViewById(R.id.recycler_demandas);
         barra_navegacion1 = findViewById(R.id.barra_navegacionadmi);
+        tab_denuncias = findViewById(R.id.tab_denuncias);
+        db = FirebaseFirestore.getInstance();
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Agregar pestañas
+        tab_denuncias.addTab(tab_denuncias.newTab().setText("Cursos"));
+        tab_denuncias.addTab(tab_denuncias.newTab().setText("Comentarios"));
+        tab_denuncias.addTab(tab_denuncias.newTab().setText("Clases"));
 
-        btn_vercursos_verdenuncias.setOnClickListener(v -> {
-            actualizarColorBotones(btn_vercursos_verdenuncias);
-            db.collection("denuncias")
-                    .whereEqualTo("formato", "curso")
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        List<Denuncia> denunciasCursos = new ArrayList<>();
-                        for (DocumentSnapshot doc : querySnapshot) {
-                            Denuncia d = doc.toObject(Denuncia.class);
-                            if (d != null) denunciasCursos.add(d);
-                        }
-                        recycler_demandas.setLayoutManager(new LinearLayoutManager(this));
-                        recycler_demandas.setAdapter(new AdapterAdminVerCursosDenunciados(denunciasCursos));
-                    })
-                    .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error al obtener denuncias de cursos", e));
+        // Listener para tabs
+        tab_denuncias.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0: cargarDenuncias("curso"); break;
+                    case 1: cargarDenuncias("comentario"); break;
+                    case 2: cargarDenuncias("clase"); break;
+                }
+            }
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        btn_verclases_verdenuncias.setOnClickListener(v -> {
-            actualizarColorBotones(btn_verclases_verdenuncias);
-            db.collection("denuncias")
-                    .whereEqualTo("formato", "clase")
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        List<Denuncia> denunciasClases = new ArrayList<>();
-                        for (DocumentSnapshot doc : querySnapshot) {
-                            Denuncia d = doc.toObject(Denuncia.class);
-                            if (d != null) denunciasClases.add(d);
-                        }
-                        recycler_demandas.setLayoutManager(new LinearLayoutManager(this));
-                        recycler_demandas.setAdapter(new AdapterAdminVerClasesDenunciadas(denunciasClases));
-                    })
-                    .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error al obtener denuncias de clases", e));
-        });
-
-        btn_vercomentarios_verdenuncias.setOnClickListener(v -> {
-            actualizarColorBotones(btn_vercomentarios_verdenuncias);
-            db.collection("denuncias")
-                    .whereEqualTo("formato", "comentario")
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        List<Denuncia> denunciasComentarios = new ArrayList<>();
-                        for (DocumentSnapshot doc : querySnapshot) {
-                            Denuncia d = doc.toObject(Denuncia.class);
-                            if (d != null) denunciasComentarios.add(d);
-                        }
-                        recycler_demandas.setLayoutManager(new LinearLayoutManager(this));
-                        recycler_demandas.setAdapter(new AdapterAdminVerComentarioComoAdministrador(denunciasComentarios));
-                    })
-                    .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error al obtener denuncias de comentarios", e));
-        });
+        // Mostrar cursos por default
+        cargarDenuncias("curso");
 
         barra_navegacion1.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -113,12 +74,31 @@ public class admi_denuncias extends AppCompatActivity {
             return false;
         });
     }
-    private void actualizarColorBotones(Button seleccionado) {
-        int colorSeleccionado = getResources().getColor(R.color.rojo);
-        int colorDefault = getResources().getColor(R.color.white);
 
-        btn_vercursos_verdenuncias.setTextColor(btn_vercursos_verdenuncias == seleccionado ? colorSeleccionado : colorDefault);
-        btn_verclases_verdenuncias.setTextColor(btn_verclases_verdenuncias == seleccionado ? colorSeleccionado : colorDefault);
-        btn_vercomentarios_verdenuncias.setTextColor(btn_vercomentarios_verdenuncias == seleccionado ? colorSeleccionado : colorDefault);
+    private void cargarDenuncias(String tipo) {
+        db.collection("denuncias")
+                .whereEqualTo("formato", tipo)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Denuncia> lista = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Denuncia d = doc.toObject(Denuncia.class);
+                        if (d != null) lista.add(d);
+                    }
+
+                    recycler_demandas.setLayoutManager(new LinearLayoutManager(this));
+                    switch (tipo) {
+                        case "curso":
+                            recycler_demandas.setAdapter(new AdapterAdminVerCursosDenunciados(lista));
+                            break;
+                        case "comentario":
+                            recycler_demandas.setAdapter(new AdapterAdminVerComentarioComoAdministrador(lista));
+                            break;
+                        case "clase":
+                            recycler_demandas.setAdapter(new AdapterAdminVerClasesDenunciadas(lista));
+                            break;
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error al obtener denuncias de " + tipo, e));
     }
 }

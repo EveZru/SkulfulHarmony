@@ -79,9 +79,6 @@
             android:name=".VerCursoComoCreador"
             android:exported="false" />
         <activity
-            android:name=".imagen"
-            android:exported="false" />
-        <activity
             android:name=".modificar_tiempo"
             android:exported="false" />
         <activity
@@ -187,9 +184,6 @@
             android:exported="false" />
         <activity
             android:name=".Ver_clases"
-            android:exported="false" />
-        <activity
-            android:name=".VerMiClase"
             android:exported="false" />
         <activity
             android:name=".EscribirPartiturasAct"

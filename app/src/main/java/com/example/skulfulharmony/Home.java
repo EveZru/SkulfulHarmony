@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -66,6 +67,7 @@ public class Home extends AppCompatActivity {
     private Handler handler = new Handler();
     private int currentPosition = 0;
     private SQLiteDatabase localDatabase;
+    private ImageView iv_buscar;
     //private ViewPager2 viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,7 @@ public class Home extends AppCompatActivity {
         rv_homehistorial.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         et_buscarhome=findViewById(R.id.et_buscarhome);
+        iv_buscar=findViewById(R.id.iv_buscarhome);
 
         //-------Parte de los cursos de clases originales -------
         listaCursos = new ArrayList<>();
@@ -128,6 +131,13 @@ public class Home extends AppCompatActivity {
 
         //  Listener para abrir la actividad de búsqueda
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, Busqueda.class);
+                startActivity(intent);
+            }
+        });
+        iv_buscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Home.this, Busqueda.class);

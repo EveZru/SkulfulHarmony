@@ -1,20 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    >
 
-    <Button
-        android:id="@+id/btn_cerrar_archivo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cerrar"
-        android:layout_gravity="end"
-        android:padding="10dp"/>
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/black">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vista del archivo"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="22sp"/>
+        <Button
+            android:id="@+id/btn_cerrar_archivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cerrar"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/rojo_oscuro"
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Línea separadora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
+
+
+    <!-- WebView -->
     <WebView
         android:id="@+id/webview_archivo"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:background="@color/black"/>
 </LinearLayout>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray2"
+    android:background="@color/black"
     android:id="@+id/main">
 
     <!-- Contenido scrollable -->
@@ -22,7 +22,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray2">
+                app:title="Perfil"
+                app:titleTextColor="@color/white"
+                app:titleMarginStart="10dp"
+                android:background="@color/black">
 
                 <ImageView
                     android:id="@+id/iv_gotoconfiguracion"
@@ -32,15 +35,6 @@
                     android:src="@drawable/config_ico"
                     android:contentDescription="Toolbar Icon" />
 
-                <Button
-                    android:id="@+id/btnVerVideoPrueba"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Prueba notificaciones"
-                    android:textColor="@android:color/white"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="16dp"
-                    android:backgroundTint="@color/rojo_oscuro"/>
             </androidx.appcompat.widget.Toolbar>
             <View
                 android:layout_width="match_parent"
@@ -48,34 +42,39 @@
                 android:background="@color/tinto"
                 />
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                app:cardCornerRadius="110dp"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"
+                app:cardElevation="6dp">
+
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_profile"
+                    android:contentDescription="Profile Picture" />
+            </androidx.cardview.widget.CardView>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_margin="16dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="50dp"
-                    app:cardElevation="6dp">
-
-                    <ImageView
-                        android:id="@+id/ivProfilePicture"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/default_profile"
-                        android:contentDescription="Profile Picture" />
-                </androidx.cardview.widget.CardView>
+                android:layout_gravity="center"
+                android:layout_margin="2dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    >
 
                     <TextView
                         android:id="@+id/tv_NombreUsuario"
@@ -93,7 +92,7 @@
                         android:text="Correo"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@color/gray1" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/tv_DescripcionUsuario"
@@ -101,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:text="Descripción breve del usuario"
                         android:textSize="16sp"
-                        android:textColor="@color/gray1"
+                        android:textColor="@color/white"
                         android:layout_marginTop="4dp" />
 
                     <TextView
@@ -110,7 +109,7 @@
                         android:layout_height="wrap_content"
                         android:text="Cursos Creados: 10"
                         android:textSize="16sp"
-                        android:textColor="@color/gray1"
+                        android:textColor="@color/white"
                         android:layout_marginTop="4dp" />
 
                     <TextView
@@ -119,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:text="Seguidores: 200"
                         android:textSize="16sp"
-                        android:textColor="@color/gray1"
+                        android:textColor="@color/white"
                         android:layout_marginTop="4dp" />
 
                     <TextView
@@ -128,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:text="Seguidos: 150"
                         android:textSize="16sp"
-                        android:textColor="@color/gray1"
+                        android:textColor="@color/white"
                         android:layout_marginTop="4dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -136,14 +135,29 @@
             <Button
                 android:id="@+id/btn_preguntas_incorrectas"
                 android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/rojo_oscuro"
                 android:layout_height="wrap_content"
-                android:text="ver preguntas incorrectas"/>
+                android:textColor="@color/white"
+                android:text="Ver tus preguntas incorrectas"/>
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/chartPracticaSemanal"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="270dp"
-                android:layout_margin="16dp" />
+                android:layout_height="2dp"
+                android:background="@color/gray1"
+                android:layout_marginVertical="10dp"
+                android:layout_marginHorizontal="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_marginTop="5dp"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="Tus Estadisticas"/>
 
             <TextView
                 android:id="@+id/tvComparacionSemana"
@@ -154,31 +168,63 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="Comparación semanal" />
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:text="Comparación semanal:" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                android:layout_margin="16dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/gray2"
+                app:cardElevation="10dp">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chartPracticaSemanal"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp"
+                    android:layout_margin="16dp" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/tvProgresoCursosTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="📘 Avance en cursos:"
-                android:textSize="15sp"
+                android:text="Avance en cursos"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:layout_marginTop="16dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chartProgresoCursos"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="270dp"
-                android:layout_margin="16dp" />
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                android:layout_margin="16dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/gray2"
+                app:cardElevation="10dp">
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chartProgresoCursos"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp"
+                    android:layout_margin="16dp" />
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/tvNivelInstrumentoTitulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="🎸 Nivel por instrumento:"
-                android:textSize="15sp"
+                android:text="Nivel por instrumento"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textSize="16sp"
                 android:textColor="@color/white"
                 android:layout_marginTop="16dp"
                 android:paddingStart="16dp"
@@ -194,15 +240,29 @@
                 android:layout_margin="8dp"/>
 
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chartNivelInstrumentos"
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="270dp"
-                android:layout_margin="16dp" />
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                android:layout_margin="16dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/gray2"
+                app:cardElevation="10dp">
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chartNivelInstrumentos"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp"
+                    android:layout_margin="16dp" />
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
     <!-- Barra de navegación abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"

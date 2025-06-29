@@ -4,6 +4,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 android:orientation="vertical"
+    android:background="@color/black"
 android:id="@+id/main">
 
     <!-- Toolbar arriba -->
@@ -14,90 +15,91 @@ android:id="@+id/main">
         android:background="@color/black"
         app:title="Perfil"
         app:titleTextColor="@color/white"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Administrador"
-            android:textSize="30sp"
-            android:layout_gravity="center"
-            android:textColor="@color/black"/>
-    </androidx.appcompat.widget.Toolbar>
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/gray2"
-    app:cardCornerRadius="10dp"
-    android:layout_margin="5dp"
-    app:cardElevation="10dp">
-    <LinearLayout
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"
+        android:layout_marginBottom="10dp"/>
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_margin="16dp">
-
-        <!-- Imagen de perfil -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="6dp">
-
-            <ImageView
-                android:id="@+id/ivProfilePicture"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/img_vacia"
-                android:contentDescription="Profile Picture" />
-        </androidx.cardview.widget.CardView>
-
+        app:cardBackgroundColor="@color/gray2"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="5dp"
+        app:cardElevation="10dp">
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_margin="16dp">
 
-            <TextView
-                android:id="@+id/tv_NombreUsuario"
+            <!-- Imagen de perfil -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="6dp">
+
+                <ImageView
+                    android:id="@+id/ivProfilePicture"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img_vacia"
+                    android:contentDescription="Profile Picture" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tv_NombreUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del Usuario"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCerrarSesion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre del Usuario"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:backgroundTint="@color/black"
+                android:text="Cerrar Sesión"
+                android:textColor="@color/white"
+                android:padding="12dp"
+                android:textSize="16sp"
+                android:layout_marginTop="12dp" />
+
         </LinearLayout>
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:layout_marginTop="20dp"
-    android:layout_weight="1">
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/black"
-        android:text="Cerrar Sesión"
-        android:textColor="@color/white"
-        android:padding="12dp"
-        android:textSize="16sp"
-        android:layout_marginTop="12dp" />
-
-</LinearLayout>
-<View
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <!-- BottomNavigation fijo abajo -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacion1"
         android:layout_width="match_parent"

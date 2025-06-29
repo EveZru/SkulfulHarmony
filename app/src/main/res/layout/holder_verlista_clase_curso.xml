@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         android:padding="5dp"
         android:orientation="horizontal"
+        android:background="@drawable/degradado_holder_background"
         >
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"

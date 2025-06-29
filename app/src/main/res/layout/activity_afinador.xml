@@ -9,7 +9,7 @@
     android:gravity="center_horizontal"
     android:padding="16dp"
     tools:context=".Afinador"
-    android:background="@color/black1">
+    android:background="@color/black">
 
     <TextView
         android:id="@+id/frequencyTextView"
@@ -80,6 +80,7 @@
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:textColor="@color/cafe1"
+        android:textAlignment="center"
         android:background="@color/grayverde"
         android:backgroundTint="@color/grayrojo2"
         android:layout_marginTop="32dp" />

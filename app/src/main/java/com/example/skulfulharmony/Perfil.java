@@ -88,7 +88,7 @@ public class Perfil extends AppCompatActivity {
     private FirebaseFirestore db;
     private ImageView ivProfilePicture;
     private TextView tv_NombreUsuario, tv_correo, tv_DescripcionUsuario, tv_No_Cursos, tv_Seguidores, tv_Seguido;
-    private Button btnVerVideoPrueba,btn_preguntas_incorrectas;
+    private Button btn_preguntas_incorrectas;
     private ImageView btn_gotoconfiguracion ;
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
@@ -124,7 +124,6 @@ public class Perfil extends AppCompatActivity {
         tv_NombreUsuario = findViewById(R.id.tv_NombreUsuario);
         tv_No_Cursos = findViewById(R.id.tv_No_Cursos);
         tv_DescripcionUsuario = findViewById(R.id.tv_DescripcionUsuario);
-        btnVerVideoPrueba = findViewById(R.id.btnVerVideoPrueba);
         tv_correo = findViewById(R.id.tv_correo);
         tv_Seguidores = findViewById(R.id.tv_Seguidores);
         tv_Seguido = findViewById(R.id.tv_Seguido);
@@ -143,29 +142,6 @@ public class Perfil extends AppCompatActivity {
 
         // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
-        btnVerVideoPrueba.setOnClickListener(v -> {
-            try {
-                File dbFile = getDatabasePath("localdata.db");
-                File exportFile = new File(android.os.Environment.getExternalStoragePublicDirectory(
-                        android.os.Environment.DIRECTORY_DOWNLOADS), "localdata_exportada.db");
-
-                try (FileInputStream fis = new FileInputStream(dbFile);
-                     FileOutputStream fos = new FileOutputStream(exportFile)) {
-                    byte[] buffer = new byte[4096];
-                    int length;
-                    while ((length = fis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, length);
-                    }
-                }
-
-                Toast.makeText(this, "✅ BD exportada a Descargas", Toast.LENGTH_LONG).show();
-                Log.d("EXPORT_BD", "📂 Archivo exportado: " + exportFile.getAbsolutePath());
-            } catch (Exception e) {
-                Log.e("EXPORT_BD", "❌ Error al exportar BD", e);
-                Toast.makeText(this, "❌ Error al exportar la BD", Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
@@ -247,7 +223,11 @@ public class Perfil extends AppCompatActivity {
                 // Cargar datos básicos
                 tv_NombreUsuario.setText(documentSnapshot.getString("nombre"));
                 tv_correo.setText(documentSnapshot.getString("correo"));
-                tv_DescripcionUsuario.setText(documentSnapshot.getString("descripcion"));
+                tv_DescripcionUsuario.setText(
+                        documentSnapshot.getString("descripcion")
+                        != null && !documentSnapshot.getString("descripcion").isEmpty()
+                        ? documentSnapshot.getString("descripcion")
+                        : "Sin descripción");
 
                 Long cursos = documentSnapshot.getLong("cursos");
                 tv_No_Cursos.setText("Cursos Creados: " + (cursos != null ? cursos : 0));
@@ -664,16 +644,17 @@ public class Perfil extends AppCompatActivity {
             int minutos = tiempo / 60;
             int segundos = tiempo % 60;
 
-            String info = "🎵 Instrumento: " + instrumento +
-                    "\n📈 Nivel: " + nivel +
-                    "\n⏱️ Tiempo total: " + minutos + " min " + segundos + " s" +
-                    "\n📚 Clases vistas: " + clases;
+            String info = " Instrumento: " + instrumento +
+                    "\nNivel: " + nivel +
+                    "\nTiempo total: " + minutos + " min " + segundos + " s" +
+                    "\nClases vistas: " + clases;
 
             TextView texto = new TextView(this);
             texto.setText(info);
             texto.setTextSize(16f);
             texto.setPadding(8, 8, 8, 16);
-            texto.setTextColor(Color.BLACK);
+            texto.setTextColor(getResources().getColor(R.color.white));
+            texto.setTextAlignment(android.view.View.TEXT_ALIGNMENT_CENTER);
 
             layout.addView(texto);
         }

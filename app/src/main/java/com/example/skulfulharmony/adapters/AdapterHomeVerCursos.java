@@ -46,6 +46,7 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
 
         // Título del curso
         holder.tvTextPrincipal.setText(curso.getTitulo());
+        holder.tvTextComplementario.setText(curso.getDescripcion());
 
         // Mostrar el nombre del autor
         if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
@@ -98,12 +99,14 @@ public class AdapterHomeVerCursos extends RecyclerView.Adapter<AdapterHomeVerCur
         public ImageView cardImage;
         public TextView tvTextPrincipal;
         public TextView tvTextSegundo;
+        public TextView tvTextComplementario;
 
         public CursoViewHolder(View itemView) {
             super(itemView);
             cardImage = itemView.findViewById(R.id.cardImage);
             tvTextPrincipal = itemView.findViewById(R.id.tv_textprincipal);
             tvTextSegundo = itemView.findViewById(R.id.tv_textsegundo);
+            tvTextComplementario = itemView.findViewById(R.id.tv_complementario);
         }
     }
 }

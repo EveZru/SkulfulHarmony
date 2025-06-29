@@ -1,89 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--maquetado-->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/black"
     tools:context=".PreguntasRecomendacion">
 
-    <ImageView
-        android:layout_width="410dp"
+    <!-- Contenedor apilado para pregunta sobre imagen -->
+    <FrameLayout
+        android:id="@+id/contenedor_pregunta"
+        android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="@drawable/encabezado_preguntas"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.021" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="322dp"
-        android:layout_height="660dp"
-        android:layout_marginVertical="30dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.491">
+        <ImageView
+            android:id="@+id/imagen_encabezado"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@drawable/encabezado_preguntas" />
 
         <TextView
             android:id="@+id/txt_preguntarecomendacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:padding="69dp"
+            android:layout_gravity="center"
+            android:padding="24dp"
             android:text="Pregunta"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    <!-- Respuestas debajo del encabezado -->
+    <RadioGroup
+        android:id="@+id/rg_recomendacionrespuesta"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/contenedor_pregunta"
+        app:layout_constraintBottom_toTopOf="@id/contenedor_botones"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Botones fijos al fondo -->
+    <LinearLayout
+        android:id="@+id/contenedor_botones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btn_preguntaanterior"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:backgroundTint="@color/rojo_oscuro"
+            android:text="Anterior"
+            android:textColor="@color/white" />
 
-            <android.widget.Button
-                android:id="@+id/btn_preguntaanterior"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/third_rounder_button"
-                android:text="Anterior "
-                android:textColor="@color/black"
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
 
-
-                />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <android.widget.Button
-                android:id="@+id/btn_preguntasigueinte"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/third_rounder_button"
-                android:text="Siguiente"
-                android:textColor="@color/black" />
-
-
-        </LinearLayout>
-
-        <RadioGroup
-            android:id="@+id/rg_recomendacionrespuesta"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btn_preguntasigueinte"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:textColor="@color/black" />
-
-
+            android:backgroundTint="@color/rojo_oscuro"
+            android:text="Siguiente"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

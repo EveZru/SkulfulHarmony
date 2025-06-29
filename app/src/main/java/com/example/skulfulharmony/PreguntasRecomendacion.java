@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PreguntasRecomendacion extends AppCompatActivity {
     private TextView txt_preguntas;
@@ -45,7 +46,9 @@ public class PreguntasRecomendacion extends AppCompatActivity {
     }};
 
     private static final ArrayList<String> respuestas2 = new ArrayList<>() {{
-        addAll(DataClusterList.listaInstrumentos.stream().map(map -> new ArrayList<>(map.keySet()).get(0)).toList());
+        addAll(DataClusterList.listaInstrumentos.stream()
+                .map(map -> new ArrayList<>(map.keySet()).get(0))
+                .collect(Collectors.toList()));
     }};
 
     private static final ArrayList<String> respuestas3 = new ArrayList<>() {{
@@ -56,7 +59,9 @@ public class PreguntasRecomendacion extends AppCompatActivity {
     }};
 
     private static final ArrayList<String> respuestas4 = new ArrayList<>() {{
-        addAll(DataClusterList.listaGenero.stream().map(map -> new ArrayList<>(map.keySet()).get(0)).toList());
+        addAll(DataClusterList.listaGenero.stream()
+                .map(map -> new ArrayList<>(map.keySet()).get(0))
+                .collect(Collectors.toList()));
     }};
 
     @Override
@@ -125,6 +130,9 @@ public class PreguntasRecomendacion extends AppCompatActivity {
             RadioButton radioButton = new RadioButton(this);
             radioButton.setText(respuestas.get(i));
             radioButton.setId(View.generateViewId());
+            radioButton.setTextSize(15f);
+            radioButton.setTextColor(getResources().getColor(R.color.white));
+            radioButton.setButtonTintList(getResources().getColorStateList(R.color.radiobutton_tint));
             if (pregunta.getRespuestaElegida() != null && pregunta.getRespuestaElegida() == i) {
                 radioButton.setChecked(true);
             }

@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray2">
+    android:background="@color/black">
     <!-- maquetado -->
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_curso_descargado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:title="Curso Descargado"
+        app:titleTextColor="@color/white"
         android:background="@color/black">
         <ImageView
             android:id="@+id/iv_menu_curso_descargado"
@@ -23,6 +25,10 @@
             android:contentDescription="Icono de menú" />
     </androidx.appcompat.widget.Toolbar>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray1"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +39,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="5dp"
-            android:background="@color/gray2">
+            android:background="@color/black">
 
             <!-- Imagen y datos del curso -->
             <androidx.cardview.widget.CardView

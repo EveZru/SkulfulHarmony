@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".admi_populares">
 
     <!-- Toolbar arriba -->
@@ -26,9 +27,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
-        app:tabMode="scrollable"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
         app:tabTextColor="@color/white"
         app:tabSelectedTextColor="@color/rojo"
+        android:backgroundTint="@color/black"
         app:tabIndicatorColor="@color/rojo" />
 <!--maquetado-->
     <!-- ViewPager2 que cambiará entre gráficos -->
@@ -39,7 +42,12 @@
         android:layout_below="@id/tabLayoutEstadisticas"
         android:layout_above="@id/barra_navegacionadmi" />
 
-    <!-- BottomNavigation fijo abajo -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@id/barra_navegacionadmi"
+        android:background="@color/gray1" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/barra_navegacionadmi"
         android:layout_width="match_parent"

@@ -6,7 +6,7 @@
     android:layout_margin="8dp"
     android:elevation="4dp"
     app:cardCornerRadius="12dp"
-    android:background="@color/gray1">
+    app:cardBackgroundColor="@color/gray2">
 
     <LinearLayout
         android:orientation="vertical"

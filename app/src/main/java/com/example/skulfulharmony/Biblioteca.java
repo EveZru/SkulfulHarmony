@@ -22,13 +22,13 @@ import com.example.skulfulharmony.databaseinfo.DbUser;
 import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.users.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class Biblioteca extends AppCompatActivity {
 
     private static final String PREF_ORDEN_CURSOS = "orden_cursos_seguidos";
@@ -36,11 +36,8 @@ public class Biblioteca extends AppCompatActivity {
 
     private DbUser dbUser = new DbUser(this);
     private BottomNavigationView bottomNavigationView;
-
     private RecyclerView rvDescargados;
-    private Button btnVerDescargas;
-    private Button btnVerSeguidos;
-    private Button btnVerHistorial;
+    private TabLayout tabLayout;
 
     private static final int REQUEST_VER_CURSO = 101;
 
@@ -50,35 +47,37 @@ public class Biblioteca extends AppCompatActivity {
         setContentView(R.layout.activity_biblioteca);
 
         rvDescargados = findViewById(R.id.rv_bliblioteca);
-        btnVerDescargas = findViewById(R.id.btn_gotodescargados);
-        btnVerSeguidos = findViewById(R.id.btn_gotoseguidos);
-        btnVerHistorial = findViewById(R.id.btn_gotohistorial);
-
+        tabLayout = findViewById(R.id.tab_layout);
         rvDescargados.setLayoutManager(new LinearLayoutManager(this));
-        btnVerDescargas.setOnClickListener(v -> {
-            resaltarBotonSeleccionado(btnVerDescargas);
-            cargarCursosDescargados();
-        });
-        btnVerSeguidos.setOnClickListener(v -> {
-            resaltarBotonSeleccionado(btnVerSeguidos);
-            cargarCursosSeguidos();
-        });
-        btnVerSeguidos.setOnLongClickListener(v -> {
-            resaltarBotonSeleccionado(btnVerSeguidos);
-            mostrarDialogoOrdenSeguidos();
-            return true;
-        });
-        btnVerHistorial.setOnClickListener(v -> {
-            resaltarBotonSeleccionado(btnVerHistorial);
-            cargarCursosHistorial();
+
+        tabLayout.addTab(tabLayout.newTab().setText("Seguidos"));
+        tabLayout.addTab(tabLayout.newTab().setText("Historial"));
+        tabLayout.addTab(tabLayout.newTab().setText("Descargas"));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        cargarCursosSeguidos();
+                        break;
+                    case 1:
+                        cargarCursosHistorial();
+                        break;
+                    case 2:
+                        cargarCursosDescargados();
+                        break;
+                }
+            }
+
+            @Override public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override public void onTabReselected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) mostrarDialogoOrdenSeguidos();
+            }
         });
 
-        resaltarBotonSeleccionado(btnVerSeguidos);
         cargarCursosSeguidos();
 
         bottomNavigationView = findViewById(R.id.barra_navegacion);
-
-
         if (bottomNavigationView != null) {
             bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
                 int itemId = item.getItemId();
@@ -96,10 +95,7 @@ public class Biblioteca extends AppCompatActivity {
                 }
                 return false;
             });
-
             bottomNavigationView.setSelectedItemId(R.id.it_seguidos);
-        } else {
-            Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
     }
 
@@ -107,35 +103,24 @@ public class Biblioteca extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-
             db.collection("usuarios")
                     .whereEqualTo("correo", user.getEmail())
                     .limit(1)
                     .get()
-                    .addOnSuccessListener(onQuerySnapshot -> {
-                        if (!onQuerySnapshot.isEmpty()) {
-                            Usuario usuario = onQuerySnapshot.getDocuments().get(0).toObject(Usuario.class);
-                            List<Curso> cursosHistorial = new ArrayList<>();
-                            if (usuario != null) {
-                                cursosHistorial = usuario.getHistorialCursos();
-                            }
-
-                                AdapterBibliotecaVerCursosHistorial adapter = new AdapterBibliotecaVerCursosHistorial(cursosHistorial);
-                                rvDescargados.setAdapter(adapter);
-
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            Usuario usuario = snapshot.getDocuments().get(0).toObject(Usuario.class);
+                            List<Curso> cursosHistorial = usuario != null ? usuario.getHistorialCursos() : new ArrayList<>();
+                            rvDescargados.setAdapter(new AdapterBibliotecaVerCursosHistorial(cursosHistorial));
                         }
                     })
-                    .addOnFailureListener( e -> {
-                        Log.e("Error", "Error al obtener los cursos del historial", e);
-                    });
+                    .addOnFailureListener(e -> Log.e("Error", "Error al obtener los cursos del historial", e));
         }
     }
-
 
     private void cargarCursosDescargados() {
         DbHelper dbHelper = new DbHelper(this);
         List<Curso> cursos = dbHelper.obtenerCursosDescargados();
-
         AdapterCursosDescargados adapter = new AdapterCursosDescargados(cursos, curso -> {
             Intent intent = new Intent(Biblioteca.this, VerCursoDescargado.class);
             intent.putExtra("curso_id", curso.getId());
@@ -152,28 +137,31 @@ public class Biblioteca extends AppCompatActivity {
         }
     }
 
-    private String obtenerOrdenGuardado() {
-        String orden = getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE).getString(KEY_ORDEN, null);
-        if (orden == null) {
-            guardarOrden("popularidad");
-            return "popularidad";
+    private void cargarCursosSeguidos() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            db.collection("usuarios")
+                    .whereEqualTo("correo", user.getEmail())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            Usuario usuario = snapshot.getDocuments().get(0).toObject(Usuario.class);
+                            List<Integer> cursosSeguidos = usuario != null && usuario.getCursosSeguidos() != null
+                                    ? usuario.getCursosSeguidos() : new ArrayList<>();
+                            String orden = obtenerOrdenGuardado();
+                            rvDescargados.setAdapter(new AdapterBibliotecaVerCursosActualizacion(cursosSeguidos, orden));
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("Error", "Error al obtener los cursos seguidos", e));
         }
-        return orden;
-    }
-
-    private void guardarOrden(String orden) {
-        getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE)
-                .edit()
-                .putString(KEY_ORDEN, orden)
-                .apply();
     }
 
     private void mostrarDialogoOrdenSeguidos() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_seleccion_orden_biblioteca, null);
-
         androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setView(dialogView)
-                .create();
+                .setView(dialogView).create();
 
         dialogView.findViewById(R.id.btn_orden_popularidad).setOnClickListener(v -> {
             guardarOrden("popularidad");
@@ -198,40 +186,19 @@ public class Biblioteca extends AppCompatActivity {
         dialog.show();
     }
 
-    private void cargarCursosSeguidos() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            db.collection("usuarios")
-                    .whereEqualTo("correo", user.getEmail())
-                    .limit(1)
-                    .get()
-                    .addOnSuccessListener(onQuerySnapshot -> {
-                        if (!onQuerySnapshot.isEmpty()) {
-                            Usuario usuario = onQuerySnapshot.getDocuments().get(0).toObject(Usuario.class);
-                            List<Integer> cursosSeguidos = usuario != null && usuario.getCursosSeguidos() != null
-                                    ? usuario.getCursosSeguidos() : new ArrayList<>();
-
-                            String orden = obtenerOrdenGuardado();
-                            AdapterBibliotecaVerCursosActualizacion adapter =
-                                    new AdapterBibliotecaVerCursosActualizacion(cursosSeguidos, orden);
-
-                            rvDescargados.setAdapter(adapter);
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e("Error", "Error al obtener los cursos seguidos", e));
+    private String obtenerOrdenGuardado() {
+        String orden = getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE).getString(KEY_ORDEN, null);
+        if (orden == null) {
+            guardarOrden("popularidad");
+            return "popularidad";
         }
+        return orden;
     }
-    private void resaltarBotonSeleccionado(Button botonSeleccionado) {
-        Button[] botones = {btnVerDescargas, btnVerSeguidos, btnVerHistorial};
 
-        for (Button btn : botones) {
-            if (btn == botonSeleccionado) {
-                btn.setTextColor(getResources().getColor(R.color.rojo_oscuro, getTheme()));
-            } else {
-                btn.setTextColor(getResources().getColor(R.color.white, getTheme()));
-            }
-        }
+    private void guardarOrden(String orden) {
+        getSharedPreferences(PREF_ORDEN_CURSOS, MODE_PRIVATE)
+                .edit()
+                .putString(KEY_ORDEN, orden)
+                .apply();
     }
 }
