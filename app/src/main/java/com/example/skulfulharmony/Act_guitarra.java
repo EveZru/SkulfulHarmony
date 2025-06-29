@@ -108,10 +108,10 @@ public class Act_guitarra extends AppCompatActivity {
         posicionesAcordes.put("Do", Arrays.asList("l5_t3", "l4_t2", "l2_t1"));
         posicionesAcordes.put("Re", Arrays.asList("l3_t2", "l2_t3", "l1_t2"));
         posicionesAcordes.put("Mi", Arrays.asList( "l5_t2", "l4_t2", "l3_t1"));
-        posicionesAcordes.put("Fa", Arrays.asList("l6_t1", "l5_t3", "l4_t3", "l3_t2", "l2_t1", "l1_t1"));
+        posicionesAcordes.put("Fa", Arrays.asList("l6_t1", "l5_t3", "l4_t3", "l3_t2", "l2_t1", "l1_t1","l5_t1","l4_t1","l3_t1"));
         posicionesAcordes.put("Sol", Arrays.asList("l6_t3", "l5_t2", "l1_t3"));
         posicionesAcordes.put("La", Arrays.asList( "l4_t2", "l3_t2", "l2_t2"));
-        posicionesAcordes.put("Si", Arrays.asList("l5_t2", "l4_t4", "l3_t4", "l2_t3", "l1_t2"));
+        posicionesAcordes.put("Si", Arrays.asList("l1_t2","l2_t2","l3_t2","l4_t2","l5_t2","l6_t2","l4_t4","l3_t4","l2_t4","l1_t4"));
          imagenContainer.setOnClickListener(v -> {
              imagenContainer.setVisibility(View.GONE);
              actividadContainer.setVisibility(View.VISIBLE);

@@ -348,11 +348,10 @@
         android:layout_marginBottom="20dp"
         android:gravity="center_vertical">
         <ImageView
-            android:layout_width="400dp"
+            android:layout_width="380dp"
             android:layout_height="700dp"
             android:layout_gravity="center"
-            android:background="@drawable/provicional_guitarra" />
-
+            android:background="@drawable/infografia_guitarra" />
 
 
     </LinearLayout>

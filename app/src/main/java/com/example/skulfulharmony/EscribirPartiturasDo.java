@@ -20,7 +20,7 @@ public class EscribirPartiturasDo extends AppCompatActivity {
 
     private float posInicialY;
     private float initialY;
-    private String[] notas = {  "La2", "Si2","Do3", "Re3", "Mi3", "Fa3", "Sol3", "La3","Si3","Do4", "Re4"};
+    private String[] notas = {  "Re2", "Mi2","Fa2", "Sol2", "La2", "Si2", "Do3", "Re3", "Mi3", "Fa3", "Sol3", };
     private String notaActual;
     private View[] lineas = new View[6];
     private View[] espacios = new View[5];
@@ -61,17 +61,17 @@ public class EscribirPartiturasDo extends AppCompatActivity {
                 limiteSuperior = 0;
                 limiteInferior = ((View) ivNota.getParent()).getHeight() - ivNota.getHeight();
 
-                coordenadasEsperadas.put("La2", lineas[0].getY()+360 );
-                coordenadasEsperadas.put("Si2", espacios[0].getY()+360);
-                coordenadasEsperadas.put("Do3", lineas[1].getY() +360);
-                coordenadasEsperadas.put("Re3", espacios[1].getY()+360 );
-                coordenadasEsperadas.put("Mi3", lineas[2].getY() +360);
-                coordenadasEsperadas.put("Fa3", espacios[2].getY()+360 );
-                coordenadasEsperadas.put("Sol3", lineas[3].getY()+360 );
-                coordenadasEsperadas.put("La3", espacios[3].getY()+360 );
-                coordenadasEsperadas.put("Si3", lineas[4].getY() +360);
-                coordenadasEsperadas.put("Do4", espacios[4].getY() +360);
-                coordenadasEsperadas.put("Re4", lineas[5].getY()+360);
+                coordenadasEsperadas.put("La2", lineas[0].getY() +151);
+                coordenadasEsperadas.put("Si2", espacios[0].getY()+151);
+                coordenadasEsperadas.put("Do3", lineas[1].getY()+151);
+                coordenadasEsperadas.put("Re3", espacios[1].getY()+151);
+                coordenadasEsperadas.put("Mi3", lineas[2].getY()+151);
+                coordenadasEsperadas.put("Fa3", espacios[2].getY() +151);
+                coordenadasEsperadas.put("Sol3", lineas[3].getY()+151);
+                coordenadasEsperadas.put("La3", espacios[3].getY()+151);
+                coordenadasEsperadas.put("Si3", lineas[4].getY() +151);
+                coordenadasEsperadas.put("Do4", espacios[4].getY() +151);
+                coordenadasEsperadas.put("Re4", lineas[5].getY()+151);
 
                 cambiarNota(); // Mostrar la primera nota aleatoria
             }
