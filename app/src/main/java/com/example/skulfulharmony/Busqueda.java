@@ -137,7 +137,6 @@ public class Busqueda extends AppCompatActivity {
                     curso.setFechaActualizacion(doc.getTimestamp("fechaActualizacion"));
                     curso.setFechaAcceso(doc.getTimestamp("fechaAcceso"));
 
-                    // Creador con validación
                     Object creadorRaw = doc.get("creador");
                     if (creadorRaw instanceof String) {
                         curso.setCreador((String) creadorRaw);
@@ -152,7 +151,6 @@ public class Busqueda extends AppCompatActivity {
                         }
                     }
 
-                    // Mapas
                     if (doc.get("instrumento") instanceof Map)
                         curso.setInstrumento((Map<String, Integer>) doc.get("instrumento"));
                     if (doc.get("genero") instanceof Map)
@@ -186,18 +184,33 @@ public class Busqueda extends AppCompatActivity {
                         try {
                             Clase clase = new Clase();
 
-                            clase.setTitulo(doc.contains("titulo") ? doc.getString("titulo") : doc.getString("Titulo"));
-                            clase.setNombreCurso(doc.getString("nombreCurso"));
-
-                            // ID de clase desde doc.getId()
-                            try {
-                                clase.setIdClase(Integer.parseInt(doc.getId()));
-                            } catch (NumberFormatException e) {
-                                Log.w("Busqueda", "⚠️ ID clase no convertible: " + doc.getId());
+                            // ✅ Obtener idClase del campo, no del doc ID
+                            Object idClaseRaw = doc.get("idClase");
+                            if (idClaseRaw instanceof Long) {
+                                clase.setIdClase(((Long) idClaseRaw).intValue());
+                            } else if (idClaseRaw instanceof Integer) {
+                                clase.setIdClase((Integer) idClaseRaw);
+                            } else {
+                                Log.w("Busqueda", "⚠️ Clase sin campo válido 'idClase': " + doc.getId());
                                 continue;
                             }
 
-                            // idCurso con validación
+                            // ✅ Leer título robusto
+                            String tituloClase = null;
+                            if (doc.contains("titulo")) {
+                                tituloClase = doc.getString("titulo");
+                            }
+                            if ((tituloClase == null || tituloClase.trim().isEmpty()) && doc.contains("Titulo")) {
+                                tituloClase = doc.getString("Titulo");
+                            }
+                            if (tituloClase == null) {
+                                Log.w("Busqueda", "⚠️ Clase sin campo 'titulo' ni 'Titulo': " + doc.getId());
+                                tituloClase = "";
+                            }
+                            clase.setTitulo(tituloClase);
+
+                            clase.setNombreCurso(doc.getString("nombreCurso"));
+
                             Object idCursoRaw = doc.get("idCurso");
                             if (idCursoRaw instanceof Long) {
                                 clase.setIdCurso(((Long) idCursoRaw).intValue());
@@ -265,12 +278,12 @@ public class Busqueda extends AppCompatActivity {
             String titulo = c.getTitulo() != null ? c.getTitulo().toLowerCase() : "";
             String descripcion = c.getDescripcion() != null ? c.getDescripcion().toLowerCase() : "";
 
-            Log.d("BUSQUEDA", "🔎 Curso revisado -> titulo: '" + titulo + "', descripcion: '" + descripcion + "', idCurso: " + c.getIdCurso());
-
             boolean match = titulo.contains(textoLower) || descripcion.contains(textoLower);
             if (match && c.getIdCurso() != null) {
                 cursosEncontrados.add(c.getIdCurso());
                 Log.d("BUSQUEDA", "✅ Curso coincide: " + titulo);
+            } else {
+                Log.d("BUSQUEDA", "❌ Curso no coincide: " + titulo);
             }
         }
 
@@ -279,11 +292,12 @@ public class Busqueda extends AppCompatActivity {
             String nombre = u.getNombre() != null ? u.getNombre().toLowerCase() : "";
             String correo = u.getCorreo() != null ? u.getCorreo().toLowerCase() : "";
 
-            Log.d("BUSQUEDA", "🔎 Usuario revisado -> nombre: '" + nombre + "', correo: '" + correo + "', id: " + u.getId());
-
-            if ((nombre.contains(textoLower) || correo.contains(textoLower)) && u.getId() != null) {
+            boolean match = nombre.contains(textoLower) || correo.contains(textoLower);
+            if (match && u.getId() != null) {
                 usuariosEncontrados.add(u.getId());
                 Log.d("BUSQUEDA", "✅ Usuario coincide: " + nombre);
+            } else {
+                Log.d("BUSQUEDA", "❌ Usuario no coincide: " + nombre);
             }
         }
 
@@ -292,14 +306,19 @@ public class Busqueda extends AppCompatActivity {
             String titulo = cl.getTitulo() != null ? cl.getTitulo().toLowerCase() : "";
             String nombreCurso = cl.getNombreCurso() != null ? cl.getNombreCurso().toLowerCase() : "";
 
-            Log.d("BUSQUEDA", "🔎 Clase revisada -> titulo: '" + titulo + "', nombreCurso: '" + nombreCurso + "', idClase: " + cl.getIdClase());
+            boolean match = titulo.contains(textoLower) || nombreCurso.contains(textoLower);
 
-            if ((titulo.contains(textoLower) || nombreCurso.contains(textoLower)) && cl.getIdClase() != null) {
+            Log.d("BUSQUEDA", "🎬 Revisando clase: \"" + titulo + "\" / curso: \"" + nombreCurso + "\" → match: " + match);
+
+            if (match && cl.getIdClase() != null) {
                 clasesEncontradas.add(cl.getIdClase());
                 Log.d("BUSQUEDA", "✅ Clase coincide: " + titulo);
+            } else {
+                Log.d("BUSQUEDA", "❌ Clase no coincide: " + textoLower + " no está en \"" + titulo + "\" ni en \"" + nombreCurso + "\"");
             }
         }
 
+        // Construir lista final
         List<Object> resultados = new ArrayList<>();
 
         for (Curso c : cursos) {
