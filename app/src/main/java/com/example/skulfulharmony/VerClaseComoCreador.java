@@ -1,11 +1,9 @@
 package com.example.skulfulharmony;
 
-import static androidx.media3.exoplayer.mediacodec.MediaCodecInfo.TAG;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -35,8 +33,8 @@ public class VerClaseComoCreador extends AppCompatActivity {
     private PlayerView vv_videoplayer;
     private TextView tv_titulo,tv_info;
     private ExoPlayer player;
-    private RecyclerView rv_preguntas, rv_archos;
-    int idClase;
+    private RecyclerView rv_preguntas;
+    int idClase,idCurso;
 
     private Clase clase;
     @Override
@@ -56,8 +54,7 @@ public class VerClaseComoCreador extends AppCompatActivity {
         tv_info=findViewById(R.id.tv_info_verclase);
         rv_preguntas=findViewById(R.id.rv_preguntasporclase_verclase);
         idClase = getIntent().getIntExtra("idClase",1);
-
-
+        idCurso = getIntent().getIntExtra("idCurso",1);
 
         menupop=findViewById(R.id.iv_menu);
         menupop.setOnClickListener(new View.OnClickListener() {
@@ -65,8 +62,12 @@ public class VerClaseComoCreador extends AppCompatActivity {
             public void onClick(View view) {showMenu(view);}
         });
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("clases").whereEqualTo("idClase",idClase).limit(1).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+        db.collection("clases")
+                .whereEqualTo("idClase", idClase) // Mantén este filtro
+                .whereEqualTo("idCurso", idCurso) // ¡Añade este filtro!
+                .limit(1)
+                .get()
+                .addOnCompleteListener(task -> {  if (task.isSuccessful()) {
                 if (!task.getResult().isEmpty()) {
                     // Se encontró al menos un documento
                     QueryDocumentSnapshot document = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
