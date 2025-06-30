@@ -145,30 +145,33 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                     listaComentarios.set(position, comentario);
                     notifyItemChanged(position);
 
-                    db.collection("cursos")
-                            .whereEqualTo("idCurso", idCurso)
+                    db.collection("comentarios")
+                            .whereEqualTo("idComentario", comentario.getIdComentario())
                             .get()
                             .addOnSuccessListener(snapshot -> {
                                 if (!snapshot.isEmpty()) {
                                     String id = snapshot.getDocuments().get(0).getId();
-                                    db.collection("cursos")
+                                    db.collection("comentarios")
                                             .document(id)
-                                            .update("comentarios", listaComentarios);
+                                            .update("reacciones", reacciones);
                                 }
                             });
 
                     // 🔥 Update de likes en la raíz para el trigger
                     db.collection("comentarios")
-                            .document(String.valueOf(comentario.getIdComentario()))
+                            .whereEqualTo("idComentario", comentario.getIdComentario())
                             .get()
                             .addOnSuccessListener(doc -> {
-                                if (doc.exists()) {
+                                if (doc.isEmpty()) return;
+                                Comentario comentarionuevo = doc.getDocuments().get(0).toObject(Comentario.class);
+                                String comentarioId = doc.getDocuments().get(0).getId();
+                                if (comentarionuevo != null) {
                                     Map<String, Object> actualizacion = new HashMap<>();
                                     actualizacion.put("likes", reacciones.size());
                                     actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
 
                                     db.collection("comentarios")
-                                            .document(String.valueOf(comentario.getIdComentario()))
+                                            .document(comentarioId)
                                             .update(actualizacion)
                                             .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
                                             .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));
@@ -193,6 +196,7 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     if (user != null && comentario.getUsuario().equals(user.getEmail())) {
+
                         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
                         EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
                         Button btn_cancelar = dialogView.findViewById(R.id.btn_cancelar_dialogcalificacionpreguntas);
@@ -202,21 +206,23 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                         AlertDialog dialog = new AlertDialog.Builder(context)
                                 .setView(dialogView)
                                 .create();
+
                         btn_aceptar.setOnClickListener(view -> {
                             String nuevoTexto = editTextComentario.getText().toString().trim();
                             comentario.setTexto(nuevoTexto);
                             listaComentarios.set(position, comentario);
                             notifyItemChanged(position);
 
-                            db.collection("cursos")
-                                    .whereEqualTo("idCurso", idCurso)
+                            db.collection("comentarios")
+                                    .whereEqualTo("idComentario", comentario.getIdComentario())
+                                    .limit(1)
                                     .get()
                                     .addOnSuccessListener(snapshot -> {
                                         if (!snapshot.isEmpty()) {
                                             String id = snapshot.getDocuments().get(0).getId();
-                                            db.collection("cursos")
+                                            db.collection("comentarios")
                                                     .document(id)
-                                                    .update("comentarios", listaComentarios);
+                                                    .update("texto", nuevoTexto);
                                         }
                                     });
                             dialog.dismiss();
@@ -224,6 +230,7 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                         btn_cancelar.setOnClickListener(view -> {
                             dialog.dismiss();
                         });
+
                         dialog.show();
                     }
                     return true;
@@ -250,30 +257,33 @@ public class AdapterVerCursoVerComentarios extends RecyclerView.Adapter<AdapterV
                         listaComentarios.set(position, comentario);
                         notifyItemChanged(position);
 
-                        db.collection("cursos")
-                                .whereEqualTo("idCurso", idCurso)
+                        db.collection("comentarios")
+                                .whereEqualTo("idComentario", comentario.getIdComentario())
                                 .get()
                                 .addOnSuccessListener(snapshot -> {
                                     if (!snapshot.isEmpty()) {
                                         String id = snapshot.getDocuments().get(0).getId();
-                                        db.collection("cursos")
+                                        db.collection("comentarios")
                                                 .document(id)
-                                                .update("comentarios", listaComentarios);
+                                                .update("reacciones", reacciones);
                                     }
                                 });
 
                         // 🔥 Update de likes en la raíz para el trigger
                         db.collection("comentarios")
-                                .document(String.valueOf(comentario.getIdComentario()))
+                                .whereEqualTo("idComentario", comentario.getIdComentario())
                                 .get()
                                 .addOnSuccessListener(doc -> {
-                                    if (doc.exists()) {
+                                    if (doc.isEmpty()) return;
+                                    Comentario comentarionuevo = doc.getDocuments().get(0).toObject(Comentario.class);
+                                    String comentarioId = doc.getDocuments().get(0).getId();
+                                    if (comentarionuevo != null) {
                                         Map<String, Object> actualizacion = new HashMap<>();
                                         actualizacion.put("likes", reacciones.size());
                                         actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
 
                                         db.collection("comentarios")
-                                                .document(String.valueOf(comentario.getIdComentario()))
+                                                .document(comentarioId)
                                                 .update(actualizacion)
                                                 .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
                                                 .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));

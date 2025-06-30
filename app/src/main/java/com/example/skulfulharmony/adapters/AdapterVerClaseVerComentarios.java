@@ -92,7 +92,7 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
             String correoUsuario = user != null ? user.getEmail() : "";
 
             txt_comentario_usuario.setText(comentario.getUsuario());
-            txt_comentario_fecha.setText(comentario.getFecha().toDate().toString());
+            txt_comentario_fecha.setText(comentario.getFecha().toDate().toString()!=null?comentario.getFecha().toDate().toString():"No es posible acceder a la fecha");
             txt_comentario_texto.setText(comentario.getTexto());
 
             // Reacciones
@@ -142,43 +142,47 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                             ? new ArrayList<>()
                             : new ArrayList<>(comentario.getReacciones());
 
+                    boolean dioLike = false;
                     if (reacciones.contains(correoUsuario)) {
                         reacciones.remove(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_corner);
                     } else {
                         reacciones.add(correoUsuario);
                         img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                        dioLike = true;
                     }
 
-                    comentario.setReacciones(reacciones); // ya está
+                    comentario.setReacciones(reacciones);
                     listaComentarios.set(position, comentario);
                     notifyItemChanged(position);
 
-                    // 🔁 Actualiza en la clase embebida
-                    db.collection("clases")
-                            .whereEqualTo("idCurso", idCurso)
-                            .whereEqualTo("idClase", idClase)
+                    db.collection("comentarios")
+                            .whereEqualTo("idComentario", comentario.getIdComentario())
                             .get()
                             .addOnSuccessListener(snapshot -> {
                                 if (!snapshot.isEmpty()) {
                                     String id = snapshot.getDocuments().get(0).getId();
-                                    db.collection("clases")
+                                    db.collection("comentarios")
                                             .document(id)
-                                            .update("comentarios", listaComentarios); // 🔄 actualiza embebido también
+                                            .update("reacciones", reacciones);
                                 }
                             });
 
+                    // 🔥 Update de likes en la raíz para el trigger
                     db.collection("comentarios")
-                            .document(String.valueOf(comentario.getIdComentario()))
+                            .whereEqualTo("idComentario", comentario.getIdComentario())
                             .get()
                             .addOnSuccessListener(doc -> {
-                                if (doc.exists()) {
+                                if (doc.isEmpty()) return;
+                                Comentario comentarionuevo = doc.getDocuments().get(0).toObject(Comentario.class);
+                                String comentarioId = doc.getDocuments().get(0).getId();
+                                if (comentarionuevo != null) {
                                     Map<String, Object> actualizacion = new HashMap<>();
                                     actualizacion.put("likes", reacciones.size());
                                     actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
 
                                     db.collection("comentarios")
-                                            .document(String.valueOf(comentario.getIdComentario()))
+                                            .document(comentarioId)
                                             .update(actualizacion)
                                             .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
                                             .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));
@@ -191,6 +195,7 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     if (user != null && comentario.getUsuario().equals(user.getEmail())) {
+
                         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_editar_comentario, null);
                         EditText editTextComentario = dialogView.findViewById(R.id.et_editar_comentario_vercurso);
                         Button btn_cancelar = dialogView.findViewById(R.id.btn_cancelar_dialogcalificacionpreguntas);
@@ -207,16 +212,16 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                             listaComentarios.set(position, comentario);
                             notifyItemChanged(position);
 
-                            db.collection("clases")
-                                    .whereEqualTo("idCurso", idCurso)
-                                    .whereEqualTo("idClase", idClase)
+                            db.collection("comentarios")
+                                    .whereEqualTo("idComentario", comentario.getIdComentario())
+                                    .limit(1)
                                     .get()
                                     .addOnSuccessListener(snapshot -> {
                                         if (!snapshot.isEmpty()) {
                                             String id = snapshot.getDocuments().get(0).getId();
-                                            db.collection("clases")
+                                            db.collection("comentarios")
                                                     .document(id)
-                                                    .update("comentarios", listaComentarios);
+                                                    .update("texto", nuevoTexto);
                                         }
                                     });
                             dialog.dismiss();
@@ -271,43 +276,47 @@ public class AdapterVerClaseVerComentarios extends RecyclerView.Adapter<AdapterV
                                 ? new ArrayList<>()
                                 : new ArrayList<>(comentario.getReacciones());
 
+                        boolean dioLike = false;
                         if (reacciones.contains(correoUsuario)) {
                             reacciones.remove(correoUsuario);
                             img_comentario_megusta.setImageResource(R.drawable.heart_corner);
                         } else {
                             reacciones.add(correoUsuario);
                             img_comentario_megusta.setImageResource(R.drawable.heart_red);
+                            dioLike = true;
                         }
 
                         comentario.setReacciones(reacciones);
                         listaComentarios.set(position, comentario);
                         notifyItemChanged(position);
 
-                        db.collection("clases")
-                                .whereEqualTo("idCurso", idCurso)
-                                .whereEqualTo("idClase", idClase)
+                        db.collection("comentarios")
+                                .whereEqualTo("idComentario", comentario.getIdComentario())
                                 .get()
                                 .addOnSuccessListener(snapshot -> {
                                     if (!snapshot.isEmpty()) {
                                         String id = snapshot.getDocuments().get(0).getId();
-                                        db.collection("clases")
+                                        db.collection("comentarios")
                                                 .document(id)
-                                                .update("comentarios", listaComentarios);
+                                                .update("reacciones", reacciones);
                                     }
                                 });
 
-                        // ✅ Solo update al campo de likes (ya existe el doc)
+                        // 🔥 Update de likes en la raíz para el trigger
                         db.collection("comentarios")
-                                .document(String.valueOf(comentario.getIdComentario()))
+                                .whereEqualTo("idComentario", comentario.getIdComentario())
                                 .get()
                                 .addOnSuccessListener(doc -> {
-                                    if (doc.exists()) {
+                                    if (doc.isEmpty()) return;
+                                    Comentario comentarionuevo = doc.getDocuments().get(0).toObject(Comentario.class);
+                                    String comentarioId = doc.getDocuments().get(0).getId();
+                                    if (comentarionuevo != null) {
                                         Map<String, Object> actualizacion = new HashMap<>();
                                         actualizacion.put("likes", reacciones.size());
                                         actualizacion.put("ultimoLikeUid", user.getUid()); // 🔔 importante
 
                                         db.collection("comentarios")
-                                                .document(String.valueOf(comentario.getIdComentario()))
+                                                .document(comentarioId)
                                                 .update(actualizacion)
                                                 .addOnSuccessListener(unused -> Log.d("LIKE", "✅ Likes actualizados"))
                                                 .addOnFailureListener(error -> Log.e("LIKE", "❌ Falló el update", error));

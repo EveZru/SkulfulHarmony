@@ -64,11 +64,13 @@ public class admi_denuncias extends AppCompatActivity {
             if (itemId == R.id.menu_estadisticas) {
                 startActivity(new Intent(this, admi_populares.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             }
             if (itemId == R.id.menu_perfil) {
                 startActivity(new Intent(this, perfil_admin.class));
                 overridePendingTransition(0, 0);
+                finish();
                 return true;
             }
             return false;

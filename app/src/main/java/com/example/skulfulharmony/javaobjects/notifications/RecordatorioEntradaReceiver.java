@@ -30,17 +30,6 @@ public class RecordatorioEntradaReceiver extends BroadcastReceiver {
         boolean notiEntradaActiva = prefs.getBoolean("horaentrada", true);
         boolean notiMeGustaActiva = prefs.getBoolean("megustacomentario", true);
 
-        // 🔥 NOTIFICACIÓN DE PRUEBA para "me gusta en comentario"
-        if (notiMeGustaActiva) {
-            NotificacionHelper.mostrarSimple(
-                    context,
-                    "👍 ¡Esto es una preuba manito!",
-                    "Wasaaaaaaaaaa!"
-            );
-        } else {
-            Log.d("RecordatorioReceiver", "🔕 Notificación de me gusta en comentario desactivada.");
-        }
-
         // Si no está activa la de hora promedio, cancelamos el resto
         if (!notiEntradaActiva) {
             Log.d("RecordatorioReceiver", "🔕 Notificación de hora de entrada desactivada.");

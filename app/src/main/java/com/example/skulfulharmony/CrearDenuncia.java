@@ -19,6 +19,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.skulfulharmony.javaobjects.courses.Curso;
 import com.example.skulfulharmony.javaobjects.miscellaneous.Denuncia;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -201,16 +202,25 @@ public class CrearDenuncia extends AppCompatActivity {
                     .get()
                     .addOnSuccessListener(snapshot -> {
                         if (!snapshot.isEmpty()) {
-                            String correo = snapshot.getDocuments().get(0).getString("creador");
-                            firestore.collection("usuarios")
-                                    .whereEqualTo("correo", correo)
-                                    .get()
-                                    .addOnSuccessListener(usuarioSnap -> {
-                                        if (!usuarioSnap.isEmpty()) {
-                                            denuncia.setAutorContenido(usuarioSnap.getDocuments().get(0).getId());
-                                        }
-                                        subirDenuncia(denuncia, dialog);
-                                    });
+                            Curso curso = snapshot.getDocuments().get(0).toObject(Curso.class);
+                            if (curso == null) {
+                                Toast.makeText(this, "Error al obtener el curso", Toast.LENGTH_SHORT).show();
+                                return;
+                            }else{
+                                if(!curso.getCreador().isEmpty() && curso.getCreador() != null
+                                && !curso.getCreador().equals("") && !curso.getCreador().equals("null")) {
+                                    firestore.collection("usuarios")
+                                            .whereEqualTo("correo", curso.getCreador())
+                                            .get()
+                                            .addOnSuccessListener(usuarioSnap -> {
+                                                if (!usuarioSnap.isEmpty()) {
+                                                    denuncia.setAutorContenido(usuarioSnap.getDocuments().get(0).getId());
+                                                }
+                                                subirDenuncia(denuncia, dialog);
+                                            });
+                                }
+                            }
+
                         } else {
                             subirDenuncia(denuncia, dialog);
                         }

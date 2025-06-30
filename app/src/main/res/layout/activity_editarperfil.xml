@@ -60,26 +60,6 @@
                 android:inputType="textMultiLine"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Imagen de perfil -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="210dp"
-                android:layout_height="210dp"
-                android:layout_gravity="center"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                android:backgroundTint="@color/gray1">
-
-                <ImageView
-                    android:id="@+id/iv_fotoperfil"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/subir_ico"
-                    android:contentDescription="@string/imagen_perfil_desc"
-                    android:clickable="true"
-                    android:focusable="true" />
-            </androidx.cardview.widget.CardView>
-
             <!-- Espacio -->
             <View
                 android:layout_width="match_parent"

@@ -36,8 +36,9 @@ public class CerrarSesion extends AppCompatActivity {
             DbUser dbUser = new DbUser(this);
             dbUser.deleteUser();
             Intent intent = new Intent(CerrarSesion.this, IniciarSesion.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish(); // Cierra la actividad actual
+            finish();
         });
 
         // Botón para cancelar y volver atrás

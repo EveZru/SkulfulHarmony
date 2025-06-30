@@ -69,13 +69,15 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
   const antes = event.data.before.data();
   const despues = event.data.after.data();
 
+  // Solo continuar si aumentaron los likes
   if ((antes.likes || 0) >= (despues.likes || 0)) return;
 
-  const autorId = despues.autorId;
+  const autorId = despues.uidAutor;
   const quienDioLikeUid = despues.ultimoLikeUid;
 
   if (!autorId || !quienDioLikeUid || autorId === quienDioLikeUid) return;
 
+  // Obtener documentos de autor y quien dio like
   const [autorDoc, quienDoc] = await Promise.all([
     admin.firestore().collection("usuarios").doc(autorId).get(),
     admin.firestore().collection("usuarios").doc(quienDioLikeUid).get()
@@ -86,6 +88,7 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
   const autorData = autorDoc.data();
   const quienData = quienDoc.data();
 
+  // Verificar si el usuario acepta recibir notificaciones de likes
   if (!autorData?.notificaciones?.likeComentario) {
     console.log("🔕 Notificación de like desactivada por el usuario:", autorId);
     return;
@@ -111,6 +114,7 @@ exports.notificacionLikeComentario = onDocumentUpdated("comentarios/{comentarioI
     console.error("❌ Error al enviar notificación:", error);
   }
 });
+
 
 exports.notificacionDenuncia = onDocumentCreated("denuncias/{id}", async (event) => {
   const data = event.data.data();

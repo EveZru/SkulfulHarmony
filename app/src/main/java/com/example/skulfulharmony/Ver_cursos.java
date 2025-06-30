@@ -258,58 +258,28 @@ public class Ver_cursos extends AppCompatActivity {
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
-            comentario.setIdClase(null); // Curso, no clase
+            comentario.setIdClase(-1); // Curso, no clase
             comentario.setUidAutor(user.getUid());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            db.collection("cursos")
-                    .whereEqualTo("idCurso", idCurso)
+            db.collection("comentarios")
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                            String docId = doc.getId();
+                        Integer nuevaId = queryDocumentSnapshots.size() + 1;
+                        comentario.setIdComentario(nuevaId);
 
-                            Curso curso = doc.toObject(Curso.class);
-                            if (curso == null) {
-                                Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-
-                            List<Comentario> comentarios = curso.getComentarios();
-                            if (comentarios == null) comentarios = new ArrayList<>();
-
-                            Integer nuevaId = comentarios.size() + 1;
-                            comentario.setIdComentario(nuevaId);
-                            comentarios.add(comentario);
-
-                            db.collection("cursos")
-                                    .document(docId)
-                                    .update("comentarios", comentarios)
-                                    .addOnSuccessListener(unused -> {
-                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                        etcomentario.setText("");
-                                        cargarComentarios(idCurso);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
-                                        e.printStackTrace();
-                                    });
-
-                            // 🔥 También guardar en colección raíz "comentarios"
-                            db.collection("comentarios")
-                                    .document(String.valueOf(nuevaId))
-                                    .set(new java.util.HashMap<String, Object>() {{
-                                        put("autorId", user.getUid());
-                                        put("texto", coment);
-                                        put("likes", 0); // Empieza en 0
-                                        put("idCurso", idCurso);
-                                        put("timestamp", fecha);
-                                    }});
-                        } else {
-                            Toast.makeText(this, "Curso no encontrado", Toast.LENGTH_SHORT).show();
-                        }
+                        db.collection("comentarios")
+                                .add(comentario)
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                    etcomentario.setText("");
+                                    cargarComentarios(idCurso);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                });
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error al buscar el curso", Toast.LENGTH_SHORT).show();
@@ -365,7 +335,7 @@ public class Ver_cursos extends AppCompatActivity {
                                                         int generoId = generoMap.values().iterator().next();
                                                         String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, generoId);
                                                         if (generoStr != null) {
-                                                            finalPreferenciasUsuario.decrementarGenero(generoStr);
+                                                            finalPreferenciasUsuario.incrementarGenero(generoStr);
                                                         }
                                                     }
 
@@ -841,25 +811,23 @@ public class Ver_cursos extends AppCompatActivity {
 
     private void cargarComentarios(Integer idCurso){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("cursos")
+        db.collection("comentarios")
                 .whereEqualTo("idCurso", idCurso)
-                .limit(1)
+                .whereEqualTo("idClase", -1)
                 .get()
                 .addOnSuccessListener(cursoQuery -> {
                     if (!cursoQuery.isEmpty()) {
-                        DocumentSnapshot cursoDoc = cursoQuery.getDocuments().get(0);
-                        Curso curso = cursoDoc.toObject(Curso.class);
-                        if (curso != null) {
-                            if (curso.getComentarios() == null) {
-                                curso.setComentarios(new ArrayList<>());
-                            }
-                            Toast.makeText(Ver_cursos.this, "Tiene" + curso.getComentarios().size() + "comentarios", Toast.LENGTH_SHORT).show();
-                            rvComentarios.setNestedScrollingEnabled(false);
-                            AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(curso.getComentarios(), idCurso);
-                            rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                            rvComentarios.setAdapter(adapter);
+
+                        List<Comentario> comentarios = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : cursoQuery) {
+                            Comentario comentario = doc.toObject(Comentario.class);
+                            comentarios.add(comentario);
                         }
+                        rvComentarios.setNestedScrollingEnabled(false);
+                        AdapterVerCursoVerComentarios adapter = new AdapterVerCursoVerComentarios(comentarios, idCurso);
+                        rvComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                        rvComentarios.setAdapter(adapter);
+
                     }
                 })
                 .addOnFailureListener(e -> {
