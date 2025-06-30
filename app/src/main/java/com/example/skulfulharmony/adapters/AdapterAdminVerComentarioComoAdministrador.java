@@ -46,8 +46,14 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         holder.tipo.setText(denuncia.getTipo_denuncia());
-        holder.fecha.setText(denuncia.getFecha_denuncia().toDate().toString());
 
+        if (denuncia.getFecha_denuncia() != null) {
+            holder.fecha.setText(denuncia.getFecha_denuncia().toDate().toString());
+        } else {
+            holder.fecha.setText("Fecha desconocida");
+        }
+
+        // Color por tipo
         int color;
         switch (denuncia.getTipo_denuncia()) {
             case "Contenido ilegal":
@@ -67,101 +73,109 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
         }
         holder.card.setCardBackgroundColor(holder.itemView.getResources().getColor(color));
 
+        // Validar formato
         if (!"comentario".equals(denuncia.getFormato())) {
             holder.identificador_comentario.setText("⚠️ Formato inválido");
             return;
         }
 
-        // Comentario dentro de una CLASE
-        if (denuncia.getIdClase() != -1) {
-            db.collection("clases")
-                    .whereEqualTo("idCurso", denuncia.getIdCurso())
-                    .whereEqualTo("idClase", denuncia.getIdClase())
-                    .limit(1)
-                    .get()
-                    .addOnSuccessListener(claseSnapshot -> {
-                        if (!claseSnapshot.isEmpty()) {
-                            Clase clase = claseSnapshot.getDocuments().get(0).toObject(Clase.class);
-                            String claseDocId = claseSnapshot.getDocuments().get(0).getId();
-                            String textoComentario = obtenerTextoComentario(clase.getComentarios(), denuncia.getIdComentario());
+        // Primero obtener el comentario
+        db.collection("comentarios")
+                .whereEqualTo("idComentario", denuncia.getIdComentario())
+                .limit(1)
+                .get()
+                .addOnSuccessListener(comentarioSnapshot -> {
+                    String textoComentario;
+                    if (!comentarioSnapshot.isEmpty()) {
+                        Comentario comentario = comentarioSnapshot.getDocuments().get(0).toObject(Comentario.class);
+                        textoComentario = comentario != null ? comentario.getTexto() : "Comentario vacío";
+                    } else {
+                        textoComentario = "Comentario no encontrado";
+                    }
 
+                    // Comentario dentro de una CLASE
+                    if (denuncia.getIdClase() != -1) {
+                        db.collection("clases")
+                                .whereEqualTo("idCurso", denuncia.getIdCurso())
+                                .whereEqualTo("idClase", denuncia.getIdClase())
+                                .limit(1)
+                                .get()
+                                .addOnSuccessListener(claseSnapshot -> {
+                                    if (!claseSnapshot.isEmpty()) {
+                                        Clase clase = claseSnapshot.getDocuments().get(0).toObject(Clase.class);
+                                        String claseDocId = claseSnapshot.getDocuments().get(0).getId();
 
-                            db.collection("cursos")
-                                    .whereEqualTo("idCurso", clase.getIdCurso())
-                                    .limit(1)
-                                    .get()
-                                    .addOnSuccessListener(cursoSnapshot -> {
-                                        if (!cursoSnapshot.isEmpty()) {
-                                            Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
-                                            holder.identificador_comentario.setText("#" + clase.getIdClase() + ": " + curso.getTitulo());
+                                        db.collection("cursos")
+                                                .whereEqualTo("idCurso", clase.getIdCurso())
+                                                .limit(1)
+                                                .get()
+                                                .addOnSuccessListener(cursoSnapshot -> {
+                                                    if (!cursoSnapshot.isEmpty()) {
+                                                        Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
+                                                        holder.identificador_comentario.setText("#" + clase.getIdClase() + ": " + curso.getTitulo());
 
-                                            db.collection("usuarios")
-                                                    .whereEqualTo("correo", curso.getCreador())
-                                                    .limit(1)
-                                                    .get()
-                                                    .addOnSuccessListener(userSnapshot -> {
-                                                        if (!userSnapshot.isEmpty()) {
-                                                            Usuario user = userSnapshot.getDocuments().get(0).toObject(Usuario.class);
-                                                            holder.autor.setText(user.getNombre());
-                                                        } else {
-                                                            holder.autor.setText("Autor desconocido");
-                                                        }
-                                                    });
+                                                        db.collection("usuarios")
+                                                                .whereEqualTo("correo", curso.getCreador())
+                                                                .limit(1)
+                                                                .get()
+                                                                .addOnSuccessListener(userSnapshot -> {
+                                                                    if (!userSnapshot.isEmpty()) {
+                                                                        Usuario user = userSnapshot.getDocuments().get(0).toObject(Usuario.class);
+                                                                        holder.autor.setText(user != null ? user.getNombre() : "Autor desconocido");
+                                                                    } else {
+                                                                        holder.autor.setText("Autor desconocido");
+                                                                    }
+                                                                });
 
-                                            configurarDialogo(holder, denuncia, textoComentario, true, claseDocId);
-                                        }
-                                    });
-                        }
-                    });
+                                                        holder.itemView.setOnClickListener(v -> {
+                                                            configurarDialogo(holder, denuncia, textoComentario, true, claseDocId);
+                                                        });
+                                                    }
+                                                });
+                                    }
+                                });
 
-        } else { // Comentario en CURSO
-            db.collection("cursos")
-                    .whereEqualTo("idCurso", denuncia.getIdCurso())
-                    .limit(1)
-                    .get()
-                    .addOnSuccessListener(cursoSnapshot -> {
-                        if (!cursoSnapshot.isEmpty()) {
-                            Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
-                            String cursoDocId = cursoSnapshot.getDocuments().get(0).getId();
-                            String textoComentario = obtenerTextoComentario(curso.getComentarios(), denuncia.getIdComentario());
+                    } else { // Comentario en CURSO
+                        db.collection("cursos")
+                                .whereEqualTo("idCurso", denuncia.getIdCurso())
+                                .limit(1)
+                                .get()
+                                .addOnSuccessListener(cursoSnapshot -> {
+                                    if (!cursoSnapshot.isEmpty()) {
+                                        Curso curso = cursoSnapshot.getDocuments().get(0).toObject(Curso.class);
+                                        String cursoDocId = cursoSnapshot.getDocuments().get(0).getId();
 
-                            holder.identificador_comentario.setText(curso.getTitulo());
+                                        holder.identificador_comentario.setText(curso.getTitulo());
 
-                            db.collection("usuarios")
-                                    .whereEqualTo("correo", curso.getCreador())
-                                    .limit(1)
-                                    .get()
-                                    .addOnSuccessListener(userSnapshot -> {
-                                        if (!userSnapshot.isEmpty()) {
-                                            Usuario user = userSnapshot.getDocuments().get(0).toObject(Usuario.class);
-                                            if (user != null){
-                                                holder.autor.setText(user.getNombre());
-                                            }
-                                            holder.autor.setText(curso.getCreador());
+                                        db.collection("usuarios")
+                                                .whereEqualTo("correo", curso.getCreador())
+                                                .limit(1)
+                                                .get()
+                                                .addOnSuccessListener(userSnapshot -> {
+                                                    if (!userSnapshot.isEmpty()) {
+                                                        Usuario user = userSnapshot.getDocuments().get(0).toObject(Usuario.class);
+                                                        holder.autor.setText(user != null ? user.getNombre() : curso.getCreador());
+                                                    } else {
+                                                        holder.autor.setText("Autor desconocido");
+                                                    }
+                                                });
 
-                                        } else {
-                                            holder.autor.setText("Autor desconocido");
-                                        }
-                                    });
+                                        holder.itemView.setOnClickListener(v -> {
+                                            configurarDialogo(holder, denuncia, textoComentario, false, cursoDocId);
+                                        });
+                                    }
+                                });
+                    }
 
-                            configurarDialogo(holder, denuncia, textoComentario, false, cursoDocId);
-                        }
-                    });
-        }
+                }); // Fin comentario
     }
+
 
     @Override
     public int getItemCount() {
         return comentarios.size();
     }
 
-    private String obtenerTextoComentario(List<Comentario> lista, int index) {
-        if (lista != null && index >= 0 && index < lista.size()) {
-            Comentario c = lista.get(index);
-            return c != null ? c.getTexto() : "Comentario nulo";
-        }
-        return "Comentario no encontrado";
-    }
 
     private void configurarDialogo(ViewHolder holder, Denuncia denuncia, String textoComentario, boolean esClase, String documentoId) {
         View dialogView = LayoutInflater.from(holder.itemView.getContext()).inflate(R.layout.dialog_vercomentario_denunciado_admin, null);
@@ -186,42 +200,36 @@ public class AdapterAdminVerComentarioComoAdministrador extends RecyclerView.Ada
 
         btnEliminar.setOnClickListener(v -> {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("denuncias")
+                    .whereEqualTo("idDenuncia", denuncia.getIdDenuncia())
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.isEmpty()) {
+                            String docId = snapshot.getDocuments().get(0).getId();
+                            Denuncia denunciad = snapshot.getDocuments().get(0).toObject(Denuncia.class);
+                            db.collection("comentarios")
+                                            .whereEqualTo("idComentario", denunciad.getIdComentario())
+                                            .limit(1)
+                                            .get()
+                                            .addOnSuccessListener(comentarioSnapshot -> {
+                                                if (!comentarioSnapshot.isEmpty()) {
+                                                    String docIdComentario = comentarioSnapshot.getDocuments().get(0).getId();
+                                                    db.collection("comentarios").document(docIdComentario).delete()
+                                                            .addOnSuccessListener( unused -> {
+                                                                db.collection("denuncias").document(docId).delete()
+                                                                        .addOnSuccessListener(aVoid -> {
+                                                                            comentarios.remove(denuncia);
+                                                                            notifyDataSetChanged();
+                                                                            alertDialog.dismiss();
+                                                                        });
+                                                            });
+                                                }
+                                            });
 
-            Runnable eliminarDenuncia = () -> {
-                db.collection("denuncias")
-                        .whereEqualTo("idDenuncia", denuncia.getIdDenuncia())
-                        .limit(1)
-                        .get()
-                        .addOnSuccessListener(snapshot -> {
-                            if (!snapshot.isEmpty()) {
-                                String docId = snapshot.getDocuments().get(0).getId();
-                                db.collection("denuncias").document(docId).delete()
-                                        .addOnSuccessListener(aVoid -> {
-                                            comentarios.remove(denuncia);
-                                            notifyDataSetChanged();
-                                            alertDialog.dismiss();
-                                        });
-                            }
-                        });
-            };
+                        }
+                    });
 
-            if (esClase) {
-                db.collection("clases").document(documentoId).get().addOnSuccessListener(doc -> {
-                    Clase clase = doc.toObject(Clase.class);
-                    if (clase != null && clase.getComentarios() != null) {
-                        clase.getComentarios().remove(denuncia.getIdComentario());
-                        db.collection("clases").document(documentoId).set(clase).addOnSuccessListener(aVoid -> eliminarDenuncia.run());
-                    }
-                });
-            } else {
-                db.collection("cursos").document(documentoId).get().addOnSuccessListener(doc -> {
-                    Curso curso = doc.toObject(Curso.class);
-                    if (curso != null && curso.getComentarios() != null) {
-                        curso.getComentarios().remove(denuncia.getIdComentario());
-                        db.collection("cursos").document(documentoId).set(curso).addOnSuccessListener(aVoid -> eliminarDenuncia.run());
-                    }
-                });
-            }
         });
 
         alertDialog.show();

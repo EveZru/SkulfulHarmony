@@ -473,49 +473,22 @@ public class Ver_clases extends AppCompatActivity {
             comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
             comentario.setUidAutor(user.getUid());
 
-            db.collection("clases")
-                    .whereEqualTo("idCurso", idCurso)
-                    .whereEqualTo("idClase", idClase)
+            db.collection("comentarios")
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            DocumentSnapshot doc = queryDocumentSnapshots.getDocuments().get(0);
-                            String docId = doc.getId();
-                            Clase clase = doc.toObject(Clase.class);
-                            List<Comentario> comentarios = clase.getComentarios();
-                            if (comentarios == null) comentarios = new ArrayList<>();
-                            Integer nuevaId = comentarios.size() + 1;
-                            comentario.setIdComentario(nuevaId);
-                            comentarios.add(comentario);
+                        Integer nuevaId = queryDocumentSnapshots.size() + 1;
+                        comentario.setIdComentario(nuevaId);
 
-                            db.collection("clases")
-                                    .document(docId)
-                                    .update("comentarios", comentarios)
-                                    .addOnSuccessListener(unused -> {
-                                        Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
-                                        etcomentario.setText("");
-                                        cargarComentarios(idCurso, idClase);
-
-                                        db.collection("comentarios")
-                                                .document(String.valueOf(nuevaId))
-                                                .set(new HashMap<String, Object>() {{
-                                                    put("autorId", user.getUid());
-                                                    put("texto", coment);
-                                                    put("likes", 0);
-                                                    put("idClase", idClase);
-                                                    put("idCurso", idCurso);
-                                                    put("timestamp", fecha);
-                                                }})
-                                                .addOnSuccessListener(aVoid -> Log.d("CrearComentario", "Comentario raíz creado"))
-                                                .addOnFailureListener(e -> Log.e("CrearComentario", "Error al crear en raíz", e));
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
-                                    });
-
-                        } else {
-                            Toast.makeText(this, "Clase no encontrada", Toast.LENGTH_SHORT).show();
-                        }
+                        db.collection("comentarios")
+                                .add(comentario)
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Comentario agregado", Toast.LENGTH_SHORT).show();
+                                    etcomentario.setText("");
+                                    cargarComentarios(idCurso, idClase);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(this, "Error al subir comentario", Toast.LENGTH_SHORT).show();
+                                });
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Error al buscar la clase", Toast.LENGTH_SHORT).show();
@@ -579,7 +552,7 @@ public class Ver_clases extends AppCompatActivity {
                                                         int generoId = generoMap.values().iterator().next(); // ✅ obtiene el único valor
                                                         String generoStr = obtenerClavePorValor(DataClusterList.listaGenero, generoId);
                                                         if (generoStr != null) {
-                                                            finalPreferenciasUsuario.decrementarGenero(generoStr);
+                                                            finalPreferenciasUsuario.incrementarGenero(generoStr);
                                                         }
                                                     }
 
@@ -684,24 +657,22 @@ public class Ver_clases extends AppCompatActivity {
     private void cargarComentarios(int idCurso, int idClase) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("clases")
+        db.collection("comentarios")
                 .whereEqualTo("idCurso",idCurso)
                 .whereEqualTo("idClase", idClase)
-                .limit(1)
                 .get()
                 .addOnSuccessListener(onSuccessListener -> {
                     if (!onSuccessListener.isEmpty()) {
-                        DocumentSnapshot doc = onSuccessListener.getDocuments().get(0);
-                        String docId = doc.getId();
-                        Clase clase = doc.toObject(Clase.class);
-                        if (clase != null) {
-                            if(clase.getComentarios()==null){
-                                clase.setComentarios(new ArrayList<>());
-                            }
-                            verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-                            AdapterVerClaseVerComentarios adapter = new AdapterVerClaseVerComentarios(clase.getComentarios(), idCurso, idClase);
-                            verComentarios.setAdapter(adapter);
+                        List<Comentario> comentarios = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : onSuccessListener) {
+                            Comentario comentario = doc.toObject(Comentario.class);
+                            comentarios.add(comentario);
                         }
+
+                        verComentarios.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+                        AdapterVerClaseVerComentarios adapter = new AdapterVerClaseVerComentarios(comentarios, idCurso, idClase);
+                        verComentarios.setAdapter(adapter);
+
                     }
                 })
                 .addOnFailureListener(e -> {
