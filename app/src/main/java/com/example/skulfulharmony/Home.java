@@ -22,12 +22,14 @@ import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 
 import com.example.skulfulharmony.adapters.AdapterHomeVerClaseHistorial;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursos;
 import com.example.skulfulharmony.adapters.AdapterHomeVerCursosOriginales;
+import com.example.skulfulharmony.adapters.AdapterHomeVerTodosLosCursos;
 import com.example.skulfulharmony.adapters.AdapterPopulares;
 import com.example.skulfulharmony.databaseinfo.DbHelper;
 import com.example.skulfulharmony.javaobjects.courses.Clase;
@@ -63,6 +65,7 @@ public class Home extends AppCompatActivity {
     private List<Curso> listaCursos;
     private RecyclerView rv_populares,rv_homevercursos, rv_homehistorial,rv_homeclasesoriginales;
     RecyclerView recyclerView2;
+    private RecyclerView verTodosLosCursos;
     private AdapterHomeVerCursosOriginales adapterHomeVerCursosOriginales;
     private Handler handler = new Handler();
     private int currentPosition = 0;
@@ -86,6 +89,7 @@ public class Home extends AppCompatActivity {
         rv_homevercursos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         et_buscarhome=findViewById(R.id.et_buscarhome);
         iv_buscar=findViewById(R.id.iv_buscarhome);
+        verTodosLosCursos=findViewById(R.id.rv_hometodosloscursos);
 
         //-------Parte de los cursos de clases originales -------
         listaCursos = new ArrayList<>();
@@ -126,6 +130,7 @@ public class Home extends AppCompatActivity {
         cargarCursosHistorial();
         cargarCursosPopulares();
         carrucelPopulares();
+        cargarTodosLosCursos();
 
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,6 +201,29 @@ public class Home extends AppCompatActivity {
         } else {
             Log.e("Error", "La vista BottomNavigationView no se ha encontrado");
         }
+    }
+
+    private void cargarTodosLosCursos() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("cursos")
+                .orderBy("popularidad", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(onSucces->{
+                    List<Curso> cursos = new ArrayList<>();
+                    for (DocumentSnapshot doc : onSucces) {
+                        Curso curso = doc.toObject(Curso.class);
+                        if (curso != null && curso.getTitulo() != null && !curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧" ) && !curso.getTitulo().isEmpty()
+                                && !curso.getTitulo().toLowerCase().startsWith("desabilitado") && !curso.getTitulo().equals("")){
+                            cursos.add(curso);
+                        }
+
+                    }
+                    verTodosLosCursos.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+                    AdapterHomeVerTodosLosCursos adapter = new AdapterHomeVerTodosLosCursos(cursos, Home.this);
+                    verTodosLosCursos.setAdapter(adapter);
+                })
+                .addOnFailureListener(e->{
+                });
     }
 
     private void cargarCursosCluster() {
@@ -319,7 +347,7 @@ public class Home extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
         cargarCursosCluster();
         cargarCursosHistorial();
-
+        cargarTodosLosCursos();
         if (this instanceof Home) {
             bottomNavigationView.setSelectedItemId(R.id.it_homme);
 
@@ -356,6 +384,7 @@ public class Home extends AppCompatActivity {
                     mostrarCursoError("Error al cargar populares", "Verifica tu conexión");
                 });
     }
+
     private void mostrarCursoError(String titulo, String mensaje) {
         RecyclerView rvPopulares = findViewById(R.id.rv_populares_homme);
         Curso error = new Curso(titulo, mensaje, null, null, null);
@@ -363,6 +392,7 @@ public class Home extends AppCompatActivity {
         listaError.add(error);
         rvPopulares.setAdapter(new AdapterHomeVerCursos(listaError, this));
     }
+
     private void carrucelPopulares() {
         handler.postDelayed(new Runnable() {
             @Override

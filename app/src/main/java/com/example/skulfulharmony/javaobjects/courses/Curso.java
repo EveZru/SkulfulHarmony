@@ -224,6 +224,7 @@ public class Curso implements Serializable {
         return promedioCalificacion;
     }
 
+
    public List<Integer> getCalificacionCursos() {
         return calificacionCursos;
     }

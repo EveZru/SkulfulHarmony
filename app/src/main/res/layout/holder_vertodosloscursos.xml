@@ -1,0 +1,76 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/clase_elemento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:clickable="true">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="16dp"
+        app:cardBackgroundColor="@color/gray2"
+        app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/degradado_holder_background">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/cardImagetc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="250dp"
+                android:adjustViewBounds="true"
+                android:padding="5dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CardShapeRounded"
+                android:src="@drawable/img_encabezado" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_textprincipaltc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre del curso"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/tv_complementariotc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Complemento"
+                    android:textSize="13sp"
+                    android:textColor="@color/white"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_marginTop="2dp" />
+
+                <TextView
+                    android:id="@+id/tv_textsegundotc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descripción corta"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
