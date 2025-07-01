@@ -46,7 +46,7 @@
                     android:textStyle="bold"
                     android:textSize="20sp"
                     android:paddingHorizontal="5dp"
-                    android:text="Skillfull Harmony"/>
+                    android:text="Skillful Harmony"/>
             </androidx.appcompat.widget.Toolbar>
 
             <View
