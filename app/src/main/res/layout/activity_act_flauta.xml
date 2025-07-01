@@ -21,6 +21,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="190dp"
            android:layout_marginLeft="20dp"
+            android:backgroundTint="@color/white"
             android:background="@drawable/five_rounder_button"/>
 
         <FrameLayout
