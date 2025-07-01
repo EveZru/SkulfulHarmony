@@ -28,24 +28,20 @@ public class EditarPerfil extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_editarperfil);
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         userId = mAuth.getCurrentUser().getUid();
 
-        // Inicializar los componentes
         et_nuevoNombre = findViewById(R.id.et_nombrecambiar);
         et_nuevaDescripcion = findViewById(R.id.et_nuevadescripcion);
         btn_actualizar = findViewById(R.id.btn_cambiardatos);
 
-        // Ajustar el padding si es necesario
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Evento para actualizar los datos del perfil
         btn_actualizar.setOnClickListener(v -> {
             String nuevoNombre = et_nuevoNombre.getText().toString().trim();
             String nuevaDescripcion = et_nuevaDescripcion.getText().toString().trim();
@@ -61,7 +57,6 @@ public class EditarPerfil extends AppCompatActivity {
     private void actualizarPerfil(String nuevoNombre, String nuevaDescripcion) {
         if (userId == null) return;
 
-        // Actualizar los datos en Firestore
         db.collection("usuarios").document(userId)
                 .update("nombre", nuevoNombre, "descripcion", nuevaDescripcion)
                 .addOnSuccessListener(aVoid -> {

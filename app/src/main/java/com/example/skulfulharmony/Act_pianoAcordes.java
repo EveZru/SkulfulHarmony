@@ -44,6 +44,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,8 +104,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_act_piano_acordes);
 
-
-        //  teclas blancas
         btn_do1 = findViewById(R.id.btn_do1);
         btn_re1 = findViewById(R.id.btn_re1);
         btn_mi1 = findViewById(R.id.btn_mi1);
@@ -120,7 +119,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
         btn_la2 = findViewById(R.id.btn_la2);
         btn_si2 = findViewById(R.id.btn_si2);
 
-        //  teclas negras
         btn_doso1 = findViewById(R.id.btn_doso1);
         btn_reso1 = findViewById(R.id.btn_reso1);
         btn_faso1 = findViewById(R.id.btn_faso1);
@@ -188,7 +186,7 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
 
         for (AppCompatButton tecla : teclasPiano) {
-            if (tecla != null) { // Check if the button is not null
+            if (tecla != null) {
                 coloresOriginales.put(tecla, drawableMap.get(getResources().getResourceEntryName(tecla.getId())));
                 tecla.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -265,7 +263,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
 
         notasAcordeActual = acordeInfo.notas;
 
-        // Restablecer el color de todas las teclas del piano usando el Map
         for (AppCompatButton tecla : teclasPiano) {
             if (tecla != null) {
                 tecla.setBackgroundResource(coloresOriginales.get(tecla));
@@ -328,10 +325,6 @@ public class Act_pianoAcordes extends AppCompatActivity {
             nombreTecla = "La#";
         }
 
-
-        Toast.makeText(this, "Presionaste: " + nombreTecla, Toast.LENGTH_SHORT).show();
-
-
         boolean teclaCorrecta = notasAcordeActual.contains(nombreTecla);
         if (teclaCorrecta) {
             // La tecla es correcta, cambiar su color
@@ -346,12 +339,12 @@ public class Act_pianoAcordes extends AppCompatActivity {
                         AcordeRandom();
                     }
                 }, 1000);
-                Toast.makeText(this, "¡Acorde correcto!", Toast.LENGTH_SHORT).show();
-            }
+                mostrarMensaje("Acorde Correcto!");
+                  }
         } else {
 
             botonPresionado.setBackgroundColor(ContextCompat.getColor(this, R.color.rojo));
-            Toast.makeText(this, "¡Inténtalo otra vez!", Toast.LENGTH_SHORT).show();
+            mostrarMensaje("¡Intentalo Otravez!");
 
 
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -377,6 +370,16 @@ public class Act_pianoAcordes extends AppCompatActivity {
         if (tecla != null) {
             teclasPiano.add(tecla);
         }
+    }
+    private void mostrarMensaje(String mensaje) {
+        View layout = getLayoutInflater().inflate(R.layout.holder_boton_extra, null);
+        Button boton = layout.findViewById(R.id.btn_ver_mas);
+        boton.setText(mensaje);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 }
 

@@ -142,20 +142,19 @@ public class CrearCuenta extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
 
-                        String photoUrl = "https://dl.dropboxusercontent.com/scl/fi/n5hcisqjtnj52rhr54k2l/lol.png?rlkey=nxygu2omun5ktztg0mr23gcr2"; // URL predeterminada, cámbiala según sea necesario
+                        String photoUrl = "https://dl.dropboxusercontent.com/scl/fi/n5hcisqjtnj52rhr54k2l/lol.png?rlkey=nxygu2omun5ktztg0mr23gcr2";
 
-                        // 🔥 Guardar en Firestore con rol usuario
                         FirebaseFirestore.getInstance().collection("usuarios")
                                 .document(uid)
                                 .set(new HashMap<String, Object>() {{
                                     put("nombre", name);
                                     put("correo", email);
                                     put("rol", "usuario");
-                                    put("fotoPerfil", photoUrl);  // Agrega la URL de la foto de perfil
-                                    put("seguidores", 0);  // Inicializamos en 0
-                                    put("seguidos", 0);    // Inicializamos en 0
+                                    put("fotoPerfil", photoUrl);
+                                    put("seguidores", 0);
+                                    put("seguidos", 0);
                                     put("cursos", 0);
-                                    put("acceptedTerms", false); // Asegúrate de agregar este campo para verificar si el usuario aceptó los términos
+                                    put("acceptedTerms", false);
                                 }});
 
                         DbUser dbUser = new DbUser(this);
@@ -168,7 +167,6 @@ public class CrearCuenta extends AppCompatActivity {
 
                         Toast.makeText(CrearCuenta.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
 
-                        // Redirigir al usuario a la pantalla de Términos y Condiciones
                         Intent intent = new Intent(CrearCuenta.this, TerminosCondiciones.class);
                         intent.putExtra("cuentaRecienCreada", true);
                         startActivity(intent);
@@ -209,7 +207,6 @@ public class CrearCuenta extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         String uid = mAuth.getCurrentUser().getUid();
 
-                        // 🔥 Guardar en Firestore con rol usuario si no existe
                         FirebaseFirestore.getInstance().collection("usuarios").document(uid).get()
                                 .addOnSuccessListener(document -> {
                                     if (!document.exists()) {

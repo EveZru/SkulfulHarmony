@@ -1,6 +1,5 @@
 package com.example.skulfulharmony;
 
-// 🧠 Clases internas del proyecto
 import com.example.skulfulharmony.server.config.DropboxConfig; // Configuración del cliente de Dropbox
 
 // ☁️ Dropbox SDK
@@ -103,23 +102,20 @@ public class Perfil extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        // Obtener el UID del usuario actual
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            userId = user.getUid(); // Obtener el ID del usuario autenticado
+            userId = user.getUid();
         } else {
-            // Si el usuario no está autenticado, redirige al login
+
             startActivity(new Intent(this, IniciarSesion.class));
             finish();
             return;
         }
 
 
-        // Referencias UI
         ivProfilePicture = findViewById(R.id.ivProfilePicture);
         tv_NombreUsuario = findViewById(R.id.tv_NombreUsuario);
         tv_No_Cursos = findViewById(R.id.tv_No_Cursos);
@@ -132,7 +128,7 @@ public class Perfil extends AppCompatActivity {
         cargarDatosUsuario();
 
         btn_gotoconfiguracion = findViewById(R.id.iv_gotoconfiguracion);
-        btn_gotoconfiguracion.setOnClickListener(v -> showPopupMenu(v));  // Se pasa la vista del botón que se ha clickeado
+        btn_gotoconfiguracion.setOnClickListener(v -> showPopupMenu(v));
         btn_preguntas_incorrectas=findViewById(R.id.btn_preguntas_incorrectas);
         btn_preguntas_incorrectas.setOnClickListener(v -> {
          Intent intent;
@@ -140,14 +136,11 @@ public class Perfil extends AppCompatActivity {
          startActivity(intent);
         });
 
-        // Configuración de los botones
         ivProfilePicture.setOnClickListener(v -> seleccionarImagen());
 
-        // Configurar la barra de navegación
         BottomNavigationView bottomNavigationView1 = findViewById(R.id.barra_navegacion1);
         bottomNavigationView1.setSelectedItemId(R.id.it_perfil);
 
-        // Gráfica de práctica semanal
         chartPracticaSemanal = findViewById(R.id.chartPracticaSemanal);
         chartProgresoCursos = findViewById(R.id.chartProgresoCursos);
         chartNivelInstrumentos = findViewById(R.id.chartNivelInstrumentos);
@@ -176,12 +169,11 @@ public class Perfil extends AppCompatActivity {
         }
     }
 
-    // Método para mostrar el menú flotante
     private void showPopupMenu(View view) {
         // Crear el PopupMenu y asociarlo con la vista 'view' (el botón de configuración)
         PopupMenu popupMenu = new PopupMenu(this, view);
         MenuInflater inflater = popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.config_menu, popupMenu.getMenu());  // Aquí se infla el menú desde el archivo config_menu.xml
+        inflater.inflate(R.menu.config_menu, popupMenu.getMenu());
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
@@ -213,7 +205,6 @@ public class Perfil extends AppCompatActivity {
             return false;
         });
 
-        // Mostrar el menú
         popupMenu.show();
     }
 
@@ -262,7 +253,7 @@ public class Perfil extends AppCompatActivity {
                     cargarGraficaPractica(tiemposPorSemana);
                 }
 
-                // 🔢 Mostrar progreso de cursos en gráfico
+                // Mostrar progreso de cursos en gráfico
                 Object rawProgresoCursos = documentSnapshot.get("progresoCursos");
                 if (rawProgresoCursos instanceof Map) {
                     Map<String, List<Long>> progresoCursos = new HashMap<>();
@@ -285,7 +276,7 @@ public class Perfil extends AppCompatActivity {
                     cargarGraficaProgresoCursos(progresoCursos);
                 }
 
-                // 🧠 Calcular nivel por instrumento desde Perfil directamente
+                // Calcular nivel por instrumento desde Perfil directamente
                 calcularNivelInstrumentos(db, userId, resultado -> {
                     for (String instrumento : resultado.keySet()) {
                         Map<String, Object> nivelData = resultado.get(instrumento);

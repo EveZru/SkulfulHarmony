@@ -40,7 +40,7 @@ public class vertiempousuario extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         } else {
-            // Si no hay usuario logueado, evitamos error
+
             finish();
             return;
         }
@@ -57,11 +57,10 @@ public class vertiempousuario extends AppCompatActivity {
                 findViewById(R.id.barSabado)
         };
 
-        btnModificarTiempo = findViewById(R.id.btnModificarTiempo); // Inicializamos el botón
+        btnModificarTiempo = findViewById(R.id.btnModificarTiempo);
 
-        // Configuramos el click del botón para redirigir al usuario a la actividad de configuración
         btnModificarTiempo.setOnClickListener(v -> {
-            // Creamos una intención para llevar al usuario a la actividad de modificación de tiempo
+
             Intent intent = new Intent(vertiempousuario.this, modificar_tiempo.class);
             startActivity(intent);
         });
@@ -81,7 +80,7 @@ public class vertiempousuario extends AppCompatActivity {
             if (documentSnapshot != null && documentSnapshot.exists() && documentSnapshot.getData() != null) {
                 String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                tiemposPorDia.clear(); // 🔥 Limpiar datos viejos
+                tiemposPorDia.clear();
                 tiempoHoy = 0;
 
                 for (Map.Entry<String, Object> entry : documentSnapshot.getData().entrySet()) {
@@ -96,7 +95,6 @@ public class vertiempousuario extends AppCompatActivity {
                         tiemposPorDia.put(fecha, minutos);
                     }
                 }
-
                 actualizarPantalla();
             } else {
                 actualizarPantalla();

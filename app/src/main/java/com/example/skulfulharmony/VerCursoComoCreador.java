@@ -233,25 +233,23 @@ public class VerCursoComoCreador extends AppCompatActivity {
     }
     private void deshabilitarCurso(FirebaseFirestore db, String documentIdCurso) {
         Map<String, Object> updates = new HashMap<>();
-        updates.put("titulo", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧"); // Carácter invisible + texto
-        updates.put("creador", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧");
-        updates.put("descripcion", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧Este curso ha sido eliminado");
+        updates.put("titulo", "✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧");
+        updates.put("creador", "\uD83C\uDFA7");
+        updates.put("descripcion", "✩♬ ₊˚.Este curso ha sido desabilitado\uD83C\uDFA7⋆☾⋆⁺₊✧");
         updates.put("popularidad",0.0);
         updates.put("visitas",0);
         updates.put("cantidadDescargas",0);
        updates.put( "promedioCalificacion",0.0);
-        updates.put("strike1",true);
-        updates.put("strike2",true);
-        updates.put("strike3",true);
+
 
         db.collection("cursos").document(documentIdCurso)
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(VerCursoComoCreador.this, "Curso marcado como eliminado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VerCursoComoCreador.this, "Curso marcado como desabilitado", Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(VerCursoComoCreador.this, "Error al deshabilitar curso: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(VerCursoComoCreador.this, "Error al deshabilitar curso: "/* + e.getMessage()*/, Toast.LENGTH_LONG).show();
                 });
     }
 

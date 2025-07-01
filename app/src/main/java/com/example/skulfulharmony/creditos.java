@@ -13,15 +13,13 @@ public class creditos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creditos); // Cargar el layout de créditos
 
-        // Inicializar el botón de aceptación
         Button botonAceptar = findViewById(R.id.botonAceptar);
 
-        // Configurar el botón de aceptación
         botonAceptar.setOnClickListener(v -> {
-            // Redirigir a la siguiente actividad (por ejemplo, Perfil)
-            Intent intent = new Intent(creditos.this, Perfil.class); // Cambia 'Perfil' a la actividad que quieras abrir
+
+            Intent intent = new Intent(creditos.this, Perfil.class);
             startActivity(intent);
-            finish(); // Finaliza la actividad actual para evitar que el usuario regrese a esta pantalla con el botón de atrás
+            finish();
         });
     }
 }

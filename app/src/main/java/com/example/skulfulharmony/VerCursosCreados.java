@@ -42,9 +42,6 @@ public class VerCursosCreados extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ver_cursos_creados);
-//
-//        Window window = getWindow();
-//        window.setDecorFitsSystemWindows(false);
 
 
         bottomNavigationView = findViewById(R.id.barra_navegacion1);
@@ -104,23 +101,21 @@ public class VerCursosCreados extends AppCompatActivity {
     private void cargarCursosFirebase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        
-        // Verificar que el usuario esté autenticado
+
         if (user != null) {
-            // Crear la referencia de la colección "cursos"
+
             CollectionReference cursosRef = db.collection("cursos");
 
-            // Crear la consulta con el filtro y orden
             Query cursosQuery = cursosRef
-                    .whereEqualTo("creador", user.getEmail()) // Filtro por el email del creador
-                    .orderBy("fechaCreacionf", Query.Direction.ASCENDING); // Orden por fecha de creación de forma ascendente
+                    .whereEqualTo("creador", user.getEmail())
+                    .orderBy("fechaCreacionf", Query.Direction.ASCENDING);
 
-            // Obtener los cursos
+
             cursosQuery.get().addOnSuccessListener(queryDocumentSnapshots -> {
-                // Crear una lista para almacenar los cursos
+
                 ArrayList<Curso> listaCursost = new ArrayList<>();
 
-                // Recorrer los documentos obtenidos y convertirlos en objetos Curso
+
                 for (DocumentSnapshot document : queryDocumentSnapshots) {
                     Curso curso = document.toObject(Curso.class);
                     if (curso != null && !curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧")) {
@@ -128,17 +123,16 @@ public class VerCursosCreados extends AppCompatActivity {
                     }
                 }
 
-                // Ahora actualizamos el adaptador con la lista de cursos obtenida
                 AdapterCrearVerCursosCreados adapter = new AdapterCrearVerCursosCreados(listaCursost, VerCursosCreados.this);
                 recyclerView.setAdapter(adapter);
 
             }).addOnFailureListener(e -> {
-                // Manejo de errores al obtener los cursos
+
                 Toast.makeText(VerCursosCreados.this, "Error al cargar cursos", Toast.LENGTH_SHORT).show();
                 Log.e("Firestore", "Error: ", e);
             });
         } else {
-            // Si el usuario no está autenticado
+
             Toast.makeText(VerCursosCreados.this, "Usuario no autenticado", Toast.LENGTH_SHORT).show();
         }
 
@@ -157,16 +151,5 @@ public class VerCursosCreados extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.it_denunciar) {
-            startActivity(new Intent(VerCursosCreados.this, CrearClase.class));
-            return true;
-        } else if (id == R.id.it_descargar) {
-            Toast.makeText(this, "se supone que vas a ver lo de descargas", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 }

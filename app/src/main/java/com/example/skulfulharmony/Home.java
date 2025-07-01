@@ -68,7 +68,7 @@ public class Home extends AppCompatActivity {
     private int currentPosition = 0;
     private SQLiteDatabase localDatabase;
     private ImageView iv_buscar;
-    //private ViewPager2 viewPager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,27 +89,25 @@ public class Home extends AppCompatActivity {
 
         //-------Parte de los cursos de clases originales -------
         listaCursos = new ArrayList<>();
-        // Cursos originale creados de forma estatica
+        // Cursos originale
         Curso curso1 = new Curso("Fundamentos", null, null, null, null);
         Curso curso2 = new Curso("Partituras", null, null, null, null);
         Curso curso3 = new Curso("Piano", null, null, null, null);
         Curso curso4 = new Curso("Flauta", null, null, null, null);
         Curso curso5 = new Curso("Guitarra", null, null, null, null);
         Curso curso6 = new Curso("Afinador", null, null, null, null);
-        // Agregamos los cursos a la lista
+
         listaCursos.add(curso1);
         listaCursos.add(curso2);
         listaCursos.add(curso3);
         listaCursos.add(curso4);
         listaCursos.add(curso5);
         listaCursos.add(curso6);
-        /*// Ahora actualiza el adaptador
-            adapterHomeVerCursos = new AdapterHomeVerCursos(listaCursost, Home.this);
-            rv_homevercursos.setAdapter(adapterHomeVerCursos);*/
+
         RecyclerView recyclerView2 = findViewById(R.id.rv_homeclasesoriginales);
         recyclerView2.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapterHomeVerCursosOriginales=new AdapterHomeVerCursosOriginales((Context) this, listaCursos);
-        // AdapterHomeVerCursosOriginales adapter2 = new AdapterHomeVerCursosOriginales(this, listaCursos);
+
         recyclerView2.setAdapter(adapterHomeVerCursosOriginales);
 //_________________________________________________
         DbHelper dbHelper = new DbHelper(Home.this);
@@ -117,10 +115,10 @@ public class Home extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            // Si no hay usuario, redirigir a Login
+
             Intent intent = new Intent(Home.this, IniciarSesion.class);
             startActivity(intent);
-            finish(); // Evita que el usuario vuelva a Home si no está logueado
+            finish();
         }
 
 
@@ -129,7 +127,6 @@ public class Home extends AppCompatActivity {
         cargarCursosPopulares();
         carrucelPopulares();
 
-        //  Listener para abrir la actividad de búsqueda
         et_buscarhome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,19 +147,19 @@ public class Home extends AppCompatActivity {
             public void handleOnBackPressed() {
                 backPressCount++;
                 if (backPressCount == 3) {
-                    moveTaskToBack(true); // 🔹 Minimiza la aplicación en lugar de cerrarla
+                    moveTaskToBack(true);
                 } else {
                     Toast.makeText(Home.this, "Presiona atrás " + (3 - backPressCount) + " veces más para salir", Toast.LENGTH_SHORT).show();
-                    backPressHandler.postDelayed(() -> backPressCount = 0, 2000); // Reinicia el contador después de 2 segundos
+                    backPressHandler.postDelayed(() -> backPressCount = 0, 2000);
                 }
             }
         });
         rv_populares = findViewById(R.id.rv_populares_homme);
         rv_populares.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        LinearSnapHelper snapHelper = new LinearSnapHelper();// con esto queda centrado el card
+        LinearSnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(rv_populares);
-        //____coso de abrir lo de las preguntas incorrectas--------------------
+        //____ de abrir lo de las preguntas incorrectas--------------------
         SharedPreferences prefs = getSharedPreferences("mi_pref", MODE_PRIVATE);
         String lastDate = prefs.getString("last_open_date", "");
 
@@ -175,22 +172,21 @@ public class Home extends AppCompatActivity {
         }
 
         if (bottomNavigationView1 != null) {
-            // Configurar el listener para los ítems seleccionados
             bottomNavigationView1.setOnNavigationItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.it_homme) {
-                    // Acción para Home
+
                     return true;
                 } else if (itemId == R.id.it_new) {
-                    // Navegar a la actividad para crear un curso
+
                     startActivity(new Intent(Home.this, VerCursosCreados.class));
                     return true;
                 } else if (itemId == R.id.it_seguidos) {
-                    // Navegar a la actividad para ver la Biblioteca
+
                     startActivity(new Intent(Home.this, Biblioteca.class));
                     return true;
                 } else if (itemId == R.id.it_perfil) {
-                    // Navegar a la actividad para buscar perfiles
+
                     startActivity(new Intent(Home.this, Perfil.class));
                     return true;
                 }
@@ -221,7 +217,6 @@ public class Home extends AppCompatActivity {
                         Usuario usuario = doc.toObject(Usuario.class);
                         usuario.setId(doc.getId());
 
-                        // 🔁 Calcular cluster y luego continuar
                         usuario.calcularClusterUsuario(db, usuario, usuarioConCluster -> {
                             String instrumentoClave = usuarioConCluster.getInstrumento().keySet().iterator().next();
                             Integer instrumentoValor = usuarioConCluster.getInstrumento().get(instrumentoClave);
@@ -242,7 +237,7 @@ public class Home extends AppCompatActivity {
                                         for (DocumentSnapshot c : snapshot) {
                                             Curso curso = c.toObject(Curso.class);
                                         
-                                            if (curso != null && curso.getTitulo() != null && !curso.getTitulo().toLowerCase().startsWith("desabilitado")) {
+                                            if (curso != null && curso.getTitulo() != null && !curso.getTitulo().toLowerCase().startsWith("desabilitado")&& curso.getTitulo() != null && !curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧")) {
 
                                                 cursos.add(c.toObject(Curso.class));
                                             }
@@ -297,11 +292,10 @@ public class Home extends AppCompatActivity {
                                     return b.getFechaAcceso().compareTo(a.getFechaAcceso()); // Más reciente primero
                                 });
 
-                                // --- AQUI EL CAMBIO: Limita a las últimas 10 clases ---
-                                // Aseguramos que solo tomamos hasta 10 elementos, o menos si el historial es más corto.
+
                                 List<Clase> ultimasDiezClases = historialClases.subList(0, Math.min(historialClases.size(), 10));
 
-                                // Configura el RecyclerView con el historial limitado
+
                                 AdapterHomeVerClaseHistorial adapter = new AdapterHomeVerClaseHistorial(ultimasDiezClases, Home.this, true); // Cambia el constructor del adaptador
                                 rv_homehistorial.setAdapter(adapter);
                             } else {
@@ -325,7 +319,7 @@ public class Home extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
         cargarCursosCluster();
         cargarCursosHistorial();
-        // Establece el ítem seleccionado
+
         if (this instanceof Home) {
             bottomNavigationView.setSelectedItemId(R.id.it_homme);
 
@@ -374,16 +368,12 @@ public class Home extends AppCompatActivity {
             @Override
             public void run() {
                 if (rv_populares.getAdapter() == null || rv_populares.getAdapter().getItemCount() == 0) return;
-
                 int totalItems = rv_populares.getAdapter().getItemCount();
                 currentPosition++;
-
                 if (currentPosition >= totalItems) {
-                    currentPosition = 0; // Reinicia scroll
+                    currentPosition = 0;
                 }
-
                 rv_populares.smoothScrollToPosition(currentPosition);
-
                 handler.postDelayed(this, 3000);
             }
         }, 8000);

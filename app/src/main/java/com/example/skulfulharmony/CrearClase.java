@@ -98,7 +98,6 @@ public class CrearClase extends AppCompatActivity {
 
         EdgeToEdge.enable(this);
 
-        // Asegurar que el primer campo tenga el listener
         LayoutInflater inflater = LayoutInflater.from(this);
         View initialOption = inflater.inflate(R.layout.holder_opciones, containerOpciones, false);
         EditText initialEditText = initialOption.findViewById(R.id.et_opcrespuesta);
@@ -157,7 +156,7 @@ public class CrearClase extends AppCompatActivity {
 
 
     private void agregarOpSiFalta() {
-        if (opcionesList.size() >= MAX_OPCIONES) return; // No más de 5 opciones
+        if (opcionesList.size() >= MAX_OPCIONES) return;
 
         LayoutInflater inflater = LayoutInflater.from(this);
         View newOption = inflater.inflate(R.layout.holder_opciones, containerOpciones, false);
@@ -171,7 +170,6 @@ public class CrearClase extends AppCompatActivity {
         opcionesList.add(newOption);
     }
 
-    // Eliminar opciones vacías
     private void removeEmptyOptions() {
         for (int i = opcionesList.size() - 1; i >= 0; i--) {
             View option = opcionesList.get(i);
@@ -195,7 +193,6 @@ public class CrearClase extends AppCompatActivity {
             }
         }
 
-        // Si hay más de un campo vacío, elimina solo uno
         if (emptyCount > 1 && lastEmptyView != null) {
             containerOpciones.removeView(lastEmptyView);
             opcionesList.remove(lastEmptyView);
@@ -224,10 +221,10 @@ public class CrearClase extends AppCompatActivity {
             DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
 
             try (FileInputStream fis = new FileInputStream(archivo)) {
-                final long totalBytes = archivo.length();  // Hacemos esta variable final
-                final long[] bytesTransferidos = {0};  // Hacemos esto un arreglo para modificar dentro de la lambda
+                final long totalBytes = archivo.length();
+                final long[] bytesTransferidos = {0};
 
-                // Notificación inicial de progreso
+
                 handler.post(() -> NotificacionHelper.mostrarProgreso(
                         CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", 0));
 
@@ -252,12 +249,12 @@ public class CrearClase extends AppCompatActivity {
                     Toast.makeText(this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
                     guardarVideoTemporal(urlVideo); // Guardamos el enlace para usarlo al crear la clase
                     tvEstadoVideo.setText("🎥 Video subido");
-                    // Completa la notificación de progreso
+
                     NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");
                 });
 
             } catch (Exception e) {
-                Log.e("Dropbox", "Error al subir video", e);
+             /*   Log.e("Dropbox", "Error al subir video", e);*/
                 handler.post(() -> {
                     Toast.makeText(this, "Error al subir video", Toast.LENGTH_SHORT).show();
                     // Notificación de error
@@ -361,7 +358,7 @@ public class CrearClase extends AppCompatActivity {
 
     private void SubirArchivo(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("application/pdf"); // ✅ Solo PDF
+        intent.setType("application/pdf");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         filePickerLauncher.launch(intent);
@@ -371,14 +368,14 @@ public class CrearClase extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     if (result.getData().getClipData() != null) {
-                        // 🎯 Múltiples archivos seleccionados
+
                         int total = result.getData().getClipData().getItemCount();
                         for (int i = 0; i < total; i++) {
                             Uri fileUri = result.getData().getClipData().getItemAt(i).getUri();
                             manejarArchivoSeleccionado(fileUri);
                         }
                     } else if (result.getData().getData() != null) {
-                        // ✅ Solo un archivo seleccionado
+
                         Uri fileUri = result.getData().getData();
                         manejarArchivoSeleccionado(fileUri);
                     }
@@ -430,7 +427,7 @@ public class CrearClase extends AppCompatActivity {
                     if (!respuestaTexto.isEmpty()) {
                         respuestas.add(respuestaTexto);
                         if (cbCorrecta.isChecked()) {
-                            respuestaCorrectaIndex = respuestas.size() - 1; // Usar el índice de la lista de respuestas no vacías
+                            respuestaCorrectaIndex = respuestas.size() - 1;
                             respuestasCorrectasCount++;
                         }
                     }
@@ -441,40 +438,38 @@ public class CrearClase extends AppCompatActivity {
 
             Log.d("SubirPregunta", "Respuestas correctas encontradas: " + respuestasCorrectasCount);
 
-            // Validar si se seleccionó una única respuesta correcta
             if (respuestasCorrectasCount == 0) {
                 Toast.makeText(this, "No marcaste ninguna respuesta como correcta.", Toast.LENGTH_SHORT).show();
-                return; // Salir si no hay respuesta correcta
+                return;
             } else if (respuestasCorrectasCount > 1) {
                 Toast.makeText(this, "Marcaste más de una respuesta como correcta.", Toast.LENGTH_SHORT).show();
-                return; // Salir si hay más de una respuesta correcta
+                return;
             }
 
-            // Crear el objeto PreguntaCuestionario
+
             if (!respuestas.isEmpty() && respuestaCorrectaIndex != null) {
                 PreguntaCuestionario preguntaCuestionario = new PreguntaCuestionario(preguntaTexto, respuestas, respuestaCorrectaIndex);
                 preguntasClase.add(preguntaCuestionario);
-                // Inflar el CardView
+
+
                 LayoutInflater inflater = LayoutInflater.from(CrearClase.this);
                 View cardView = inflater.inflate(R.layout.holder_preguntasinicio, null);
 
-                // Obtener referencias a las vistas dentro del CardView
+
                 TextView tvPreguntaTextoCard = cardView.findViewById(R.id.tv_preguntatexto);
                 TextView tvRespuestasCard = cardView.findViewById(R.id.tv_respuestas);
                 TextView tvRespuestaCorrectaCard = cardView.findViewById(R.id.tv_respuesta_correcta);
                 ImageView btnEliminarPreguntaCard = cardView.findViewById(R.id.btn_eliminar_pregunta);
 
-                // Mostrar la pregunta
+
                 tvPreguntaTextoCard.setText(preguntaCuestionario.getPregunta());
 
-                // Mostrar las respuestas con un enter entre cada una
                 StringBuilder respuestasTexto = new StringBuilder();
                 for (String respuesta : preguntaCuestionario.getRespuestas()) {
                     respuestasTexto.append("- ").append(respuesta).append("\n");
                 }
                 tvRespuestasCard.setText(respuestasTexto.toString().trim());
 
-                // Mostrar la respuesta correcta (basándonos en el índice)
                 if (preguntaCuestionario.getRespuestaCorrecta() != null &&
                         preguntaCuestionario.getRespuestaCorrecta() >= 0 &&
                         preguntaCuestionario.getRespuestaCorrecta() < preguntaCuestionario.getRespuestas().size()) {
@@ -483,7 +478,6 @@ public class CrearClase extends AppCompatActivity {
                     tvRespuestaCorrectaCard.setText("Error al obtener la respuesta correcta");
                 }
 
-                // Configurar OnClickListener para el botón de eliminar
                 btnEliminarPreguntaCard.setOnClickListener(v -> {
                     LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
                     if (containerPreguntasCreadas != null) {
@@ -493,7 +487,6 @@ public class CrearClase extends AppCompatActivity {
                     }
                 });
 
-                // Agregar el CardView al contenedor
                 LinearLayout containerPreguntasCreadas = findViewById(R.id.container_preguntas_creadas);
                 if (containerPreguntasCreadas != null) {
                     containerPreguntasCreadas.addView(cardView);
@@ -501,10 +494,8 @@ public class CrearClase extends AppCompatActivity {
                     Toast.makeText(this, "No se encontró el contenedor para la pregunta creada.", Toast.LENGTH_SHORT).show();
                 }
 
-                // Mostrar mensaje de éxito
                 Toast.makeText(this, "Se cargó bien la pregunta.", Toast.LENGTH_SHORT).show();
 
-                // Opcional: Limpiar los campos
                 et_pregunta.setText("");
                 containerOpciones.removeAllViews();
                 LayoutInflater inflaterOpciones = LayoutInflater.from(CrearClase.this);
@@ -537,7 +528,6 @@ public class CrearClase extends AppCompatActivity {
             Toast.makeText(this, "Debes ingresar un texto", Toast.LENGTH_SHORT).show();
             return;
         }
-        //Logica para subir archivos a firebase
 
         Toast.makeText(this, "Pidiendo datos al servidor", Toast.LENGTH_SHORT).show();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -568,7 +558,7 @@ public class CrearClase extends AppCompatActivity {
                     clase.setImagen(imagen);
                     clase.setTextos(texto);
                     clase.setPreguntas(preguntasClase);
-                    clase.setVideoUrl(urlVideoSubido); // 🔥 Guarda el enlace de Dropbox del video
+                    clase.setVideoUrl(urlVideoSubido);
                     Timestamp  timestamp = Timestamp.now();
                     clase.setFechaCreacionf(timestamp);
                     clase.setCreadorUid(currentUser.getUid());
@@ -592,7 +582,7 @@ public class CrearClase extends AppCompatActivity {
                     e.printStackTrace();
                 });
         }
-        //finish();
+        finish();
     }
 
     private File copiarUriAArchivoTemporal(Uri uri) {
@@ -612,7 +602,7 @@ public class CrearClase extends AppCompatActivity {
                 }
             }
 
-            // Cambia el nombre final para Dropbox
+
             File renamedFile = new File(getCacheDir(), nombreArchivo);
             if (tempFile.renameTo(renamedFile)) {
                 return renamedFile;

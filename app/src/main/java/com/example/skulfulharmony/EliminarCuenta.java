@@ -46,13 +46,12 @@ public class EliminarCuenta extends AppCompatActivity {
         editTextMotivo = findViewById(R.id.editTextMotivo);
         editTextPassword = findViewById(R.id.editTextPassword);
 
-        // Al inicio, oculta el EditText, contraseña y botón eliminar
         editTextMotivo.setVisibility(View.GONE);
         editTextPassword.setVisibility(View.GONE);
         btnEliminarCuenta.setVisibility(View.GONE);
 
         btnContinuar.setOnClickListener(v -> {
-            // Muestra el campo para escribir motivo, contraseña y botón eliminar
+
             editTextMotivo.setVisibility(View.VISIBLE);
             editTextPassword.setVisibility(View.VISIBLE);
             btnEliminarCuenta.setVisibility(View.VISIBLE);
@@ -86,7 +85,7 @@ public class EliminarCuenta extends AppCompatActivity {
 
             user.reauthenticate(credential).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    // Ya autenticado, ahora guarda el motivo y elimina la cuenta
+
                     subirMotivoYEliminar(user, motivo);
                 } else {
                     Toast.makeText(this, "Error al re-autenticar: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();

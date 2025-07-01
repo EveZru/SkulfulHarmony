@@ -54,7 +54,6 @@ public class Clase_Fundamentos extends AppCompatActivity {
         listaPreguntas = obtenerPreguntas(nombreCurso);
         adapterPreguntas = new  AdapterPreguntasEnCuestionariosparaContestar(this, listaPreguntas);
 
-        // 🧠 Detectar nivel y guardar progreso
         int nivel = 1; // por defecto Principiante
         switch (nombreCurso) {
             case "Curso 1":

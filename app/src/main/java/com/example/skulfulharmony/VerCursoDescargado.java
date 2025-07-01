@@ -95,7 +95,6 @@ public class VerCursoDescargado extends AppCompatActivity {
             intent.putExtra("imagen", clase.getImagenUrl());
             intent.putExtra("video", clase.getVideoUrl());
 
-            // ✅ Blindaje completo para archivos
             List<String> archivos = clase.getArchivosUrl() != null ? clase.getArchivosUrl() : new ArrayList<>();
             String documento = (!archivos.isEmpty() && archivos.get(0) != null) ? archivos.get(0) : "";
 
@@ -111,7 +110,6 @@ public class VerCursoDescargado extends AppCompatActivity {
     private void eliminarCursoDescargado() {
         DbHelper db = new DbHelper(this);
 
-        // Elimina los archivos de cada clase
         for (ClaseFirebase clase : clases) {
             eliminarArchivo(clase.getImagenUrl());
             eliminarArchivo(clase.getVideoUrl());
@@ -122,16 +120,13 @@ public class VerCursoDescargado extends AppCompatActivity {
             }
         }
 
-        // Elimina de la base de datos local
         db.eliminarCursoYClasesPorId(cursoId);
 
         Toast.makeText(this, "Curso eliminado correctamente", Toast.LENGTH_SHORT).show();
 
-        // 🧼 Limpia la lista por si acaso
         clases.clear();
         adapter.notifyDataSetChanged();
 
-        // Marcar resultado para que Biblioteca sepa que refresque
         setResult(RESULT_OK);
         finish();
     }

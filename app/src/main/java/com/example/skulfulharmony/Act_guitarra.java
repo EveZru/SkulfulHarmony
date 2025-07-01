@@ -48,6 +48,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -170,6 +171,13 @@ public class Act_guitarra extends AppCompatActivity {
     }
 
     private void mostrarMensaje(String mensaje) {
-        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+        View layout = getLayoutInflater().inflate(R.layout.holder_boton_extra, null);
+        Button boton = layout.findViewById(R.id.btn_ver_mas);
+        boton.setText(mensaje);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
     }

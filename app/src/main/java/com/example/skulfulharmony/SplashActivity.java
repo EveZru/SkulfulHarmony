@@ -56,13 +56,12 @@ public class SplashActivity extends AppCompatActivity {
                             tiempoUsuario tiempo = new tiempoUsuario(userId, getApplicationContext());
                             tiempo.iniciarConteo();
 
-                            // ✅ Calcular promedio de entrada correctamente
                             tiempo.calcularPromediosEntradaPorSemana();
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                                         != PackageManager.PERMISSION_GRANTED) {
-                                    Log.d("SplashActivity", "🔔 Solicitando permiso para notificaciones");
+                                    Log.d("SplashActivity", " Solicitando permiso para notificaciones");
                                     ActivityCompat.requestPermissions(this,
                                             new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
                                 }
@@ -84,14 +83,14 @@ public class SplashActivity extends AppCompatActivity {
                             }
 
                         } else {
-                            Log.e("SplashActivity", "⛔ Documento del usuario no existe");
+                            Log.e("SplashActivity", " Documento del usuario no existe");
                             Toast.makeText(this, "No se encontró el rol del usuario", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(this, IniciarSesion.class));
                         }
                         finish();
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("SplashActivity", "❌ Error al obtener datos: " + e.getMessage());
+                        Log.e("SplashActivity", " Error al obtener datos: " + e.getMessage());
                         Toast.makeText(this, "Error al obtener datos", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(this, IniciarSesion.class));
                         finish();
@@ -113,7 +112,7 @@ public class SplashActivity extends AppCompatActivity {
             });
 
         } else {
-            Log.e("SplashActivity", "⚠️ No hay usuario logueado");
+            Log.e("SplashActivity", "No hay usuario logueado");
             startActivity(new Intent(this, IniciarSesion.class));
             finish();
         }
@@ -134,7 +133,7 @@ public class SplashActivity extends AppCompatActivity {
 
         for (Curso curso : cursos) {
             List<ClaseFirebase> clases = dbHelper.obtenerClasesPorCurso(curso.getId());
-            List<String> clasesCompletadas = new ArrayList<>(); // ✅ Aquí se declara UNA vez
+            List<String> clasesCompletadas = new ArrayList<>();
 
             for (ClaseFirebase clase : clases) {
                 Map<String, Object> progreso = dbHelper.obtenerProgresoOffline(clase.getTitulo());
@@ -165,8 +164,8 @@ public class SplashActivity extends AppCompatActivity {
 
         if (!updates.isEmpty()) {
             userRef.set(updates, SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> Log.d("SYNC_OFFLINE", "✅ Sincronización completada"))
-                    .addOnFailureListener(e -> Log.e("SYNC_OFFLINE", "❌ Error al sincronizar progreso offline", e));
+                    .addOnSuccessListener(aVoid -> Log.d("SYNC_OFFLINE", " Sincronización completada"))
+                    .addOnFailureListener(e -> Log.e("SYNC_OFFLINE", "Error al sincronizar progreso offline", e));
         }
     }
 

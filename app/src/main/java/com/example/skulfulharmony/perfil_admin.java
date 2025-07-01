@@ -33,28 +33,19 @@ public class perfil_admin extends AppCompatActivity {
         setContentView(R.layout.activity_perfil_admin);
 
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        // Referenciar vistas
         tvNombreAdmin = findViewById(R.id.tv_NombreUsuario);
         ivFotoAdmin = findViewById(R.id.ivProfilePicture);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
-
-        // Obtener y mostrar datos del admin
         cargarDatosAdmin();
-
-        // Acción para cerrar sesión
         btnCerrarSesion.setOnClickListener(v -> startActivity(new Intent(perfil_admin.this, CerrarSesion.class)));
 
-        // Barra inferior
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
         bottomNavigationView.setSelectedItemId(R.id.menu_perfil);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == R.id.menu_denuncias) {
                 startActivity(new Intent(this, admi_denuncias.class));
                 overridePendingTransition(0, 0);
@@ -80,8 +71,7 @@ public class perfil_admin extends AppCompatActivity {
             docRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     tvNombreAdmin.setText(documentSnapshot.getString("nombre"));
-                    // Para la imagen, si tienes URL, usa Glide o Picasso
-                    // Glide.with(this).load(documentSnapshot.getString("foto")).into(ivFotoAdmin);
+
                 } else {
                     tvNombreAdmin.setText("Administrador");
                 }

@@ -101,6 +101,6 @@ public class admi_denuncias extends AppCompatActivity {
                             break;
                     }
                 })
-                .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error al obtener denuncias de " + tipo, e));
+                .addOnFailureListener(e -> Log.e("DENUNCIAS_DB", "Error " , e));
     }
 }

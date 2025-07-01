@@ -42,18 +42,17 @@ public class RecuperarContrasena extends AppCompatActivity {
             }
         });
 
-        // Acción del botón "Cancelar"
         btncancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();  // Cerrar la actividad de recuperación de contraseña
+                finish();
             }
         });
 
         btncancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();  // Cerrar la actividad de recuperación de contraseña
+                finish();
             }
         });
 

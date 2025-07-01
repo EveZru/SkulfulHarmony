@@ -81,14 +81,13 @@ public class EditarCurso extends AppCompatActivity {
             idCurso = intent.getIntExtra("idCurso", -1);
             if(idCurso != -1){
                 cargarDatosCurso(idCurso);
-                Toast.makeText(this, "idCurso: " + idCurso, Toast.LENGTH_SHORT).show();
+          //      Toast.makeText(this, "idCurso: " + idCurso, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Error al obtener la información del curso", Toast.LENGTH_SHORT).show();
             }
         });
 
         btn_cancelar.setOnClickListener(v -> {
-
             finish();
         });
 
@@ -158,7 +157,7 @@ public class EditarCurso extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(EditarCurso.this, "Error al cargar el curso: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditarCurso.this, "Error al cargar el curso: "/* + e.getMessage()*/, Toast.LENGTH_SHORT).show();
                     Log.e("EditarCurso", "Error al cargar el curso", e);
                     finish();
                 });
@@ -215,7 +214,6 @@ public class EditarCurso extends AppCompatActivity {
 
                 String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
 
-                // Actualizar en Firestore
                 handler.post(() -> actualizarImagenEnFirestore(urlImagen));
             } catch (Exception e) {
                 handler.post(() -> Toast.makeText(this, "Error al subir imagen", Toast.LENGTH_SHORT).show());

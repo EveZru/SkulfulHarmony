@@ -214,7 +214,6 @@ public class CrearCurso extends AppCompatActivity {
                     KMeans kmeans = new KMeans(k, 100);
                     kmeans.fit(puntos);
 
-                    // Actualizar los cursos existentes con sus nuevos clusters
                     for (int i = 0; i < documentos.size(); i++) {
                         int pred = kmeans.predict(puntos.get(i));
                         documentos.get(i).getReference().update("cluster", pred);

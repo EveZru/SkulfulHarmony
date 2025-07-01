@@ -161,7 +161,7 @@ public class  IniciarSesion extends AppCompatActivity {
                                     }
                                 }
 
-                                // 🔥 VERIFICACIÓN DE ROL
+
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 db.collection("usuarios").document(user.getUid()).get()
                                         .addOnSuccessListener(documentSnapshot -> {
@@ -280,7 +280,6 @@ public class  IniciarSesion extends AppCompatActivity {
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        // 🔥 Obtener y guardar el token FCM
                         FirebaseMessaging.getInstance().getToken()
                                 .addOnCompleteListener(tokenTask -> {
                                     if (tokenTask.isSuccessful()) {
