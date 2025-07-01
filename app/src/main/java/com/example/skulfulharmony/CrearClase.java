@@ -248,6 +248,7 @@ public class CrearClase extends AppCompatActivity {
                         SharedLinkMetadata linkMetadata = client.sharing()
                                 .createSharedLinkWithSettings(metadata.getPathLower());
 
+                        
                         String urlVideo = linkMetadata.getUrl()
                                 .replace("www.dropbox.com", "dl.dropboxusercontent.com")
                                 .replace("?dl=0", "");
