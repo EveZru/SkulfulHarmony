@@ -345,9 +345,7 @@ public class Home extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         BottomNavigationView bottomNavigationView = findViewById(R.id.barra_navegacion1);
-        cargarCursosCluster();
         cargarCursosHistorial();
-        cargarTodosLosCursos();
         if (this instanceof Home) {
             bottomNavigationView.setSelectedItemId(R.id.it_homme);
 
