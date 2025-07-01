@@ -72,13 +72,13 @@ public class EditarClase extends AppCompatActivity {
     private int idCurso;
     private DocumentReference claseDocRef;
 
-    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_editar_clase);
+
 
 
         btn_cancelar = findViewById(R.id.btn_cancelar_edicion);
@@ -282,39 +282,51 @@ public class EditarClase extends AppCompatActivity {
 
         handler.post(() -> Toast.makeText(this, "Subiendo video a Dropbox...", Toast.LENGTH_SHORT).show());
 
-        executor.execute(() -> {
-            DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+        // Obtener token en el hilo principal, y luego ejecutar subida en background
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    DbxClientV2 client = new DropboxConfig(token).getClient();
 
-            try (FileInputStream fis = new FileInputStream(archivo)) {
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
-                        .uploadAndFinish(fis);
+                    try (FileInputStream fis = new FileInputStream(archivo)) {
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
+                                .uploadAndFinish(fis);
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
 
-                String urlVideo = linkMetadata.getUrl()
-                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-                        .replace("?dl=0", "");
+                        String urlVideo = linkMetadata.getUrl()
+                                .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                                .replace("?dl=0", "");
 
-                handler.post(() -> {
-                    urlVideoSubido = urlVideo;
-                    setupVideoPlayer(urlVideo);
-                    Toast.makeText(this, "Video subido y cargado correctamente.", Toast.LENGTH_SHORT).show();
+                        handler.post(() -> {
+                            urlVideoSubido = urlVideo;
+                            setupVideoPlayer(urlVideo);
+                            Toast.makeText(EditarClase.this, "Video subido y cargado correctamente.", Toast.LENGTH_SHORT).show();
+                        });
+
+                    } catch (Exception e) {
+                        Log.e("EditarClase", "Error al subir video a Dropbox", e);
+                        handler.post(() -> {
+                            Toast.makeText(EditarClase.this, "Error al subir video a Dropbox: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
+                    } finally {
+                        // Puedes eliminar el archivo si quieres
+                        // if (archivo.exists()) archivo.delete();
+                        executor.shutdown();
+                    }
                 });
+            }
 
-            } catch (Exception e) {
-                Log.e("EditarClase", "Error al subir video a Dropbox", e);
-                handler.post(() -> {
-                    Toast.makeText(this, "Error al subir video a Dropbox: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            } finally {
-                if (archivo.exists()) {
-                    // archivo.delete(); // Descomentar si quieres eliminarlo inmediatamente después de la subida
-                }
+            @Override
+            public void onError(Exception e) {
+                handler.post(() -> Toast.makeText(EditarClase.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show());
             }
         });
     }
+
 
     private long getFileSizeFromUri(Uri uri) {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);

@@ -93,7 +93,6 @@ public class Perfil extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri imageUri;
     private String userId;
-    private static final String ACCESS_TOKEN =  DropboxConfig.ACCESS_TOKEN;
     private LineChart chartPracticaSemanal;
     private BarChart chartProgresoCursos;
     private BarChart chartNivelInstrumentos;
@@ -102,6 +101,7 @@ public class Perfil extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
+
 
         // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -759,7 +759,7 @@ public class Perfil extends AppCompatActivity {
         }
 
         long fileSize = archivo.length(); // Tamaño del archivo en bytes
-        long maxFileSize = 10 * 1024 * 1024; // 10 MB en bytes
+        long maxFileSize = 10 * 1024 * 1024; // 10 MB
 
         if (fileSize > maxFileSize) {
             Toast.makeText(this, "La imagen es demasiado grande. El tamaño máximo permitido es 10 MB.", Toast.LENGTH_SHORT).show();
@@ -769,42 +769,54 @@ public class Perfil extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
-            DropboxConfig dropboxConfig = new DropboxConfig(ACCESS_TOKEN);
-            DbxClientV2 client = dropboxConfig.getClient();
+        // Obtener token en UI, luego ejecutar subida en background
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    DbxClientV2 client = new DropboxConfig(token).getClient();
 
-            try (FileInputStream fis = new FileInputStream(archivo)) {
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/skillfullharmony/FotosPerfil/" + archivo.getName())
-                        .uploadAndFinish(fis);
+                    try (FileInputStream fis = new FileInputStream(archivo)) {
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/skillfullharmony/FotosPerfil/" + archivo.getName())
+                                .uploadAndFinish(fis);
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
 
-                String urlImagen = linkMetadata.getUrl()
-                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-                        .replace("?dl=0", "");
+                        String urlImagen = linkMetadata.getUrl()
+                                .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                                .replace("?dl=0", "");
 
-                // Guardar URL en Firestore
-                guardarFotoEnFirestore(urlImagen);
+                        guardarFotoEnFirestore(urlImagen); // Esto puede seguir en background
 
-                handler.post(() -> {
-                    Glide.with(this).load(urlImagen).into(ivProfilePicture);
-                    Toast.makeText(this, "Imagen subida correctamente", Toast.LENGTH_SHORT).show();
+                        handler.post(() -> {
+                            Glide.with(Perfil.this).load(urlImagen).into(ivProfilePicture);
+                            Toast.makeText(Perfil.this, "Imagen subida correctamente", Toast.LENGTH_SHORT).show();
+                        });
+
+                    } catch (UploadErrorException e) {
+                        Log.e("Dropbox", "Error al subir archivo", e);
+                        handler.post(() -> Toast.makeText(Perfil.this, "Error al subir imagen (UploadError)", Toast.LENGTH_SHORT).show());
+                    } catch (IOException e) {
+                        Log.e("Dropbox", "Error de lectura", e);
+                        handler.post(() -> Toast.makeText(Perfil.this, "Error al leer el archivo", Toast.LENGTH_SHORT).show());
+                    } catch (Exception e) {
+                        Log.e("Dropbox", "Error desconocido", e);
+                        handler.post(() -> Toast.makeText(Perfil.this, "Error desconocido al subir imagen", Toast.LENGTH_SHORT).show());
+                    } finally {
+                        executor.shutdown();
+                    }
                 });
+            }
 
-            } catch (UploadErrorException e) {
-                Log.e("Dropbox", "Error al subir archivo", e);
-                handler.post(() -> Toast.makeText(this, "Error al subir imagen (UploadError)", Toast.LENGTH_SHORT).show());
-            } catch (IOException e) {
-                Log.e("Dropbox", "Error de lectura", e);
-                handler.post(() -> Toast.makeText(this, "Error al leer el archivo", Toast.LENGTH_SHORT).show());
-            } catch (Exception e) {
-                Log.e("Dropbox", "Error desconocido", e);
-                handler.post(() -> Toast.makeText(this, "Error desconocido al subir imagen", Toast.LENGTH_SHORT).show());
+            @Override
+            public void onError(Exception e) {
+                handler.post(() -> Toast.makeText(Perfil.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show());
             }
         });
     }
+
 
     // Método para guardar la foto en Firestore
     private void guardarFotoEnFirestore(String url) {

@@ -55,7 +55,6 @@ public class CrearCurso extends AppCompatActivity {
     private Uri im = Uri.EMPTY;
     private boolean creando=false;
 
-    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     private final Map<String, Integer> mapaInstrumento = new HashMap<>() {{
@@ -83,6 +82,7 @@ public class CrearCurso extends AppCompatActivity {
         spGenero = findViewById(R.id.sp_Genero);
         btnSubirCurso = findViewById(R.id.btn_subir_curso);
         imageView = findViewById(R.id.iv_fotocurso);
+
 
         spInstrumento.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new ArrayList<>(mapaInstrumento.keySet())));
         spNivel.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new ArrayList<>(mapaDificultad.keySet())));
@@ -119,14 +119,15 @@ public class CrearCurso extends AppCompatActivity {
         String instrumento = spInstrumento.getSelectedItem().toString();
         String dificultad = spNivel.getSelectedItem().toString();
         String genero = spGenero.getSelectedItem().toString();
-        creando=true;
+        creando = true;
         btnSubirCurso.setEnabled(false);
         btnSubirCurso.setText("Subiendo...");
+
         if (nombre.isEmpty() || descripcion.isEmpty() || im == Uri.EMPTY) {
             Toast.makeText(this, "Completa todos los campos y selecciona una imagen", Toast.LENGTH_SHORT).show();
             btnSubirCurso.setEnabled(true);
             btnSubirCurso.setText("PUBLICAR");
-            creando=false;
+            creando = false;
             return;
         }
 
@@ -148,33 +149,44 @@ public class CrearCurso extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
-            try {
-                DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
-                FileInputStream fis = new FileInputStream(archivo);
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    try {
+                        DbxClientV2 client = new DropboxConfig(token).getClient();
+                        FileInputStream fis = new FileInputStream(archivo);
 
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/SkillfulHarmonyCursos/" + archivo.getName())
-                        .uploadAndFinish(fis);
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/SkillfulHarmonyCursos/" + archivo.getName())
+                                .uploadAndFinish(fis);
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
 
-                String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
+                        String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
 
-                handler.post(() -> procesarKMeansYGuardarCurso(
-                        nombre, descripcion, instrumento, dificultad, genero,
-                        instrumentoNum, dificultadNum, generoNum, urlImagen
-                ));
-            } catch (Exception e) {
-                handler.post(() -> Toast.makeText(this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
-                finish();
-            }finally {
-                executor.shutdown();
+                        handler.post(() -> procesarKMeansYGuardarCurso(
+                                nombre, descripcion, instrumento, dificultad, genero,
+                                instrumentoNum, dificultadNum, generoNum, urlImagen
+                        ));
+                    } catch (Exception e) {
+                        Log.e("CrearCurso", "Error al subir imagen", e);
+                        handler.post(() -> Toast.makeText(CrearCurso.this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
+                        finish();
+                    } finally {
+                        executor.shutdown();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                handler.post(() -> Toast.makeText(CrearCurso.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show());
             }
         });
-
     }
+
 
     private void procesarKMeansYGuardarCurso(String nombre, String descripcion,
                                              String instrumento, String dificultad, String genero,

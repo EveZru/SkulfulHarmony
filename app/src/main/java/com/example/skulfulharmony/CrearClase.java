@@ -42,6 +42,7 @@ import com.example.skulfulharmony.server.config.DropboxConfig;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -59,7 +60,6 @@ public class CrearClase extends AppCompatActivity {
 
     //Variables
 
-    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private int idCurso;
     private List<PreguntaCuestionario> preguntasClase = new ArrayList<>();
     private final int MAX_OPCIONES = 5;
@@ -220,52 +220,66 @@ public class CrearClase extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
-            DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+        // Aviso visual inmediato
+        handler.post(() -> Toast.makeText(this, "Subiendo video a Dropbox...", Toast.LENGTH_SHORT).show());
 
-            try (FileInputStream fis = new FileInputStream(archivo)) {
-                final long totalBytes = archivo.length();  // Hacemos esta variable final
-                final long[] bytesTransferidos = {0};  // Hacemos esto un arreglo para modificar dentro de la lambda
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    DbxClientV2 client = new DropboxConfig(token).getClient();
 
-                // Notificación inicial de progreso
-                handler.post(() -> NotificacionHelper.mostrarProgreso(
-                        CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", 0));
+                    try (FileInputStream fis = new FileInputStream(archivo)) {
+                        final long totalBytes = archivo.length();
+                        final long[] bytesTransferidos = {0};
 
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
-                        .uploadAndFinish(fis, bytes -> {
-                            bytesTransferidos[0] += bytes;
-                            // Actualizar el progreso
-                            int progreso = (int) ((bytesTransferidos[0] * 100) / totalBytes);
-                            handler.post(() -> NotificacionHelper.mostrarProgreso(
-                                    CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", progreso));
+                        handler.post(() -> NotificacionHelper.mostrarProgreso(
+                                CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", 0));
+
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesVideos/" + archivo.getName())
+                                .uploadAndFinish(fis, bytes -> {
+                                    bytesTransferidos[0] += bytes;
+                                    int progreso = (int) ((bytesTransferidos[0] * 100) / totalBytes);
+                                    handler.post(() -> NotificacionHelper.mostrarProgreso(
+                                            CrearClase.this, 35, "Subiendo material", "Subiendo archivo...", progreso));
+                                });
+
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
+
+                        String urlVideo = linkMetadata.getUrl()
+                                .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                                .replace("?dl=0", "");
+
+                        handler.post(() -> {
+                            Toast.makeText(CrearClase.this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
+                            guardarVideoTemporal(urlVideo);
+                            tvEstadoVideo.setText("🎥 Video subido");
+                            NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");
                         });
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
-
-                String urlVideo = linkMetadata.getUrl()
-                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-                        .replace("?dl=0", "");
-
-                handler.post(() -> {
-                    Toast.makeText(this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
-                    guardarVideoTemporal(urlVideo); // Guardamos el enlace para usarlo al crear la clase
-                    tvEstadoVideo.setText("🎥 Video subido");
-                    // Completa la notificación de progreso
-                    NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");
+                    } catch (Exception e) {
+                        Log.e("Dropbox", "Error al subir video", e);
+                        handler.post(() -> {
+                            Toast.makeText(CrearClase.this, "Error al subir video", Toast.LENGTH_SHORT).show();
+                            NotificacionHelper.mostrarError(CrearClase.this, 36, "Error de subida", "Hubo un problema al subir el video.");
+                        });
+                    } finally {
+                        executor.shutdown();
+                    }
                 });
+            }
 
-            } catch (Exception e) {
-                Log.e("Dropbox", "Error al subir video", e);
+            @Override
+            public void onError(Exception e) {
                 handler.post(() -> {
-                    Toast.makeText(this, "Error al subir video", Toast.LENGTH_SHORT).show();
-                    // Notificación de error
-                    NotificacionHelper.mostrarError(CrearClase.this, 36, "Error de subida", "Hubo un problema al subir el video.");
+                    Toast.makeText(CrearClase.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show();
                 });
             }
         });
     }
+
 
     private void guardarVideoTemporal(String url) {
         urlVideoSubido = url;
@@ -329,35 +343,51 @@ public class CrearClase extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
-            DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
+        // Obtener token primero (en UI)
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    DbxClientV2 client = new DropboxConfig(token).getClient();
 
-            try (FileInputStream fis = new FileInputStream(archivo)) {
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesArchivos/" + archivo.getName())
-                        .uploadAndFinish(fis);
+                    try (FileInputStream fis = new FileInputStream(archivo)) {
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/skillfullharmony/ClasesArchivos/" + archivo.getName())
+                                .uploadAndFinish(fis);
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
 
-                String urlArchivo = linkMetadata.getUrl()
-                        .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-                        .replace("?dl=0", "");
+                        String urlArchivo = linkMetadata.getUrl()
+                                .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                                .replace("?dl=0", "");
 
-                handler.post(() -> {
-                    archivosAdjuntosUrls.add(urlArchivo);
-                    tvEstadoArchivos.setText("📎 Archivos adjuntos: " + archivosAdjuntosUrls.size());
-                    Toast.makeText(this, "Archivo subido correctamente", Toast.LENGTH_SHORT).show();
+                        handler.post(() -> {
+                            archivosAdjuntosUrls.add(urlArchivo);
+                            tvEstadoArchivos.setText("📎 Archivos adjuntos: " + archivosAdjuntosUrls.size());
+                            Toast.makeText(CrearClase.this, "Archivo subido correctamente", Toast.LENGTH_SHORT).show();
+                        });
+
+                    } catch (Exception e) {
+                        Log.e("Dropbox", "Error al subir archivo", e);
+                        handler.post(() -> {
+                            Toast.makeText(CrearClase.this, "Error al subir archivo", Toast.LENGTH_SHORT).show();
+                        });
+                    } finally {
+                        executor.shutdown();
+                    }
                 });
+            }
 
-            } catch (Exception e) {
-                Log.e("Dropbox", "Error al subir archivo", e);
+            @Override
+            public void onError(Exception e) {
                 handler.post(() -> {
-                    Toast.makeText(this, "Error al subir archivo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CrearClase.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show();
                 });
             }
         });
     }
+
 
     private void SubirArchivo(){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -539,7 +569,6 @@ public class CrearClase extends AppCompatActivity {
         }
         //Logica para subir archivos a firebase
 
-        Toast.makeText(this, "Pidiendo datos al servidor", Toast.LENGTH_SHORT).show();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, "No estás logueado", Toast.LENGTH_SHORT).show();
@@ -559,7 +588,6 @@ public class CrearClase extends AppCompatActivity {
                     }
 
                     int nuevoIdClase = maxIdClase + 1;
-                    Toast.makeText(CrearClase.this, "idClase: " + nuevoIdClase, Toast.LENGTH_SHORT).show();
 
                     Clase clase = new Clase();
                     clase.setIdCurso(idCurso);
@@ -575,15 +603,32 @@ public class CrearClase extends AppCompatActivity {
                     clase.setCreadorCorreo(currentUser.getEmail());
                     clase.setArchivos(archivosAdjuntosUrls);
 
-                    Toast.makeText(CrearClase.this, "Creando clase", Toast.LENGTH_SHORT).show();
                     db.collection("clases").add(clase).addOnSuccessListener(documentReference -> {
-                        db.collection("cursos").document(String.valueOf(idCurso)).update("fechaActualizacion", Timestamp.now())
-                                        .addOnSuccessListener(aVoid -> {
-                                            Toast.makeText(CrearClase.this, "Clase creada exitosamente", Toast.LENGTH_SHORT).show();
-                                            finish();
-                                        }).addOnFailureListener(e->{
-                                            Toast.makeText(CrearClase.this, "Error al actualizar la fecha de actualización", Toast.LENGTH_SHORT).show();
+                        db.collection("cursos")
+                                .whereEqualTo("idCurso", idCurso) // buscar por el campo, no por el ID de documento
+                                .limit(1)
+                                .get()
+                                .addOnSuccessListener(queryDocumentSnapshotsc -> {
+                                    if (!queryDocumentSnapshotsc.isEmpty()) {
+                                        DocumentSnapshot cursoDoc = queryDocumentSnapshotsc.getDocuments().get(0);
+                                        String docId = cursoDoc.getId();
+
+                                        db.collection("cursos")
+                                                .document(docId)
+                                                .update("fechaActualizacionf", Timestamp.now())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(CrearClase.this, "Clase creada exitosamente", Toast.LENGTH_SHORT).show();
+                                                    finish();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(CrearClase.this, "Error al actualizar la fecha de actualización", Toast.LENGTH_SHORT).show();
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(CrearClase.this, "Error al pedir datos al servidor" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 });
+
                     }).addOnFailureListener(e -> {
                         Toast.makeText(CrearClase.this, "Error al subir la clase", Toast.LENGTH_SHORT).show();
                     });

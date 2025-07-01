@@ -49,7 +49,6 @@ public class EditarCurso extends AppCompatActivity {
     private ImageView iv_fotocurso;
     private String nombreCursoActual;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-    private static final String ACCESS_TOKEN = DropboxConfig.ACCESS_TOKEN;
     private Uri im = Uri.EMPTY;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class EditarCurso extends AppCompatActivity {
         tv_nombrecurso = findViewById(R.id.tv_nombrecurso);
         tv_descripcioncurso = findViewById(R.id.tv_descripantreior);
         et_nueva_descripcion = findViewById(R.id.et_descripnueva);
-
 
         firestore = FirebaseFirestore.getInstance();
 
@@ -194,26 +192,37 @@ public class EditarCurso extends AppCompatActivity {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
-        executor.execute(() -> {
-            try {
-                DbxClientV2 client = new DropboxConfig(ACCESS_TOKEN).getClient();
-                FileInputStream fis = new FileInputStream(archivo);
+        // Primero obtenemos el token en hilo principal
+        DropboxConfig.obtenerAccessTokenFirebase(new DropboxConfig.TokenCallback() {
+            @Override
+            public void onTokenReceived(String token) {
+                executor.execute(() -> {
+                    try (FileInputStream fis = new FileInputStream(archivo)) {
+                        DbxClientV2 client = new DropboxConfig(token).getClient();
 
-                // Subir con nombre único basado en timestamp
-                String nombreArchivo = "curso_" + idCurso + "_" + System.currentTimeMillis() + ".jpg";
-                FileMetadata metadata = client.files()
-                        .uploadBuilder("/Aplicaciones/SkillfulHarmonyCursos/" + nombreArchivo)
-                        .uploadAndFinish(fis);
+                        String nombreArchivo = "curso_" + idCurso + "_" + System.currentTimeMillis() + ".jpg";
+                        FileMetadata metadata = client.files()
+                                .uploadBuilder("/Aplicaciones/SkillfulHarmonyCursos/" + nombreArchivo)
+                                .uploadAndFinish(fis);
 
-                SharedLinkMetadata linkMetadata = client.sharing()
-                        .createSharedLinkWithSettings(metadata.getPathLower());
+                        SharedLinkMetadata linkMetadata = client.sharing()
+                                .createSharedLinkWithSettings(metadata.getPathLower());
 
-                String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
+                        String urlImagen = convertirLinkADirecto(linkMetadata.getUrl());
 
-                // Actualizar en Firestore
-                handler.post(() -> actualizarImagenEnFirestore(urlImagen));
-            } catch (Exception e) {
-                handler.post(() -> Toast.makeText(this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
+                        handler.post(() -> actualizarImagenEnFirestore(urlImagen));
+                    } catch (Exception e) {
+                        Log.e("EditarCurso", "❌ Error al subir imagen", e);
+                        handler.post(() -> Toast.makeText(EditarCurso.this, "Error al subir imagen", Toast.LENGTH_SHORT).show());
+                    } finally {
+                        executor.shutdown();
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception e) {
+                handler.post(() -> Toast.makeText(EditarCurso.this, "Error al obtener datos del servidor", Toast.LENGTH_SHORT).show());
             }
         });
     }
