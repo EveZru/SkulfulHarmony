@@ -114,6 +114,13 @@ public class Biblioteca extends AppCompatActivity {
                         if (!snapshot.isEmpty()) {
                             Usuario usuario = snapshot.getDocuments().get(0).toObject(Usuario.class);
                             List<Curso> cursosHistorial = usuario != null ? usuario.getHistorialCursos() : new ArrayList<>();
+                            for (Curso curso : cursosHistorial) {
+                                if(curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧") || curso.getTitulo().isEmpty() || curso.getTitulo().toLowerCase().startsWith("desabilitado")
+                                        || curso.getTitulo() == null || curso.getTitulo().equals("") || curso.getTitulo().equals("null") || curso.getTitulo().equals("NULL"))
+                                {
+                                    cursosHistorial.remove(curso);
+                                }
+                            }
                             rvDescargados.setAdapter(new AdapterBibliotecaVerCursosHistorial(cursosHistorial));
                         }
                     })
