@@ -80,7 +80,7 @@ public class VerClaseOffline extends AppCompatActivity {
         if (documentoUrl == null) documentoUrl = "";
         if (archivos == null) archivos = new ArrayList<>();
 
-        ImageView ivMenu = findViewById(R.id.iv_menu_curso_descargado); // Usa el mismo ID del XML
+        ImageView ivMenu = findViewById(R.id.iv_menu_curso_descargado);
         ivMenu.setOnClickListener(view -> {
             PopupMenu popupMenu = new PopupMenu(this, view);
             MenuInflater inflater = popupMenu.getMenuInflater();
@@ -158,7 +158,7 @@ public class VerClaseOffline extends AppCompatActivity {
             final int finalIdClase = idClase;
 
             if (respuestasUsuario.size() != preguntasLista.size()) {
-                Log.e("OFFLINE_SYNC", "❌ Respuestas incompletas o mal sincronizadas");
+                Log.e("OFFLINE_SYNC", " Respuestas incompletas o mal sincronizadas");
                 return;
             }
 
@@ -183,7 +183,6 @@ public class VerClaseOffline extends AppCompatActivity {
             int incorrectas = total - correctasFinal;
             int porcentaje = (int) (((double) correctasFinal / total) * 100);
 
-            // ✅ Dialog original con botones
             runOnUiThread(() -> {
                 new androidx.appcompat.app.AlertDialog.Builder(VerClaseOffline.this)
                         .setTitle("Resultados")
@@ -198,7 +197,6 @@ public class VerClaseOffline extends AppCompatActivity {
                         .show();
             });
 
-            // 🟦 Nuevo dialogo personalizado como Ver_clases
             runOnUiThread(() -> {
                 Dialog dialog = new Dialog(VerClaseOffline.this);
                 dialog.setContentView(R.layout.dialog_calificacionpreguntas_verclase);
@@ -224,7 +222,6 @@ public class VerClaseOffline extends AppCompatActivity {
                 dialog.show();
             });
 
-            // 🔁 Guardado Firebase
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
             DocumentReference userRef = firestore.collection("usuarios").document(currentUser.getUid());
 
@@ -279,7 +276,7 @@ public class VerClaseOffline extends AppCompatActivity {
                     dbHelper.guardarProgresoOffline(finalTitulo, tiempoAcumuladoClase, true);
                 }
 
-                Log.d("OFFLINE_SYNC", "📤 Respuestas enviadas correctamente");
+                Log.d("OFFLINE_SYNC", "Respuestas enviadas correctamente");
 
                 runOnUiThread(() -> {
                     Toast.makeText(this, "Respuestas enviadas", Toast.LENGTH_SHORT).show();
@@ -287,7 +284,7 @@ public class VerClaseOffline extends AppCompatActivity {
                     finish();
                 });
 
-            }).addOnFailureListener(e -> Log.e("OFFLINE_SYNC", "🔥 Error al obtener documento de usuario", e));
+            }).addOnFailureListener(e -> Log.e("OFFLINE_SYNC", " Error al obtener documento de usuario", e));
         });
     }
 
@@ -320,8 +317,8 @@ public class VerClaseOffline extends AppCompatActivity {
                 datos.put("progresoCursoOffline", progresoTemp);
 
                 userRef.set(datos, SetOptions.merge())
-                        .addOnSuccessListener(a -> Log.d("PROGRESO_OFFLINE", "✅ Clase marcada como vista offline"))
-                        .addOnFailureListener(e -> Log.e("PROGRESO_OFFLINE", "❌ Error al guardar progreso offline", e));
+                        .addOnSuccessListener(a -> Log.d("PROGRESO_OFFLINE", "Clase marcada como vista offline"))
+                        .addOnFailureListener(e -> Log.e("PROGRESO_OFFLINE", "Error al guardar progreso offline", e));
             }
         });
     }
@@ -333,7 +330,7 @@ public class VerClaseOffline extends AppCompatActivity {
         ArrayList<String> archivos = getIntent().getStringArrayListExtra("archivos");
 
         DbHelper db = new DbHelper(this);
-        db.eliminarClasePorTitulo(tituloClase); // 🧹 Debes implementar este método si no lo tienes
+        db.eliminarClasePorTitulo(tituloClase);
 
         eliminarArchivo(imagen);
         eliminarArchivo(video);
@@ -365,7 +362,7 @@ public class VerClaseOffline extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (tiempoInicioClase > 0) {
-            long tiempoVisto = (System.currentTimeMillis() - tiempoInicioClase) / 1000; // en segundos
+            long tiempoVisto = (System.currentTimeMillis() - tiempoInicioClase) / 1000;
             tiempoAcumuladoClase += tiempoVisto;
             tiempoInicioClase = 0;
         }
@@ -399,8 +396,8 @@ public class VerClaseOffline extends AppCompatActivity {
             userRef.set(new HashMap<String, Object>() {{
                         put("tiempoVisualizadoOffline", tiempoPorClase);
                     }}, SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> Log.d("TiempoOffline", "⏱️ Tiempo offline guardado: " + tiempoAcumuladoClase + "s"))
-                    .addOnFailureListener(e -> Log.e("TiempoOffline", "❌ Error al guardar tiempo offline", e));
+                    .addOnSuccessListener(aVoid -> Log.d("TiempoOffline", "Tiempo offline guardado: " + tiempoAcumuladoClase + "s"))
+                    .addOnFailureListener(e -> Log.e("TiempoOffline", "Error al guardar tiempo offline", e));
 
             DbHelper db = new DbHelper(this);
             db.guardarProgresoOffline(tvTitulo.getText().toString(), tiempoAcumuladoClase, false);
@@ -461,7 +458,7 @@ public class VerClaseOffline extends AppCompatActivity {
                 put("respuestasIncorrectas", listaRespuestas);
             }}, SetOptions.merge());
 
-            // 🔁 Reemplazo de .stream().map().toList() por código manual compatible
+
             List<Integer> respuestasCorrectas = new ArrayList<>();
             for (PreguntaCuestionario p : preguntasLista) {
                 respuestasCorrectas.add(p.getRespuestaCorrecta());
@@ -482,7 +479,7 @@ public class VerClaseOffline extends AppCompatActivity {
                 finish();
             });
 
-        }).addOnFailureListener(e -> Log.e("OFFLINE_SYNC", "🔥 Error al obtener documento de usuario", e));
+        }).addOnFailureListener(e -> Log.e("OFFLINE_SYNC", " Error al obtener documento de usuario", e));
     }
 
     private enum MensajeCalificacion {

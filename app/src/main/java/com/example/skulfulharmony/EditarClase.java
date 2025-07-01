@@ -146,7 +146,8 @@ public class EditarClase extends AppCompatActivity {
                             finish();
                         }
                     } else{
-                        Toast.makeText(EditarClase.this, "Clase no encontrada con los IDs proporcionados. idClase: " + claseId + ", idCurso: " + cursoId, Toast.LENGTH_SHORT).show();
+
+                        Toast.makeText(EditarClase.this, /*"Clase no encontrada con los IDs proporcionados. idClase: " + claseId + ", idCurso: " + cursoId*/"Error al cargar clase", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 })
@@ -188,7 +189,7 @@ public class EditarClase extends AppCompatActivity {
             return;
         }
 
-        updates.put("videoUrl", urlVideoSubido); // Se actualiza la URL del video
+        updates.put("videoUrl", urlVideoSubido);
         updates.put("fechaActualizacion", Timestamp.now());
 
         claseDocRef.update(updates)
@@ -207,7 +208,7 @@ public class EditarClase extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(EditarClase.this, "Error al actualizar la clase: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("EditarClase", "Error al actualizar la clase", e);
+                    /*Log.e("EditarClase", "Error al actualizar la clase", e);*/
                 });
     }
 

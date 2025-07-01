@@ -383,7 +383,6 @@ public class PerfilMostrar extends AppCompatActivity {
                                     DocumentReference refActual = db.collection("usuarios").document(idDocActual);
                                     DocumentReference refPerfil = db.collection("usuarios").document(docPerfil.getId());
 
-                                    // Datos para agregar en arrays
                                     Map<String, Object> seguidorData = new HashMap<>();
                                     seguidorData.put("nombre", docActual.getString("nombre") != null ? docActual.getString("nombre") : correoActual);
                                     seguidorData.put("correo", correoActual);
@@ -392,11 +391,9 @@ public class PerfilMostrar extends AppCompatActivity {
                                     seguidoData.put("nombre", nombrePerfil);
                                     seguidoData.put("correo", correoPerfil);
 
-                                    // Actualizar arrays con arrayUnion (agrega sin borrar)
                                     refPerfil.update("seguidoresname", FieldValue.arrayUnion(seguidorData));
                                     refActual.update("seguidosname", FieldValue.arrayUnion(seguidoData));
 
-                                    // Actualizar contadores seguidores y seguidos
                                     WriteBatch batch = db.batch();
                                     batch.update(refPerfil, "seguidores", FieldValue.increment(1));
                                     batch.update(refActual, "seguidos", FieldValue.increment(1));
@@ -439,7 +436,6 @@ public class PerfilMostrar extends AppCompatActivity {
             return;
         }
 
-        // Busca documento perfil a dejar de seguir
         db.collection("usuarios")
                 .whereEqualTo("correo", correoPerfil)
                 .get()

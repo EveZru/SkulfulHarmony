@@ -71,7 +71,7 @@ public class Afinador extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 notaObjetivo = (String) parent.getItemAtPosition(position);
-                Toast.makeText(Afinador.this, "Nota objetivo seleccionada: " + notaObjetivo, Toast.LENGTH_SHORT).show();
+                mostrarMensaje("Nota objetivo seleccionada: " + notaObjetivo);
                 updateUIWithCurrentNote();
 
 
@@ -124,8 +124,6 @@ public class Afinador extends AppCompatActivity {
                  }
         }
     }
-    // La anotación @RequiresPermission es para que el IDE te advierta, pero no previene el error en runtime si el permiso no está.
-    // La verdadera seguridad la da el check de permisos y la llamada condicional.
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private void startPitchDetection() {
         stopPitchDetection();
@@ -153,22 +151,16 @@ public class Afinador extends AppCompatActivity {
                 });
             }
         };
-        // Crea el AudioDispatcher desde el micrófono
-        // TarsosDSP se encarga de usar AudioRecord internamente con los permisos ya concedidos.
-        try {
+         try {
             dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(SAMPLE_RATE, BUFFER_SIZE, OVERLAP);
 
-            // Creamos el procesador de detección de tono (YIN es un algoritmo popular)
-            AudioProcessor pitchProcessor = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, SAMPLE_RATE, BUFFER_SIZE, pdh);
+             AudioProcessor pitchProcessor = new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, SAMPLE_RATE, BUFFER_SIZE, pdh);
 
             dispatcher.addAudioProcessor(pitchProcessor);
 
-            // Ejecutamos el dispatcher en un nuevo hilo para no bloquear el hilo principal
-            new Thread(dispatcher, "Audio Dispatcher").start();
+             new Thread(dispatcher, "Audio Dispatcher").start();
         } catch (Exception e) {
             Toast.makeText(this, "Error al iniciar el micrófono: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.e("Afinador", "Error al iniciar TarsosDSP micrófono: " + e.getMessage(), e);
-            // Si hay un error al iniciar, detén cualquier dispatcher que pueda haber quedado
             stopPitchDetection();
         }
     }
@@ -177,7 +169,7 @@ public class Afinador extends AppCompatActivity {
         if (dispatcher != null) {
             dispatcher.stop(); // Detiene el procesamiento de audio y libera recursos
             dispatcher = null;
-            Log.d("Afinador", "TarsosDSP dispatcher detenido.");
+
         }
     }
 
@@ -221,8 +213,7 @@ public class Afinador extends AppCompatActivity {
                     int colorBoton = ContextCompat.getColor(Afinador.this, R.color.grayverde);
                     v_fondo.setBackgroundColor(colorFondo);
                     btn_decoracion.setBackgroundColor(colorBoton);
-
-                    Toast.makeText(Afinador.this, "Nota correcta: " + notaDetectada, Toast.LENGTH_SHORT).show();
+                    mostrarMensaje("Nota correcta");
                     ultimaNotaCoincidente = notaDetectada;
                 }
                 // Si antes coincidía pero ahora no
@@ -235,33 +226,40 @@ public class Afinador extends AppCompatActivity {
                     ultimaNotaCoincidente = null;
                 }
             } catch (Exception e) {
-                Log.e("ColorError", "Error cambiando color: " + e.getMessage());
-            }
+             }
         });
     }
+    private void mostrarMensaje(String mensaje) {
+        View layout = getLayoutInflater().inflate(R.layout.holder_boton_extra, null);
+        Button boton = layout.findViewById(R.id.btn_ver_mas);
+        boton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.cafe1));
+        boton.setText(mensaje);
 
-    // Métodos del ciclo de vida de la Activity
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        stopPitchDetection(); // Detener la detección al pausar la Activity
-        Log.d("Afinador", "Activity en onPause. Deteniendo detección.");
-    }
+        stopPitchDetection();
+       }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("Afinador", "Activity en onResume. Chequeando permisos para iniciar detección.");
         if (checkAudioPermission()) {
-            startPitchDetection(); // Reanudar la detección al volver a la Activity
+            startPitchDetection();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopPitchDetection(); // Asegurarse de detenerlo al destruir la Activity
-        Log.d("Afinador", "Activity en onDestroy. Deteniendo detección final.");
-    }
+        stopPitchDetection();
+         }
 
 }

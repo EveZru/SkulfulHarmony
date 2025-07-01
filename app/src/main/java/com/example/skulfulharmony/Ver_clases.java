@@ -111,7 +111,7 @@ public class Ver_clases extends AppCompatActivity {
                     return mensaje.mensaje;
                 }
             }
-            return "¡Ups!"; // Fallback por si algo sale mal
+            return "¡Ups!";
         }
     }
 
@@ -121,14 +121,14 @@ public class Ver_clases extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_verclases);
-        //  tvPuntuacion = findViewById(R.id.tv_puntuacion);
+
         tvInfo = findViewById(R.id.tv_info_verclase);
         tvTitulo = findViewById(R.id.verclase_vertitulo);
         etcomentario = findViewById(R.id.et_comentario_verclase);
-       // LinearLayout layoutEstrellas = findViewById(R.id.ll_estrellas);
+
         verPreguntas = findViewById(R.id.rv_preguntasporclase_verclase);
         btnCalificar = findViewById(R.id.btt_revisar_respuestas_verclase);
-        //-----------------------------------------
+
         crear_comentario=findViewById(R.id.btn_subir_comentario_clase);
         verComentarios = findViewById(R.id.rv_comentarios_verclase);
         toolbar = findViewById(R.id.toolbartituloclase);
@@ -136,7 +136,6 @@ public class Ver_clases extends AppCompatActivity {
         idClase = intent.getIntExtra("idClase", 1);
         idCurso = intent.getIntExtra("idCurso", 1);
 
-        //_____________-
         iv_menupop = findViewById(R.id.iv_menupop);
         iv_like = findViewById(R.id.iv_like);
         iv_dislike = findViewById(R.id.iv_dislike);
@@ -175,7 +174,6 @@ public class Ver_clases extends AppCompatActivity {
                                             List<Clase> historial = usuario.getHistorialClases();
                                             if (historial == null) historial = new ArrayList<>();
 
-                                            // Verificamos si ya existe una clase con mismo idCurso e idClase
                                             Clase claseExistente = null;
                                             for (Clase c : historial) {
                                                 if (c.getIdCurso().equals(clase.getIdCurso()) && c.getIdClase().equals(clase.getIdClase())) {
@@ -184,16 +182,14 @@ public class Ver_clases extends AppCompatActivity {
                                                 }
                                             }
 
-                                            // Si existe, la removemos para agregarla al final (actualizada)
                                             if (claseExistente != null) {
                                                 historial.remove(claseExistente);
                                             }
 
                                             clase.setFechaAcceso(Timestamp.now());
-                                            // Agregamos al final
+
                                             historial.add(clase);
 
-                                            // Si hay más de 250, eliminamos los más antiguos
                                             while (historial.size() > 250) {
                                                 historial.remove(0);
                                             }
@@ -216,11 +212,10 @@ public class Ver_clases extends AppCompatActivity {
                             tvTitulo.setText(clase.getTitulo());
                             tvInfo.setText(clase.getTextos());
 
-                            // Mostrar archivos si existen
                             RecyclerView rvArchivos = findViewById(R.id.rv_archivos);
                             rvArchivos.setLayoutManager(new LinearLayoutManager(this));
 
-                            List<String> archivos = clase.getArchivos(); // Asegúrate que este campo exista en tu modelo Clase
+                            List<String> archivos = clase.getArchivos();
                             if (archivos != null && !archivos.isEmpty()) {
                                 AdapterArchivosClase adapterArchivos = new AdapterArchivosClase(archivos, this);
                                 rvArchivos.setAdapter(adapterArchivos);
@@ -240,20 +235,18 @@ public class Ver_clases extends AppCompatActivity {
                                 Toast.makeText(this, "No hay video disponible para esta clase", Toast.LENGTH_SHORT).show();
                             }
 
-                            // Después de obtener la clase del Firestore
                             if (clase != null && clase.getCalificacionPorUsuario() != null) {
                                 Boolean calificacionUsuario = clase.getCalificacionPorUsuario().get(user.getUid());
                                 if (calificacionUsuario != null) {
                                     like = calificacionUsuario;
                                     dislike = !calificacionUsuario;
 
-                                    // Actualizar iconos según el estado guardado
                                     iv_like.setImageResource(like ? R.drawable.liketrue_icono : R.drawable.like_icono);
                                     iv_dislike.setImageResource(dislike ? R.drawable.disliketrue_icono : R.drawable.dislike_icono);
                                 }
                             }
 
-//parte de las preguntas
+
                             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
                             adapterPreguntasEnVerClase = new AdapterPreguntasEnVerClase(clase.getPreguntas(),Ver_clases.this);
                             verPreguntas.setLayoutManager(layoutManager);
@@ -261,7 +254,6 @@ public class Ver_clases extends AppCompatActivity {
 
                             cargarComentarios(idCurso,idClase);
 
-                            //Calificar preguntas
 
                             btnCalificar.setOnClickListener(v -> {
                                 cantidadRespuestasCorrectas = 0;
@@ -272,7 +264,7 @@ public class Ver_clases extends AppCompatActivity {
                                     return;
                                 }
 
-                                // 🔁 Guardamos todas las respuestas (correctas o no)
+
                                 Map<String, Object> mapaRespuestas = new HashMap<>();
                                 List<Integer> respuestas = adapterPreguntasEnVerClase.getRespuestas();
 
@@ -292,7 +284,6 @@ public class Ver_clases extends AppCompatActivity {
                                 FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                                 DocumentReference userRef = firestore.collection("usuarios").document(currentUser.getUid());
 
-                                // 🔄 Guardar respuestas completas
                                 userRef.get().addOnSuccessListener(snapshot -> {
                                     List<Map<String, Object>> listaRespuestas = new ArrayList<>();
 
@@ -322,11 +313,11 @@ public class Ver_clases extends AppCompatActivity {
                                                 }
                                             }
 
-                                            // 👉 Agregar nuevo intento
+
                                             intentosPrevios.add(new HashMap<>(mapaRespuestas));
                                             intento.put("intentos", intentosPrevios);
                                             actualizo = true;
-                                            Log.d("Firebase", "🔁 Agregando intento a clase ya existente");
+                                            Log.d("Firebase", "Agregando intento a clase ya existente");
                                             break;
                                         }
                                     }
@@ -339,20 +330,20 @@ public class Ver_clases extends AppCompatActivity {
                                         intentos.add(new HashMap<>(mapaRespuestas));
                                         nueva.put("intentos", intentos);
                                         listaRespuestas.add(nueva);
-                                        Log.d("Firebase", "🆕 Nuevo set de intentos para clase");
+                                        Log.d("Firebase", " Nuevo set de intentos para clase");
                                     }
 
                                     userRef.set(new HashMap<String, Object>() {{
                                         put("respuestasIncorrectas", listaRespuestas);
                                     }}, SetOptions.merge()).addOnSuccessListener(unused -> {
-                                        Toast.makeText(Ver_clases.this, "✅ Intento guardado correctamente", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Ver_clases.this, " Intento guardado correctamente", Toast.LENGTH_SHORT).show();
                                     }).addOnFailureListener(e -> {
-                                        Log.e("Firebase", "🔥 Error al guardar intento", e);
+                                        Log.e("Firebase", " Error al guardar intento", e);
                                         Toast.makeText(Ver_clases.this, "Error al guardar intento", Toast.LENGTH_SHORT).show();
                                     });
                                 });
 
-                                // ✅ Si el usuario respondió todo bien, se cuenta la clase como completada
+
                                 int total = clase.getPreguntas().size();
                                 int porcentaje = (int) (((double) cantidadRespuestasCorrectas / total) * 100);
 
@@ -395,7 +386,7 @@ public class Ver_clases extends AppCompatActivity {
                                         } else {
                                             Log.d("Progreso", "🟡 Clase ya estaba completada");
                                         }
-                                    }).addOnFailureListener(e -> Log.e("Progreso", "❌ Error al obtener progreso", e));
+                                    }).addOnFailureListener(e -> Log.e("Progreso", " Error al obtener progreso", e));
                                 }
 
                                 // Mostrar resultado
@@ -470,7 +461,7 @@ public class Ver_clases extends AppCompatActivity {
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
-            comentario.setIdClase(idClase); // Asegúrate que no sea null aquí si es clase
+            comentario.setIdClase(idClase);
             comentario.setUidAutor(user.getUid());
 
             db.collection("comentarios")
@@ -505,11 +496,10 @@ public class Ver_clases extends AppCompatActivity {
                             Usuario usuario = doc.toObject(Usuario.class);
 
                             if (usuario != null) {
-                                // Validamos que la lista de comentarios del usuario no sea null
                                 List<Comentario> listaComentarios = usuario.getComentarios();
                                 if (listaComentarios == null) {
                                     listaComentarios = new ArrayList<>();
-                                    usuario.setComentarios(listaComentarios); // actualizamos en el objeto
+                                    usuario.setComentarios(listaComentarios);
                                 }
 
                                 comentario.setIdComentario(listaComentarios.size() + 1);
@@ -614,7 +604,6 @@ public class Ver_clases extends AppCompatActivity {
         });
     }
 
-    // para la reprocuccion de video
     @Override
     protected void onStop() {
         super.onStop();
@@ -642,7 +631,7 @@ public class Ver_clases extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setBuiltInZoomControls(true);
 
-        // Asegúrate que el link es tipo raw directo (no dropbox.com sino dl.dropboxusercontent.com)
+
         String viewer = "https://docs.google.com/gview?embedded=true&url=" +
                 url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "");
 
@@ -707,7 +696,6 @@ public class Ver_clases extends AppCompatActivity {
             String userId = user.getUid();
             DocumentReference userRef = FirebaseFirestore.getInstance().collection("usuarios").document(userId);
 
-            // Guarda tiempo detallado
             String claveClase = "clase_" + idClase;
             Map<String, Object> tiempoPorClase = new HashMap<>();
             Map<String, Object> claseInfo = new HashMap<>();
@@ -718,10 +706,9 @@ public class Ver_clases extends AppCompatActivity {
             userRef.set(new HashMap<String, Object>() {{
                         put("tiempoPorClase", tiempoPorClase);
                     }}, SetOptions.merge())
-                    .addOnSuccessListener(aVoid -> Log.d("TiempoClase", "⏱️ Tiempo registrado correctamente: " + tiempoAcumuladoClase + "s"))
-                    .addOnFailureListener(e -> Log.e("TiempoClase", "❌ Error al registrar tiempo", e));
+                    .addOnSuccessListener(aVoid -> Log.d("TiempoClase", " Tiempo registrado correctamente: " + tiempoAcumuladoClase + "s"))
+                    .addOnFailureListener(e -> Log.e("TiempoClase", " Error al registrar tiempo", e));
 
-            // ✅ También cuenta como clase vista (si no está ya)
             userRef.get().addOnSuccessListener(docSnapshot -> {
                 Map<String, Object> progreso = new HashMap<>();
                 Map<String, Object> nuevosDatos = new HashMap<>();
@@ -751,10 +738,10 @@ public class Ver_clases extends AppCompatActivity {
                     nuevosDatos.put("progresoCursos", progreso);
 
                     userRef.set(nuevosDatos, SetOptions.merge())
-                            .addOnSuccessListener(aVoid -> Log.d("Progreso", "✅ Clase marcada como vista por tiempo"))
-                            .addOnFailureListener(e -> Log.e("Progreso", "❌ Error al marcar progreso", e));
+                            .addOnSuccessListener(aVoid -> Log.d("Progreso", " Clase marcada como vista por tiempo"))
+                            .addOnFailureListener(e -> Log.e("Progreso", " Error al marcar progreso", e));
                 } else {
-                    Log.d("Progreso", "⏸️ Ya estaba marcada como vista");
+                    Log.d("Progreso", " Ya estaba marcada como vista");
                 }
             });
         }

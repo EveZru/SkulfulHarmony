@@ -124,26 +124,21 @@ public class PreguntasIncorrectas extends AppCompatActivity {
             adapterPreguntas.comprobarRespuestas();
             Toast.makeText(this, "Respuestas comprobadas", Toast.LENGTH_SHORT).show();
 
-            // Obtener la lista de preguntas que el adaptador identificó como INCORRECTAS
             List<PreguntaCuestionario> preguntasQueQuedaronIncorrectas = adapterPreguntas.getPreguntasIncorrectas();
 
-            // Actualizar la lista de la actividad con las preguntas que aún son incorrectas
-            preguntasIncorrectasCargadas.clear();
+              preguntasIncorrectasCargadas.clear();
             preguntasIncorrectasCargadas.addAll(preguntasQueQuedaronIncorrectas);
 
             adapterPreguntas.notifyDataSetChanged();
 
-        // 5. Guardar la lista actualizada (solo las preguntas incorrectas restantes) en SharedPreferences.
         Gson gson = new Gson();
         String jsonActualizado = gson.toJson(preguntasIncorrectasCargadas);
         prefs.edit().putString("preguntas_incorrectas", jsonActualizado).apply();
         Log.d(TAG, "Preguntas restantes guardadas en SharedPreferences. Cantidad: " + preguntasIncorrectasCargadas.size());
 
-        //  Cambiar el texto del botón a "Salir".
-        btnAccionPrincipal.setText("Salir");
+         btnAccionPrincipal.setText("Salir");
 
-        // Actualizar la interfaz de usuario si no quedan preguntas incorrectas.
-        if (preguntasIncorrectasCargadas.isEmpty()) {
+         if (preguntasIncorrectasCargadas.isEmpty()) {
             tvPreguntasIncorrectas.setText("¡Felicidades! Has respondido correctamente todas las preguntas incorrectas. ¡Sigue practicando!");
             tvPreguntasIncorrectas.setVisibility(View.VISIBLE);
             rvPreguntasIncorrectas.setVisibility(View.GONE);
@@ -161,15 +156,12 @@ public class PreguntasIncorrectas extends AppCompatActivity {
                 primerIntento.put(entry.getKey(), (Boolean) entry.getValue());
             }
         }
-
         for (Map.Entry<String, Object> entry : intentos.get(intentos.size() - 1).entrySet()) {
             if (entry.getValue() instanceof Boolean) {
                 ultimoIntento.put(entry.getKey(), (Boolean) entry.getValue());
             }
         }
-
         int corregidas = 0;
-
         for (String key : primerIntento.keySet()) {
             boolean falloAntes = !primerIntento.get(key);
             boolean acertoDespues = ultimoIntento.getOrDefault(key, false);
@@ -184,7 +176,6 @@ public class PreguntasIncorrectas extends AppCompatActivity {
     private void cargarYContarCorregidasDesdeFirebase() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
-
         bd.collection("usuarios")
                 .document(user.getUid())
                 .get()
@@ -236,7 +227,6 @@ public class PreguntasIncorrectas extends AppCompatActivity {
                                             });
                                 }
 
-                                // Cargar título de la clase si no está
                                 if (!cacheTitulosClase.containsKey(idClase)) {
                                     bd.collection("clases")
                                             .whereEqualTo("idClase", idClase)
@@ -257,7 +247,7 @@ public class PreguntasIncorrectas extends AppCompatActivity {
                         mostrarMensajeFinal(correccionesPorCursoClase, cacheTitulosCurso, cacheTitulosClase, totalCorregidas[0]);
                     }
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "❌ Error al obtener respuestasIncorrectas", e));
+                .addOnFailureListener(e -> Log.e(TAG, "Error al obtener respuestasIncorrectas", e));
     }
 
     private void mostrarMensajeFinal(Map<Long, Integer> correccionesPorCursoClase, Map<Long, String> cacheTitulosCurso, Map<Long, String> cacheTitulosClase, int totalCorregidas) {
@@ -278,9 +268,9 @@ public class PreguntasIncorrectas extends AppCompatActivity {
             }
 
             if (totalCorregidas > 0) {
-                tvPreguntasCorregidas.setText("🔁 Has corregido un total de " + totalCorregidas + " preguntas:\n\n" + mensaje.toString());
+                tvPreguntasCorregidas.setText("Has corregido un total de " + totalCorregidas + " preguntas:\n\n" + mensaje.toString());
             } else {
-                tvPreguntasCorregidas.setText("🔁 Aún no has corregido ninguna pregunta fallada.");
+                tvPreguntasCorregidas.setText(" Aún no has corregido ninguna pregunta fallada.");
             }
         });
     }

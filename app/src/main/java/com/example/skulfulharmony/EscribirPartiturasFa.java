@@ -3,12 +3,14 @@ package com.example.skulfulharmony;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,23 +38,22 @@ public class EscribirPartiturasFa extends AppCompatActivity {
         tvNota = findViewById(R.id.tv_notaporbuscar);
 
         tvInfo = findViewById(R.id.tvinfo);
-        // Referencia al EditText
+
 
         lineas[0] = findViewById(R.id.line0); // mi (primera línea inferior en clave de Fa)
         lineas[1] = findViewById(R.id.line1); // sol
         lineas[2] = findViewById(R.id.line2); // si
         lineas[3] = findViewById(R.id.line3); // re
         lineas[4] = findViewById(R.id.line4); // fa
-        lineas[5] = findViewById(R.id.line5); // la (línea adicional superior, si la consideras)
+        lineas[5] = findViewById(R.id.line5); // la
 
         // Inicializar los espacios
         espacios[0] = findViewById(R.id.space0); // fa
         espacios[1] = findViewById(R.id.space1); // la
         espacios[2] = findViewById(R.id.space2); // do
         espacios[3] = findViewById(R.id.space3); // Smi
-        espacios[4] = findViewById(R.id.space4); // sol (espacio adicional superior, si lo consideras)
+        espacios[4] = findViewById(R.id.space4); // sol
 
-        // Guardar las coordenadas Y esperadas de cada nota después de que la vista se dibuja
         ivNota.post(new Runnable() {
             @Override
             public void run() {
@@ -72,7 +73,7 @@ public class EscribirPartiturasFa extends AppCompatActivity {
                 coordenadasEsperadas.put("Sol3", espacios[4].getY()+320);
                 coordenadasEsperadas.put("La3", lineas[5].getY()+320 );
 
-                cambiarNota(); // Mostrar la primera nota aleatoria
+                cambiarNota();
             }
         });
 
@@ -98,24 +99,20 @@ public class EscribirPartiturasFa extends AppCompatActivity {
         });
     }
 
-    // cambiar la nota mostrada en el TextView por una nota aleatoria del arreglo
     private void cambiarNota() {
         int indiceAleatorio = (int) (Math.random() * notas.length);
         notaActual = notas[indiceAleatorio];
         tvNota.setText(notaActual);
     }
 
-    // comparar la coordenada Y de la nota con la coordenada Y esperada de la nota actual
     private void compararCoordenada() {
         float notaYCentroImagen = ivNota.getY() + ivNota.getHeight() / 2;
         Float coordenadaEsperada = coordenadasEsperadas.get(notaActual);
         float tolerancia = 40;
 
-        // Definir la tolerancia fija para líneas y espacios
         float toleranciaLineas = 18f;
         float toleranciaEspacios = 40f;
 
-        // Determinar la tolerancia basada en si la nota actual corresponde a una línea o un espacio
         if (notaActual.equals("Do") || notaActual.equals("Mi") || notaActual.equals("Sol") || notaActual.equals("Si") || notaActual.equals("Re4") || notaActual.equals("Fa4")) {
             tolerancia = toleranciaLineas;
         } else if (notaActual.equals("Re") || notaActual.equals("Fa") || notaActual.equals("La") || notaActual.equals("Do4") || notaActual.equals("Mi4")) {
@@ -129,8 +126,8 @@ public class EscribirPartiturasFa extends AppCompatActivity {
             textoCoordenadas += "Tolerancia (Y): " + String.format("%.2f", tolerancia) + "\n"; // Muestra la tolerancia actual
 
             if (notaYCentroImagen >= coordenadaEsperada - tolerancia && notaYCentroImagen <= coordenadaEsperada + tolerancia) {
-                Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show();
-                ivNota.animate().y(initialY).setDuration(200).start();
+                mostrarMensaje("Correcto");
+                 ivNota.animate().y(initialY).setDuration(200).start();
                 cambiarNota();
             }
         } else {
@@ -139,5 +136,16 @@ public class EscribirPartiturasFa extends AppCompatActivity {
         tvInfo.setText("Buscando: " + notaActual); // Mantén actualizado el tvActual si lo deseas
         tvInfo.setText(textoCoordenadas); // Muestra la información en el nuevo TextView
 
+    }
+    private void mostrarMensaje(String mensaje) {
+        View layout = getLayoutInflater().inflate(R.layout.holder_boton_extra, null);
+        Button boton = layout.findViewById(R.id.btn_ver_mas);
+        boton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.grayverde));
+        boton.setText(mensaje);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 }

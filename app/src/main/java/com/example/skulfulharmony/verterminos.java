@@ -13,15 +13,14 @@ public class verterminos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verterminos);
 
-        // Inicializar el botón de aceptación
+
         Button botonAceptar = findViewById(R.id.botonAceptar);
 
-        // Configurar el botón de aceptación
         botonAceptar.setOnClickListener(v -> {
-            // Redirigir a la siguiente actividad (por ejemplo, Home)
+
             Intent intent = new Intent(verterminos.this, Perfil.class);
             startActivity(intent);
-            finish(); // Finaliza la actividad actual
+            finish();
         });
     }
 }

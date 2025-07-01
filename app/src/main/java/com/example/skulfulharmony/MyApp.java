@@ -31,9 +31,9 @@ public class MyApp extends Application {
         dbHelper.getWritableDatabase(); // Forzar creación
 
 
-        Log.d("MyApp", "🔥 MyApp.onCreate ejecutado");
+        Log.d("MyApp", " MyApp.onCreate ejecutado");
         if (hayInternet(this)) {
-            Log.d("MyApp", "🌐 Conexión detectada, sincronizando progreso offline...");
+            Log.d("MyApp", " Conexión detectada, sincronizando progreso offline...");
             sincronizarProgresoOffline(this);
         }
     }
@@ -88,8 +88,8 @@ public class MyApp extends Application {
             datos.put("progresoCursoOffline", progresoTemp);
 
             userRef.set(datos, SetOptions.merge())
-                    .addOnSuccessListener(a -> Log.d("SYNC", "✔️ Sincronización de progreso completa"))
-                    .addOnFailureListener(e -> Log.e("SYNC", "❌ Error sincronizando progreso", e));
+                    .addOnSuccessListener(a -> Log.d("SYNC", "✔ Sincronización de progreso completa"))
+                    .addOnFailureListener(e -> Log.e("SYNC", " Error sincronizando progreso", e));
         });
     }
 
@@ -97,7 +97,7 @@ public class MyApp extends Application {
     public void onTerminate() {
         super.onTerminate();
         if (contadorTiempo != null) {
-            contadorTiempo.forzarGuardarAhora(); // Backup cuando se cierra
+            contadorTiempo.forzarGuardarAhora();
         }
     }
 }

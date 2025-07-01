@@ -90,7 +90,6 @@ public class Ver_cursos extends AppCompatActivity {
     private EditText etcomentario;
     private Intent visualizaciones,calificaciones;
 
-    //--- contador de visitas
     private final static String Prefers_name="nombreclase";
     private final static String Cuentas_Visitas="Contador";
 
@@ -114,7 +113,6 @@ public class Ver_cursos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_cursos);
 
-        // Vincular vistas
         imagenTitulo = findViewById(R.id.imgen_vercurso_imagentitulo);
         tituloCurso = findViewById(R.id.text_vercurso_title);
         descripcionCurso = findViewById(R.id.text_vercurso_descripcion);
@@ -133,12 +131,12 @@ public class Ver_cursos extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
-        Log.d("Ya entro al curso", "creando curso");
+       /* Log.d("Ya entro al curso", "creando curso");*/
         rvClases.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         firestore = FirebaseFirestore.getInstance();
 
-        // Obtener idCurso del intent
+
         idCurso = getIntent().getIntExtra("idCurso", 1);
         if (idCurso != -1) {
             obtenerCurso(idCurso);
@@ -159,7 +157,7 @@ public class Ver_cursos extends AppCompatActivity {
         estrellas[2] = findViewById(R.id.iv_3_estrella);
         estrellas[3] = findViewById(R.id.iv_4_estrella);
         estrellas[4] = findViewById(R.id.iv_5_estrella);
-        // Establecer OnClickListener para cada estrella
+
         for (int i = 0; i < estrellas.length; i++) {
             final int estrellaIndex = i;
             estrellas[i].setOnClickListener(new View.OnClickListener() {
@@ -170,7 +168,6 @@ public class Ver_cursos extends AppCompatActivity {
             });
         }
 
-        // Inicializar la puntuación en 0/5
         actualizarTextoPuntuacion();
 
         //---- comentarios ------
@@ -258,7 +255,7 @@ public class Ver_cursos extends AppCompatActivity {
             comentario.setTexto(coment);
             comentario.setFecha(fecha);
             comentario.setIdCurso(idCurso);
-            comentario.setIdClase(-1); // Curso, no clase
+            comentario.setIdClase(-1);
             comentario.setUidAutor(user.getUid());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -313,7 +310,7 @@ public class Ver_cursos extends AppCompatActivity {
                                                 Curso curso = cursoQuery.getDocuments().get(0).toObject(Curso.class);
 
                                                 if (curso != null) {
-                                                    // Asegúrate de que no sean listas vacías o null
+
                                                     if (!curso.getInstrumento().isEmpty()) {
                                                         Map<String, Integer> instrumentoMap = curso.getInstrumento();
                                                         int instrumentoId = instrumentoMap.values().iterator().next();
@@ -341,7 +338,7 @@ public class Ver_cursos extends AppCompatActivity {
 
                                                     usuario.setPreferenciasUsuario(finalPreferenciasUsuario);
 
-                                                    // Convertimos el usuario en un Map para hacer merge
+
                                                     Map<String, Object> userMap = new HashMap<>();
                                                     userMap.put("comentarios", usuario.getComentarios());
                                                     userMap.put("preferenciasUsuario", finalPreferenciasUsuario);
@@ -389,8 +386,6 @@ public class Ver_cursos extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.w("VISITAS", "Error buscando el curso", e));
 
-// subir / actualizar  la popularidad a firebase
-        //
         firestore.collection("cursos")
                 .whereEqualTo("idCurso", idCurso)
                 .limit(1)
@@ -402,7 +397,6 @@ public class Ver_cursos extends AppCompatActivity {
                         Curso curso = doc.toObject(Curso.class);
 
                         double nuevaPopularidad = calcularPopularidad(curso);
-                        //   double calificacinActual=
 
                         firestore.collection("cursos").document(docId)
                                 .update("popularidad", nuevaPopularidad)
@@ -427,9 +421,6 @@ public class Ver_cursos extends AppCompatActivity {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                             Curso curso = doc.toObject(Curso.class);
-
-
-
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             if (user != null) {
                                 firestore.collection("usuarios")
@@ -446,7 +437,7 @@ public class Ver_cursos extends AppCompatActivity {
                                                     List<Curso> historial = usuario.getHistorialCursos();
                                                     if (historial == null) historial = new ArrayList<>();
 
-                                                    // Verificamos si ya existe un curso con el mismo idCurso
+
                                                     Curso cursoExistente = null;
                                                     for (Curso c : historial) {
                                                         if (c.getIdCurso() == curso.getIdCurso()) {
@@ -455,22 +446,18 @@ public class Ver_cursos extends AppCompatActivity {
                                                         }
                                                     }
 
-                                                    // Si existe, lo removemos
                                                     if (cursoExistente != null) {
                                                         historial.remove(cursoExistente);
                                                     }
 
                                                     curso.setFechaAcceso(Timestamp.now());
 
-                                                    // Agregamos al final
                                                     historial.add(curso);
 
-                                                    // Si hay más de 250, eliminamos los más antiguos
                                                     while (historial.size() > 250) {
                                                         historial.remove(0);
                                                     }
 
-                                                    // Actualizamos en Firestore
                                                     firestore.collection("usuarios")
                                                             .document(docId)
                                                             .update("historialCursos", historial)
@@ -489,7 +476,6 @@ public class Ver_cursos extends AppCompatActivity {
                                             Toast.makeText(this, "Error al consultar Firestore", Toast.LENGTH_SHORT).show();
                                         });}
                             cargarComentarios(idCurso);
-                            // Mostrar datos
                             tituloCurso.setText(curso.getTitulo());
 
                             if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
@@ -529,9 +515,6 @@ public class Ver_cursos extends AppCompatActivity {
                                     .placeholder(R.drawable.loading)
                                     .error(R.drawable.img_defaultclass)
                                     .into(imagenTitulo);
-
-                            // Aquí puedes luego cargar clases del curso si quieres
-
 
                             ArrayList<Clase> listaClases = new ArrayList<>();
 

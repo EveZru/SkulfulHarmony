@@ -51,7 +51,6 @@ public class CrearDenuncia extends AppCompatActivity {
             return insets;
         });
 
-        // RadioButtons tint setup
         for (int id : new int[]{
                 R.id.rb_contenidoilegal, R.id.rb_suplantacion, R.id.rb_inapropiado,
                 R.id.rb_spam, R.id.rb_abuso, R.id.rb_normas_, R.id.rb_otro
@@ -108,30 +107,29 @@ public class CrearDenuncia extends AppCompatActivity {
                 tipoDenuncia = "Otro";
             }
 
-            // Crear objeto denuncia
             Denuncia denuncia = new Denuncia(usuario, tipoDenuncia, txtDenuncia, -1);
             denuncia.setFecha_denuncia(Timestamp.now());
 
             if (idComentario != -1) {
                 if (idCurso != -1 && idClase != -1) {
-                    // Comentario dentro de clase
+
                     denuncia.setIdCurso(idCurso);
                     denuncia.setIdClase(idClase);
                 } else if (idCurso != -1) {
-                    // Comentario de curso
+
                     denuncia.setIdCurso(idCurso);
                     denuncia.setIdClase(-1);
                 }
                 denuncia.setIdComentario(idComentario);
                 denuncia.setFormato("comentario");
             } else if (idClase != -1 && idCurso != -1) {
-                // Clase
+
                 denuncia.setIdCurso(idCurso);
                 denuncia.setIdClase(idClase);
                 denuncia.setIdComentario(-1);
                 denuncia.setFormato("clase");
             } else if (idCurso != -1) {
-                // Curso
+
                 denuncia.setIdCurso(idCurso);
                 denuncia.setIdClase(-1);
                 denuncia.setIdComentario(-1);

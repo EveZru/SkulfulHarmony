@@ -63,14 +63,12 @@ public class VerCursoComoAdministrador extends AppCompatActivity {
             builder.setView(dialogView);
             AlertDialog dialog = builder.create();
 
-            // Referencias a los botones del diálogo
             Button btnCancelar = dialogView.findViewById(R.id.btn_desestimar_dialog_cancelar);
             Button btnDesestimar = dialogView.findViewById(R.id.btn_desestimar_dialog_desestimar);
 
-            // Acción botón Cancelar
             btnCancelar.setOnClickListener(view -> dialog.dismiss());
 
-            // Acción botón Desestimar
+
             btnDesestimar.setOnClickListener(view -> {
                 if (docDenuncia != null) {
                     db.collection("denuncias").document(docDenuncia)

@@ -22,37 +22,30 @@ public class TerminosCondiciones extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_terminos_condiciones);  // Asegúrate de tener el layout adecuado
+        setContentView(R.layout.activity_terminos_condiciones);
 
-        // Inicializar las vistas
         checkboxAceptar = findViewById(R.id.checkboxAceptar);
         btnAceptar = findViewById(R.id.botonAceptar);
 
-        // Deshabilitar el botón por defecto
         btnAceptar.setEnabled(false);
 
-        // Configurar el listener para el CheckBox
         checkboxAceptar.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // Habilitar o deshabilitar el botón según el estado del CheckBox
+
             btnAceptar.setEnabled(isChecked);
         });
 
-        // Obtener el valor de cuentaRecienCreada del intent
         cuentaRecienCreada = getIntent().getBooleanExtra("cuentaRecienCreada", false);
 
-        // Configurar la acción del botón para aceptar los términos
         btnAceptar.setOnClickListener(v -> {
             if (checkboxAceptar.isChecked()) {
-                // Guardar la aceptación de los términos en Firebase
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null) {
                     db.collection("usuarios").document(user.getUid())
                             .update("acceptedTerms", true)
                             .addOnSuccessListener(aVoid -> {
-                                // Mostrar un mensaje confirmando la aceptación
+
                                 Toast.makeText(this, "Términos aceptados", Toast.LENGTH_SHORT).show();
-                                // Redirigir al Home
 
                                 if (cuentaRecienCreada) {
                                     Intent intent = new Intent(TerminosCondiciones.this, PreguntasRecomendacion.class);
@@ -66,13 +59,13 @@ public class TerminosCondiciones extends AppCompatActivity {
                                 }
                             })
                             .addOnFailureListener(e -> {
-                                // Si ocurre un error al guardar, mostrar un mensaje
+
                                 Toast.makeText(this, "Error al guardar la aceptación", Toast.LENGTH_SHORT).show();
                             });
                 }
 
             } else {
-                // Si el usuario no acepta los términos, mostrar un mensaje de advertencia
+
                 Toast.makeText(this, "Debes aceptar los términos para continuar", Toast.LENGTH_SHORT).show();
             }
         });

@@ -66,6 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:max="240"
+                    android:progressTint="@color/cafe"
+                    android:thumbTint="@color/black"
                     android:progress="60"/>
 
                 <!-- Texto de tiempo -->

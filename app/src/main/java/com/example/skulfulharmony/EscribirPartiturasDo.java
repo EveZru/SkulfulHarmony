@@ -3,12 +3,14 @@ package com.example.skulfulharmony;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class EscribirPartiturasDo extends AppCompatActivity {
     private View[] lineas = new View[6];
     private View[] espacios = new View[5];
     private float limiteSuperior, limiteInferior;
-    private Map<String, Float> coordenadasEsperadas = new HashMap<>(); // Mapa para guardar las coordenadas esperadas de cada nota
+    private Map<String, Float> coordenadasEsperadas = new HashMap<>();
     private TextView tvInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,6 @@ public class EscribirPartiturasDo extends AppCompatActivity {
         tvNota = findViewById(R.id.tv_notaporbuscar);
         tvInfo = findViewById(R.id.tvinfo);
 
-        // Referencia al EditText
 
         // Inicializar las líneas
         lineas[0] = findViewById(R.id.line0); // Do
@@ -53,7 +54,6 @@ public class EscribirPartiturasDo extends AppCompatActivity {
         espacios[3] = findViewById(R.id.space3); // Do4
         espacios[4] = findViewById(R.id.space4); // Mi4
 
-        // Guardar las coordenadas Y esperadas de cada nota después de que la vista se dibuja
         ivNota.post(new Runnable() {
             @Override
             public void run() {
@@ -73,7 +73,7 @@ public class EscribirPartiturasDo extends AppCompatActivity {
                 coordenadasEsperadas.put("Do4", espacios[4].getY() +151);
                 coordenadasEsperadas.put("Re4", lineas[5].getY()+151);
 
-                cambiarNota(); // Mostrar la primera nota aleatoria
+                cambiarNota();
             }
         });
 
@@ -99,24 +99,21 @@ public class EscribirPartiturasDo extends AppCompatActivity {
         });
     }
 
-    // cambiar la nota mostrada en el TextView por una nota aleatoria del arreglo
     private void cambiarNota() {
         int indiceAleatorio = (int) (Math.random() * notas.length);
         notaActual = notas[indiceAleatorio];
         tvNota.setText(notaActual);
     }
 
-    // comparar la coordenada Y de la nota con la coordenada Y esperada de la nota actual
+
     private void compararCoordenada() {
         float notaYCentroImagen = ivNota.getY() + ivNota.getHeight() / 2;
         Float coordenadaEsperada = coordenadasEsperadas.get(notaActual);
         float tolerancia = 40;
 
-        // Definir la tolerancia fija para líneas y espacios
         float toleranciaLineas = 17f;
         float toleranciaEspacios = 40f;
 
-        // Determinar la tolerancia basada en si la nota actual corresponde a una línea o un espacio
         if (notaActual.equals("Do") || notaActual.equals("Mi") || notaActual.equals("Sol") || notaActual.equals("Si") || notaActual.equals("Re4") || notaActual.equals("Fa4")) {
             tolerancia = toleranciaLineas;
         } else if (notaActual.equals("Re") || notaActual.equals("Fa") || notaActual.equals("La") || notaActual.equals("Do4") || notaActual.equals("Mi4")) {
@@ -127,18 +124,29 @@ public class EscribirPartiturasDo extends AppCompatActivity {
         if (coordenadaEsperada != null) {
             textoCoordenadas += "Coordenada Esperada (Y): " + String.format("%.2f", coordenadaEsperada) + "\n";
             textoCoordenadas += "Coordenada Imagen (Y): " + String.format("%.2f", notaYCentroImagen) + "\n";
-            textoCoordenadas += "Tolerancia (Y): " + String.format("%.2f", tolerancia) + "\n"; // Muestra la tolerancia actual
+            textoCoordenadas += "Tolerancia (Y): " + String.format("%.2f", tolerancia) + "\n";
 
             if (notaYCentroImagen >= coordenadaEsperada - tolerancia && notaYCentroImagen <= coordenadaEsperada + tolerancia) {
-                Toast.makeText(this, "¡Correcto!", Toast.LENGTH_SHORT).show();
+               mostrarMensaje("Correcto");
                 ivNota.animate().y(initialY).setDuration(200).start();
                 cambiarNota();
             }
         } else {
             textoCoordenadas += "Coordenada esperada para " + notaActual + " no encontrada.";
         }
-        tvInfo.setText("Buscando: " + notaActual); // Mantén actualizado el tvActual si lo deseas
-        tvInfo.setText(textoCoordenadas); // Muestra la información en el nuevo TextView
+        tvInfo.setText("Buscando: " + notaActual);
+        tvInfo.setText(textoCoordenadas);
 
+    }
+    private void mostrarMensaje(String mensaje) {
+        View layout = getLayoutInflater().inflate(R.layout.holder_boton_extra, null);
+        Button boton = layout.findViewById(R.id.btn_ver_mas);
+        boton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.grayverde));
+        boton.setText(mensaje);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 }
