@@ -199,7 +199,6 @@ public class Ver_clases extends AppCompatActivity {
                                                     .addOnSuccessListener(aVoid -> {
                                                         Log.d("Historial", "Historial de clases actualizado");
                                                         usuario.calcularClusterUsuario(db1,usuario,call->{
-                                                            Toast.makeText(this, "Cluster actualizado", Toast.LENGTH_SHORT).show();
                                                         });
                                                     })
                                                     .addOnFailureListener(e -> Log.e("Historial", "Error al actualizar historial", e));
@@ -336,7 +335,6 @@ public class Ver_clases extends AppCompatActivity {
                                     userRef.set(new HashMap<String, Object>() {{
                                         put("respuestasIncorrectas", listaRespuestas);
                                     }}, SetOptions.merge()).addOnSuccessListener(unused -> {
-                                        Toast.makeText(Ver_clases.this, " Intento guardado correctamente", Toast.LENGTH_SHORT).show();
                                     }).addOnFailureListener(e -> {
                                         Log.e("Firebase", " Error al guardar intento", e);
                                         Toast.makeText(Ver_clases.this, "Error al guardar intento", Toast.LENGTH_SHORT).show();

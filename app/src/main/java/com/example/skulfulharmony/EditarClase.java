@@ -103,7 +103,6 @@ public class EditarClase extends AppCompatActivity {
             cargarDatosClase(idClase, idCurso);
          //   Toast.makeText(this, "ID Clase: " + idClase + ", ID Curso: " + idCurso, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Error: No se pudo obtener la información de la clase. idClase: " + idClase + ", idCurso: " + idCurso, Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -141,7 +140,6 @@ public class EditarClase extends AppCompatActivity {
                             }
 
                         } else {
-                            Toast.makeText(EditarClase.this, "Error: No se pudo convertir el documento a Clase. Verifique la estructura de su modelo Clase o los datos en Firestore.", Toast.LENGTH_LONG).show();
                             Log.e("EditarClase", "Fallo al convertir documento a objeto Clase para claseId: " + claseId + " y cursoId: " + cursoId + ". Datos del documento: " + queryDocumentSnapshots.getDocuments().get(0).getData());
                             finish();
                         }

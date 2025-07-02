@@ -75,7 +75,6 @@ public class EditarCurso extends AppCompatActivity {
         idCurso=intent.getIntExtra("idCurso",-1);
         if(idCurso!=-1){
             cargarDatosCurso(idCurso);
-            Toast.makeText(this, "idCurso: "+idCurso, Toast.LENGTH_SHORT).show();
         }else{
             Toast.makeText(this, "Error al obtener la informacion del curso", Toast.LENGTH_SHORT).show();
         }

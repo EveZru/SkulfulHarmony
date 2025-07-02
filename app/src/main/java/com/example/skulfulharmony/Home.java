@@ -72,6 +72,7 @@ public class Home extends AppCompatActivity {
     private SQLiteDatabase localDatabase;
     private ImageView iv_buscar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +91,9 @@ public class Home extends AppCompatActivity {
         et_buscarhome=findViewById(R.id.et_buscarhome);
         iv_buscar=findViewById(R.id.iv_buscarhome);
         verTodosLosCursos=findViewById(R.id.rv_hometodosloscursos);
+
+        Boolean primeraVez = false;
+        primeraVez = getIntent().getBooleanExtra("primeraVez", false);
 
         //-------Parte de los cursos de clases originales -------
         listaCursos = new ArrayList<>();
@@ -170,7 +174,7 @@ public class Home extends AppCompatActivity {
 
         String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
 
-        if (!today.equals(lastDate)) {
+        if (!today.equals(lastDate) && !primeraVez) {
             Intent intent = new Intent(this, PreguntasIncorrectas.class);
             startActivity(intent);
             prefs.edit().putString("last_open_date", today).apply();

@@ -254,7 +254,6 @@ public class CrearClase extends AppCompatActivity {
                                 .replace("?dl=0", "");
 
                         handler.post(() -> {
-                            Toast.makeText(CrearClase.this, "Video subido correctamente", Toast.LENGTH_SHORT).show();
                             guardarVideoTemporal(urlVideo);
                             tvEstadoVideo.setText("🎥 Video subido");
                             NotificacionHelper.completarProgreso(CrearClase.this, 35, "Subida exitosa", "Tu video fue subido correctamente.");

@@ -142,7 +142,6 @@ public class Ver_cursos extends AppCompatActivity {
             obtenerCurso(idCurso);
 
         } else {
-            Toast.makeText(this, "ID del curso no válido", Toast.LENGTH_SHORT).show();
             finish();
         }
 

@@ -183,12 +183,10 @@ public class PreguntasRecomendacion extends AppCompatActivity {
 
                         ref.update("respuestasCuestionario", respuestas)
                                 .addOnSuccessListener(unused -> {
-                                    Toast.makeText(this, "Recomendaciones guardadas", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(this, Home.class));
+                                    startActivity(new Intent(this, Home.class).putExtra("primeraVez", true));
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {
-                                    Toast.makeText(this, "Error al guardar recomendaciones", Toast.LENGTH_LONG).show();
                                 });
                     }
                 });

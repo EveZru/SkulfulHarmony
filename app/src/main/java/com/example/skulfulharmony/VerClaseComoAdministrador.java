@@ -103,7 +103,6 @@ public class VerClaseComoAdministrador extends AppCompatActivity {
                         try {
                             clase = claseDoc.toObject(Clase.class);
                         } catch (Exception e) {
-                            Toast.makeText(this, " Error al convertir datos de la clase", Toast.LENGTH_LONG).show();
                             finish();
                             return;
                         }
