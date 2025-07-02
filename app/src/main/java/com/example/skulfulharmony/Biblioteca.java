@@ -118,9 +118,10 @@ public class Biblioteca extends AppCompatActivity {
                             for (Curso curso : cursosHistorial) {
                                 if(curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧") || curso.getTitulo().isEmpty() || curso.getTitulo().toLowerCase().startsWith("desabilitado")
                                         || curso.getTitulo() == null || curso.getTitulo().equals("") || curso.getTitulo().equals("null") || curso.getTitulo().equals("NULL"))
-                                {}
-                                else{
-                                    cursosNuevos.remove(curso);
+                                {
+                                    
+                                } else{
+                                    cursosNuevos.add(curso);
                                 }
                             }
                             rvDescargados.setAdapter(new AdapterBibliotecaVerCursosHistorial(cursosNuevos));
