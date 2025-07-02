@@ -508,6 +508,7 @@ public class Ver_cursos extends AppCompatActivity {
                                 descripcionCurso.setText(curso.getDescripcion());
                             }
 
+                            //
                             Glide.with(this)
                                     .load(curso.getImagen())
                                     .placeholder(R.drawable.loading)
