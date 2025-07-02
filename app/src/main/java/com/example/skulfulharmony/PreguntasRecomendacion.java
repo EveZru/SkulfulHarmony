@@ -42,7 +42,6 @@ public class PreguntasRecomendacion extends AppCompatActivity {
         add("Sí, es la primera vez");
         add("No, he tomado clases regularmente");
         add("No, hace mucho tomé clases");
-        add("No, no he tomado clases");
     }};
 
     private static final ArrayList<String> respuestas2 = new ArrayList<>() {{
