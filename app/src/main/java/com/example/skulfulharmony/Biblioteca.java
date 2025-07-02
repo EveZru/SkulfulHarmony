@@ -114,14 +114,15 @@ public class Biblioteca extends AppCompatActivity {
                         if (!snapshot.isEmpty()) {
                             Usuario usuario = snapshot.getDocuments().get(0).toObject(Usuario.class);
                             List<Curso> cursosHistorial = usuario != null ? usuario.getHistorialCursos() : new ArrayList<>();
+                            List<Curso> cursosNuevos = new ArrayList<>();
                             for (Curso curso : cursosHistorial) {
                                 if(curso.getTitulo().startsWith("✩♬ ₊˚.\uD83C\uDFA7⋆☾⋆⁺₊✧") || curso.getTitulo().isEmpty() || curso.getTitulo().toLowerCase().startsWith("desabilitado")
                                         || curso.getTitulo() == null || curso.getTitulo().equals("") || curso.getTitulo().equals("null") || curso.getTitulo().equals("NULL"))
                                 {
-                                    cursosHistorial.remove(curso);
+                                    cursosNuevos.remove(curso);
                                 }
                             }
-                            rvDescargados.setAdapter(new AdapterBibliotecaVerCursosHistorial(cursosHistorial));
+                            rvDescargados.setAdapter(new AdapterBibliotecaVerCursosHistorial(cursosNuevos));
                         }
                     })
                     .addOnFailureListener(e -> Log.e("Error", "Error al obtener los cursos del historial", e));
