@@ -17,6 +17,7 @@ public class Comentario {
     private Integer idClase;
     private Integer idComentario;
     private String uidAutor;
+    private String ultimoLikeUid;
     private int likes;
 
     public Comentario() {
@@ -93,5 +94,13 @@ public class Comentario {
 
     public int getLikes() {
         return likes;
+    }
+
+    public String getUltimoLikeUid() {
+        return ultimoLikeUid;
+    }
+
+    public void setUltimoLikeUid(String ultimoLikeUid) {
+        this.ultimoLikeUid = ultimoLikeUid;
     }
 }

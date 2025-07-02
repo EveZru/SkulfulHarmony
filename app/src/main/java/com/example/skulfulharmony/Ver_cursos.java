@@ -109,7 +109,6 @@ public class Ver_cursos extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.d("Ya entro al curso", "creando curso");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver_cursos);
 
@@ -195,7 +194,6 @@ public class Ver_cursos extends AppCompatActivity {
                             String docId = doc.getId();
                             Usuario usuario = doc.toObject(Usuario.class);
                             if (usuario != null) {
-                                Toast.makeText(this, "Entro a el usuario", Toast.LENGTH_SHORT).show();
 
                                 List<Integer> cursosSeguidos = usuario.getCursosSeguidos();
                                 if (cursosSeguidos == null) {
@@ -216,14 +214,11 @@ public class Ver_cursos extends AppCompatActivity {
                                         .document(docId)
                                         .update("cursosSeguidos", cursosSeguidos)
                                         .addOnSuccessListener(unused -> {
-                                            Toast.makeText(this, "Subio correctamente", Toast.LENGTH_SHORT).show();
                                         })
                                         .addOnFailureListener(e -> {
-                                            Toast.makeText(this, "Error al actualizar cursos seguidos", Toast.LENGTH_SHORT).show();
                                         });
                             }
                             else {
-                                Toast.makeText(this, "No se encontró el usuario", Toast.LENGTH_SHORT).show();
                             }
                         }
                         else {
@@ -461,10 +456,8 @@ public class Ver_cursos extends AppCompatActivity {
                                                             .document(docId)
                                                             .update("historialCursos", historial)
                                                             .addOnSuccessListener(unused -> {
-                                                                Toast.makeText(this, "Historial de cursos actualizado correctamente", Toast.LENGTH_SHORT).show();
                                                             })
                                                             .addOnFailureListener(e -> {
-                                                                Toast.makeText(this, "Error al actualizar historial de cursos", Toast.LENGTH_SHORT).show();
                                                             });
                                                 }
                                             } else {
@@ -479,27 +472,33 @@ public class Ver_cursos extends AppCompatActivity {
 
                             if (curso.getCreador() != null && !curso.getCreador().isEmpty()) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                CollectionReference usersRef = db.collection("usuarios");
-                                usersRef.whereEqualTo("correo", curso.getCreador())
-                                        .limit(1)
+                                db.collection("usuarios").whereEqualTo("correo", curso.getCreador())
                                         .get()
                                         .addOnSuccessListener(queryDocumentSnapshotsuser -> {
-                                            if (!queryDocumentSnapshots.isEmpty()) {
-                                                String nombre = queryDocumentSnapshots.getDocuments().get(0).getString("nombre");
-                                                if (nombre != null)
-                                                autorCurso.setText("Publicado por: " + nombre);
-                                                else {
+                                            if (!queryDocumentSnapshotsuser.isEmpty()) {
+                                                List<DocumentSnapshot> documentos = queryDocumentSnapshotsuser.getDocuments();
+                                                if (documentos.size() > 0) {
+                                                    Usuario autor = documentos.get(0).toObject(Usuario.class);
+                                                    if (autor != null){
+                                                        String nombre = autor.getNombre();
+                                                        if (nombre != null)
+                                                            autorCurso.setText("Publicado por: " + nombre);
+                                                        else {
+                                                            autorCurso.setText("Autor desconocido");
+                                                        }
+                                                    } else {
+                                                        autorCurso.setText("Autor desconocido");
+                                                    }
+                                                } else {
                                                     autorCurso.setText("Autor desconocido");
                                                 }
+
                                             } else {
                                                 autorCurso.setText("Autor desconocido");
                                                 Log.w("Firebase", "No se encontró autor con correo: " + curso.getCreador());
                                             }
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Log.e("Firebase", "Error al obtener el nombre del autor", e);
-                                            autorCurso.setText("Autor desconocido");
                                         });
+
                             } else {
                                 autorCurso.setText("Autor desconocido");
                             }
